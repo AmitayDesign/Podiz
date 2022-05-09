@@ -19,3 +19,4 @@ class Twitter:
 
     def make_tweet(self, tweet):
         self.client.create_tweet(text=tweet)
+
