@@ -1,6 +1,7 @@
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/home/components/HomeAppBar.dart';
+import 'package:podiz/home/components/player.dart';
 import 'package:podiz/home/components/podcastListTile.dart';
 import 'package:podiz/home/components/podcastListTileQuickNote.dart';
 import 'package:podiz/home/homePage.dart';
@@ -21,6 +22,8 @@ class FeedPage extends ConsumerStatefulWidget with HomePageMixin {
   ConsumerState<FeedPage> createState() => _FeedPageState();
 }
 
+bool player = true;
+
 class _FeedPageState extends ConsumerState<FeedPage> {
   List<String> categories = [
     "Last Listened",
@@ -36,15 +39,15 @@ class _FeedPageState extends ConsumerState<FeedPage> {
   }
 
   handleAppBar() {
-    print("entrei");
-    print(_controller.position.pixels);
     int size = 0;
+
     if (_controller.position.pixels == 0) {
       setState(() {
         title = "";
       });
       return;
     }
+
     for (int i = 0; i < categories.length; i++) {
       size += 16;
       if (_controller.position.pixels >= size &&
@@ -70,20 +73,28 @@ class _FeedPageState extends ConsumerState<FeedPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      HomeAppBar(title),
-      Expanded(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: ListView.builder(
-            controller: _controller,
-            itemCount: categories.length,
-            itemBuilder: (context, index) => index == 0
-                ? PodcastListTileQuickNote("Last Listened")
-                : PodcastListTile(categories[index]),
-          ),
+    return Stack(
+      children: [
+        Column(
+          children: [
+            HomeAppBar(title),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: ListView.builder(
+                  controller: _controller,
+                  itemCount: categories.length,
+                  itemBuilder: (context, index) => index == 0
+                      ? PodcastListTileQuickNote("Last Listened")
+                      : PodcastListTile(categories[index]),
+                ),
+              ),
+            ),
+            player ? const SizedBox(height: 100) : Container()
+          ],
         ),
-      ),
-    ]);
+        player ? Player() : Container()
+      ],
+    );
   }
 }
