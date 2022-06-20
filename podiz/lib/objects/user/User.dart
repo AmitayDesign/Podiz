@@ -12,7 +12,11 @@ class UserPodiz with EquatableMixin {
   String name;
   String email;
   DateTime timestamp;
-  
+  // List<String> followers;
+  // List<String> following;
+  // List<String> favPodcast;
+  // String accessToken;
+  // String refreshedToken;
 
   @JsonKey(ignore: true)
   File? image;
@@ -22,6 +26,11 @@ class UserPodiz with EquatableMixin {
     required this.name,
     required this.email,
     required this.timestamp,
+    // required this.followers,
+    // required this.following,
+    // required this.favPodcast,
+    // required this.accessToken,
+    // required this.refreshedToken,
   });
 
   factory UserPodiz.fromFirestore(Doc doc) =>
@@ -32,7 +41,8 @@ class UserPodiz with EquatableMixin {
 
   Map<String, dynamic> toJson() => _$UserPodizToJson(this);
 
-  factory UserPodiz.copyFrom(UserPodiz user) => UserPodiz.fromJson(user.toJson());
+  factory UserPodiz.copyFrom(UserPodiz user) =>
+      UserPodiz.fromJson(user.toJson());
 
   @override
   String toString() =>

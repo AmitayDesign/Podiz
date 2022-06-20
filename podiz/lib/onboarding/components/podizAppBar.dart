@@ -3,21 +3,18 @@ import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/onboarding/components/linearGradientAppBar.dart';
 
-class PodizAppBar extends StatelessWidget with PreferredSizeWidget {
+class PodizAppBar extends StatelessWidget {
   const PodizAppBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return AppBar(
-      automaticallyImplyLeading: false,
-      centerTitle: true,
-      flexibleSpace: Container(
-        decoration: BoxDecoration(gradient: appBarGradient()),
-      ),
-      title: Container(
-        height: 96,
-        child: Center(
+    return Container(
+      decoration: BoxDecoration(gradient: appBarGradient()),
+      height: 96,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 32.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -45,5 +42,5 @@ class PodizAppBar extends StatelessWidget with PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size(kScreenWidth, 96);
+  Size get preferredSize => const Size.fromHeight(96);
 }

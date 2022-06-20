@@ -42,16 +42,15 @@ IconThemeData _iconTheme(ColorScheme colorScheme) => IconThemeData(
 InputDecorationTheme _inputDecorationTheme(ColorScheme colorScheme) =>
     InputDecorationTheme(
       filled: true,
-      fillColor: colorScheme.surface,
+      fillColor: Color(0xFF404040),
       border: OutlineInputBorder(
         borderSide: BorderSide.none,
-        borderRadius: BorderRadius.circular(kBorderRadius),
+        borderRadius: BorderRadius.circular(30),
       ),
       contentPadding: EdgeInsets.symmetric(
-        horizontal: 24,
-        vertical: (kButtonHeight - 14) / 2,
+        horizontal: 16,
       ),
-      hintStyle: TextStyle(color: colorScheme.onSurface),
+      hintStyle: discussionCardCommentHint(),
       iconColor: colorScheme.onSurface,
     );
 
@@ -76,12 +75,14 @@ BottomNavigationBarThemeData _bottomNavigationBarTheme(
   ColorScheme colorScheme,
 ) =>
     BottomNavigationBarThemeData(
+      selectedLabelStyle: selectedLabel(),
+      unselectedLabelStyle: unselectedLabel(),
       elevation: 0,
-      backgroundColor: colorScheme.background,
-      selectedItemColor: colorScheme.onBackground,
-      unselectedItemColor: colorScheme.onSurface,
-      showSelectedLabels: false,
-      showUnselectedLabels: false,
+      backgroundColor: Color(0xE6090909),
+      selectedItemColor: Color(0xFFD74EFF),
+      unselectedItemColor: Color(0xB2FFFFFF),
+      showSelectedLabels: true,
+      showUnselectedLabels: true,
     );
 
 TextTheme _textTheme(ColorScheme colorScheme) => TextTheme(
@@ -151,6 +152,12 @@ TextStyle podcastTitle() => const TextStyle(
       height: 1,
       fontWeight: FontWeight.w700,
     );
+TextStyle discussionAppBarTitle() => const TextStyle(
+      fontSize: 16,
+      color: Color(0xFFFAFAFA),
+      height: 1,
+      fontWeight: FontWeight.w700,
+    );
 
 TextStyle podcastTitleQuickNote() => const TextStyle(
       fontSize: 16,
@@ -185,4 +192,113 @@ TextStyle podcastArtistQuickNote() => const TextStyle(
       color: Color(0xFF4E4E4E),
       height: 1,
       fontWeight: FontWeight.w400,
+    );
+
+TextStyle discussionAppBarInsights() => const TextStyle(
+      fontSize: 14,
+      color: Color(0xB2FFFFFF),
+      height: 1,
+      fontWeight: FontWeight.w400,
+    );
+
+TextStyle discussionCardProfile() => const TextStyle(
+      fontSize: 16,
+      color: Color(0xFFFFFFFF),
+      height: 1,
+      fontWeight: FontWeight.w700,
+    );
+
+TextStyle discussionCardFollowers() => const TextStyle(
+      fontSize: 14,
+      color: Color(0xFF9E9E9E),
+      height: 1,
+      fontWeight: FontWeight.w400,
+    );
+
+TextStyle discussionCardComment() => const TextStyle(
+      fontSize: 16,
+      color: Color(0xFFFFFFFF),
+      height: 1,
+      fontWeight: FontWeight.w400,
+    );
+
+TextStyle discussionCardPlay() => const TextStyle(
+      fontSize: 16,
+      color: Color(0xE6FFFFFF),
+      height: 1,
+      fontWeight: FontWeight.w700,
+    );
+
+TextStyle discussionCardCommentHint() => const TextStyle(
+      fontSize: 12,
+      color: Color(0xFF9E9E9E),
+      height: 1,
+      fontWeight: FontWeight.w400,
+    );
+
+TextStyle discussionSnackCommentHint() => const TextStyle(
+      fontSize: 14,
+      color: Color(0xE6FFFFFF),
+      height: 1,
+      fontWeight: FontWeight.w400,
+    );
+
+TextStyle discussionSnackPlay() => const TextStyle(
+      fontSize: 16,
+      color: Color(0xFFFFFFFF),
+      height: 1,
+      fontWeight: FontWeight.w700,
+    );
+
+TextStyle followerName() => const TextStyle(
+      fontSize: 20,
+      color: Color(0xFFFFFFFF),
+      height: 1,
+      fontWeight: FontWeight.w700,
+    );
+
+TextStyle followersNumber() => const TextStyle(
+      fontSize: 18,
+      color: Color(0xE6FFFFFF),
+      height: 1,
+      fontWeight: FontWeight.w700,
+    );
+
+TextStyle followersText() => const TextStyle(
+      fontSize: 16,
+      color: Color(0xE6FFFFFF),
+      height: 1,
+      fontWeight: FontWeight.w400,
+    );
+TextStyle followersFavorite() => const TextStyle(
+      fontSize: 14,
+      color: Color(0xE6FFFFFF),
+      height: 1,
+      fontWeight: FontWeight.w700,
+    );
+
+    TextStyle selectedLabel() => const TextStyle(
+      fontSize: 14,
+      height: 1,
+      fontWeight: FontWeight.w700,
+    );
+
+    TextStyle unselectedLabel() => const TextStyle(
+      fontSize: 14,
+      height: 1,
+      fontWeight: FontWeight.w700,
+    );
+
+    TextStyle notificationsSelectedLabel() => const TextStyle(
+      fontSize: 16,
+      height: 1,
+      fontWeight: FontWeight.w700,
+      color: Color(0xE6FFFFFF),
+    );
+
+    TextStyle notificationsUnselectedLabel() => const TextStyle(
+      fontSize: 16,
+      height: 1,
+      fontWeight: FontWeight.w400,
+      color: Color(0xE6FFFFFF),
     );

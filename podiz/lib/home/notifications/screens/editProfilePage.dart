@@ -5,8 +5,8 @@ import 'package:podiz/aspect/widgets/asyncElevatedButton.dart';
 import 'package:podiz/aspect/widgets/asyncElevatedButtonColor.dart';
 import 'package:podiz/aspect/widgets/preferredAppBar.dart';
 import 'package:podiz/authentication/AuthManager.dart';
-import 'package:podiz/home/profile/components/hashtagContainer.dart';
-import 'package:podiz/home/profile/components/imageInkwell.dart';
+import 'package:podiz/home/notifications/components/hashtagContainer.dart';
+import 'package:podiz/home/notifications/components/imageInkwell.dart';
 import 'package:podiz/objects/user/User.dart';
 
 

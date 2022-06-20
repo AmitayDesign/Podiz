@@ -15,8 +15,7 @@ class SearchPage extends ConsumerStatefulWidget with HomePageMixin {
   @override
   final Widget icon = const Icon(Icons.search);
   @override
-  final Widget activeIcon =
-      const Icon(Icons.search, color: Color(0xFF6310BF));
+  final Widget activeIcon = const Icon(Icons.search);
   @override
   _SearchPageState createState() => _SearchPageState();
 }
@@ -46,7 +45,7 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
   Widget build(BuildContext context) {
     // final podcasts = filter(ref.watch(podcastsProvider));
     final podcasts = [];
-    
+
     return Stack(
       children: [
         if (searchBarHeight != null)

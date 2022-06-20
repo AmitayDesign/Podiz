@@ -14,15 +14,14 @@ class FeedPage extends ConsumerStatefulWidget with HomePageMixin {
   @override
   final Widget icon = const Icon(Icons.home);
   @override
-  final Widget activeIcon = const Icon(Icons.home, color: Color(0xFF6310BF));
+  final Widget activeIcon =
+      const Icon(Icons.home, color: Color(0xFFD74EFF));
 
   FeedPage({Key? key}) : super(key: key);
 
   @override
   ConsumerState<FeedPage> createState() => _FeedPageState();
 }
-
-bool player = true;
 
 class _FeedPageState extends ConsumerState<FeedPage> {
   List<String> categories = [
@@ -39,16 +38,16 @@ class _FeedPageState extends ConsumerState<FeedPage> {
   }
 
   handleAppBar() {
-    int size = 0;
+    int size = 196;
 
-    if (_controller.position.pixels == 0) {
+    if (_controller.position.pixels < 196) {
       setState(() {
-        title = "";
+        title = "Last Listened";
       });
       return;
     }
 
-    for (int i = 0; i < categories.length; i++) {
+    for (int i = 1; i < categories.length; i++) {
       size += 16;
       if (_controller.position.pixels >= size &&
           _controller.position.pixels <=
@@ -69,31 +68,25 @@ class _FeedPageState extends ConsumerState<FeedPage> {
   }
 
   final _controller = ScrollController();
-  String title = "";
+  String title = "Last Listened";
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Column(
       children: [
-        Column(
-          children: [
-            HomeAppBar(title),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: ListView.builder(
-                  controller: _controller,
-                  itemCount: categories.length,
-                  itemBuilder: (context, index) => index == 0
-                      ? PodcastListTileQuickNote("Last Listened")
-                      : PodcastListTile(categories[index]),
-                ),
-              ),
+        HomeAppBar(title),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: ListView.builder(
+              controller: _controller,
+              itemCount: categories.length,
+              itemBuilder: (context, index) => index == 0
+                  ? PodcastListTileQuickNote()
+                  : PodcastListTile(categories[index]),
             ),
-            player ? const SizedBox(height: 100) : Container()
-          ],
+          ),
         ),
-        player ? Player() : Container()
       ],
     );
   }

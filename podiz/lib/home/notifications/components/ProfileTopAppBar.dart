@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:podiz/home/profile/components/followers.dart';
-import 'package:podiz/home/profile/components/hashtagContainer.dart';
-import 'package:podiz/home/profile/components/settingsButton.dart';
+import 'package:podiz/home/notifications/components/followers.dart';
+import 'package:podiz/home/notifications/components/hashtagContainer.dart';
+import 'package:podiz/home/notifications/components/settingsButton.dart';
 import 'package:podiz/objects/user/User.dart';
 
 

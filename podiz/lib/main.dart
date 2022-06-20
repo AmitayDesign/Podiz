@@ -11,6 +11,7 @@ import 'package:podiz/aspect/widgets/routeAwareState.dart';
 import 'package:podiz/authentication/AuthManager.dart';
 import 'package:podiz/home/homePage.dart';
 import 'package:podiz/onboarding/onbordingPage.dart';
+import 'package:podiz/profile/followerProfilePage.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -85,7 +86,6 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
               // if (user == null) return OnBoardingPage();
               // return OnBoardingPage();
               return HomePage();
-              // return ProfilePage();
               // final podcasts = ref.watch(podcastsStreamProvider); //create
               // return podcasts.maybeWhen(
               //     data: (_) => HomePage(), //create

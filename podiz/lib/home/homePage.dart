@@ -1,7 +1,10 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
-import 'package:podiz/home/components/HomeAppBar.dart';
+import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/home/components/player.dart';
 import 'package:podiz/home/feed/feedPage.dart';
-import 'package:podiz/home/profile/ProfilePage.dart';
+import 'package:podiz/home/notifications/NotificationsPage.dart';
 import 'package:podiz/home/search/searchPage.dart';
 
 mixin HomePageMixin on Widget {
@@ -26,13 +29,15 @@ class _HomePageState extends State<HomePage>
     });
   }
 
-  var pageIndex = 0;
-  final pageController = PageController(initialPage: 0);
+  var pageIndex = 2;
+  final pageController = PageController(initialPage: 2);
   String title = "";
+  bool player = true;
+
   final pages = <HomePageMixin>[
     FeedPage(),
     SearchPage(),
-    ProfilePage(),
+    NotificationsPage(),
   ];
 
   @override
@@ -43,11 +48,12 @@ class _HomePageState extends State<HomePage>
   @override
   void dispose() {
     super.dispose();
+    pageController.dispose();
   }
 
   void changeTab(int index) => pageController.animateToPage(
         index,
-        duration: Duration(milliseconds: 250),
+        duration: const Duration(milliseconds: 250),
         curve: Curves.ease,
       );
 
@@ -55,25 +61,56 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: PageView(
-          controller: pageController,
-          onPageChanged: (i) => setState(() {
-            pageIndex = i;
-            title = "";
-          }),
-          children: pages,
+        child: Stack(
+          children: [
+            PageView(
+              controller: pageController,
+              onPageChanged: (i) => setState(() {
+                pageIndex = i;
+                title = "";
+              }),
+              children: pages,
+            ),
+            player
+                ? Positioned(right: 0, left: 0, bottom: 93, child: Player())
+                : Container(),
+            Positioned(
+              bottom: 0.0,
+              left: 0.0,
+              right: 0.0,
+              child: SizedBox(
+                height: 93,
+                child: ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(
+                      sigmaX: 5,
+                      sigmaY: 10,
+                    ),
+                    child: Opacity(
+                      opacity: 0.9,
+                      child: BottomNavigationBar(
+                        iconSize: 30,
+                        showSelectedLabels: true,
+                        showUnselectedLabels: true,
+                        selectedItemColor: Color(0xFFD74EFF),
+                        unselectedItemColor: Color(0xB2FFFFFF),
+                        currentIndex: pageIndex,
+                        onTap: changeTab,
+                        items: pages.map((page) {
+                          return BottomNavigationBarItem(
+                            icon: page.icon,
+                            activeIcon: page.activeIcon,
+                            label: page.label,
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: pageIndex,
-        onTap: changeTab,
-        items: pages.map((page) {
-          return BottomNavigationBarItem(
-            icon: page.icon,
-            activeIcon: page.activeIcon,
-            label: page.label,
-          );
-        }).toList(),
       ),
     );
   }

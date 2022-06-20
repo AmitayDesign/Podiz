@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/home/profile/screens/editProfilePage.dart';
+import 'package:podiz/home/notifications/screens/editProfilePage.dart';
 
 class SettingsButton extends StatelessWidget {
   const SettingsButton({Key? key}) : super(key: key);

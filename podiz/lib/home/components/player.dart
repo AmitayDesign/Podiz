@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:miniplayer/miniplayer.dart';
 import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/home/feed/screens/discussionPage.dart';
 
 class Player extends StatefulWidget {
   Player({Key? key}) : super(key: key);
@@ -9,18 +11,21 @@ class Player extends StatefulWidget {
   State<Player> createState() => _PlayerState();
 }
 
-final MiniplayerController controller = MiniplayerController();
-
 class _PlayerState extends State<Player> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Miniplayer(
-      controller: controller,
-      onDismiss: () {},
-      minHeight: 100,
-      maxHeight: kScreenHeight,
-      builder: ((height, percentage) => Container(
+    return InkWell(
+      onTap: () => Navigator.pushNamed(context, DiscussionPage.route),
+      child: Column(
+        children: [
+          LinearProgressIndicator(
+            backgroundColor: const Color(0xFFE5CEFF),
+            color: const Color(0xFFD74EFF),
+            minHeight: 4,
+          ),
+          Container(
+            height: 100,
             color: const Color(0xFF3E0979),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14.0),
@@ -40,7 +45,7 @@ class _PlayerState extends State<Player> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          child: const Center(child: Text("12:31")),
+                          child: Center(child: Text("12:31", style: discussionCardPlay()),),
                           width: 57,
                           height: 23,
                           decoration: BoxDecoration(
@@ -49,8 +54,7 @@ class _PlayerState extends State<Player> {
                         ),
                         const SizedBox(height: 8),
                         const Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text("32m")),
+                            alignment: Alignment.centerLeft, child: Text("32m")),
                       ],
                     ),
                   ),
@@ -78,7 +82,9 @@ class _PlayerState extends State<Player> {
                 ],
               ),
             ),
-          )),
+          ),
+        ],
+      ),
     );
   }
 }
