@@ -13,6 +13,7 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("Building SpalshScreen");
     final theme = Theme.of(context);
     return Container(
       color: theme.backgroundColor,
@@ -20,7 +21,6 @@ class SplashScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Spacer(),
           // SvgPicture.asset(
           //   'assets/brand/logo.svg',
           //   width: 87,

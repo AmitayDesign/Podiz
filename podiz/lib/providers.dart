@@ -6,6 +6,10 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:connectivity/connectivity.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/home/search/podcastManager.dart';
+import 'package:podiz/home/search/showManager.dart';
+import 'package:podiz/objects/Podcast.dart';
+import 'package:podiz/objects/Podcaster.dart';
 import 'package:podiz/objects/user/User.dart';
 
 // Instance Providers
@@ -36,6 +40,18 @@ final userProvider = Provider<UserPodiz>(
   (ref) => ref.watch(userStreamProvider).value!,
 );
 
+final podcastsStreamProvider = StreamProvider<Map<String, Podcast>>(
+  (ref) => ref.watch(podcastManagerProvider).podcasts,
+);
 
+final podcastsProvider = Provider<Map<String, Podcast>>(
+  (ref) => ref.watch(podcastsStreamProvider).value!,
+);
 
+final showStreamProvider = StreamProvider<List<Podcaster>>(
+  (ref) => ref.watch(showManagerProvider).podcasts,
+);
 
+final showProvider = Provider<List<Podcaster>>(
+  (ref) => ref.watch(showStreamProvider).value!,
+);

@@ -31,5 +31,7 @@
     "edit" : "Edit",
     "feed" : "FEED",
     "quicknote" : "QUICK NOTE",
-    "back" : "Back"
+    "back" : "Back",
+    "search1": "Search",
+    "search2": "Nothing Found with"
 }

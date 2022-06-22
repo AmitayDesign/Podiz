@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:podiz/aspect/failures/authFailure.dart';
 import 'package:podiz/aspect/failures/failure.dart';
 import 'package:podiz/aspect/typedefs.dart';
+import 'package:podiz/home/search/showManager.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/services/fileHandler.dart';
 
+import 'package:podiz/home/search/podcastManager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,9 +23,10 @@ final authManagerProvider = Provider<AuthManager>(
 class AuthManager {
   final Reader _read;
   // AppManager get appManager => _read(appManagerProvider);
-  // StoreManager get storeManager => _read(storeManagerProvider);
   // EStoreManager get eStoreManager => _read(eStoreManagerProvider);
   // OrderManager get orderManager => _read(orderManagerProvider);
+  PodcastManager get podcastManager => _read(podcastManagerProvider);
+  ShowManager get showManager => _read(showManagerProvider);
   FirebaseAuth get firebaseAuth => _read(authProvider);
   FirebaseFirestore get firestore => _read(firestoreProvider);
 
@@ -40,6 +43,8 @@ class AuthManager {
   }
 
   _loadUserInfo() async {
+    podcastManager.setUpPodcastStream();
+    showManager.setUpShowStream();
     try {
       if (await FileHandler.fileExists("user.txt")) {
         final json = await FileHandler.readFromFile("user.txt");
@@ -77,11 +82,12 @@ class AuthManager {
     }
     await saveUser();
     await setUpUserStream();
+    // podcastManager.setUpPodcastStream();
     // await orderManager.setUpOrders(userBloc!.uid);
   }
 
   _emptyManagers() {
-    // storeManager.resetManager();
+    podcastManager.resetManager();
     // orderManager.inOrdersEvent.add("empty orders"); //TODO  change to function
 
     // appManager.selectedRestaurantEvent.add(null);
@@ -141,10 +147,12 @@ class AuthManager {
         email: email,
         password: password,
       );
-      final userRef =
-          firestore.collection('user').doc(userCredential.user!.uid).set({
+      final userRef = firestore
+          .collection('user')
+          .doc(userCredential.user!.uid)
+          .set({
         "name": name,
-        "email" : email,
+        "email": email,
         "timestamp": DateTime.now().toString()
       });
 

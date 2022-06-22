@@ -151,7 +151,9 @@ TextStyle podcastTitle() => const TextStyle(
       color: Color(0xFFFAFAFA),
       height: 1,
       fontWeight: FontWeight.w700,
+      overflow: TextOverflow.ellipsis,
     );
+
 TextStyle discussionAppBarTitle() => const TextStyle(
       fontSize: 16,
       color: Color(0xFFFAFAFA),
@@ -164,6 +166,7 @@ TextStyle podcastTitleQuickNote() => const TextStyle(
       color: Color(0xFF9E9E9E),
       height: 1,
       fontWeight: FontWeight.w700,
+      overflow: TextOverflow.ellipsis,
     );
 
 TextStyle podcastInsights() => const TextStyle(
@@ -185,6 +188,7 @@ TextStyle podcastArtist() => const TextStyle(
       color: Color(0xFF9E9E9E),
       height: 1,
       fontWeight: FontWeight.w400,
+      overflow: TextOverflow.ellipsis,
     );
 
 TextStyle podcastArtistQuickNote() => const TextStyle(
@@ -192,6 +196,7 @@ TextStyle podcastArtistQuickNote() => const TextStyle(
       color: Color(0xFF4E4E4E),
       height: 1,
       fontWeight: FontWeight.w400,
+      overflow: TextOverflow.ellipsis,
     );
 
 TextStyle discussionAppBarInsights() => const TextStyle(
@@ -277,26 +282,26 @@ TextStyle followersFavorite() => const TextStyle(
       fontWeight: FontWeight.w700,
     );
 
-    TextStyle selectedLabel() => const TextStyle(
+TextStyle selectedLabel() => const TextStyle(
       fontSize: 14,
       height: 1,
       fontWeight: FontWeight.w700,
     );
 
-    TextStyle unselectedLabel() => const TextStyle(
+TextStyle unselectedLabel() => const TextStyle(
       fontSize: 14,
       height: 1,
       fontWeight: FontWeight.w700,
     );
 
-    TextStyle notificationsSelectedLabel() => const TextStyle(
+TextStyle notificationsSelectedLabel() => const TextStyle(
       fontSize: 16,
       height: 1,
       fontWeight: FontWeight.w700,
       color: Color(0xE6FFFFFF),
     );
 
-    TextStyle notificationsUnselectedLabel() => const TextStyle(
+TextStyle notificationsUnselectedLabel() => const TextStyle(
       fontSize: 16,
       height: 1,
       fontWeight: FontWeight.w400,

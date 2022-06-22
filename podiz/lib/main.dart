@@ -82,15 +82,13 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
           locale: locale,
           home: user.maybeWhen(
             data: (user) {
-              print(user);
               // if (user == null) return OnBoardingPage();
-              // return OnBoardingPage();
-              return HomePage();
-              // final podcasts = ref.watch(podcastsStreamProvider); //create
+              // final podcasts = ref.watch(podcastsStreamProvider); 
               // return podcasts.maybeWhen(
-              //     data: (_) => HomePage(), //create
-              //     loading: () => SplashScreen(),
+              //     data: (_) => HomePage(), 
+              //     loading: () => Container(color: Colors.red),
               //     orElse: () => SplashScreen.error());
+              return HomePage();
             },
             loading: () => SplashScreen(),
             orElse: () => SplashScreen.error(),
