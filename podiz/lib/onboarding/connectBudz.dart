@@ -4,6 +4,7 @@ import 'package:podiz/aspect/widgets/asyncElevatedButton.dart';
 import 'package:podiz/home/homePage.dart';
 import 'package:podiz/onboarding/components/podizAppBar.dart';
 import 'package:podiz/onboarding/components/spotifyContainer.dart';
+import 'package:podiz/onboarding/screens/spotifyView.dart';
 
 class ConnectBudzPage extends StatelessWidget {
   const ConnectBudzPage({Key? key}) : super(key: key);
@@ -31,7 +32,8 @@ class ConnectBudzPage extends StatelessWidget {
                   const Spacer(),
                   AsyncElevatedButton(
                     onPressed: () =>
-                        Navigator.pushNamed(context, HomePage.route),
+                        Navigator.pushNamed(context, SpotifyView.route),
+                        
                     child: Text(
                       Locales.string(context, "intro4"),
                       style: theme.textTheme.button,

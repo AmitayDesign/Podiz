@@ -60,7 +60,6 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    print("Building home");
     return KeyboardVisibilityBuilder(builder: (context, isKeyBoardOpen) {
       return Scaffold(
         body: SafeArea(

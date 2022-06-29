@@ -8,12 +8,13 @@ part 'User.g.dart';
 
 @JsonSerializable()
 class UserPodiz with EquatableMixin {
-  String uid;
+  String? uid;
   String name;
   String email;
-  DateTime timestamp;
-  // List<String> followers;
-  // List<String> following;
+  List<String> followers;
+  List<String> following;
+  String image_url;
+  // DateTime timestamp;
   // List<String> favPodcast;
   // String accessToken;
   // String refreshedToken;
@@ -25,9 +26,10 @@ class UserPodiz with EquatableMixin {
     this.uid, {
     required this.name,
     required this.email,
-    required this.timestamp,
-    // required this.followers,
-    // required this.following,
+    required this.followers,
+    required this.following,
+    required this.image_url,
+    // required this.timestamp,
     // required this.favPodcast,
     // required this.accessToken,
     // required this.refreshedToken,
@@ -46,7 +48,7 @@ class UserPodiz with EquatableMixin {
 
   @override
   String toString() =>
-      " user + ${this.uid} : \n{(name : ${this.name};\nemail : ${this.email};\n";
+      " user + ${this.uid} : \n{(name : ${this.name};\nemail : ${this.email}; ${this.followers.length}; ${this.following.length}\n";
 
   @override
   List<Object> get props => [name];

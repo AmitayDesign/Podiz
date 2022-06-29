@@ -73,8 +73,8 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
   @override
   Widget build(BuildContext context) {
     List<SearchResult> result = [];
-    result = filterPodcast(ref.watch(podcastsProvider), result);
     result = filterPodcaster(ref.watch(showProvider), result);
+    result = filterPodcast(ref.watch(podcastsProvider), result);
     return Stack( //TODO put stream here!!
       children: [
         if (searchBarHeight != null)

@@ -22,9 +22,7 @@ final authManagerProvider = Provider<AuthManager>(
 
 class AuthManager {
   final Reader _read;
-  // AppManager get appManager => _read(appManagerProvider);
-  // EStoreManager get eStoreManager => _read(eStoreManagerProvider);
-  // OrderManager get orderManager => _read(orderManagerProvider);
+
   PodcastManager get podcastManager => _read(podcastManagerProvider);
   ShowManager get showManager => _read(showManagerProvider);
   FirebaseAuth get firebaseAuth => _read(authProvider);
@@ -43,53 +41,30 @@ class AuthManager {
   }
 
   _loadUserInfo() async {
-    podcastManager.setUpPodcastStream();
-    showManager.setUpShowStream();
     try {
-      if (await FileHandler.fileExists("user.txt")) {
-        final json = await FileHandler.readFromFile("user.txt");
-        userBloc = UserPodiz.fromJson(json!);
-        _userStream.add(userBloc);
-        await _fetchUserInfo(userBloc!.uid);
-      } else {
-        _userStream.add(null);
-      }
+    if (await FileHandler.fileExists("user.txt")) {
+      final json = await FileHandler.readFromFile("user.txt");
+      userBloc = UserPodiz.fromJson(json!);
+      await fetchUserInfo(userBloc!.uid!);
+    } else {
+      userBloc = null;
+      _userStream.add(userBloc);
+    }
     } catch (e) {
       return "error";
     }
-    if (!_userCompleter.isCompleted) _userCompleter.complete();
+    if (!_userCompleter.isCompleted) _userCompleter.complete(); //TODO 
   }
 
-  _fetchUserInfo(String userID) async {
-    final userReference = firestore.collection('user').doc(userID);
-    Doc userData = await userReference.get();
-    int totalTimeWaiting = 0;
-    while (userData.data() == null && totalTimeWaiting < 2000) {
-      await Future.delayed(Duration(milliseconds: 100));
-      userData = await userReference.get();
-      totalTimeWaiting += 100;
-    }
-
-    if (userData.data() == null) {
-      //TODO couldnt login
-      return;
-    }
-
-    try {
-      userBloc = UserPodiz.fromFirestore(userData);
-    } on Exception catch (_) {
-      print("EXCEPTION WTF");
-    }
-    await saveUser();
-    await setUpUserStream();
-    // podcastManager.setUpPodcastStream();
-    // await orderManager.setUpOrders(userBloc!.uid);
+  fetchUserInfo(String userID) async {
+    await setUpUserStream(userID);
+    await podcastManager.setUpPodcastStream();
+    await showManager.setUpShowStream();
   }
 
   _emptyManagers() {
     podcastManager.resetManager();
-    // orderManager.inOrdersEvent.add("empty orders"); //TODO  change to function
-
+    showManager.resetManager();
     // appManager.selectedRestaurantEvent.add(null);
   }
 
@@ -104,16 +79,12 @@ class AuthManager {
     _userStream.add(userBloc);
   }
 
-  setUpUserStream() async {
-    firestore
-        .collection("user")
-        .doc(userBloc!.uid)
-        .snapshots()
-        .listen((snapshot) async {
+  setUpUserStream(String uid) async {
+    firestore.collection("users").doc(uid).snapshots().listen((snapshot) async {
       if (snapshot.data() != null) {
-        userBloc = UserPodiz.fromFirestore(snapshot);
-        saveUser();
-        _userStream.add(userBloc);
+        userBloc = UserPodiz.fromJson(snapshot.data()!);
+        userBloc!.uid = uid;
+        await saveUser();
       }
     });
   }
@@ -128,7 +99,7 @@ class AuthManager {
     try {
       await firebaseAuth.currentUser!.updateDisplayName(user.name);
       await firestore
-          .collection('user')
+          .collection('users')
           .doc(firebaseAuth.currentUser!.uid)
           .update(user.toJson());
     } catch (_) {
@@ -136,84 +107,8 @@ class AuthManager {
     }
   }
 
-  Future<void> registerUserAndPassFirebase(
-    BuildContext context, {
-    required String name,
-    required String email,
-    required String password,
-  }) async {
-    try {
-      final userCredential = await firebaseAuth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      final userRef = firestore
-          .collection('user')
-          .doc(userCredential.user!.uid)
-          .set({
-        "name": name,
-        "email": email,
-        "timestamp": DateTime.now().toString()
-      });
-
-      await _fetchUserInfo(userCredential.user!.uid);
-    } on FirebaseAuthException catch (e) {
-      switch (e.code) {
-        case 'weak-password':
-          throw AuthFailure.weekPassword(context);
-        case 'email-already-in-use':
-          throw AuthFailure.emailAlreadyInUse(context);
-        default:
-          print(e.code);
-          throw Failure.unexpected(context);
-      }
-    }
-  }
-
-  Future<void> signInUserAndPassFirebase(
-    BuildContext context, {
-    required String email,
-    required String password,
-  }) async {
-    try {
-      final userCredential = await firebaseAuth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      await _fetchUserInfo(userCredential.user!.uid);
-    } on FirebaseAuthException catch (e) {
-      switch (e.code) {
-        case 'wrong-password':
-          throw AuthFailure.wrongPassword(context);
-        case 'user-not-found':
-        case 'invalid-email':
-          throw AuthFailure.userNotFound(context);
-        case 'too-many-requests':
-          throw AuthFailure.tooManyRequests(context);
-        default:
-          print(e.code);
-          throw Failure.unexpected(context);
-      }
-    }
-  }
-
-  Future<void> resetPassword(BuildContext context, String email) async {
-    try {
-      await firebaseAuth.sendPasswordResetEmail(email: email);
-    } on FirebaseAuthException catch (e) {
-      switch (e.code) {
-        case 'invalid-email':
-        case 'user-not-found':
-          throw AuthFailure.userNotFound(context);
-        default:
-          throw Failure.unexpected(context);
-      }
-    }
-  }
-
   Future<void> signOut(BuildContext context) async {
     await _emptyManagers();
-    await firebaseAuth.signOut();
     await deleteUserFile();
   }
 

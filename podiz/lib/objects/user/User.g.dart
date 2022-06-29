@@ -7,15 +7,22 @@ part of 'User.dart';
 // **************************************************************************
 
 UserPodiz _$UserPodizFromJson(Map<String, dynamic> json) => UserPodiz(
-      json['uid'] as String,
+      json['uid'] as String?,
       name: json['name'] as String,
       email: json['email'] as String,
-      timestamp: DateTime.parse(json['timestamp'] as String),
+      followers:
+          (json['followers'] as List<dynamic>).map((e) => e as String).toList(),
+      following:
+          (json['following'] as List<dynamic>).map((e) => e as String).toList(),
+           image_url: json['image_url'] as String,
     );
 
 Map<String, dynamic> _$UserPodizToJson(UserPodiz instance) => <String, dynamic>{
       'uid': instance.uid,
       'name': instance.name,
       'email': instance.email,
-      'timestamp': instance.timestamp.toIso8601String(),
+      'followers': instance.followers,
+      'following': instance.following,
+      'image_url': instance.image_url,
+
     };
