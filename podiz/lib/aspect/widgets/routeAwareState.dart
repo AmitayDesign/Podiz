@@ -15,7 +15,7 @@ abstract class RouteAwareState<T extends ConsumerStatefulWidget>
   @mustCallSuper
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
@@ -49,7 +49,7 @@ abstract class RouteAwareState<T extends ConsumerStatefulWidget>
   void dispose() {
     if (enteredScreen) _leaveScreen();
     observer.unsubscribe(this);
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 

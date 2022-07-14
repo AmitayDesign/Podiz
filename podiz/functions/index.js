@@ -4,6 +4,7 @@ const fetch = require("node-fetch");
 const { firestore } = require("firebase-admin");
 
 const utf8 = require("utf8");
+const { user } = require("firebase-functions/v1/auth");
 
 var firebase_app = admin.initializeApp(functions.config().firebase);
 
@@ -17,6 +18,7 @@ var client_secret = "10de465afd164e8e9196988aa738a127";
  ******************AUTHENTICATION**************
  *********************************************/
 exports.getAccessTokenWithCode = functions.https.onCall(
+  //Working and tested!!!
   async (data, context) => {
     /*
     data = {
@@ -42,9 +44,9 @@ exports.getAccessTokenWithCode = functions.https.onCall(
       console.log(response);
       var result = await response.json();
 
-      let userID = await getUserInfo(result.access_token);
+      let userUid = await getUserInfo(result.access_token);
 
-      await admin.firestore().collection("spotifyAuth").doc(userID).set({
+      await admin.firestore().collection("spotifyAuth").doc(userUid).set({
         access_token: result.access_token,
         token_type: result.token_type,
         expires_in: result.expires_in,
@@ -52,7 +54,7 @@ exports.getAccessTokenWithCode = functions.https.onCall(
         scope: result.scope,
       });
 
-      return userID;
+      return userUid;
     } catch (err) {
       console.log(err);
       return "0";
@@ -60,10 +62,10 @@ exports.getAccessTokenWithCode = functions.https.onCall(
   }
 );
 
-async function getAccessTokenWithRefreshToken(userID) {
+async function getAccessTokenWithRefreshToken(userUid) {
+  //need to test
   try {
-    ref = admin.firestore().collection("spotifyAuth").doc(userID).get();
-    var spotifyAuth = ref.data();
+    spotifyAuth = getSpotifyAuth(userUid);
 
     var response = await fetch(authenticationHost + "api/token", {
       headers: {
@@ -81,20 +83,27 @@ async function getAccessTokenWithRefreshToken(userID) {
 
     var result = await response.json();
 
-    admin
+    await admin
       .firestore()
       .collection("spotifyAuth")
-      .doc(userID)
+      .doc(userUid)
       .update({ access_token: result.access_token });
 
     return result.access_token;
   } catch (err) {
     console.log(err);
-    return false;
+    return "0";
   }
 }
 
+async function getSpotifyAuth(userUid) {
+  ref = await admin.firestore().collection("spotifyAuth").doc(userUid).get();
+  let spotifyAuth = ref.data();
+  return spotifyAuth;
+}
+
 async function getUserInfo(code) {
+  //working and tested
   try {
     var response = await fetch(host + "/me", {
       headers: {
@@ -106,7 +115,7 @@ async function getUserInfo(code) {
     });
     //TODO verificar o Statuscode das mensagens
     var result = await response.json();
-    console.log(result);
+
     admin.firestore().collection("users").doc(result.uri).set({
       //TODO verificar se ja existe ou nao!!
       name: result.display_name,
@@ -114,6 +123,9 @@ async function getUserInfo(code) {
       image_url: result.images[0].url,
       followers: [],
       following: [],
+      lastListened: "",
+      comments: [],
+      favPodcasts: []
     });
     return result.uri;
   } catch (err) {
@@ -132,155 +144,138 @@ const encodeFormData = (data) => {
  *********************************************/
 
 exports.play = functions.https.onCall(async (data, context) => {
+  //need to test
   /*
     data = {
-        songUid : String
+        episodeUid : String
         userUid : String
     }
   */
-  let result = await playEpisode(data.songUid, data.userUid);
-  //catch code in here 
-  if(result) {
-    return;
+  let episodeUid = data.episodeUid;
+  let userUid = data.userUid;
+  let result = await playEpisode(episodeUid, userUid);
+  //catch code in here
+  if (result) {
+    return true;
   }
-  await getAccessTokenWithRefreshToken(data.userUid);
-  await playEpisode(data.songUid, data.userUid);
+  // await getAccessTokenWithRefreshToken(userUid); // catch here
+  // await playEpisode(episodeUid, userUid);
+  return false;
 });
 
 exports.pause = functions.https.onCall(async (data, context) => {
+  //need to test
   /*
     data = {
-        songUid : String
+        episodeUid : String
         userUid : String
     }
   */
-
-  let result = await pauseEpisode(data.songUid, data.userUid);
-  //catch code in here 
-  if(result) {
-    return;
+  let userUid = data.userUid;
+  let result = await pauseEpisode(userUid);
+  //catch code in here
+  if (result) {
+    return true;
   }
-  await getAccessTokenWithRefreshToken(data.userUid);
-  await pauseEpisode(data.songUid, data.userUid);
+  // await getAccessTokenWithRefreshToken(userUid); // catch here
+  // await pauseEpisode(userUid);
+  return false;
 });
 
-// exports.playEpisode = functions.https.onCall(async (data, context) => {
-//
-//   try {
-//     var ref = await admin
-//       .firestore()
-//       .collection("spotifyAuth")
-//       .doc(data.userUid)
-//       .get();
-//     var spotifyAuth = ref.data();
+exports.devices = functions.https.onCall(async (data, context) => {
+  //need to test
+  /*
+    data = {
+        userUid : String
+    }
+  */
+  let userUid = data.userUid;
+  result = await getDevices(userUid);
+  // if (result) {
+  //   await getAccessTokenWithRefreshToken(userUid); // catch here
+  //   await getDevices(userUid);
+  // }
+});
 
-//     var response = await fetch(
-//       "https://api.spotify.com/v1/me/player/play?device_id=" +
-//         spotifyAuth.device,
-//       {
-//         body: JSON.stringify({
-//           context_uri: data.album,
-//           offset: { position: data.position },
-//           position_ms: 0,
-//         }),
-//         headers: {
-//           Accept: "application/json",
-//           Authorization: "Bearer " + spotifyAuth.token,
-//           "Content-Type": "application/json",
-//         },
-//         method: "PUT",
-//       }
-//     );
-//     console.log(response);
-//     return;
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
+async function playEpisode(episodeUid, userUid) {
+  try {
+    var spotifyAuth = await getSpotifyAuth(userUid);
 
-// exports.stopEpisode = functions.https.onCall(async (data, context) => {
-//   if (!context.auth) {
-//     throw new functions.https.HttpsError(
-//       "unauthenticated",
-//       "only authenticated users can add requests"
-//     );
-//   }
-//   try {
-//     var ref = await admin
-//       .firestore()
-//       .collection("spotifyAuth")
-//       .doc(context.auth.uid)
-//       .get();
-//     var spotifyAuth = ref.data();
+    var response = await fetch(host + "/me/player/play", {
+      //TODO add device
+      body: JSON.stringify({
+        uris: [episodeUid],
+        position_ms: 0,
+      }),
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + spotifyAuth.access_token,
+        "Content-Type": "application/json",
+      },
+      method: "PUT",
+    });
+    return;
+  } catch (err) {
+    console.log(err);
+  }
+}
 
-//     var response = await fetch(
-//       "https://api.spotify.com/v1/me/player/pause?device_id=" +
-//         spotifyAuth.device,
-//       {
-//         headers: {
-//           Accept: "application/json",
-//           Authorization: "Bearer " + spotifyAuth.token,
-//           "Content-Type": "application/json",
-//         },
-//         method: "PUT",
-//       }
-//     );
-//     return;
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
+async function pauseEpisode(userUid) {
+  try {
+    var spotifyAuth = getSpotifyAuth(userUid);
 
-// exports.getDevices = functions.https.onCall(async (data, context) => {
-//   if (!context.auth) {
-//     throw new functions.https.HttpsError(
-//       "unauthenticated",
-//       "only authenticated users can add requests"
-//     );
-//   }
+    var response = await fetch(host + "/me/player/pause", {
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + spotifyAuth.access_token,
+        "Content-Type": "application/json",
+      },
+      method: "PUT",
+    });
+    console.log(response);
+    return;
+  } catch (err) {
+    console.log(err);
+  }
+}
 
-//   var ref = await admin
-//     .firestore()
-//     .collection("spotifyAuth")
-//     .doc(context.auth.uid)
-//     .get();
-//   var spotifyAuth = ref.data();
+async function getDevices(userUid) {
+  try {
+    var spotifyAuth = getSpotifyAuth(userUid);
 
-//   try {
-//     //result = await requestToken();
-//     //console.log(result);
+    var myHeaders = new fetch.Headers();
 
-//     var myHeaders = new fetch.Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", "Bearer " + spotifyAuth.access_token);
 
-//     myHeaders.append("Content-Type", "application/json");
-//     myHeaders.append("Authorization", "Bearer " + spotifyAuth.token);
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
 
-//     var requestOptions = {
-//       method: "GET",
-//       headers: myHeaders,
-//       redirect: "follow",
-//     };
+    var response = await fetch(host + "/me/player/devices/", requestOptions);
 
-//     var response = await fetch(host + "/me/player/devices/", requestOptions);
+    var result = await response.json();
+    console.log(result);
+    admin
+      .firestore()
+      .collection("spotifyAuth")
+      .doc(userUid)
+      .update({
+        device: result.devices[0].id,
+        selectedDevice: result.devices[0].id,
+      }); //change the update!!!
 
-//     var result = await response.json();
-
-//     admin
-//       .firestore()
-//       .collection("spotifyAuth")
-//       .doc(context.auth.uid)
-//       .update({ device: result.devices[0].id });
-
-//     if (
-//       result.error_description !== undefined
-//       //&& result.error_description === "Invalid access token."
-//     ) {
-//       return false;
-//     }
-//     return result;
-//   } catch (err) {
-//     console.log(err);
-//   }
-
-//   return false;
-// });
+    if (
+      result.error_description !== undefined
+      //&& result.error_description === "Invalid access token."
+    ) {
+      return false;
+    }
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+  return false;
+}

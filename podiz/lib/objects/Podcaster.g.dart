@@ -15,6 +15,8 @@ Podcaster _$PodcasterFromJson(Map<String, dynamic> json) => Podcaster(
       total_episodes: json['total_episodes'] as int,
       podcasts:
           (json['podcasts'] as List<dynamic>).map((e) => e as String).toList(),
+      followers:
+          (json['followers'] as List<dynamic>).map((e) => e as String).toList(),
     );
 
 Map<String, dynamic> _$PodcasterToJson(Podcaster instance) => <String, dynamic>{
@@ -25,4 +27,5 @@ Map<String, dynamic> _$PodcasterToJson(Podcaster instance) => <String, dynamic>{
       'image_url': instance.image_url,
       'total_episodes': instance.total_episodes,
       'podcasts': instance.podcasts,
+      'followers': instance.followers,
     };

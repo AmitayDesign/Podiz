@@ -9,7 +9,7 @@ class AuthorizationApiProvider {
   static String client_id = "9a8daaf39e784f1c90770da4a252087f";
   static String response_type = "code";
   static String redirect_uri = "podiz:/";
-  static String scope = "user-follow-read user-read-private user-read-email user-modify-playback-state";//TODO change this
+  static String scope = "user-follow-read user-read-private user-read-email user-modify-playback-state user-read-playback-state";//TODO change this
   static String state = "34fFs29kd09"; //TODO understand this
 
   String urlDireccion = "$url" +
@@ -27,7 +27,6 @@ class AuthorizationApiProvider {
       final code = Uri.parse(response).queryParameters['code'];
       return code!;
     } else {
-      print("Error al autenticar");
       return error;
     }
   }

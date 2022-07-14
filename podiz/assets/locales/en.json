@@ -32,6 +32,10 @@
     "feed" : "FEED",
     "quicknote" : "QUICK NOTE",
     "back" : "Back",
-    "search1": "Search",
-    "search2": "Nothing Found with"
+    "search1" : "Search",
+    "search2" : "Nothing Found with",
+    "lastlistened" : "Last Listened",
+    "mycasts" : "My Casts",
+    "hotlive" :"Hot & Live",
+    "noinsigths" :"Post the first Insight on this podcast"
 }

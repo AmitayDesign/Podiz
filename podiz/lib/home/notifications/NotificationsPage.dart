@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:podiz/aspect/theme/theme.dart';
-import 'package:podiz/home/components/podcastListTileQuickNote.dart';
-import 'package:podiz/home/feed/components/discussionCard.dart';
+import 'package:podiz/home/feed/components/podcastListTileQuickNote.dart';
+import 'package:podiz/player/components/discussionCard.dart';
 import 'package:podiz/home/homePage.dart';
 import 'package:podiz/home/notifications/components/tabBarLabel.dart';
+import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/onboarding/components/linearGradientAppBar.dart';
-import 'package:podiz/profile/components.dart/followersCard.dart';
+import 'package:podiz/profile/components.dart/commentCard.dart';
 
 class NotificationsPage extends StatefulWidget with HomePageMixin {
   @override
@@ -16,7 +17,9 @@ class NotificationsPage extends StatefulWidget with HomePageMixin {
   final Widget activeIcon = const Icon(Icons.notifications);
 
   static const route = '/profile';
-  NotificationsPage({Key? key}) : super(key: key);
+
+  bool isPlaying;
+  NotificationsPage(this.isPlaying, {Key? key}) : super(key: key);
 
   @override
   State<NotificationsPage> createState() => _NotificationsPageState();
@@ -42,6 +45,11 @@ class _NotificationsPageState extends State<NotificationsPage>
 
   final _controller = ScrollController();
   List<String> podcasts = ["1", "2", "3"];
+  Comment c = Comment("id",
+      uid: "spotify:episode:00bf3aQMbuhOGvH2GqOw5w",
+      timestamp: DateTime.now().toIso8601String(),
+      comment: "DENGUE DENGUE DENGUE",
+      time: 123521);
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -87,33 +95,42 @@ class _NotificationsPageState extends State<NotificationsPage>
             controller: _tabController,
             children: [
               ListView.builder(
+                controller: _controller,
+                itemCount: podcasts.length + 1,
+                itemBuilder: (context, index) => Padding(
+                  padding: const EdgeInsets.only(top: 30.0),
+                  child: (index != podcasts.length)
+                      ? CommentCard(c)
+                      : SizedBox(height: widget.isPlaying ? 205 : 101),
+                ),
+              ),
+              ListView.builder(
                   controller: _controller,
-                  itemCount: podcasts.length,
-                  itemBuilder: (context, index) => const Padding(
-                        padding: EdgeInsets.only(top: 30.0),
-                        child: FollowersCard(),
+                  itemCount: podcasts.length + 1,
+                  itemBuilder: (context, index) => Padding(
+                        padding: const EdgeInsets.only(top: 17.0),
+                        child: (index != podcasts.length)
+                            ? DiscussionCard()
+                            : SizedBox(height: widget.isPlaying ? 205 : 101),
                       )),
               ListView.builder(
                   controller: _controller,
-                  itemCount: podcasts.length,
+                  itemCount: podcasts.length + 1,
                   itemBuilder: (context, index) => Padding(
-                    padding: const EdgeInsets.only(top: 17.0),
-                    child: DiscussionCard(),
-                  )),
+                        padding: const EdgeInsets.only(top: 17.0),
+                        child: (index != podcasts.length)
+                            ? DiscussionCard()
+                            : SizedBox(height: widget.isPlaying ? 205 : 101),
+                      )),
               ListView.builder(
                   controller: _controller,
-                  itemCount: podcasts.length,
+                  itemCount: podcasts.length + 1,
                   itemBuilder: (context, index) => Padding(
-                    padding: const EdgeInsets.only(top: 17.0),
-                    child: DiscussionCard(),
-                  )),
-              ListView.builder(
-                  controller: _controller,
-                  itemCount: podcasts.length,
-                  itemBuilder: (context, index) => Padding(
-                    padding: const EdgeInsets.only(top: 17.0),
-                    child: DiscussionCard(),
-                  )),
+                        padding: const EdgeInsets.only(top: 17.0),
+                        child: (index != podcasts.length)
+                            ? DiscussionCard()
+                            : SizedBox(height: widget.isPlaying ? 205 : 101),
+                      )),
             ],
           ),
         ),

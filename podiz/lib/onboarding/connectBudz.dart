@@ -33,7 +33,6 @@ class ConnectBudzPage extends StatelessWidget {
                   AsyncElevatedButton(
                     onPressed: () =>
                         Navigator.pushNamed(context, SpotifyView.route),
-                        
                     child: Text(
                       Locales.string(context, "intro4"),
                       style: theme.textTheme.button,

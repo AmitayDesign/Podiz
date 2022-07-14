@@ -20,9 +20,8 @@ class ShowManager {
   final _showStream = BehaviorSubject<List<Podcaster>>();
   Stream<List<Podcaster>> get podcasts => _showStream.stream;
 
-  ShowManager(this._read);
-
-  setUpShowStream() {
+  ShowManager(this._read) {
+    print("Settings up show stream!");
     firestore.collection("podcasters").snapshots().listen((snapshot) async {
       for (DocChange showChange in snapshot.docChanges) {
         if (showChange.type == DocumentChangeType.added) {
@@ -45,5 +44,14 @@ class ShowManager {
     // await podcastStreamSubscription?.cancel();
     // await productsStream?.close();
     showBloc = [];
+  }
+
+  List<String> getEpisodes(String showId) {
+    Iterable<Podcaster> podcaster =
+        showBloc.where((show) => show.uid == showId);
+    if (podcaster != null) {
+      return podcaster.first.podcasts;
+    }
+    return [];
   }
 }

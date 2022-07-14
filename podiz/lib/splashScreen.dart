@@ -16,33 +16,36 @@ class SplashScreen extends StatelessWidget {
     print("Building SpalshScreen");
     final theme = Theme.of(context);
     return Container(
-      color: theme.backgroundColor,
-      padding: EdgeInsets.symmetric(horizontal: kScreenPadding * 2),
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+            image: AssetImage("assets/images/backgroundImage.png"),
+            fit: BoxFit.cover),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: kScreenPadding * 2),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // SvgPicture.asset(
-          //   'assets/brand/logo.svg',
-          //   width: 87,
-          //   color: theme.primaryColor,
-          // ),
-          Expanded(
-            child: Container(
-              alignment: Alignment.bottomCenter,
-              padding: EdgeInsets.only(bottom: 16),
-              child: type == SplashType.error
-                  ? LocaleText(
-                      'error1',
-                      textAlign: TextAlign.center,
-                    )
-                  : SizedBox(
-                      height: 24,
-                      child: LoadingIndicator(
-                        colors: [theme.primaryColor],
-                        indicatorType: Indicator.ballBeat,
-                      ),
+          Image.asset("assets/images/brandIcon.png", width: 70, height: 70),
+          const SizedBox(height: 8),
+          Text(
+            "Podiz",
+            style: theme.textTheme.headline5,
+          ),
+          Container(
+            alignment: Alignment.center,
+            padding: EdgeInsets.only(bottom: 16),
+            child: type == SplashType.error
+                ? LocaleText(
+                    'error1',
+                    textAlign: TextAlign.center,
+                  )
+                : SizedBox(
+                    height: 24,
+                    child: LoadingIndicator(
+                      colors: [theme.primaryColor],
+                      indicatorType: Indicator.ballBeat,
                     ),
-            ),
+                  ),
           ),
         ],
       ),

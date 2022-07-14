@@ -11,6 +11,7 @@ import 'package:podiz/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/splashScreen.dart';
 
 class SearchPage extends ConsumerStatefulWidget with HomePageMixin {
   @override
@@ -48,10 +49,16 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
         if (value.name.toLowerCase().contains(query.toLowerCase())) {
           resultList.add(
             SearchResult(
+                uid: value.uid!,
                 name: value.name,
                 image_url: value.image_url,
                 duration_ms: value.duration_ms,
-                show_name: value.show_name),
+                show_name: value.show_name,
+                description: value.description,
+                show_uri: value.show_uri,
+                comments: value.comments,
+                commentsImg: value.commentsImg,
+                release_date: value.release_date),
           );
         }
       },
@@ -63,8 +70,15 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
       List<Podcaster> podcasters, List<SearchResult> resultList) {
     for (Podcaster podcaster in podcasters) {
       if (podcaster.name.toLowerCase().contains(query.toLowerCase())) {
-        resultList.add(
-            SearchResult(name: podcaster.name, image_url: podcaster.image_url));
+        resultList.add(SearchResult(
+            uid: podcaster.uid!,
+            name: podcaster.name,
+            image_url: podcaster.image_url,
+            publisher: podcaster.publisher,
+            description: podcaster.description,
+            total_episodes: podcaster.total_episodes,
+            podcasts: podcaster.podcasts,
+            followers: podcaster.followers));
       }
     }
     return resultList;
@@ -75,33 +89,40 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
     List<SearchResult> result = [];
     result = filterPodcaster(ref.watch(showProvider), result);
     result = filterPodcast(ref.watch(podcastsProvider), result);
-    return Stack( //TODO put stream here!!
-      children: [
-        if (searchBarHeight != null)
-          result.isEmpty
-              ? Padding(
-                  padding: EdgeInsets.only(top: searchBarHeight! + 8).add(
-                      EdgeInsets.symmetric(horizontal: kScreenPadding * 2)),
-                  child: Text(
-                    Locales.string(context, "search2") + ' \"$query\"',
+    final player = ref.watch(playerStreamProvider);
+    return player.maybeWhen(
+      orElse: () => SplashScreen.error(),
+      loading: () => SplashScreen(),
+      data: (p) => Stack(
+        children: [
+          if (searchBarHeight != null)
+            result.isEmpty
+                ? Padding(
+                    padding: EdgeInsets.only(top: searchBarHeight! + 8).add(
+                        EdgeInsets.symmetric(horizontal: kScreenPadding * 2)),
+                    child: Text(
+                      Locales.string(context, "search2") + ' \"$query\"',
+                    ),
+                  )
+                : ListView.builder(
+                    padding: EdgeInsets.only(
+                        top: searchBarHeight!, right: 16, left: 16),
+                    itemCount: result.length,
+                    itemBuilder: (context, i) => PodcastTile(result[i],
+                        isPlaying: p.podcastPlaying == null
+                            ? false
+                            : p.podcastPlaying!.uid == result[i].uid),
                   ),
-                )
-              : ListView.builder(
-                  padding: EdgeInsets.only(
-                      top: searchBarHeight!, right: 16, left: 16),
-                  itemCount: result.length,
-                  itemBuilder: (context, i) =>
-                      PodcastTile(result[i]), //TODO podcasts[i]
-                ),
-        Padding(
-          key: searchBarKey,
-          padding: EdgeInsets.symmetric(
-            vertical: 8,
-            horizontal: kScreenPadding,
+          Padding(
+            key: searchBarKey,
+            padding: EdgeInsets.symmetric(
+              vertical: 8,
+              horizontal: kScreenPadding,
+            ),
+            child: SearchBar(controller: searchController),
           ),
-          child: SearchBar(controller: searchController),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

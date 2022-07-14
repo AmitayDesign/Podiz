@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:podiz/home/feed/components/discussionAppBar.dart';
-import 'package:podiz/home/feed/components/discussionCard.dart';
-import 'package:podiz/home/feed/components/discussionSnackBar.dart';
+import 'package:podiz/player/components/discussionAppBar.dart';
+import 'package:podiz/player/components/discussionCard.dart';
+import 'package:podiz/player/components/discussionSnackBar.dart';
 
 class DiscussionPage extends StatefulWidget {
   DiscussionPage({Key? key}) : super(key: key);

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/theme/theme.dart';
-import 'package:podiz/home/components/stackedImages.dart';
+import 'package:podiz/aspect/widgets/insightsRow.dart';
+import 'package:podiz/aspect/widgets/stackedImages.dart';
+import 'package:podiz/home/components/podcastAvatar.dart';
+import 'package:podiz/objects/Podcast.dart';
 
 class PodcastListTile extends StatelessWidget {
   String category;
-  PodcastListTile(this.category, {Key? key}) : super(key: key);
-  List<String> podcasts = ["1", "2"];
+  List<Podcast> podcasts;
+  PodcastListTile(this.category, this.podcasts, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -20,7 +24,8 @@ class PodcastListTile extends StatelessWidget {
           const SizedBox(height: 10),
           ListView.builder(
             itemCount: podcasts.length,
-            itemBuilder: (context, index) => buildItem(context),
+            itemBuilder: (context, index) =>
+                buildItem(context, podcasts[index]),
             shrinkWrap: true,
             physics: ClampingScrollPhysics(),
           ),
@@ -29,7 +34,7 @@ class PodcastListTile extends StatelessWidget {
     );
   }
 
-  Widget buildItem(BuildContext context) {
+  Widget buildItem(BuildContext context, Podcast podcast) {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -44,30 +49,14 @@ class PodcastListTile extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
+              InsightsRow(podcast),
+              const SizedBox(height: 8),
               Row(
                 children: [
-                  StackedImages(32),
+                  PodcastAvatar(imageUrl: podcast.image_url, size: 68),
                   const SizedBox(width: 8),
-                  Text(
-                    "120 Insights",
-                    style: podcastInsights(),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(kBorderRadius),
-                      color: theme.primaryColor,
-                    ),
-                    width: 68,
-                    height: 68,
-                  ),
-                  const SizedBox(width: 8),
-                  Container(
-                    width: 250,
+                  SizedBox(
+                    width: kScreenWidth - (16 + 16 + 68 + 8 + 16 + 16),
                     height: 68,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -75,28 +64,45 @@ class PodcastListTile extends StatelessWidget {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            "Here's the Renegades|Stop...",
+                            podcast.name,
                             style: podcastTitle(),
                           ),
                         ),
                         const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text("The Daily Stoic",
-                                    style: podcastArtist())),
-                            const SizedBox(width: 12),
-                            ClipOval(
-                                child: Container(
-                              width: 4,
-                              height: 4,
-                              color: const Color(0xFFD9D9D9),
-                            )),
-                            const SizedBox(width: 12),
-                            Text("1h 13m", style: podcastArtist()),
-                          ],
+                        LimitedBox(
+                          maxWidth: kScreenWidth - (16 + 16 + 68 + 8 + 16 + 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: LimitedBox(
+                                    maxWidth: kScreenWidth -
+                                        (16 +
+                                            16 +
+                                            68 +
+                                            8 +
+                                            12 +
+                                            4 +
+                                            12 +
+                                            16 +
+                                            62 +
+                                            16),
+                                    child: Text(podcast.show_name,
+                                        style: podcastArtist()),
+                                  )),
+                              const SizedBox(width: 12),
+                              ClipOval(
+                                  child: Container(
+                                width: 4,
+                                height: 4,
+                                color: const Color(0xFFD9D9D9),
+                              )),
+                              const SizedBox(width: 12),
+                              Text(timeFormatter(podcast.duration_ms),
+                                  style: podcastArtist()),
+                            ],
+                          ),
                         ),
                       ],
                     ),

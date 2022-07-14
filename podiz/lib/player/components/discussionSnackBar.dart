@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:podiz/aspect/theme/theme.dart';
-import 'package:podiz/home/components/stackedImages.dart';
+import 'package:podiz/aspect/widgets/stackedImages.dart';
 
 class DiscussionSnackBar extends StatefulWidget {
   DiscussionSnackBar({Key? key}) : super(key: key);
@@ -25,7 +25,7 @@ class _DiscussionSnackBarState extends State<DiscussionSnackBar> {
           children: [
             Row(
               children: [
-                StackedImages(23),
+                // StackedImages(23), TODO change this
                 const SizedBox(width: 8),
                 Text(
                   "8 listening with you",

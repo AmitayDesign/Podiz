@@ -14,6 +14,11 @@ Podcast _$PodcastFromJson(Map<String, dynamic> json) => Podcast(
       show_name: json['show_name'] as String,
       show_uri: json['show_uri'] as String,
       image_url: json['image_url'] as String,
+      comments: json['comments'] as int,
+      commentsImg: (json['commentsImg'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      release_date: json['release_date'] as String,
     );
 
 Map<String, dynamic> _$PodcastToJson(Podcast instance) => <String, dynamic>{
@@ -24,4 +29,7 @@ Map<String, dynamic> _$PodcastToJson(Podcast instance) => <String, dynamic>{
       'show_name': instance.show_name,
       'show_uri': instance.show_uri,
       'image_url': instance.image_url,
+      'comments': instance.comments,
+      'commentsImg': instance.commentsImg,
+      'release_date': instance.release_date,
     };

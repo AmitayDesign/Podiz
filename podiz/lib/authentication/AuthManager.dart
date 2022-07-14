@@ -1,14 +1,13 @@
 import 'dart:async';
 
-import 'package:podiz/aspect/failures/authFailure.dart';
 import 'package:podiz/aspect/failures/failure.dart';
 import 'package:podiz/aspect/typedefs.dart';
-import 'package:podiz/home/search/showManager.dart';
+import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/services/fileHandler.dart';
 
-import 'package:podiz/home/search/podcastManager.dart';
+import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -42,24 +41,24 @@ class AuthManager {
 
   _loadUserInfo() async {
     try {
-    if (await FileHandler.fileExists("user.txt")) {
-      final json = await FileHandler.readFromFile("user.txt");
-      userBloc = UserPodiz.fromJson(json!);
-      await fetchUserInfo(userBloc!.uid!);
-    } else {
-      userBloc = null;
-      _userStream.add(userBloc);
-    }
+      if (await FileHandler.fileExists("user.txt")) {
+        final json = await FileHandler.readFromFile("user.txt");
+        userBloc = UserPodiz.fromJson(json!);
+        await fetchUserInfo(userBloc!.uid!);
+      } else {
+        userBloc = null;
+        _userStream.add(userBloc);
+      }
     } catch (e) {
       return "error";
     }
-    if (!_userCompleter.isCompleted) _userCompleter.complete(); //TODO 
+    if (!_userCompleter.isCompleted) _userCompleter.complete(); //TODO
   }
 
   fetchUserInfo(String userID) async {
     await setUpUserStream(userID);
-    await podcastManager.setUpPodcastStream();
-    await showManager.setUpShowStream();
+    await podcastManager.getDevices(userID);
+    // await podcastManager.setUpPodcastStream();
   }
 
   _emptyManagers() {
@@ -117,4 +116,49 @@ class AuthManager {
     await firestore.collection("clientInfo").doc(userBloc!.uid).set(request);
     Navigator.pop(context);
   } //GDPR conserns
+
+  Future<void> updateLastListened(String episodeUid) async {
+    await firestore
+        .collection("users")
+        .doc(userBloc!.uid)
+        .update({"lastListened": episodeUid});
+  }
+
+  doComment(String comment, String episodeUid, int time) async {
+    DocRef doc = await firestore
+        .collection("podcasts")
+        .doc(episodeUid)
+        .collection("comments")
+        .doc();
+    String date = DateTime.now().toIso8601String();
+    await firestore
+        .collection("podcasts")
+        .doc(episodeUid)
+        .collection("comments")
+        .doc(doc.id)
+        .set({
+      "id": doc.id,
+      "timestamp": date,
+      "uid": userBloc!.uid,
+      "comment": comment,
+      "time": time,
+    });
+
+    await firestore.collection("users").doc(userBloc!.uid).update({
+      "comments": FieldValue.arrayUnion([
+        {
+          "id": doc.id,
+          "comment": comment,
+          "time": time,
+          "uid": episodeUid,
+          "timestamp": date
+        }
+      ]),
+    });
+
+    await firestore.collection("podcasts").doc(episodeUid).update({
+      "commentsImg": FieldValue.arrayUnion([userBloc!.image_url]),
+      "comments": FieldValue.increment(1)
+    });
+  }
 }

@@ -51,7 +51,7 @@ class ThemeConfig extends StateNotifier<Brightness> {
 
   void update() {
     if (_mode == ThemeMode.system) {
-      state = SchedulerBinding.instance!.window.platformBrightness;
+      state = SchedulerBinding.instance.window.platformBrightness;
       setSystemBarsStyle();
     }
   }

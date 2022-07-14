@@ -9,7 +9,6 @@ ThemeData theme(ColorScheme colorScheme) => ThemeData(
       errorColor: colorScheme.error,
       scaffoldBackgroundColor: colorScheme.background,
       canvasColor: colorScheme.background,
-      fontFamily: 'Montserrat', //TODO install Montserrat and the other
       primaryTextTheme: _textTheme(colorScheme),
       textTheme: _textTheme(colorScheme),
       appBarTheme: _appBarTheme(colorScheme),
@@ -87,53 +86,51 @@ BottomNavigationBarThemeData _bottomNavigationBarTheme(
 
 TextTheme _textTheme(ColorScheme colorScheme) => TextTheme(
       headline5: TextStyle(
-        // fontFamily: 'Poppins',
+        fontFamily: 'Montserrat',
         color: colorScheme.onBackground,
         fontSize: 40,
-        height: 1.2,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.w600,
       ),
       headline6: TextStyle(
-        // fontFamily: 'Poppins',
-        color: colorScheme.onBackground,
-        fontSize: 24,
-        height: 1,
-      ),
+          fontFamily: 'Montserrat',
+          color: colorScheme.onBackground,
+          fontSize: 24,
+          fontWeight: FontWeight.w600),
       subtitle1: TextStyle(
-        // fontFamily: 'Poppins',
+        fontFamily: 'Montserrat',
         color: colorScheme.onBackground,
         fontSize: 14,
         height: 1,
       ),
       bodyText1: TextStyle(
-        // fontFamily: 'Poppins',
+        fontFamily: 'Montserrat',
         color: colorScheme.onBackground,
         fontSize: 20,
         height: 1,
       ),
       bodyText2: TextStyle(
-        // fontFamily: 'Poppins',
+        fontFamily: 'Montserrat',
         color: colorScheme.onBackground,
         fontSize: 14,
         height: 1,
       ),
       caption: TextStyle(
-        // fontFamily: 'Poppins',
+        fontFamily: 'Montserrat',
         color: colorScheme.onSurface,
         fontSize: 12,
         height: 1,
       ),
-      button: TextStyle(
-        // fontFamily: 'Poppins',
+      button: const TextStyle(
+        fontFamily: 'Montserrat',
         fontSize: 16,
-        color: colorScheme.onBackground,
-        height: 1,
+        color: Color(0xFFFFFFFF),
         fontWeight: FontWeight.w700,
       ),
     );
 
 TextStyle iconStyle() => const TextStyle(
       fontSize: 32,
+      fontFamily: 'Montserrat',
       color: Color(0xFFFDFDFD),
       height: 1,
       fontWeight: FontWeight.w700,
@@ -141,20 +138,31 @@ TextStyle iconStyle() => const TextStyle(
 
 TextStyle podizStyle() => const TextStyle(
       fontSize: 34,
+      fontFamily: 'Montserrat',
       color: Color(0xFFFDFDFD),
       height: 1,
       fontWeight: FontWeight.bold,
     );
 
 TextStyle podcastTitle() => const TextStyle(
+      fontFamily: 'Montserrat',
       fontSize: 18,
       color: Color(0xFFFAFAFA),
       height: 1,
       fontWeight: FontWeight.w700,
       overflow: TextOverflow.ellipsis,
     );
+TextStyle podcastTitlePlaying() => const TextStyle(
+      fontFamily: 'Montserrat',
+      fontSize: 18,
+      color: Color(0xFF6310BF),
+      height: 1,
+      fontWeight: FontWeight.w700,
+      overflow: TextOverflow.ellipsis,
+    );
 
 TextStyle discussionAppBarTitle() => const TextStyle(
+      fontFamily: 'Montserrat',
       fontSize: 16,
       color: Color(0xFFFAFAFA),
       height: 1,
@@ -162,6 +170,7 @@ TextStyle discussionAppBarTitle() => const TextStyle(
     );
 
 TextStyle podcastTitleQuickNote() => const TextStyle(
+      fontFamily: 'Montserrat',
       fontSize: 16,
       color: Color(0xFF9E9E9E),
       height: 1,
@@ -170,6 +179,7 @@ TextStyle podcastTitleQuickNote() => const TextStyle(
     );
 
 TextStyle podcastInsights() => const TextStyle(
+      fontFamily: 'Montserrat',
       fontSize: 16,
       color: Color(0xFFFFFFFF),
       height: 1,
@@ -177,6 +187,7 @@ TextStyle podcastInsights() => const TextStyle(
     );
 
 TextStyle podcastInsightsQuickNote() => const TextStyle(
+      fontFamily: 'Montserrat',
       fontSize: 14,
       color: Color(0xFF9E9E9E),
       height: 1,
@@ -184,6 +195,7 @@ TextStyle podcastInsightsQuickNote() => const TextStyle(
     );
 
 TextStyle podcastArtist() => const TextStyle(
+      fontFamily: 'Montserrat',
       fontSize: 16,
       color: Color(0xFF9E9E9E),
       height: 1,
@@ -192,6 +204,7 @@ TextStyle podcastArtist() => const TextStyle(
     );
 
 TextStyle podcastArtistQuickNote() => const TextStyle(
+      fontFamily: 'Montserrat',
       fontSize: 14,
       color: Color(0xFF4E4E4E),
       height: 1,
@@ -200,20 +213,24 @@ TextStyle podcastArtistQuickNote() => const TextStyle(
     );
 
 TextStyle discussionAppBarInsights() => const TextStyle(
+      fontFamily: 'Montserrat',
       fontSize: 14,
       color: Color(0xB2FFFFFF),
       height: 1,
       fontWeight: FontWeight.w400,
+      overflow: TextOverflow.ellipsis
     );
 
 TextStyle discussionCardProfile() => const TextStyle(
-      fontSize: 16,
-      color: Color(0xFFFFFFFF),
-      height: 1,
-      fontWeight: FontWeight.w700,
-    );
+    fontFamily: 'Montserrat',
+    fontSize: 16,
+    color: Color(0xFFFFFFFF),
+    height: 1,
+    fontWeight: FontWeight.w700,
+    overflow: TextOverflow.ellipsis);
 
 TextStyle discussionCardFollowers() => const TextStyle(
+      fontFamily: 'Montserrat',
       fontSize: 14,
       color: Color(0xFF9E9E9E),
       height: 1,
@@ -221,6 +238,7 @@ TextStyle discussionCardFollowers() => const TextStyle(
     );
 
 TextStyle discussionCardComment() => const TextStyle(
+      fontFamily: 'Montserrat',
       fontSize: 16,
       color: Color(0xFFFFFFFF),
       height: 1,
@@ -228,6 +246,7 @@ TextStyle discussionCardComment() => const TextStyle(
     );
 
 TextStyle discussionCardPlay() => const TextStyle(
+      fontFamily: 'Montserrat',
       fontSize: 16,
       color: Color(0xE6FFFFFF),
       height: 1,
@@ -235,6 +254,7 @@ TextStyle discussionCardPlay() => const TextStyle(
     );
 
 TextStyle discussionCardCommentHint() => const TextStyle(
+      fontFamily: 'Montserrat',
       fontSize: 12,
       color: Color(0xFF9E9E9E),
       height: 1,
@@ -242,6 +262,7 @@ TextStyle discussionCardCommentHint() => const TextStyle(
     );
 
 TextStyle discussionSnackCommentHint() => const TextStyle(
+      fontFamily: 'Montserrat',
       fontSize: 14,
       color: Color(0xE6FFFFFF),
       height: 1,
@@ -249,6 +270,7 @@ TextStyle discussionSnackCommentHint() => const TextStyle(
     );
 
 TextStyle discussionSnackPlay() => const TextStyle(
+      fontFamily: 'Montserrat',
       fontSize: 16,
       color: Color(0xFFFFFFFF),
       height: 1,
@@ -256,6 +278,7 @@ TextStyle discussionSnackPlay() => const TextStyle(
     );
 
 TextStyle followerName() => const TextStyle(
+      fontFamily: 'Montserrat',
       fontSize: 20,
       color: Color(0xFFFFFFFF),
       height: 1,
@@ -263,6 +286,7 @@ TextStyle followerName() => const TextStyle(
     );
 
 TextStyle followersNumber() => const TextStyle(
+      fontFamily: 'Montserrat',
       fontSize: 18,
       color: Color(0xE6FFFFFF),
       height: 1,
@@ -270,12 +294,14 @@ TextStyle followersNumber() => const TextStyle(
     );
 
 TextStyle followersText() => const TextStyle(
+      fontFamily: 'Montserrat',
       fontSize: 16,
       color: Color(0xE6FFFFFF),
       height: 1,
       fontWeight: FontWeight.w400,
     );
 TextStyle followersFavorite() => const TextStyle(
+      fontFamily: 'Montserrat',
       fontSize: 14,
       color: Color(0xE6FFFFFF),
       height: 1,
@@ -283,18 +309,21 @@ TextStyle followersFavorite() => const TextStyle(
     );
 
 TextStyle selectedLabel() => const TextStyle(
+      fontFamily: 'Montserrat',
       fontSize: 14,
       height: 1,
       fontWeight: FontWeight.w700,
     );
 
 TextStyle unselectedLabel() => const TextStyle(
+      fontFamily: 'Montserrat',
       fontSize: 14,
       height: 1,
       fontWeight: FontWeight.w700,
     );
 
 TextStyle notificationsSelectedLabel() => const TextStyle(
+      fontFamily: 'Montserrat',
       fontSize: 16,
       height: 1,
       fontWeight: FontWeight.w700,
@@ -302,8 +331,26 @@ TextStyle notificationsSelectedLabel() => const TextStyle(
     );
 
 TextStyle notificationsUnselectedLabel() => const TextStyle(
+      fontFamily: 'Montserrat',
       fontSize: 16,
       height: 1,
       fontWeight: FontWeight.w400,
       color: Color(0xE6FFFFFF),
+    );
+
+TextStyle showFollowing() => const TextStyle(
+      fontFamily: 'Montserrat',
+      fontSize: 16,
+      color: Color(0xB2FFFFFF),
+      height: 1,
+      fontWeight: FontWeight.w400,
+    );
+
+TextStyle showDescription() => const TextStyle(
+      fontFamily: 'Montserrat',
+      fontSize: 14,
+      color: Color(0xFFFFFFFF),
+      height: 1,
+      overflow: TextOverflow.ellipsis,
+      fontWeight: FontWeight.w400,
     );

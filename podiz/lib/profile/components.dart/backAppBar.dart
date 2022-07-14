@@ -19,7 +19,7 @@ class BackAppBar extends StatelessWidget with PreferredSizeWidget {
           child: Padding(
             padding: const EdgeInsets.only(left: 20.0, top: 30),
             child: InkWell(
-              // onTap: () => Navigator.pop(context),
+              onTap: () => Navigator.pop(context),
               child: Row(children: [
                 const Icon(
                   Icons.arrow_back_ios_new,

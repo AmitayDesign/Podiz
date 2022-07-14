@@ -3,7 +3,7 @@ import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/home/feed/components/buttonPlay.dart';
 import 'package:podiz/home/feed/components/cardButton.dart';
-import 'package:podiz/profile/followerProfilePage.dart';
+import 'package:podiz/profile/profilePage.dart';
 
 class DiscussionCard extends StatefulWidget {
   DiscussionCard({Key? key}) : super(key: key);
@@ -36,13 +36,13 @@ class _DiscussionCardState extends State<DiscussionCard> {
               Row(
                 children: [
                   InkWell(
-                    onTap: ()=> Navigator.pushNamed(context, FollowerProfilePage.route) ,
+                    onTap: ()=> Navigator.pushNamed(context, ProfilePage.route) ,
                       child: CircleAvatar(
                           backgroundColor: theme.primaryColor, radius: 20)),
                   const SizedBox(
                     width: 8,
                   ),
-                  Container(
+                  SizedBox(
                     width: 200,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,

@@ -11,7 +11,6 @@ import 'package:podiz/aspect/widgets/routeAwareState.dart';
 import 'package:podiz/authentication/AuthManager.dart';
 import 'package:podiz/home/homePage.dart';
 import 'package:podiz/onboarding/onbordingPage.dart';
-import 'package:podiz/profile/followerProfilePage.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,7 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 late SharedPreferences preferences;
 
 void main() async {
-   final container = ProviderContainer();
+  final container = ProviderContainer();
   // WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.removeAfter((context) async {
     await container.read(authManagerProvider).firstUserLoad;
@@ -46,7 +45,7 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     updateBrightness();
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
@@ -59,13 +58,14 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userStreamProvider);
+    print("building main");
     return LocaleBuilder(
       builder: (locale) => MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -84,12 +84,18 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
             data: (user) {
               print("USER " + user.toString());
               if (user == null) return OnBoardingPage();
-              // final podcasts = ref.watch(podcastsStreamProvider); 
-              // return podcasts.maybeWhen(
-              //     data: (_) => HomePage(), 
-              //     loading: () => Container(color: Colors.red),
-              //     orElse: () => SplashScreen.error());
-              return HomePage();
+              final shows = ref.watch(showStreamProvider); //see this
+              return shows.maybeWhen(
+                  data: (_) {
+                    final podcasts = ref.watch(podcastsStreamProvider);
+                    return podcasts.maybeWhen(
+                      data: (_) => HomePage(user),
+                      loading: () => SplashScreen(),
+                      orElse: () => SplashScreen.error(),
+                    );
+                  },
+                  loading: () => SplashScreen(),
+                  orElse: () => SplashScreen.error());
             },
             loading: () => SplashScreen(),
             orElse: () => SplashScreen.error(),

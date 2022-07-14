@@ -14,7 +14,14 @@ UserPodiz _$UserPodizFromJson(Map<String, dynamic> json) => UserPodiz(
           (json['followers'] as List<dynamic>).map((e) => e as String).toList(),
       following:
           (json['following'] as List<dynamic>).map((e) => e as String).toList(),
-           image_url: json['image_url'] as String,
+      image_url: json['image_url'] as String,
+      lastListened: json['lastListened'] as String,
+      favPodcasts: (json['favPodcasts'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      comments: (json['comments'] as List<dynamic>)
+          .map((e) => Comment.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$UserPodizToJson(UserPodiz instance) => <String, dynamic>{
@@ -24,5 +31,7 @@ Map<String, dynamic> _$UserPodizToJson(UserPodiz instance) => <String, dynamic>{
       'followers': instance.followers,
       'following': instance.following,
       'image_url': instance.image_url,
-
+      'lastListened': instance.lastListened,
+      'favPodcasts': instance.favPodcasts,
+      'comments': instance.comments,
     };

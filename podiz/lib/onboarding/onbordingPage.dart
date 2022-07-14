@@ -21,41 +21,44 @@ class OnBoardingPage extends StatelessWidget {
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(children: [
-                const SizedBox(
-                  height: 134,
-                ),
-                Text(Locales.string(context, "intro1_1"),
-                    style: theme.textTheme.headline6),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text(Locales.string(context, "intro1_2"),
-                    style: theme.textTheme.headline5),
-                const SizedBox(
-                  height: 100,
-                ),
-                Container(
-                  width: 321,
-                  height: 236,
-                  decoration: const BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage('assets/images/onBoardingMen.png'),
-                          fit: BoxFit.cover)),
-                ),
-                const Spacer(),
-                AsyncElevatedButton(
-                  onPressed: () =>
-                      Navigator.pushNamed(context, ConnectBudzPage.route),
-                  child: Text(
-                    Locales.string(context, "intro2"),
-                    style: theme.textTheme.button,
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-              ]),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(
+                      height: 134,
+                    ),
+                    Text(Locales.string(context, "intro1_1"),
+                        style: theme.textTheme.headline6),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(Locales.string(context, "intro1_2"),
+                        style: theme.textTheme.headline5),
+                    const SizedBox(
+                      height: 100,
+                    ),
+                    Container(
+                      width: 321,
+                      height: 236,
+                      decoration: const BoxDecoration(
+                          image: DecorationImage(
+                              image:
+                                  AssetImage('assets/images/onBoardingMen.png'),
+                              fit: BoxFit.cover)),
+                    ),
+                    const Spacer(),
+                    AsyncElevatedButton(
+                      onPressed: () =>
+                          Navigator.pushNamed(context, ConnectBudzPage.route),
+                      child: Text(
+                        Locales.string(context, "intro2"),
+                        style: theme.textTheme.button,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  ]),
             ),
           ),
           const Positioned(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/theme.dart';
-import 'package:podiz/home/components/stackedImages.dart';
+import 'package:podiz/aspect/widgets/stackedImages.dart';
 
 class DiscussionAppBar extends StatelessWidget with PreferredSizeWidget {
   const DiscussionAppBar({Key? key}) : super(key: key);
@@ -18,7 +18,7 @@ class DiscussionAppBar extends StatelessWidget with PreferredSizeWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Row(
             children: [
-              StackedImages(23),
+              // StackedImages(23), TODO change this
               const SizedBox(width: 8),
               Text(
                 "120 Insights",

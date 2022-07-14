@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:podiz/aspect/typedefs.dart';
+import 'package:podiz/objects/Comment.dart';
 
 part 'User.g.dart';
 
@@ -14,26 +15,19 @@ class UserPodiz with EquatableMixin {
   List<String> followers;
   List<String> following;
   String image_url;
-  // DateTime timestamp;
-  // List<String> favPodcast;
-  // String accessToken;
-  // String refreshedToken;
+  String lastListened;
+  List<String> favPodcasts;
+  List<Comment> comments; //change this to InfoComment;
 
-  @JsonKey(ignore: true)
-  File? image;
-
-  UserPodiz(
-    this.uid, {
-    required this.name,
-    required this.email,
-    required this.followers,
-    required this.following,
-    required this.image_url,
-    // required this.timestamp,
-    // required this.favPodcast,
-    // required this.accessToken,
-    // required this.refreshedToken,
-  });
+  UserPodiz(this.uid,
+      {required this.name,
+      required this.email,
+      required this.followers,
+      required this.following,
+      required this.image_url,
+      required this.lastListened,
+      required this.favPodcasts,
+      required this.comments});
 
   factory UserPodiz.fromFirestore(Doc doc) =>
       UserPodiz.fromJson(doc.data()!..['uid'] = doc.id);

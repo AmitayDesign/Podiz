@@ -15,6 +15,7 @@ class Podcaster with EquatableMixin {
   String image_url;
   int total_episodes;
   List<String> podcasts;
+  List<String> followers;
   
   Podcaster(
     this.uid, {
@@ -24,6 +25,7 @@ class Podcaster with EquatableMixin {
     required this.image_url,
     required this.total_episodes,
     required this.podcasts,
+    required this.followers,
   });
 
   factory Podcaster.fromFirestore(Doc doc) =>
