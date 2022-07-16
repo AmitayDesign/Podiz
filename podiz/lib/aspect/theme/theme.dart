@@ -354,3 +354,12 @@ TextStyle showDescription() => const TextStyle(
       overflow: TextOverflow.ellipsis,
       fontWeight: FontWeight.w400,
     );
+
+TextStyle noInternetTitle() => const TextStyle(
+      fontFamily: 'Montserrat',
+      fontSize: 36,
+      color: Color(0xFFFFFFFF),
+      height: 1,
+      overflow: TextOverflow.ellipsis,
+      fontWeight: FontWeight.w700,
+    );

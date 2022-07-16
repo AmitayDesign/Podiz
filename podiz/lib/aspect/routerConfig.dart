@@ -18,7 +18,7 @@ class RouterConfig {
     HomePage.route: (context) => HomePage(_args(context)),
     OnBoardingPage.route: (_) => const OnBoardingPage(),
     ConnectBudzPage.route: (_) => const ConnectBudzPage(),
-    DiscussionPage.route: (_) => DiscussionPage(),
+    DiscussionPage.route: (context) => DiscussionPage(_args(context)),
     ProfilePage.route: (context) => ProfilePage(_args(context)),
     SpotifyView.route: (_) => SpotifyView(),
     SettingsPage.route: (_) => SettingsPage(),

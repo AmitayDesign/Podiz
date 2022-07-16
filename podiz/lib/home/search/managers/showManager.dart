@@ -27,6 +27,9 @@ class ShowManager {
         if (showChange.type == DocumentChangeType.added) {
           await addShowToBloc(showChange.doc);
         }
+        if (showChange.type == DocumentChangeType.modified) {
+          await editShowToBloc(showChange.doc);
+        }
       }
       _showStream.add(showBloc);
     });
@@ -38,6 +41,14 @@ class ShowManager {
     Podcaster podcaster = Podcaster.fromJson(doc.data()!);
     podcaster.uid = doc.id;
     showBloc.add(podcaster);
+  }
+
+  editShowToBloc(Doc doc) {
+    Podcaster podcaster = Podcaster.fromJson(doc.data()!);
+    podcaster.uid = doc.id;
+    int index = showBloc.indexWhere((element) => element.uid == doc.id);
+    if (index == -1) return;
+    showBloc[index] = podcaster;
   }
 
   resetManager() async {
@@ -53,5 +64,14 @@ class ShowManager {
       return podcaster.first.podcasts;
     }
     return [];
+  }
+
+  String getShowImageUrl(String showUid) {
+    for (int i = 0; i < showBloc.length; i++) {
+      if (showBloc[i].uid == showUid) {
+        return showBloc[i].image_url;
+      }
+    }
+    return "not_found";
   }
 }

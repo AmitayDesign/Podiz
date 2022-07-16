@@ -110,7 +110,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                   itemBuilder: (context, index) => Padding(
                         padding: const EdgeInsets.only(top: 17.0),
                         child: (index != podcasts.length)
-                            ? DiscussionCard()
+                            ? DiscussionCard(c)
                             : SizedBox(height: widget.isPlaying ? 205 : 101),
                       )),
               ListView.builder(
@@ -119,7 +119,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                   itemBuilder: (context, index) => Padding(
                         padding: const EdgeInsets.only(top: 17.0),
                         child: (index != podcasts.length)
-                            ? DiscussionCard()
+                            ? DiscussionCard(c)
                             : SizedBox(height: widget.isPlaying ? 205 : 101),
                       )),
               ListView.builder(
@@ -128,7 +128,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                   itemBuilder: (context, index) => Padding(
                         padding: const EdgeInsets.only(top: 17.0),
                         child: (index != podcasts.length)
-                            ? DiscussionCard()
+                            ? DiscussionCard(c)
                             : SizedBox(height: widget.isPlaying ? 205 : 101),
                       )),
             ],

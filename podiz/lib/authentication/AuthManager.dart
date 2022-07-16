@@ -161,4 +161,51 @@ class AuthManager {
       "comments": FieldValue.increment(1)
     });
   }
+
+  followPeople(String uid) {
+    String userUid = userBloc!.uid!;
+    firestore.collection("users").doc(uid).update({
+      "followers": FieldValue.arrayUnion([userUid])
+    });
+    firestore.collection("users").doc(userUid).update({
+      "following": FieldValue.arrayUnion([uid])
+    });
+  }
+
+  unfollowPeople(String uid) {
+    String userUid = userBloc!.uid!;
+    firestore.collection("users").doc(uid).update({
+      "followers": FieldValue.arrayRemove([userUid])
+    });
+
+    firestore.collection("users").doc(userUid).update({
+      "following": FieldValue.arrayRemove([uid])
+    });
+  }
+
+  followShow(String uid) {
+    String userUid = userBloc!.uid!;
+    firestore.collection("podcasters").doc(uid).update({
+      "followers": FieldValue.arrayUnion([userUid])
+    });
+    firestore.collection("users").doc(userUid).update({
+      "favPodcasts": FieldValue.arrayUnion([uid]),
+      "following": FieldValue.arrayUnion([uid])
+    });
+  }
+
+  unfollowShow(String uid) {
+    String userUid = userBloc!.uid!;
+    firestore.collection("podcasters").doc(uid).update({
+      "followers": FieldValue.arrayRemove([userUid])
+    });
+    firestore.collection("users").doc(userUid).update({
+      "favPodcasts": FieldValue.arrayRemove([uid]),
+      "following": FieldValue.arrayRemove([uid])
+    });
+  }
+
+  bool isFollowing(String showUid) {
+    return userBloc!.favPodcasts.contains(showUid);
+  }
 }

@@ -8,6 +8,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/home/search/managers/showManager.dart';
+import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/Podcaster.dart';
 import 'package:podiz/objects/user/Player.dart';
@@ -64,4 +65,8 @@ final playerStreamProvider = StreamProvider<Player>(
 
 final playerProvider = Provider<Player>(
   (ref) => ref.watch(playerStreamProvider).value!,
+);
+
+final commentsStreamProvider = StreamProvider.autoDispose<List<Comment>>(
+  (ref) => ref.watch(playerManagerProvider).comments,
 );

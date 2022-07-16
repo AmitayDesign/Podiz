@@ -35,7 +35,7 @@ class _PlayerWidgetState extends ConsumerState<PlayerWidget> {
             .playEpisode(widget.player.podcastPlaying!);
 
     return InkWell(
-      onTap: () => Navigator.pushNamed(context, DiscussionPage.route),
+      onTap: () => Navigator.pushNamed(context, DiscussionPage.route, arguments: podcast),
       child: Column(
         children: [
           const LinearProgressIndicator(

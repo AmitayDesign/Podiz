@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 
-class ButtonPlay extends StatefulWidget {
-  ButtonPlay({Key? key}) : super(key: key);
+class ButtonPlay extends StatelessWidget {
+  int time;
+  ButtonPlay(this.time, {Key? key}) : super(key: key);
 
-  @override
-  State<ButtonPlay> createState() => _ButtonPlayState();
-}
-
-class _ButtonPlayState extends State<ButtonPlay> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -25,7 +22,7 @@ class _ButtonPlayState extends State<ButtonPlay> {
           size: 20,
         ),
         Text(
-          "11:21",
+          timePlayerFormatter(time),
           style: discussionCardPlay(),
         ),
       ]),

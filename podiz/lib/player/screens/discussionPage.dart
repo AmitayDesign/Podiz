@@ -1,32 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/player/components/discussionAppBar.dart';
 import 'package:podiz/player/components/discussionCard.dart';
 import 'package:podiz/player/components/discussionSnackBar.dart';
+import 'package:podiz/providers.dart';
+import 'package:podiz/splashScreen.dart';
 
-class DiscussionPage extends StatefulWidget {
-  DiscussionPage({Key? key}) : super(key: key);
+class DiscussionPage extends ConsumerStatefulWidget {
+  Podcast podcast;
+  DiscussionPage(this.podcast, {Key? key}) : super(key: key);
   static const route = '/discussion';
 
   @override
-  State<DiscussionPage> createState() => _DiscussionPageState();
+  ConsumerState<DiscussionPage> createState() => _DiscussionPageState();
 }
 
-class _DiscussionPageState extends State<DiscussionPage> {
-  List<String> posts = ["1", "2", "3", "4", "5"];
-
+class _DiscussionPageState extends ConsumerState<DiscussionPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const DiscussionAppBar(),
-      body: Column(children: [
-        Expanded(
-          child: ListView.builder(
-            itemCount: posts.length,
-            itemBuilder: (context, index) => DiscussionCard(),
+    final comments = ref.watch(commentsStreamProvider);
+    return comments.maybeWhen(
+      data: (comments) => Scaffold(
+        appBar: DiscussionAppBar(widget.podcast),
+        body: Column(children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: comments.length,
+              itemBuilder: (context, index) => DiscussionCard(comments[index]),
+            ),
           ),
-        ),
-        DiscussionSnackBar(),
-      ]),
+          DiscussionSnackBar(),
+        ]),
+      ),
+      loading: () => const CircularProgressIndicator(),
+      orElse: () => SplashScreen.error(),
+
     );
   }
 }

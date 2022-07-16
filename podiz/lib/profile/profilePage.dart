@@ -1,28 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/authentication/AuthManager.dart';
+import 'package:podiz/home/components/followShowButton.dart';
+import 'package:podiz/home/components/podcastAvatar.dart';
+import 'package:podiz/home/search/managers/podcastManager.dart';
+import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/objects/Comment.dart';
+import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/profile/components.dart/backAppBar.dart';
-import 'package:podiz/profile/components.dart/buttonFollowing.dart';
 import 'package:podiz/profile/components.dart/commentCard.dart';
+import 'package:podiz/profile/components.dart/followPeopleButton.dart';
 
-class ProfilePage extends StatefulWidget {
+class ProfilePage extends ConsumerWidget {
   static const route = '/profile';
   UserPodiz user;
   ProfilePage(this.user, {Key? key}) : super(key: key);
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
-}
-
-class _ProfilePageState extends State<ProfilePage> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final user = widget.user;
+    ShowManager showManager = ref.read(showManagerProvider);
+    AuthManager authManager = ref.read(authManagerProvider);
+
     return Scaffold(
       appBar: BackAppBar(),
+      floatingActionButton: authManager.userBloc!.uid != user.uid ? FollowPeopleButton(user): Container(),
       body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -71,8 +76,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       height: 68,
                       child: ListView(
                         scrollDirection: Axis.horizontal,
-                        children:
-                            user.favPodcasts.map(_buildFavouriteItem).toList(),
+                        children: user.favPodcasts
+                            .map((show) => _buildFavouriteItem(
+                                showManager.getShowImageUrl(show)))
+                            .toList(),
                       ),
                     )
                   : Container() //change this
@@ -91,16 +98,10 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildFavouriteItem(String e) {
+  Widget _buildFavouriteItem(String url) {
     return Padding(
-      padding: const EdgeInsets.only(right: 16),
-      child: Container(
-        height: 68,
-        width: 68,
-        decoration: BoxDecoration(
-            color: Color(0xFF6310BF), borderRadius: BorderRadius.circular(5)),
-      ),
-    );
+        padding: const EdgeInsets.only(right: 16),
+        child: PodcastAvatar(imageUrl: url, size: 68));
   }
 
   Widget _buildItem(Comment c) {

@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/home/feed/components/buttonPlay.dart';
 import 'package:podiz/home/feed/components/cardButton.dart';
+import 'package:podiz/objects/Comment.dart';
+import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/profile/profilePage.dart';
+import 'package:podiz/profile/userManager.dart';
 
-class DiscussionCard extends StatefulWidget {
-  DiscussionCard({Key? key}) : super(key: key);
+class DiscussionCard extends ConsumerStatefulWidget {
+  Comment comment;
+  DiscussionCard(this.comment, {Key? key}) : super(key: key);
 
   @override
-  State<DiscussionCard> createState() => _DiscussionCardState();
+  ConsumerState<DiscussionCard> createState() => _DiscussionCardState();
 }
 
-class _DiscussionCardState extends State<DiscussionCard> {
+class _DiscussionCardState extends ConsumerState<DiscussionCard> {
   TextEditingController commentController = TextEditingController();
 
   @override
@@ -24,90 +30,122 @@ class _DiscussionCardState extends State<DiscussionCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: Container(
-        color: theme.colorScheme.surface,
-        width: kScreenWidth,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 9),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  InkWell(
-                    onTap: ()=> Navigator.pushNamed(context, ProfilePage.route) ,
-                      child: CircleAvatar(
-                          backgroundColor: theme.primaryColor, radius: 20)),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  SizedBox(
-                    width: 200,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "Tonny Anderson",
-                            style: discussionCardProfile(),
+    final comment = widget.comment;
+    UserManager userManager = ref.read(userManagerProvider);
+    return FutureBuilder(
+      future: userManager.getUserFromUid(comment.uid),
+      initialData: "loading",
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          // If we got an error
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                '${snapshot.error} occurred',
+                style: TextStyle(fontSize: 18),
+              ),
+            );
+
+            // if we got our data
+          } else if (snapshot.hasData) {
+            final user = snapshot.data as UserPodiz;
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Container(
+                color: theme.colorScheme.surface,
+                width: kScreenWidth,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14.0, vertical: 9),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          CircleProfile(user: user, size: 20),
+                          const SizedBox(
+                            width: 8,
                           ),
+                          SizedBox(
+                            width: 200,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    user.name,
+                                    style: discussionCardProfile(),
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                        "${user.followers.length} followers",
+                                        style: discussionCardFollowers())),
+                              ],
+                            ),
+                          ),
+                          const Spacer(),
+                          ButtonPlay(comment.time),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: kScreenWidth - 32,
+                        child: Text(
+                          comment.comment,
+                          style: discussionCardComment(),
+                          textAlign: TextAlign.left,
                         ),
-                        const SizedBox(height: 4),
-                        Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text("907 followers",
-                                style: discussionCardFollowers())),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 249,
+                            height: 31,
+                            child: TextField(
+                              // controller: commentController,
+                              keyboardType: TextInputType.text,
+                              decoration: InputDecoration(
+                                  hintText: "Comment on " +
+                                      user.name.split(" ")[0] +
+                                      "'s insight..."), //TODO change this
+                            ),
+                          ),
+                          const Spacer(),
+                          CardButton(
+                            const Icon(
+                              Icons.save_alt_rounded,
+                              color: Color(0xFF9E9E9E),
+                              size: 15,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          CardButton(
+                            const Icon(
+                              Icons.share,
+                              color: Color(0xFF9E9E9E),
+                              size: 20,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  const Spacer(),
-                  ButtonPlay(),
-                ],
+                ),
               ),
-              const SizedBox(height: 12),
-              Text(
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Laoreet scelerisque nibh dictum aliquet. Sociis vitae, massa lectus pharetra ante morbi sed. Lectus tortor, ut pellentesque magna netus enim lectus auctor feugiat. Maecenas at ultricies augue et eu.",
-                  style: discussionCardComment(),
-                  textAlign: TextAlign.left,),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 249,
-                    height: 31,
-                    child: const TextField(
-                      // controller: commentController,
-                      keyboardType: TextInputType.text,
-                      decoration: InputDecoration(
-                          hintText:
-                              "Comment on Tonny's insight..."), //TODO change this
-                    ),
-                  ),
-                  const Spacer(),
-                  CardButton(
-                    const Icon(
-                      Icons.save_alt_rounded,
-                      color: Color(0xFF9E9E9E),
-                      size: 15,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  CardButton(
-                    const Icon(
-                      Icons.share,
-                      color: Color(0xFF9E9E9E),
-                      size: 20,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+            );
+          }
+        }
+        return Container(
+            color: theme.colorScheme.surface,
+            width: kScreenWidth,
+            child: const CircularProgressIndicator());
+      },
     );
   }
 }

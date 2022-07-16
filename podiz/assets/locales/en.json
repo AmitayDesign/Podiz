@@ -37,5 +37,7 @@
     "lastlistened" : "Last Listened",
     "mycasts" : "My Casts",
     "hotlive" :"Hot & Live",
-    "noinsigths" :"Post the first Insight on this podcast"
+    "noinsigths" :"Post the first Insight on this podcast",
+    "nointernet_1" :"Ooops!",
+    "nointernet_2" :"It seems like we have trouble getting to\nwhere we wanted.\nIt might be helpful to check your internet\nconnection and take a little strech."
 }

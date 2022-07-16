@@ -33,8 +33,8 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage>
     with SingleTickerProviderStateMixin {
 
-  var pageIndex = 0;
-  final pageController = PageController(initialPage: 0);
+  var pageIndex = 1;
+  final pageController = PageController(initialPage: 1);
   bool isPlaying = false;
 
   @override
