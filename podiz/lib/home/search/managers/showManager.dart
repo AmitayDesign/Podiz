@@ -1,6 +1,10 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/typedefs.dart';
+import 'package:podiz/authentication/AuthManager.dart';
+import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/Podcaster.dart';
 import 'package:podiz/providers.dart';
 import 'package:rxdart/rxdart.dart';
@@ -14,8 +18,10 @@ class ShowManager {
 
   get userStream => _read(userStreamProvider);
   FirebaseFirestore get firestore => _read(firestoreProvider);
+  AuthManager get authManager => _read(authManagerProvider);
 
   List<Podcaster> showBloc = [];
+  List<String> favShow = [];
 
   final _showStream = BehaviorSubject<List<Podcaster>>();
   Stream<List<Podcaster>> get podcasts => _showStream.stream;
@@ -41,6 +47,18 @@ class ShowManager {
     Podcaster podcaster = Podcaster.fromJson(doc.data()!);
     podcaster.uid = doc.id;
     showBloc.add(podcaster);
+    List<String> favPodcasts = authManager.userBloc!.favPodcasts;
+
+    if (favPodcasts.contains(podcaster.uid)) {
+      favShow.add(getRandomEpisode(podcaster.podcasts));
+    }
+  }
+
+  String getRandomEpisode(List<String> episodesId) {
+    // return podcastBloc[episodesId[0]]!;
+
+    int index = Random().nextInt(episodesId.length);
+    return episodesId[index];
   }
 
   editShowToBloc(Doc doc) {
@@ -73,5 +91,9 @@ class ShowManager {
       }
     }
     return "not_found";
+  }
+
+  List<String> getFavoritePodcasts() {
+    return favShow;
   }
 }

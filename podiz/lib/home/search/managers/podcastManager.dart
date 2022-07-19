@@ -24,13 +24,14 @@ class PodcastManager {
   FirebaseFirestore get firestore => _read(firestoreProvider);
 
   Map<String, Podcast> podcastBloc = {};
+  List<Podcast> feedList = [];
 
   final _podcastStream = BehaviorSubject<Map<String, Podcast>>();
   Stream<Map<String, Podcast>> get podcasts => _podcastStream.stream;
 
   PodcastManager(this._read) {
-    print("Settings up podacast stream!");
     firestore.collection("podcasts").snapshots().listen((snapshot) async {
+      //\TODO order this
       for (DocChange podcastChange in snapshot.docChanges) {
         if (podcastChange.type == DocumentChangeType.added) {
           await addPodcastToBloc(podcastChange.doc);
@@ -47,8 +48,8 @@ class PodcastManager {
   addPodcastToBloc(Doc doc) {
     Podcast podcast = Podcast.fromJson(doc.data()!);
     podcast.uid = doc.id;
-    podcastBloc.addAll({doc.id: podcast});
-    // firestore.collection("podcasts").doc(doc.id).update({"commentsImg": [], "comments":0});
+    podcastBloc[doc.id] = podcast;
+    feedList.add(podcast);
   }
 
   editPodcastToBloc(Doc doc) {
@@ -97,23 +98,13 @@ class PodcastManager {
         release_date: "");
   }
 
-  List<Podcast> getMyCast(List<String> shows) {
-    if (shows.length > 6) {
-      shows.shuffle();
-    }
-    int count = 0;
-    List<Podcast> result = [];
-    for (int i = 0; i < shows.length || count == 6; i++) {
-      List<String> episodesId = showManager.getEpisodes(shows[i]);
-      Podcast episode = getRandomEpisode(episodesId);
-      result.add(episode);
-      count++;
-    }
-
-    return result;
+  List<Podcast> getMyCast() {
+    List<String> favEpisodes = showManager.getFavoritePodcasts();
+    return favEpisodes.map((e) => podcastBloc[e]!).toList();
   }
 
   Podcast getRandomEpisode(List<String> episodesId) {
+    // return podcastBloc[episodesId[0]]!;
     if (episodesId.isEmpty) {
       return emptyPodcast();
     }
@@ -123,11 +114,7 @@ class PodcastManager {
   }
 
   List<Podcast> getHotLive() {
-    List<Podcast> result = [];
-    podcastBloc.forEach((key, value) => result.add(value));
-    // result.sort((a, b) => b.release_date.compareTo(a.release_date));
-    result.sublist(0, 20);
-    return result;
+    return feedList;
   }
 
   Podcast emptyPodcast() {
