@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/theme/theme.dart';
@@ -6,10 +7,11 @@ import 'package:podiz/aspect/widgets/insightsRow.dart';
 import 'package:podiz/aspect/widgets/stackedImages.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/Podcast.dart';
+import 'package:podiz/objects/user/Player.dart';
 
 class DiscussionAppBar extends StatefulWidget with PreferredSizeWidget {
-  Podcast podcast;
-  DiscussionAppBar(this.podcast, {Key? key}) : super(key: key);
+  Player player;
+  DiscussionAppBar(this.player, {Key? key}) : super(key: key);
 
   @override
   State<DiscussionAppBar> createState() => _DiscussionAppBarState();
@@ -19,10 +21,23 @@ class DiscussionAppBar extends StatefulWidget with PreferredSizeWidget {
 }
 
 class _DiscussionAppBarState extends State<DiscussionAppBar> {
+  Duration position = Duration.zero;
+
+  @override
+  void initState() {
+    super.initState();
+    position = widget.player.position;
+    widget.player.onAudioPositionChanged.listen((newPosition) {
+      setState(() {
+        position = newPosition;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final podcast = widget.podcast;
+    final podcast = widget.player.podcastPlaying!;
     return AppBar(
       automaticallyImplyLeading: false,
       backgroundColor: Color(0xFF3E0979),
@@ -85,10 +100,13 @@ class _DiscussionAppBarState extends State<DiscussionAppBar> {
           ),
         ),
         const SizedBox(height: 12),
-        const LinearProgressIndicator(
-          backgroundColor: Color(0xFFE5CEFF),
-          color: Color(0xFFD74EFF),
-          minHeight: 4,
+        LinearPercentIndicator(
+          padding: EdgeInsets.zero,
+          width: kScreenWidth,
+          lineHeight: 4.0,
+          percent: position.inMilliseconds / podcast.duration_ms,
+          backgroundColor: const Color(0xFFE5CEFF),
+          progressColor: const Color(0xFFD74EFF),
         ),
       ]),
     );

@@ -104,6 +104,10 @@ class PlayerManager {
     playerSink.add({"pause": true});
   }
 
+  void resumeEpisode() {
+    playerSink.add({"resume": true});
+  }
+
   List<Comment> showComments(int time) {
     List<Comment> result = [];
     commentsBloc.map((c) {

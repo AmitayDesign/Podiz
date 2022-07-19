@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/authentication/AuthManager.dart';
@@ -12,16 +14,39 @@ enum PlayerState {
 class Player {
   Player();
 
-  PlayerState playingState = PlayerState.close;
   Podcast? podcastPlaying;
+
+  final StreamController<Duration> _positionController =
+      StreamController.broadcast();
+
+  PlayerState _state = PlayerState.close;
+
+  PlayerState get state => _state;
+
+  Duration position = Duration.zero;
+
+  Stream<Duration> get onAudioPositionChanged => _positionController.stream;
+
+  startTimer() async {
+    Podcast podcastTimer = podcastPlaying!;
+    while (podcastTimer.uid == podcastPlaying!.uid &&
+        (_state == PlayerState.play ||
+            position.inMilliseconds >= podcastPlaying!.duration_ms)) {
+      _positionController.add(position);
+      position = Duration(milliseconds: position.inMilliseconds + 200);
+      await Future.delayed(Duration(milliseconds: 200));
+    }
+  }
 
   Future<void> playEpisode(Podcast episode, String userUid) async {
     // TODO verify arguments
     HttpsCallableResult result = await FirebaseFunctions.instance
         .httpsCallable("play")
         .call({"episodeUid": episode.uid, "userUid": userUid});
-    playingState = PlayerState.play;
     podcastPlaying = episode;
+    position = Duration.zero;
+    _state = PlayerState.play;
+    startTimer();
     return;
   }
 
@@ -30,7 +55,7 @@ class Player {
     HttpsCallableResult result = await FirebaseFunctions.instance
         .httpsCallable("pause")
         .call({"userUid": userUid});
-    playingState = PlayerState.stop;
+    _state = PlayerState.stop;
     return;
   }
 
@@ -39,12 +64,12 @@ class Player {
     HttpsCallableResult result = await FirebaseFunctions.instance
         .httpsCallable("resume")
         .call({"userUid": userUid});
-    playingState = PlayerState.play;
+    _state = PlayerState.play;
+    startTimer();
     return;
   }
 
   void closePlayer() {
-    playingState = PlayerState.close;
     podcastPlaying = null;
     return;
   }

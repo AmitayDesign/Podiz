@@ -1,15 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/aspect/widgets/stackedImages.dart';
+import 'package:podiz/objects/user/Player.dart';
 
 class DiscussionSnackBar extends StatefulWidget {
-  DiscussionSnackBar({Key? key}) : super(key: key);
+  Player player;
+  DiscussionSnackBar(this.player, {Key? key}) : super(key: key);
 
   @override
   State<DiscussionSnackBar> createState() => _DiscussionSnackBarState();
 }
 
 class _DiscussionSnackBarState extends State<DiscussionSnackBar> {
+  Duration position = Duration.zero;
+
+  @override
+  void initState() {
+    super.initState();
+    position = widget.player.position;
+    widget.player.onAudioPositionChanged.listen((newPosition) {
+      setState(() {
+        position = newPosition;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -28,19 +44,18 @@ class _DiscussionSnackBarState extends State<DiscussionSnackBar> {
                 // StackedImages(23), TODO change this
                 const SizedBox(width: 8),
                 Text(
-                  "8 listening with you",
+                  "8 listening with you", //TODO change this!!!
                   style: discussionAppBarInsights(),
                 ),
                 Spacer(),
                 Container(
-                  child:
-                      Center(
-                        child: Text(
-                          "12:31",
-                          style: discussionSnackPlay(),
-                        ),
-                      ),
-                   
+                  child: Center(
+                    child: Text(
+                      timePlayerFormatter(
+                          widget.player.position.inMilliseconds),
+                      style: discussionSnackPlay(),
+                    ),
+                  ),
                   width: 64,
                   height: 23,
                   decoration: BoxDecoration(

@@ -10,27 +10,13 @@ import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/profile/profilePage.dart';
 import 'package:podiz/profile/userManager.dart';
 
-class DiscussionCard extends ConsumerStatefulWidget {
+class DiscussionCard extends ConsumerWidget {
   Comment comment;
   DiscussionCard(this.comment, {Key? key}) : super(key: key);
 
   @override
-  ConsumerState<DiscussionCard> createState() => _DiscussionCardState();
-}
-
-class _DiscussionCardState extends ConsumerState<DiscussionCard> {
-  TextEditingController commentController = TextEditingController();
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final comment = widget.comment;
     UserManager userManager = ref.read(userManagerProvider);
     return FutureBuilder(
       future: userManager.getUserFromUid(comment.uid),

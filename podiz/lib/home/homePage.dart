@@ -66,7 +66,7 @@ class _HomePageState extends ConsumerState<HomePage>
         orElse: () => SplashScreen.error(),
         loading: () => SplashScreen(),
         data: (p) {
-          p.playingState == PlayerState.close
+          p.state == PlayerState.close
               ? isPlaying = false
               : isPlaying = true;
           return KeyboardVisibilityBuilder(
@@ -84,7 +84,7 @@ class _HomePageState extends ConsumerState<HomePage>
                           children: pages,
                         ),
                         !isKeyBoardOpen
-                            ? p.playingState != PlayerState.close
+                            ? p.state != PlayerState.close
                                 ? Positioned(
                                     right: 0,
                                     left: 0,

@@ -62,7 +62,7 @@ class ShowPage extends ConsumerWidget {
               ],
             ),
           ),
-          p.playingState != PlayerState.close
+          p.state != PlayerState.close
               ? Positioned(
                   child: PlayerWidget(p),
                   bottom: 0.0,
@@ -74,7 +74,7 @@ class ShowPage extends ConsumerWidget {
         floatingActionButton: FollowShowButton(
           show.uid!,
           imageUrl: show.image_url,
-          isPlaying: p.playingState != PlayerState.close,
+          isPlaying: p.state != PlayerState.close,
         ),
       ),
     );

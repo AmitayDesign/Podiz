@@ -6,10 +6,10 @@ String dateFormatter(String date) {
 String timeFormatter(int time) {
   double minutes = ((time / (1000 * 60)) % 60);
   double hours = ((time / (1000 * 60 * 60)) % 24);
-  if (hours > 0) {
-    return "${hours.ceil()}h ${minutes.ceil()}m";
+  if (hours.floor() > 0) {
+    return "${hours.floor()}h ${minutes.floor()}m";
   } else {
-    return "${minutes.ceil()}m";
+    return "${minutes.floor()}m";
   }
 }
 
@@ -17,11 +17,12 @@ String timePlayerFormatter(int time) {
   double seconds = (time / 1000) % 60;
   double minutes = ((time / (1000 * 60)) % 60);
   double hours = ((time / (1000 * 60 * 60)) % 24);
-  if (minutes < 0) {
-    return "${minutes.ceil()}:${seconds.ceil()}";
+
+  if (hours < 0) {
+    return "${minutes.floor ()}:${seconds.floor()}";
   } else if (minutes > 0 && hours < 0) {
-    return "${minutes.ceil()}:${seconds.ceil()}";
+    return "${minutes.floor()}:${seconds.floor()}";
   } else {
-    return "${hours.ceil()}:${minutes.ceil()}:${seconds.ceil()}";
+    return "${hours.floor()}:${minutes.floor()}:${seconds.floor()}";
   }
 }
