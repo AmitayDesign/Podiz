@@ -21,8 +21,7 @@ class SpotifyManager {
 
   final _repository = RepositoryAuthorization();
 
-  final PublishSubject _authorizationTokenFetcher =
-      PublishSubject<String>();
+  final PublishSubject _authorizationTokenFetcher = PublishSubject<String>();
   final PublishSubject _authorizationCodeFetcher = PublishSubject<String>();
 
   Stream<dynamic> get authorizationCode => _authorizationCodeFetcher.stream;
@@ -46,7 +45,8 @@ class SpotifyManager {
     _authorizationTokenFetcher.close();
   }
 
-  void setUpAuthStream(AsyncSnapshot snapshot) async {
+  Future<void> setUpAuthStream(AsyncSnapshot snapshot) async {
     await authManager.fetchUserInfo(snapshot.data);
+    print("USERRRRRRRRRRRRRR");
   }
 }

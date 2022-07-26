@@ -7,8 +7,11 @@ import 'package:podiz/home/notifications/components/tabBarLabel.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/onboarding/components/linearGradientAppBar.dart';
 import 'package:podiz/profile/components.dart/commentCard.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/providers.dart';
+import 'package:podiz/splashScreen.dart';
 
-class NotificationsPage extends StatefulWidget with HomePageMixin {
+class NotificationsPage extends ConsumerStatefulWidget with HomePageMixin {
   @override
   final String label = 'Notifications';
   @override
@@ -22,24 +25,19 @@ class NotificationsPage extends StatefulWidget with HomePageMixin {
   NotificationsPage(this.isPlaying, {Key? key}) : super(key: key);
 
   @override
-  State<NotificationsPage> createState() => _NotificationsPageState();
+  ConsumerState<NotificationsPage> createState() => _NotificationsPageState();
 }
 
-class _NotificationsPageState extends State<NotificationsPage>
+class _NotificationsPageState extends ConsumerState<NotificationsPage>
     with SingleTickerProviderStateMixin {
-  TabController? _tabController;
-
   @override
   void initState() {
-    _tabController = TabController(length: 4, vsync: this);
-    _tabController!.addListener(() => setState(() {}));
     super.initState();
   }
 
   @override
   void dispose() {
     super.dispose();
-    _tabController!.dispose();
     _controller.dispose();
   }
 
@@ -52,89 +50,79 @@ class _NotificationsPageState extends State<NotificationsPage>
       time: 123521);
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: NestedScrollView(
-        headerSliverBuilder: (context, value) {
-          return [
-            SliverAppBar(
-              automaticallyImplyLeading: false,
-              flexibleSpace: Container(
-                height: 96,
-                decoration: BoxDecoration(
-                  gradient: appBarGradient(),
-                ),
-              ),
-              bottom: TabBar(
-                isScrollable: true,
-                controller: _tabController,
-                labelStyle: notificationsSelectedLabel(),
-                unselectedLabelStyle: notificationsUnselectedLabel(),
-                indicatorSize: TabBarIndicatorSize.tab,
-                overlayColor:
-                    MaterialStateProperty.all(const Color(0xFF262626)),
-                indicator: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50),
-                  color: theme.primaryColor,
-                ),
-                padding: const EdgeInsets.only(left: 16),
-                tabs: [
-                  TabBarLabel("All", 34),
-                  TabBarLabel("Is It Time For M...", 12),
-                  TabBarLabel("Is It Time For M...", 12),
-                  TabBarLabel("Is It Time For M...", 10),
-                ],
-              ),
-            )
-          ];
-        },
-        body: Padding(
-          padding: EdgeInsets.only(top: 20),
-          child: TabBarView(
-            controller: _tabController,
-            children: [
-              ListView.builder(
-                controller: _controller,
-                itemCount: podcasts.length + 1,
-                itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.only(top: 30.0),
-                  child: (index != podcasts.length)
-                      ? CommentCard(c)
-                      : SizedBox(height: widget.isPlaying ? 205 : 101),
-                ),
-              ),
-              ListView.builder(
-                  controller: _controller,
-                  itemCount: podcasts.length + 1,
-                  itemBuilder: (context, index) => Padding(
-                        padding: const EdgeInsets.only(top: 17.0),
-                        child: (index != podcasts.length)
-                            ? DiscussionCard(c)
-                            : SizedBox(height: widget.isPlaying ? 205 : 101),
-                      )),
-              ListView.builder(
-                  controller: _controller,
-                  itemCount: podcasts.length + 1,
-                  itemBuilder: (context, index) => Padding(
-                        padding: const EdgeInsets.only(top: 17.0),
-                        child: (index != podcasts.length)
-                            ? DiscussionCard(c)
-                            : SizedBox(height: widget.isPlaying ? 205 : 101),
-                      )),
-              ListView.builder(
-                  controller: _controller,
-                  itemCount: podcasts.length + 1,
-                  itemBuilder: (context, index) => Padding(
-                        padding: const EdgeInsets.only(top: 17.0),
-                        child: (index != podcasts.length)
-                            ? DiscussionCard(c)
-                            : SizedBox(height: widget.isPlaying ? 205 : 101),
-                      )),
-            ],
-          ),
-        ),
-      ),
-    );
+    return Container();
+    // final theme = Theme.of(context);
+    // final notifications = ref.watch(notificationsStreamProvider);
+    // return notifications.maybeWhen(
+    //     loading: () => CircularProgressIndicator(),
+    //     orElse: () => SplashScreen.error(),
+    //     data: (n) {
+    //       Iterable<String> keys = n.keys;
+    //       int number = keys.length + 1;
+
+    //       List<Widget> tabs = [];
+    //       List<Widget> children = [];
+
+    //       int count = 0;
+    //       int numberValue;
+
+    //       for (String key in keys) {
+    //         numberValue = n[key]!.length;
+    //         tabs.add(TabBarLabel(key, numberValue));
+    //         children.add(ListView.builder(
+    //                     controller: _controller,
+    //                     itemCount: podcasts.length + 1,
+    //                     itemBuilder: (context, index) => Padding(
+    //                           padding: const EdgeInsets.only(top: 17.0),
+    //                           child: (index != podcasts.length)
+    //                               ? DiscussionCard(c)
+    //                               : SizedBox(
+    //                                   height: widget.isPlaying ? 205 : 101),
+    //                         )),)
+    //         count += numberValue;
+    //       }
+    //       tabs.insert(0, TabBarLabel("All", count));
+
+    //       return Align(
+    //         alignment: Alignment.centerLeft,
+    //         child: NestedScrollView(
+    //           headerSliverBuilder: (context, value) {
+    //             return [
+    //               SliverAppBar(
+    //                 automaticallyImplyLeading: false,
+    //                 flexibleSpace: Container(
+    //                   height: 96,
+    //                   decoration: BoxDecoration(
+    //                     gradient: appBarGradient(),
+    //                   ),
+    //                 ),
+    //                 bottom: TabBar(
+    //                     isScrollable: true,
+    //                     controller: _tabController,
+    //                     labelStyle: notificationsSelectedLabel(),
+    //                     unselectedLabelStyle: notificationsUnselectedLabel(),
+    //                     indicatorSize: TabBarIndicatorSize.tab,
+    //                     overlayColor:
+    //                         MaterialStateProperty.all(const Color(0xFF262626)),
+    //                     indicator: BoxDecoration(
+    //                       borderRadius: BorderRadius.circular(50),
+    //                       color: theme.primaryColor,
+    //                     ),
+    //                     padding: const EdgeInsets.only(left: 16),
+    //                     tabs: tabs),
+    //               )
+    //             ];
+    //           },
+    //           body: Padding(
+    //             padding: EdgeInsets.only(top: 20),
+    //             child: TabBarView(
+    //               controller: _tabController,
+    //               children: children))
+
+    //             ),
+    //           ),
+    //         ),
+    //       );
+    //     });
   }
 }

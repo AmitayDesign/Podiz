@@ -14,15 +14,19 @@ String timeFormatter(int time) {
 }
 
 String timePlayerFormatter(int time) {
-  double seconds = (time / 1000) % 60;
-  double minutes = ((time / (1000 * 60)) % 60);
-  double hours = ((time / (1000 * 60 * 60)) % 24);
+  int seconds = ((time / 1000) % 60).floor();
+  int minutes = ((time / (1000 * 60)) % 60).floor();
+  int hours = ((time / (1000 * 60 * 60)) % 24).floor();
 
-  if (hours < 0) {
-    return "${minutes.floor ()}:${seconds.floor()}";
-  } else if (minutes > 0 && hours < 0) {
-    return "${minutes.floor()}:${seconds.floor()}";
-  } else {
-    return "${hours.floor()}:${minutes.floor()}:${seconds.floor()}";
+  if (hours == 0) {
+    String min = "$minutes", sec = "$seconds";
+    if (minutes < 10) {
+      min = "0$minutes";
+    }
+    if (seconds < 10) {
+      sec = "0$seconds";
+    }
+    return "$min:$sec";
   }
+  return "0$hours:$minutes:$seconds";
 }

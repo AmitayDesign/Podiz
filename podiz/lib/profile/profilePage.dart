@@ -27,23 +27,33 @@ class ProfilePage extends ConsumerWidget {
 
     return Scaffold(
       appBar: BackAppBar(),
-      floatingActionButton: authManager.userBloc!.uid != user.uid ? FollowPeopleButton(user): Container(),
+      floatingActionButton: authManager.userBloc!.uid != user.uid
+          ? FollowPeopleButton(user)
+          : Container(),
       body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircleAvatar(
-                backgroundImage: NetworkImage(user.image_url),
-                radius: 50,
+              Align(
+                alignment: Alignment.centerLeft,
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage(user.image_url),
+                  radius: 50,
+                ),
               ),
 
               const SizedBox(height: 12),
-              Text(user.name, style: followerName()),
+              Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    user.name,
+                    style: followerName(),
+                  )),
               const SizedBox(height: 16),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(user.followers.length.toString(),
                       style: followersNumber()),

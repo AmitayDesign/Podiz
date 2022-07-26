@@ -79,11 +79,26 @@ class AuthManager {
   }
 
   setUpUserStream(String uid) async {
+    final userReference = firestore.collection('users').doc(uid);
+    Doc userData = await userReference.get();
+    int totalTimeWaiting = 0;
+    while (userData.data() == null && totalTimeWaiting < 2000) {
+      await Future.delayed(Duration(milliseconds: 100));
+      userData = await userReference.get();
+      totalTimeWaiting += 100;
+    }
+
+    userBloc = UserPodiz.fromFirestore(userData);
+    await saveUser();
+
     firestore.collection("users").doc(uid).snapshots().listen((snapshot) async {
       if (snapshot.data() != null) {
         userBloc = UserPodiz.fromJson(snapshot.data()!);
         userBloc!.uid = uid;
         await saveUser();
+        print("done");
+      } else {
+        print("upsssss");
       }
     });
   }
@@ -131,7 +146,7 @@ class AuthManager {
         .collection("comments")
         .doc();
     String date = DateTime.now().toIso8601String();
-    await firestore
+    firestore
         .collection("podcasts")
         .doc(episodeUid)
         .collection("comments")
@@ -144,7 +159,7 @@ class AuthManager {
       "time": time,
     });
 
-    await firestore.collection("users").doc(userBloc!.uid).update({
+    firestore.collection("users").doc(userBloc!.uid).update({
       "comments": FieldValue.arrayUnion([
         {
           "id": doc.id,

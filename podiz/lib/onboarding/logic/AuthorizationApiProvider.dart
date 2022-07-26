@@ -10,8 +10,8 @@ class AuthorizationApiProvider {
   static String response_type = "code";
   static String redirect_uri = "podiz:/";
   static String scope = "user-follow-read user-read-private user-read-email user-modify-playback-state user-read-playback-state";//TODO change this
-  static String state = "34fFs29kd09"; //TODO understand this
-
+  static String state = "34fFs29kd09";
+  
   String urlDireccion = "$url" +
       "?client_id=$client_id" +
       "&response_type=$response_type" +

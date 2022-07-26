@@ -12,13 +12,13 @@ import 'package:podiz/profile/screens/settingsPage.dart';
 
 class RouterConfig {
   static dynamic _args(BuildContext context) =>
-      ModalRoute.of(context)!.settings.arguments!;
+      ModalRoute.of(context)?.settings.arguments!;
 
   static Map<String, WidgetBuilder> routes = {
     HomePage.route: (context) => HomePage(_args(context)),
     OnBoardingPage.route: (_) => const OnBoardingPage(),
     ConnectBudzPage.route: (_) => const ConnectBudzPage(),
-    DiscussionPage.route: (context) => DiscussionPage(_args(context)),
+    DiscussionPage.route: (_) => DiscussionPage(),
     ProfilePage.route: (context) => ProfilePage(_args(context)),
     SpotifyView.route: (_) => SpotifyView(),
     SettingsPage.route: (_) => SettingsPage(),

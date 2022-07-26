@@ -180,7 +180,6 @@ TextStyle podcastTitleQuickNote() => const TextStyle(
 
 TextStyle podcastInsights() => const TextStyle(
       fontFamily: 'Montserrat',
-      fontSize: 16,
       color: Color(0xFFFFFFFF),
       height: 1,
       fontWeight: FontWeight.w400,

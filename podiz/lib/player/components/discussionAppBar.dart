@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:podiz/aspect/constants.dart';
@@ -22,16 +24,22 @@ class DiscussionAppBar extends StatefulWidget with PreferredSizeWidget {
 
 class _DiscussionAppBarState extends State<DiscussionAppBar> {
   Duration position = Duration.zero;
-
+  StreamSubscription<Duration>? subscription;
   @override
   void initState() {
     super.initState();
     position = widget.player.position;
-    widget.player.onAudioPositionChanged.listen((newPosition) {
+    subscription = widget.player.onAudioPositionChanged.listen((newPosition) {
       setState(() {
         position = newPosition;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    subscription!.cancel();
   }
 
   @override

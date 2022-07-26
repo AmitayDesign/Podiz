@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/widgets/insightsRow.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/aspect/widgets/stackedImages.dart';
 import 'package:podiz/home/search/screens/showPage.dart';
@@ -42,16 +43,7 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
             child: Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    StackedImages(widget.result.searchResultToPodcast(),
-                        size: 31),
-                    const SizedBox(width: 8),
-                    Text("${widget.result.comments} Insights",
-                        style: podcastInsights())
-                  ],
-                ),
+                InsightsRow(widget.result.searchResultToPodcast()),
                 const SizedBox(height: 16),
                 Row(
                   children: [

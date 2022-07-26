@@ -30,7 +30,11 @@ class PodcastManager {
   Stream<Map<String, Podcast>> get podcasts => _podcastStream.stream;
 
   PodcastManager(this._read) {
-    firestore.collection("podcasts").snapshots().listen((snapshot) async {
+    firestore
+        .collection("podcasts")
+        .orderBy("release_date", descending: true)
+        .snapshots()
+        .listen((snapshot) async {
       //\TODO order this
       for (DocChange podcastChange in snapshot.docChanges) {
         if (podcastChange.type == DocumentChangeType.added) {
@@ -114,7 +118,7 @@ class PodcastManager {
   }
 
   List<Podcast> getHotLive() {
-    return feedList;
+    return feedList.sublist(0, 40);
   }
 
   Podcast emptyPodcast() {

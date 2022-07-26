@@ -1,10 +1,14 @@
 import 'dart:ui';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/aspect/widgets/tapTo.dart';
+import 'package:podiz/main.dart';
+import 'package:podiz/onboarding/screens/spotifyView.dart';
 import 'package:podiz/player/playerWidget.dart';
 import 'package:podiz/home/feed/feedPage.dart';
 import 'package:podiz/home/notifications/NotificationsPage.dart';
@@ -22,9 +26,9 @@ mixin HomePageMixin on Widget {
 
 class HomePage extends ConsumerStatefulWidget {
   static const route = '/home';
-  UserPodiz user;
+  UserPodiz? user;
 
-  HomePage(this.user);
+  HomePage(this.user, {Key? key}) : super(key: key);
 
   @override
   ConsumerState<HomePage> createState() => _HomePageState();
@@ -32,7 +36,6 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage>
     with SingleTickerProviderStateMixin {
-
   var pageIndex = 1;
   final pageController = PageController(initialPage: 1);
   bool isPlaying = false;
@@ -56,87 +59,107 @@ class _HomePageState extends ConsumerState<HomePage>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.user == null) return Container();
     List<HomePageMixin> pages = <HomePageMixin>[
-      FeedPage(isPlaying, user: widget.user,),
+      FeedPage(
+        isPlaying,
+        user: widget.user!,
+      ),
       SearchPage(),
       NotificationsPage(isPlaying),
     ];
     final player = ref.watch(playerStreamProvider);
-    return player.maybeWhen(
-        orElse: () => SplashScreen.error(),
-        loading: () => SplashScreen(),
-        data: (p) {
-          p.state == PlayerState.close
-              ? isPlaying = false
-              : isPlaying = true;
-          return KeyboardVisibilityBuilder(
-            builder: (context, isKeyBoardOpen) {
-              return Scaffold(
-                body: SafeArea(
-                  child: TapTo.unfocus(
-                    child: Stack(
-                      children: [
-                        PageView(
-                          controller: pageController,
-                          onPageChanged: (i) => setState(() {
-                            pageIndex = i;
-                          }),
-                          children: pages,
-                        ),
-                        !isKeyBoardOpen
-                            ? p.state != PlayerState.close
-                                ? Positioned(
-                                    right: 0,
-                                    left: 0,
-                                    bottom: 93,
-                                    child: PlayerWidget(p))
-                                : Container()
-                            : Container(),
-                        !isKeyBoardOpen
-                            ? Positioned(
-                                bottom: 0.0,
-                                left: 0.0,
-                                right: 0.0,
-                                child: SizedBox(
-                                  height: 93,
-                                  child: ClipRect(
-                                    child: BackdropFilter(
-                                      filter: ImageFilter.blur(
-                                        sigmaX: 5,
-                                        sigmaY: 10,
-                                      ),
-                                      child: Opacity(
-                                        opacity: 0.9,
-                                        child: BottomNavigationBar(
-                                          iconSize: 30,
-                                          showSelectedLabels: true,
-                                          showUnselectedLabels: true,
-                                          selectedItemColor: Color(0xFFD74EFF),
-                                          unselectedItemColor:
-                                              Color(0xB2FFFFFF),
-                                          currentIndex: pageIndex,
-                                          onTap: changeTab,
-                                          items: pages.map((page) {
-                                            return BottomNavigationBarItem(
-                                              icon: page.icon,
-                                              activeIcon: page.activeIcon,
-                                              label: page.label,
-                                            );
-                                          }).toList(),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+    final podcasts = ref.watch(podcastsStreamProvider);
+    final shows = ref.watch(showStreamProvider);
+    return shows.maybeWhen(
+        data: (_) {
+          return podcasts.maybeWhen(
+            data: (_) => player.maybeWhen(
+                orElse: () => SplashScreen.error(),
+                loading: () => SplashScreen(),
+                data: (p) {
+                  p.state == PlayerState.close
+                      ? isPlaying = false
+                      : isPlaying = true;
+                  if (p.error) {
+                    return SpotifyView();
+                  }
+                  return KeyboardVisibilityBuilder(
+                    builder: (context, isKeyBoardOpen) {
+                      return Scaffold(
+                        body: SafeArea(
+                          child: TapTo.unfocus(
+                            child: Stack(
+                              children: [
+                                PageView(
+                                  controller: pageController,
+                                  onPageChanged: (i) => setState(() {
+                                    pageIndex = i;
+                                  }),
+                                  children: pages,
                                 ),
-                              )
-                            : Container(),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
+                                !isKeyBoardOpen
+                                    ? p.state != PlayerState.close
+                                        ? Positioned(
+                                            right: 0,
+                                            left: 0,
+                                            bottom: 93,
+                                            child: PlayerWidget(p))
+                                        : Container()
+                                    : Container(),
+                                !isKeyBoardOpen
+                                    ? Positioned(
+                                        bottom: 0.0,
+                                        left: 0.0,
+                                        right: 0.0,
+                                        child: SizedBox(
+                                          height: 93,
+                                          child: ClipRect(
+                                            child: BackdropFilter(
+                                              filter: ImageFilter.blur(
+                                                sigmaX: 5,
+                                                sigmaY: 10,
+                                              ),
+                                              child: Opacity(
+                                                opacity: 0.9,
+                                                child: BottomNavigationBar(
+                                                  iconSize: 30,
+                                                  showSelectedLabels: true,
+                                                  showUnselectedLabels: true,
+                                                  selectedItemColor:
+                                                      Color(0xFFD74EFF),
+                                                  unselectedItemColor:
+                                                      Color(0xB2FFFFFF),
+                                                  currentIndex: pageIndex,
+                                                  onTap: changeTab,
+                                                  items: pages.map((page) {
+                                                    return BottomNavigationBarItem(
+                                                      icon: page.icon,
+                                                      activeIcon:
+                                                          page.activeIcon,
+                                                      label: page.label,
+                                                    );
+                                                  }).toList(),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : Container(),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }),
+            loading: () => SplashScreen(),
+            orElse: () => SplashScreen.error(),
           );
-        });
+        },
+        loading: () => SplashScreen(),
+        orElse: () => SplashScreen.error());
   }
 }

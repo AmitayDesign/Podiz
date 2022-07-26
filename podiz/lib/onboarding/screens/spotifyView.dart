@@ -2,9 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/authentication/AuthManager.dart';
 import 'package:podiz/home/homePage.dart';
 import 'package:podiz/objects/AuthorizationModel.dart';
 import 'package:podiz/onboarding/SpotifyManager.dart';
+import 'package:podiz/onboarding/onbordingPage.dart';
+import 'package:podiz/player/PlayerManager.dart';
 
 class SpotifyView extends ConsumerStatefulWidget {
   static const route = '/spotifyView';
@@ -15,18 +18,25 @@ class SpotifyView extends ConsumerStatefulWidget {
 }
 
 class _SpotifyViewState extends ConsumerState<SpotifyView> {
-
   @override
   Widget build(BuildContext context) {
     SpotifyManager spotifyManager = ref.read(spotifyManagerProvider);
     spotifyManager.fetchAuthorizationCode();
-    
+
     _bienvenido() {
       spotifyManager.disposeToken();
+      AuthManager authManager = ref.read(authManagerProvider);
+      PlayerManager playerManager = ref.read(playerManagerProvider);
+      playerManager.playerBloc.error = false;
       Timer(
-          Duration(microseconds: 0),
-          () => Navigator.pushNamedAndRemoveUntil(
-              context, HomePage.route, (route) => false));
+        Duration(milliseconds: 0),
+        () => Navigator.pushNamedAndRemoveUntil(
+          context,
+          HomePage.route,
+          (route) => false,
+          arguments: authManager.userBloc!,
+        ),
+      );
       return Center(child: CircularProgressIndicator());
     }
 
@@ -43,8 +53,18 @@ class _SpotifyViewState extends ConsumerState<SpotifyView> {
                 stream: spotifyManager.authorizationToken,
                 builder: (context, AsyncSnapshot<dynamic> snapshot) {
                   if (snapshot.hasData) {
-                    spotifyManager.setUpAuthStream(snapshot);
-                    return _bienvenido();
+                    return FutureBuilder(
+                      initialData: "loading",
+                      future: spotifyManager.setUpAuthStream(snapshot),
+                      builder: ((context, snapshot) {
+                        if (snapshot.data == "loading" ||
+                            snapshot.connectionState != ConnectionState.done) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                        return _bienvenido();
+                      }),
+                    );
                   } else if (snapshot.hasError) {
                     return Text(snapshot.error.toString());
                   }

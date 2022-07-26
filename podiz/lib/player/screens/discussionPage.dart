@@ -10,17 +10,21 @@ import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
 
 class DiscussionPage extends ConsumerStatefulWidget {
-  Player player;
-  DiscussionPage(this.player, {Key? key}) : super(key: key);
+  DiscussionPage({Key? key}) : super(key: key);
   static const route = '/discussion';
 
   @override
   ConsumerState<DiscussionPage> createState() => _DiscussionPageState();
 }
-
 class _DiscussionPageState extends ConsumerState<DiscussionPage> {
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
+    print("building discusion room");
     final PlayerManager playerManager = ref.read(playerManagerProvider);
     final comments = ref.watch(commentsStreamProvider);
     final player = ref.watch(playerStreamProvider);
@@ -30,15 +34,15 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
           data: (c) {
             c = playerManager.showComments(p.position.inMilliseconds);
             return Scaffold(
-              appBar: DiscussionAppBar(widget.player),
+              appBar: DiscussionAppBar(p),
               body: Column(children: [
                 Expanded(
                   child: ListView.builder(
                     itemCount: c.length,
-                    itemBuilder: (context, index) => DiscussionCard(c[index]),
+                    itemBuilder: (context, index) => DiscussionCard(p.podcastPlaying!, c[index]),
                   ),
                 ),
-                DiscussionSnackBar(widget.player),
+                DiscussionSnackBar(p),
               ]),
             );
           },

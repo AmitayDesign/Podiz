@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -5,6 +7,7 @@ import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
+import 'package:podiz/onboarding/screens/spotifyView.dart';
 import 'package:podiz/player/screens/discussionPage.dart';
 import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/objects/user/Player.dart';
@@ -18,11 +21,12 @@ class PlayerWidget extends ConsumerStatefulWidget {
 }
 
 class _PlayerWidgetState extends ConsumerState<PlayerWidget> {
+  StreamSubscription<Duration>? subscription;
   @override
   void initState() {
     super.initState();
     position = widget.player.position;
-    widget.player.onAudioPositionChanged.listen((newPosition) {
+    subscription = widget.player.onAudioPositionChanged.listen((newPosition) {
       setState(() {
         position = newPosition;
       });
@@ -32,6 +36,7 @@ class _PlayerWidgetState extends ConsumerState<PlayerWidget> {
   @override
   void dispose() {
     super.dispose();
+    subscription!.cancel();
   }
 
   Duration position = Duration.zero;
@@ -47,15 +52,14 @@ class _PlayerWidgetState extends ConsumerState<PlayerWidget> {
         ? () => ref.read(playerManagerProvider).pauseEpisode()
         : () => ref
             .read(playerManagerProvider)
-            .resumeEpisode();
-
+            .resumeEpisode(podcast, position.inMilliseconds);
     return InkWell(
       onTap: () => Navigator.pushNamed(context, DiscussionPage.route,
           arguments: widget.player),
       child: Column(
         children: [
           LinearPercentIndicator(
-            padding:EdgeInsets.zero,
+            padding: EdgeInsets.zero,
             width: kScreenWidth,
             lineHeight: 4.0,
             percent: position.inMilliseconds / podcast.duration_ms,

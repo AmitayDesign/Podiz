@@ -6,13 +6,15 @@ import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/home/feed/components/buttonPlay.dart';
 import 'package:podiz/home/feed/components/cardButton.dart';
 import 'package:podiz/objects/Comment.dart';
+import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/profile/profilePage.dart';
 import 'package:podiz/profile/userManager.dart';
 
 class DiscussionCard extends ConsumerWidget {
   Comment comment;
-  DiscussionCard(this.comment, {Key? key}) : super(key: key);
+  Podcast podcast;
+  DiscussionCard(this.podcast, this.comment, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -74,7 +76,7 @@ class DiscussionCard extends ConsumerWidget {
                             ),
                           ),
                           const Spacer(),
-                          ButtonPlay(comment.time),
+                          ButtonPlay(podcast, comment.time),
                         ],
                       ),
                       const SizedBox(height: 12),

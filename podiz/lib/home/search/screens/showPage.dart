@@ -31,17 +31,20 @@ class ShowPage extends ConsumerWidget {
         body: Stack(children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              children: [
-                PodcastAvatar(imageUrl: show.image_url, size: 124),
-                const SizedBox(height: 16),
-                Text(show.name, style: iconStyle()),
-                const SizedBox(height: 8),
-                Text("${show.followers.length} Following",
-                    style: showFollowing()),
-                const SizedBox(height: 24),
-                Expanded(
-                  child: ListView.builder(
+            child: SingleChildScrollView(
+              physics: const ScrollPhysics(),
+              child: Column(
+                children: [
+                  PodcastAvatar(imageUrl: show.image_url, size: 124),
+                  const SizedBox(height: 16),
+                  Text(show.name, style: iconStyle()),
+                  const SizedBox(height: 8),
+                  Text("${show.followers.length} Following",
+                      style: showFollowing()),
+                  const SizedBox(height: 24),
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
                     itemCount: show.total_episodes,
                     itemBuilder: (context, i) {
                       SearchResult result =
@@ -58,8 +61,8 @@ class ShowPage extends ConsumerWidget {
                       }
                     },
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           p.state != PlayerState.close

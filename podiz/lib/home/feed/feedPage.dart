@@ -40,19 +40,15 @@ class _FeedPageState extends ConsumerState<FeedPage> {
   bool lastListened = false;
   List<Podcast> hotlivePodcasts = [];
   List<Podcast> mycastPodcasts = [];
+
   @override
   void initState() {
     if (widget.user.lastListened != "") {
       title = "lastlistened";
       lastListened = true;
-    }
-    if (widget.user.favPodcasts.isNotEmpty) {
-      if (!lastListened) {
-        title = "mycasts";
-      }
-      numberCast = widget.user.favPodcasts.length;
-    }
-    if (!lastListened && numberCast == 0) {
+    } else if (widget.user.favPodcasts.isNotEmpty) {
+      title = "mycasts";
+    } else if (!lastListened && numberCast == 0) {
       title = "hotlive";
     }
     PodcastManager podcastManager = ref.read(podcastManagerProvider);
@@ -63,6 +59,8 @@ class _FeedPageState extends ConsumerState<FeedPage> {
   }
 
   handleAppBar() {
+    numberCast = widget.user.favPodcasts.length;
+
     int lastListenedSize = lastListened ? 196 : 0;
     int myCastsSize = numberCast > 0
         ? numberCast * (8 + 8 + 148) + 20 + 10 + lastListenedSize
@@ -93,6 +91,12 @@ class _FeedPageState extends ConsumerState<FeedPage> {
   }
 
   @override
+  void didUpdateWidget(covariant FeedPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     List<String> categories = [
       Locales.string(context, "lastlistened"),
@@ -100,47 +104,40 @@ class _FeedPageState extends ConsumerState<FeedPage> {
       Locales.string(context, "hotlive"),
     ];
 
-    final user = ref.watch(userStreamProvider);
     PodcastManager podcastManager = ref.read(podcastManagerProvider);
-    return user.maybeWhen(
-        orElse: () => SplashScreen.error(),
-        loading: () => const CircularProgressIndicator(),
-        data: (u) {
-          return Column(
-            children: [
-              HomeAppBar(title),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: ListView.builder(
-                      controller: _controller,
-                      itemCount: categories.length + 1,
-                      itemBuilder: (context, index) {
-                        switch (index) {
-                          case 0:
-                            return u!.lastListened != ""
-                                ? PodcastListTileQuickNote(podcastManager
-                                    .getPodcastById(u.lastListened)
-                                    .searchResultToPodcast())
-                                : Container();
-                          case 1:
-                            return u!.favPodcasts.length != 0
-                                ? PodcastListTile(categories[1], mycastPodcasts)
-                                : Container();
-                          case 2:
-                            return PodcastListTile(
-                                categories[2], hotlivePodcasts);
-                          case 3:
-                            return SizedBox(
-                                height: widget.isPlaying ? 197 : 93);
-                          default:
-                            return Container();
-                        }
-                      }),
-                ),
-              ),
-            ],
-          );
-        });
+
+    return Column(
+      children: [
+        HomeAppBar(title),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: ListView.builder(
+                controller: _controller,
+                itemCount: categories.length + 1,
+                itemBuilder: (context, index) {
+                  switch (index) {
+                    case 0:
+                      return widget.user.lastListened != ""
+                          ? PodcastListTileQuickNote(podcastManager
+                              .getPodcastById(widget.user.lastListened)
+                              .searchResultToPodcast())
+                          : Container();
+                    case 1:
+                      return widget.user.favPodcasts.isNotEmpty
+                          ? PodcastListTile(categories[1], mycastPodcasts)
+                          : Container();
+                    case 2:
+                      return PodcastListTile(categories[2], hotlivePodcasts);
+                    case 3:
+                      return SizedBox(height: widget.isPlaying ? 197 : 93);
+                    default:
+                      return Container();
+                  }
+                }),
+          ),
+        ),
+      ],
+    );
   }
 }

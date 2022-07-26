@@ -50,9 +50,10 @@ class PlayerManager {
       if (key == "pause") {
         await playerBloc.pauseEpisode(userUid);
       } else if (key == "play") {
-        await playerBloc.playEpisode(event[key]["episode"], userUid);
+        await playerBloc.playEpisode(event[key]["episode"], userUid, 0);
       } else if (key == "resume") {
-        await playerBloc.resumeEpisode(userUid);
+        await playerBloc.playEpisode(
+            event[key]["episode"], userUid, event[key]["position"]);
       } else if (key == "close") {
         playerBloc.closePlayer();
       }
@@ -104,8 +105,10 @@ class PlayerManager {
     playerSink.add({"pause": true});
   }
 
-  void resumeEpisode() {
-    playerSink.add({"resume": true});
+  void resumeEpisode(Podcast podcast, int position) {
+    playerSink.add({
+      "resume": {"episode": podcast, "position": position}
+    });
   }
 
   List<Comment> showComments(int time) {

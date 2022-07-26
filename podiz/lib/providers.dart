@@ -6,11 +6,13 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:connectivity/connectivity.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/home/notifications/NotificationManager.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/Podcaster.dart';
+import 'package:podiz/objects/user/NotificationPodiz.dart';
 import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/player/PlayerManager.dart';
@@ -70,3 +72,7 @@ final playerProvider = Provider<Player>(
 final commentsStreamProvider = StreamProvider.autoDispose<List<Comment>>(
   (ref) => ref.watch(playerManagerProvider).comments,
 );
+
+final notificationsStreamProvider =
+    StreamProvider<Map<String, List<NotificationPodiz>>>(
+        (ref) => ref.watch(notificationManagerProvider).notifications);
