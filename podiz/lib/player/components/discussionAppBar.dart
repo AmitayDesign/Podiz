@@ -10,42 +10,18 @@ import 'package:podiz/aspect/widgets/stackedImages.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/Player.dart';
+import 'package:podiz/player/components/pinkProgress.dart';
 
-class DiscussionAppBar extends StatefulWidget with PreferredSizeWidget {
-  Player player;
-  DiscussionAppBar(this.player, {Key? key}) : super(key: key);
-
-  @override
-  State<DiscussionAppBar> createState() => _DiscussionAppBarState();
+class DiscussionAppBar extends StatelessWidget with PreferredSizeWidget {
+  Podcast podcast;
+  DiscussionAppBar(this.podcast, {Key? key}) : super(key: key);
 
   @override
   Size get preferredSize => const Size.fromHeight(134);
-}
-
-class _DiscussionAppBarState extends State<DiscussionAppBar> {
-  Duration position = Duration.zero;
-  StreamSubscription<Duration>? subscription;
-  @override
-  void initState() {
-    super.initState();
-    position = widget.player.position;
-    subscription = widget.player.onAudioPositionChanged.listen((newPosition) {
-      setState(() {
-        position = newPosition;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    subscription!.cancel();
-  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final podcast = widget.player.podcastPlaying!;
     return AppBar(
       automaticallyImplyLeading: false,
       backgroundColor: Color(0xFF3E0979),
@@ -108,14 +84,7 @@ class _DiscussionAppBarState extends State<DiscussionAppBar> {
           ),
         ),
         const SizedBox(height: 12),
-        LinearPercentIndicator(
-          padding: EdgeInsets.zero,
-          width: kScreenWidth,
-          lineHeight: 4.0,
-          percent: position.inMilliseconds / podcast.duration_ms,
-          backgroundColor: const Color(0xFFE5CEFF),
-          progressColor: const Color(0xFFD74EFF),
-        ),
+        PinkProgress()
       ]),
     );
   }

@@ -8,10 +8,12 @@ import 'package:podiz/home/feed/components/cardButton.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/User.dart';
+import 'package:podiz/player/components/repliesArea.dart';
 import 'package:podiz/profile/profilePage.dart';
 import 'package:podiz/profile/userManager.dart';
 
 class DiscussionCard extends ConsumerWidget {
+  //TODO change this to widget
   Comment comment;
   Podcast podcast;
   DiscussionCard(this.podcast, this.comment, {Key? key}) : super(key: key);
@@ -76,7 +78,7 @@ class DiscussionCard extends ConsumerWidget {
                             ),
                           ),
                           const Spacer(),
-                          ButtonPlay(podcast, comment.time),
+                          ButtonPlay(comment.uid, comment.time),
                         ],
                       ),
                       const SizedBox(height: 12),
@@ -93,7 +95,7 @@ class DiscussionCard extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Container(
-                            width: 249,
+                            width: kScreenWidth - (16 + 20+ 16 +16 ),
                             height: 31,
                             child: TextField(
                               // controller: commentController,
@@ -105,14 +107,7 @@ class DiscussionCard extends ConsumerWidget {
                             ),
                           ),
                           const Spacer(),
-                          CardButton(
-                            const Icon(
-                              Icons.save_alt_rounded,
-                              color: Color(0xFF9E9E9E),
-                              size: 15,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
+                          
                           CardButton(
                             const Icon(
                               Icons.share,
@@ -122,6 +117,9 @@ class DiscussionCard extends ConsumerWidget {
                           ),
                         ],
                       ),
+                      comment.replies!.isEmpty
+                          ? Container()
+                          : RepliesArea(comment.replies!),
                     ],
                   ),
                 ),
@@ -132,7 +130,8 @@ class DiscussionCard extends ConsumerWidget {
         return Container(
             color: theme.colorScheme.surface,
             width: kScreenWidth,
-            child: const CircularProgressIndicator());
+            height: 50,
+            );
       },
     );
   }

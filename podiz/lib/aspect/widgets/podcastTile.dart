@@ -33,7 +33,7 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
                 arguments: widget.result.searchResultToPodcaster())
             : ref
                 .read(playerManagerProvider)
-                .playEpisode(widget.result.searchResultToPodcast()),
+                .playEpisode(widget.result.searchResultToPodcast(), 0),
         child: Container(
           height: 92,
           decoration: BoxDecoration(
@@ -55,7 +55,9 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           widget.result.name,
-                          style: widget.isPlaying ? podcastTitlePlaying() : podcastTitle(),
+                          style: widget.isPlaying
+                              ? podcastTitlePlaying()
+                              : podcastTitle(),
                         ),
                       ),
                       const SizedBox(height: 8),

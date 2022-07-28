@@ -32,7 +32,7 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
       child: InkWell(
         onTap: () => ref
             .read(playerManagerProvider)
-            .playEpisode(widget.result.searchResultToPodcast()),
+            .playEpisode(widget.result.searchResultToPodcast(), 0),
         child: Container(
           height: 188,
           decoration: BoxDecoration(

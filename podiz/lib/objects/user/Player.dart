@@ -4,6 +4,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/authentication/AuthManager.dart';
 import 'package:podiz/objects/Podcast.dart';
+import 'package:rxdart/rxdart.dart';
 
 enum PlayerState {
   close,
@@ -12,20 +13,27 @@ enum PlayerState {
 }
 
 class Player {
-  Player();
+  Player() {
+    _stateController.add(PlayerState.close);
+  }
 
   Podcast? podcastPlaying;
   bool error = false;
   final StreamController<Duration> _positionController =
       StreamController.broadcast();
 
+  Stream<Duration> get onAudioPositionChanged => _positionController.stream;
+
+  final BehaviorSubject<PlayerState> _stateController =
+      BehaviorSubject<PlayerState>();
+
+  Stream<PlayerState> get state => _stateController.stream;
+
   PlayerState _state = PlayerState.close;
 
-  PlayerState get state => _state;
+  PlayerState get getState => _state;
 
   Duration position = Duration.zero;
-
-  Stream<Duration> get onAudioPositionChanged => _positionController.stream;
 
   startTimer() async {
     Podcast podcastTimer = podcastPlaying!;
@@ -38,8 +46,8 @@ class Player {
     }
   }
 
-  Future<void> playEpisode(Podcast episode, String userUid, int pos) async {
-    // TODO verify arguments
+  Future<void> playEpisode(
+      Podcast episode, String userUid, int pos) async {
     HttpsCallableResult<bool> result = await FirebaseFunctions.instance
         .httpsCallable("play")
         .call({"episodeUid": episode.uid, "userUid": userUid, "position": pos});
@@ -48,10 +56,32 @@ class Player {
     if (!result.data) {
       error = true;
       _state = PlayerState.stop;
+      _stateController.add(_state);
       return;
     }
     error = false;
     _state = PlayerState.play;
+    _stateController.add(_state);
+    startTimer();
+    return;
+  }
+
+  Future<void> resumeEpisode(String userUid) async {
+    HttpsCallableResult<bool> result =
+        await FirebaseFunctions.instance.httpsCallable("play").call({
+      "episodeUid": podcastPlaying!.uid,
+      "userUid": userUid,
+      "position": position.inMilliseconds,
+    });
+    if (!result.data) {
+      error = true;
+      _state = PlayerState.stop;
+      _stateController.add(_state);
+      return;
+    }
+    error = false;
+    _state = PlayerState.play;
+    _stateController.add(_state);
     startTimer();
     return;
   }
@@ -62,21 +92,14 @@ class Player {
         .httpsCallable("pause")
         .call({"userUid": userUid});
     _state = PlayerState.stop;
-    return;
-  }
-
-  Future<void> resumeEpisode(String userUid) async {
-    // TODO verify arguments
-    HttpsCallableResult result = await FirebaseFunctions.instance
-        .httpsCallable("resume")
-        .call({"userUid": userUid});
-    _state = PlayerState.play;
-    startTimer();
+    _stateController.add(_state);
     return;
   }
 
   void closePlayer() {
     podcastPlaying = null;
+    _state = PlayerState.close;
+    _stateController.add(_state);
     return;
   }
 }

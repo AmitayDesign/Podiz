@@ -69,7 +69,11 @@ final playerProvider = Provider<Player>(
   (ref) => ref.watch(playerStreamProvider).value!,
 );
 
-final commentsStreamProvider = StreamProvider.autoDispose<List<Comment>>(
+final stateProvider = StreamProvider<PlayerState>(
+  (ref) => ref.watch(playerProvider).state,
+);
+
+final commentsStreamProvider = StreamProvider.autoDispose<Map<String, Comment>>(
   (ref) => ref.watch(playerManagerProvider).comments,
 );
 

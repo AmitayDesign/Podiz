@@ -10,6 +10,7 @@ import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/player/components/pinkTimer.dart';
+import 'package:podiz/providers.dart';
 
 class DiscussionSnackBar extends ConsumerStatefulWidget {
   Player player;
@@ -21,35 +22,21 @@ class DiscussionSnackBar extends ConsumerStatefulWidget {
 
 class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
   final TextEditingController _controller = TextEditingController();
-  final KeyboardVisibilityController _keyboardVisibilityController =
-      KeyboardVisibilityController();
 
-  late StreamSubscription<bool> keyboardSubscription;
-  late bool visible;
+  bool visible = false;
 
   final Key _key = const Key("textField");
 
+  FocusNode focusNode = FocusNode();
   @override
   void initState() {
     super.initState();
-    print("init");
-    visible = _keyboardVisibilityController.isVisible;
-    keyboardSubscription =
-        _keyboardVisibilityController.onChange.listen((bool vis) {
-      if (vis) {
-        ref.read(playerManagerProvider).pauseEpisode();
-      }
-      // } else {
-      //   ref.read(playerManagerProvider).resumeEpisode(
-      //       widget.player.podcastPlaying!,
-      //       widget.player.position.inMilliseconds);
-      // }
-    });
   }
 
   @override
   void dispose() {
     super.dispose();
+    focusNode.dispose();
     _controller.dispose();
   }
 
@@ -69,7 +56,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(10), topRight: Radius.circular(10)),
         ),
-        child: widget.player.state == PlayerState.stop
+        child: visible
             ? openedTextInputView(context)
             : closedTextInputView(context));
   }
@@ -91,7 +78,9 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                 maxHeight: 31,
                 child: TextField(
                   // key: _key,
-                  focusNode: FocusNode(),
+                  maxLines: 5,
+                  keyboardType: TextInputType.multiline,
+                  focusNode: focusNode,
                   controller: _controller,
                   decoration: InputDecoration(
                     filled: true,
@@ -107,9 +96,24 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                 ),
               ),
               const SizedBox(width: 8),
-              const Icon(
-                Icons.send,
-                size: 31,
+              InkWell(
+                onTap: () {
+                  ref.read(playerManagerProvider).resumeEpisode();
+                  ref.read(authManagerProvider).doComment(
+                      _controller.text,
+                      ref.read(playerProvider).podcastPlaying!.uid!,
+                      ref.read(playerProvider).position.inMilliseconds);
+                    
+                  setState(() {
+                    visible = false;
+                  });
+                  focusNode.unfocus();
+                  _controller.clear();
+                },
+                child: const Icon(
+                  Icons.send,
+                  size: 31,
+                ),
               ),
             ],
           ),
@@ -128,7 +132,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                 size: 25,
               ),
               const SizedBox(width: 15),
-              PinkTimer(widget.player),
+              PinkTimer(),
               const SizedBox(width: 15),
               const Icon(
                 Icons.rotate_90_degrees_cw_outlined,
@@ -155,32 +159,34 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                 style: discussionAppBarInsights(),
               ),
               Spacer(),
-              PinkTimer(widget.player),
+              PinkTimer(),
             ],
           ),
           const SizedBox(height: 16),
           Row(
             children: [
-              Container(
-                width: 226,
-                height: 33,
-                child: TextField(
-                  key: _key,
-                  controller: _controller,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Color(0xFF262626),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
+              InkWell(
+                onTap: () {
+                  ref.read(playerManagerProvider).pauseEpisode();
+                  setState(() {
+                    visible = true;
+                  });
+                  focusNode.requestFocus();
+                },
+                child: Container(
+                    width: 226,
+                    height: 33,
+                    decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
+                      color: const Color(0xFF262626),
                     ),
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 16,
-                    ),
-                    hintStyle: discussionSnackCommentHint(),
-                    hintText: "Share your insight...",
-                  ),
-                ),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Share your insight...",
+                        style: discussionSnackCommentHint(),
+                      ),
+                    )),
               ),
               Spacer(),
               const Icon(
@@ -189,7 +195,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
               ),
               const SizedBox(width: 25),
               const Icon(
-                Icons.pause,
+                Icons.pause, //TODO change this
                 size: 25,
               ),
               const SizedBox(width: 25),

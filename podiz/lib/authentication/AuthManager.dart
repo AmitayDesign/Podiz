@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:podiz/aspect/failures/failure.dart';
 import 'package:podiz/aspect/typedefs.dart';
 import 'package:podiz/home/search/managers/showManager.dart';
+import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/services/fileHandler.dart';
@@ -157,6 +158,8 @@ class AuthManager {
       "uid": userBloc!.uid,
       "comment": comment,
       "time": time,
+      "lvl": 1,
+      "parents": [],
     });
 
     firestore.collection("users").doc(userBloc!.uid).update({
@@ -166,12 +169,59 @@ class AuthManager {
           "comment": comment,
           "time": time,
           "uid": episodeUid,
-          "timestamp": date
+          "timestamp": date,
+          "lvl": 1,
+          "parents": [],
         }
       ]),
     });
+    incrementPodcastCounter(episodeUid);
+    // doReply(Comment(doc.id, uid: episodeUid, timestamp: date, comment: comment, time: time, lvl: 1, parents: []), "reply");
 
-    await firestore.collection("podcasts").doc(episodeUid).update({
+  }
+
+  doReply(Comment comment, String reply) async {
+    DocRef doc = await firestore
+        .collection("podcasts")
+        .doc(comment.uid)
+        .collection("comments")
+        .doc();
+    String date = DateTime.now().toIso8601String();
+    List<String> parents = comment.parents;
+    parents.add(comment.id);
+    firestore
+        .collection("podcasts")
+        .doc(comment.uid)
+        .collection("comments")
+        .doc(doc.id)
+        .set({
+      "id": doc.id,
+      "timestamp": date,
+      "uid": userBloc!.uid,
+      "comment": reply,
+      "time": comment.time,
+      "lvl": comment.lvl + 1,
+      "parents": parents,
+    });
+
+    firestore.collection("users").doc(userBloc!.uid).update({
+      "comments": FieldValue.arrayUnion([
+        {
+          "id": doc.id,
+          "comment": reply,
+          "time": comment.time,
+          "uid": comment.uid,
+          "timestamp": date,
+          "lvl": comment.lvl + 1,
+          "parents": parents,
+        }
+      ]),
+    });
+    incrementPodcastCounter(comment.uid);
+  }
+
+  incrementPodcastCounter(String episodeUid) {
+    firestore.collection("podcasts").doc(episodeUid).update({
       "commentsImg": FieldValue.arrayUnion([userBloc!.image_url]),
       "comments": FieldValue.increment(1)
     });

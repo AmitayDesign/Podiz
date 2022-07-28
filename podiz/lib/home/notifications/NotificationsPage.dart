@@ -42,12 +42,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
   }
 
   final _controller = ScrollController();
-  List<String> podcasts = ["1", "2", "3"];
-  Comment c = Comment("id",
-      uid: "spotify:episode:00bf3aQMbuhOGvH2GqOw5w",
-      timestamp: DateTime.now().toIso8601String(),
-      comment: "DENGUE DENGUE DENGUE",
-      time: 123521);
+
   @override
   Widget build(BuildContext context) {
     return Container();

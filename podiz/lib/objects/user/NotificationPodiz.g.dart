@@ -8,7 +8,7 @@ part of 'NotificationPodiz.dart';
 
 NotificationPodiz _$NotificationPodizFromJson(Map<String, dynamic> json) =>
     NotificationPodiz(
-      json['uid'] as String,
+      json['uid'] as String?,
       type: json['type'] as String,
       timestamp: json['timestamp'] as String,
       user: json['user'] as String,

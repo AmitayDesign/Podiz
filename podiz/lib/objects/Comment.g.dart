@@ -12,6 +12,9 @@ Comment _$CommentFromJson(Map<String, dynamic> json) => Comment(
       timestamp: json['timestamp'] as String,
       comment: json['comment'] as String,
       time: json['time'] as int,
+      lvl: json['lvl'] as int,
+      parents:
+          (json['parents'] as List<dynamic>).map((e) => e as String).toList(),
     );
 
 Map<String, dynamic> _$CommentToJson(Comment instance) => <String, dynamic>{
@@ -20,4 +23,6 @@ Map<String, dynamic> _$CommentToJson(Comment instance) => <String, dynamic>{
       'timestamp': instance.timestamp,
       'comment': instance.comment,
       'time': instance.time,
+      'lvl': instance.lvl,
+      'parents': instance.parents,
     };

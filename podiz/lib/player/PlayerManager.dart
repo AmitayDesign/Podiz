@@ -31,13 +31,13 @@ class PlayerManager {
 
   Player playerBloc = Player();
 
-  BehaviorSubject<List<Comment>>? _commentsStream;
+  BehaviorSubject<Map<String, Comment>>? _commentsStream;
 
-  Stream<List<Comment>> get comments => _commentsStream!.stream;
+  Stream<Map<String, Comment>> get comments => _commentsStream!.stream;
 
   StreamSubscription<QuerySnapshot>? commentsStreamSubscription;
 
-  List<Comment> commentsBloc = [];
+  Map<String, Comment> commentsBloc = {}; //change this
 
   bool firstTime = true;
 
@@ -50,10 +50,10 @@ class PlayerManager {
       if (key == "pause") {
         await playerBloc.pauseEpisode(userUid);
       } else if (key == "play") {
-        await playerBloc.playEpisode(event[key]["episode"], userUid, 0);
-      } else if (key == "resume") {
         await playerBloc.playEpisode(
             event[key]["episode"], userUid, event[key]["position"]);
+      } else if (key == "resume") {
+        await playerBloc.resumeEpisode(userUid);
       } else if (key == "close") {
         playerBloc.closePlayer();
       }
@@ -65,14 +65,15 @@ class PlayerManager {
     if (!firstTime) {
       await commentsStreamSubscription!.cancel();
       await _commentsStream!.close();
-      commentsBloc = [];
+      commentsBloc = {};
     }
     firstTime = false;
-    _commentsStream = BehaviorSubject<List<Comment>>();
+    _commentsStream = BehaviorSubject<Map<String, Comment>>();
     commentsStreamSubscription = firestore
         .collection("podcasts")
         .doc(podcastUid)
         .collection("comments")
+        .orderBy("lvl")
         .snapshots()
         .listen((snapshot) async {
       for (DocChange commentChange in snapshot.docChanges) {
@@ -84,18 +85,36 @@ class PlayerManager {
         // }
       }
       _commentsStream!.add(commentsBloc);
+      print(commentsBloc);
     });
   }
 
   addCommentToBloc(Doc doc) {
     Comment comment = Comment.fromJson(doc.data()!);
     comment.id = doc.id;
-    commentsBloc.add(comment);
+    Map<String, Comment> replies = {};
+    comment.replies = replies;
+    if (comment.lvl == 1) {
+      commentsBloc.addAll({doc.id: comment});
+    } else if (comment.lvl == 2) {
+      commentsBloc[comment.parents[0]]!.replies!.addAll({doc.id: comment});
+    } else if (comment.lvl == 3) {
+      commentsBloc[comment.parents[0]]!
+          .replies![comment.parents[1]]!
+          .replies!
+          .addAll({doc.id: comment});
+    } else if (comment.lvl == 4) {
+      commentsBloc[comment.parents[0]]!
+          .replies![comment.parents[1]]!
+          .replies![comment.parents[2]]!
+          .replies!
+          .addAll({doc.id: comment});
+    }
   }
 
-  void playEpisode(Podcast podcast) {
+  void playEpisode(Podcast podcast, int position) {
     playerSink.add({
-      "play": {"episode": podcast}
+      "play": {"episode": podcast, "position": position}
     });
     authManager.updateLastListened(podcast.uid!);
     setUpDiscussionPageStream(podcast.uid!);
@@ -105,17 +124,14 @@ class PlayerManager {
     playerSink.add({"pause": true});
   }
 
-  void resumeEpisode(Podcast podcast, int position) {
-    playerSink.add({
-      "resume": {"episode": podcast, "position": position}
-    });
+  void resumeEpisode() {
+    playerSink.add({"resume": true});
   }
 
   List<Comment> showComments(int time) {
+    print("showing");
     List<Comment> result = [];
-    commentsBloc.map((c) {
-      if (c.time < time) result.add(c);
-    });
+    commentsBloc.forEach((key, value) => result.add(value));
     return result;
   }
 }

@@ -13,12 +13,20 @@ class Comment with EquatableMixin {
   String timestamp;
   String comment;
   int time;
-  //TODO try a composite!!!
-  Comment(this.id,
-      {required this.uid,
-      required this.timestamp,
-      required this.comment,
-      required this.time});
+  int lvl;
+  List<String> parents;
+  @JsonKey(ignore: true)
+  Map<String, Comment>? replies;
+
+  Comment(
+    this.id, {
+    required this.uid,
+    required this.timestamp,
+    required this.comment,
+    required this.time,
+    required this.lvl,
+    required this.parents,
+  });
 
   factory Comment.fromFirestore(Doc doc) =>
       Comment.fromJson(doc.data()!..['uid'] = doc.id);
@@ -31,7 +39,7 @@ class Comment with EquatableMixin {
   factory Comment.copyFrom(Comment user) => Comment.fromJson(user.toJson());
 
   @override
-  String toString() => " user + ${this.uid} : \n{(name : ${this.comment};\n";
+  String toString() => " user + ${this.uid} : \n{(name : ${this.comment}; ${replies}\n";
 
   @override
   // TODO: implement props

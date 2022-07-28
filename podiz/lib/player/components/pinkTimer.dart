@@ -1,26 +1,28 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/objects/user/Player.dart';
+import 'package:podiz/providers.dart';
 
-class PinkTimer extends StatefulWidget {
-  Player player;
-  PinkTimer(this.player, {Key? key}) : super(key: key);
+class PinkTimer extends ConsumerStatefulWidget {
+  PinkTimer({Key? key}) : super(key: key);
 
   @override
-  State<PinkTimer> createState() => _PinkTimerState();
+  ConsumerState<PinkTimer> createState() => _PinkTimerState();
 }
 
-class _PinkTimerState extends State<PinkTimer> {
+class _PinkTimerState extends ConsumerState<PinkTimer> {
   Duration position = Duration.zero;
   StreamSubscription<Duration>? subscription;
 
   @override
   void initState() {
-    position = widget.player.position;
-    subscription = widget.player.onAudioPositionChanged.listen(
+    Player player = ref.read(playerProvider);
+    position = player.position;
+    subscription = player.onAudioPositionChanged.listen(
       (newPosition) {
         setState(() {
           position = newPosition;
@@ -43,7 +45,7 @@ class _PinkTimerState extends State<PinkTimer> {
     return Container(
       child: Center(
         child: Text(
-          timePlayerFormatter(widget.player.position.inMilliseconds),
+          timePlayerFormatter(position.inMilliseconds),
           style: discussionSnackPlay(),
         ),
       ),

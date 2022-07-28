@@ -115,6 +115,6 @@ class ProfilePage extends ConsumerWidget {
   }
 
   Widget _buildItem(Comment c) {
-    return CommentCard(c);
+    return CommentCard(c, user);
   }
 }

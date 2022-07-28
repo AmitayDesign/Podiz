@@ -2,137 +2,98 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
-import 'package:podiz/onboarding/screens/spotifyView.dart';
+import 'package:podiz/player/components/pinkProgress.dart';
+import 'package:podiz/player/components/pinkTimer.dart';
 import 'package:podiz/player/screens/discussionPage.dart';
 import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/objects/user/Player.dart';
+import 'package:podiz/providers.dart';
+import 'package:podiz/splashScreen.dart';
 
-class PlayerWidget extends ConsumerStatefulWidget {
-  Player player;
-  PlayerWidget(this.player, {Key? key}) : super(key: key);
-
-  @override
-  ConsumerState<PlayerWidget> createState() => _PlayerWidgetState();
-}
-
-class _PlayerWidgetState extends ConsumerState<PlayerWidget> {
-  StreamSubscription<Duration>? subscription;
-  @override
-  void initState() {
-    super.initState();
-    position = widget.player.position;
-    subscription = widget.player.onAudioPositionChanged.listen((newPosition) {
-      setState(() {
-        position = newPosition;
-      });
-    });
-  }
+class PlayerWidget extends ConsumerWidget {
+  PlayerWidget({Key? key}) : super(key: key);
 
   @override
-  void dispose() {
-    super.dispose();
-    subscription!.cancel();
-  }
-
-  Duration position = Duration.zero;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-
-    final podcast = widget.player.podcastPlaying!;
-    final icon =
-        widget.player.state == PlayerState.play ? Icons.stop : Icons.play_arrow;
-    final onTap = widget.player.state == PlayerState.play
-        ? () => ref.read(playerManagerProvider).pauseEpisode()
-        : () => ref
-            .read(playerManagerProvider)
-            .resumeEpisode(podcast, position.inMilliseconds);
-    return InkWell(
-      onTap: () => Navigator.pushNamed(context, DiscussionPage.route,
-          arguments: widget.player),
-      child: Column(
-        children: [
-          LinearPercentIndicator(
-            padding: EdgeInsets.zero,
-            width: kScreenWidth,
-            lineHeight: 4.0,
-            percent: position.inMilliseconds / podcast.duration_ms,
-            backgroundColor: const Color(0xFFE5CEFF),
-            progressColor: const Color(0xFFD74EFF),
-          ),
-          Container(
-            height: 100,
-            color: const Color(0xFF3E0979),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  PodcastAvatar(imageUrl: podcast.image_url, size: 52),
-                  const SizedBox(width: 8),
-                  SizedBox(
-                    width: kScreenWidth - (14 + 52 + 8 + 8 + 100 + 14),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Container(
-                            child: Center(
-                              child: Text(
-                                  timePlayerFormatter(position.inMilliseconds),
-                                  style: discussionCardPlay()),
+    print("building");
+    final state = ref.watch(stateProvider);
+    return state.maybeWhen(
+      data: (s) {
+        if(s == PlayerState.close) return Container();
+        final podcast = ref.read(playerProvider).podcastPlaying!;
+        final icon = s == PlayerState.play ? Icons.stop : Icons.play_arrow;
+        final onTap = s == PlayerState.play
+            ? () => ref.read(playerManagerProvider).pauseEpisode()
+            : () => ref.read(playerManagerProvider).resumeEpisode();
+        return InkWell(
+          onTap: () => Navigator.pushNamed(context, DiscussionPage.route),
+          child: Column(
+            children: [
+              PinkProgress(),
+              Container(
+                height: 100,
+                color: const Color(0xFF3E0979),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      PodcastAvatar(imageUrl: podcast.image_url, size: 52),
+                      const SizedBox(width: 8),
+                      SizedBox(
+                        width: kScreenWidth - (14 + 52 + 8 + 8 + 100 + 14),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: PinkTimer(),
                             ),
-                            width: 57,
-                            height: 23,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                color: const Color(0xFFD74EFF)),
-                          ),
+                            const SizedBox(height: 8),
+                            Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(podcast.name,
+                                    style: discussionAppBarInsights(),
+                                    maxLines: 1)),
+                          ],
                         ),
-                        const SizedBox(height: 8),
-                        Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(podcast.name,
-                                style: discussionAppBarInsights(),
-                                maxLines: 1)),
-                      ],
-                    ),
+                      ),
+                      const Spacer(),
+                      SizedBox(
+                        width: 100,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            const Icon(
+                              Icons.rotate_90_degrees_ccw_outlined,
+                              size: 25,
+                            ),
+                            IconButton(
+                              icon: Icon(icon),
+                              onPressed: onTap,
+                              iconSize: 25,
+                            ),
+                            const Icon(
+                              Icons.rotate_90_degrees_cw_outlined,
+                              size: 25,
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  const Spacer(),
-                  SizedBox(
-                    width: 100,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        const Icon(
-                          Icons.rotate_90_degrees_ccw_outlined,
-                          size: 25,
-                        ),
-                        IconButton(
-                          icon: Icon(icon),
-                          onPressed: onTap,
-                          iconSize: 25,
-                        ),
-                        const Icon(
-                          Icons.rotate_90_degrees_cw_outlined,
-                          size: 25,
-                        )
-                      ],
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
+      orElse: () => SplashScreen.error(),
     );
   }
 }

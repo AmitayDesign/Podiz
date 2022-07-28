@@ -41,7 +41,7 @@ class PodcastListTile extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: InkWell(
-        onTap: () => ref.read(playerManagerProvider).playEpisode(podcast),
+        onTap: () => ref.read(playerManagerProvider).playEpisode(podcast, 0),
         child: Container(
           height: 148,
           decoration: BoxDecoration(

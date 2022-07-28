@@ -78,7 +78,7 @@ class _HomePageState extends ConsumerState<HomePage>
                 orElse: () => SplashScreen.error(),
                 loading: () => SplashScreen(),
                 data: (p) {
-                  p.state == PlayerState.close
+                  p.getState == PlayerState.close
                       ? isPlaying = false
                       : isPlaying = true;
                   if (p.error) {
@@ -99,12 +99,12 @@ class _HomePageState extends ConsumerState<HomePage>
                                   children: pages,
                                 ),
                                 !isKeyBoardOpen
-                                    ? p.state != PlayerState.close
+                                    ? p.getState != PlayerState.close
                                         ? Positioned(
                                             right: 0,
                                             left: 0,
                                             bottom: 93,
-                                            child: PlayerWidget(p))
+                                            child: PlayerWidget())
                                         : Container()
                                     : Container(),
                                 !isKeyBoardOpen

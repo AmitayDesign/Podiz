@@ -67,7 +67,7 @@ class ShowPage extends ConsumerWidget {
           ),
           p.state != PlayerState.close
               ? Positioned(
-                  child: PlayerWidget(p),
+                  child: PlayerWidget(),
                   bottom: 0.0,
                   left: 0.0,
                   right: 0.0,
