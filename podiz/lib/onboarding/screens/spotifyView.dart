@@ -26,8 +26,8 @@ class _SpotifyViewState extends ConsumerState<SpotifyView> {
     _bienvenido() {
       spotifyManager.disposeToken();
       AuthManager authManager = ref.read(authManagerProvider);
-      PlayerManager playerManager = ref.read(playerManagerProvider);
-      playerManager.playerBloc.error = false;
+      // PlayerManager playerManager = ref.read(playerManagerProvider);
+      // playerManager.playerBloc.error = false;
       Timer(
         Duration(milliseconds: 0),
         () => Navigator.pushNamedAndRemoveUntil(
