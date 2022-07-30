@@ -118,7 +118,7 @@ class DiscussionCard extends ConsumerWidget {
                       ),
                       comment.replies!.isEmpty
                           ? Container()
-                          : RepliesArea(comment.uid, comment.replies!),
+                          : RepliesArea(comment.id, comment.replies!),
                     ],
                   ),
                 ),

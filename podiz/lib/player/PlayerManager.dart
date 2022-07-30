@@ -31,13 +31,17 @@ class PlayerManager {
 
   Player playerBloc = Player();
 
-  BehaviorSubject<Map<String, Comment>>? _commentsStream;
+  BehaviorSubject<List<Comment>>? _commentsStream;
 
-  Stream<Map<String, Comment>> get comments => _commentsStream!.stream;
+  Stream<List<Comment>> get comments => _commentsStream!.stream;
 
   StreamSubscription<QuerySnapshot>? commentsStreamSubscription;
 
   Map<String, Comment> commentsBloc = {}; //change this
+
+  List<Comment> commentsOrdered = [];
+
+  int index = 0;
 
   bool firstTime = true;
 
@@ -66,9 +70,11 @@ class PlayerManager {
       await commentsStreamSubscription!.cancel();
       await _commentsStream!.close();
       commentsBloc = {};
+      commentsOrdered = [];
     }
+    index = 0;
     firstTime = false;
-    _commentsStream = BehaviorSubject<Map<String, Comment>>();
+    _commentsStream = BehaviorSubject<List<Comment>>();
     commentsStreamSubscription = firestore
         .collection("podcasts")
         .doc(podcastUid)
@@ -84,8 +90,8 @@ class PlayerManager {
         //   await editCommentToBloc(commentChange.doc);
         // }
       }
-      _commentsStream!.add(commentsBloc);
-      print(commentsBloc);
+      commentsOrdered = getOrderedComments();
+      _commentsStream!.add([]);
     });
   }
 
@@ -128,34 +134,50 @@ class PlayerManager {
     playerSink.add({"resume": true});
   }
 
-  List<Comment> showComments(int time) {
-    print("showing");
+  showComments(int time) {
+    int i;
+    for (i = index; i < commentsOrdered.length; i++) {
+      if (commentsOrdered[i].time > time) {
+        break;
+      }
+    }
+    print(i);
+    if (i > index) {
+      if (commentsOrdered.isNotEmpty) {
+        _commentsStream?.add(commentsOrdered.sublist(0, i).reversed.toList());
+        index = i;
+      }
+    }
+  }
+
+  List<Comment> getOrderedComments() {
     List<Comment> result = [];
-    commentsBloc.forEach((key, value) => result.add(value));
+    commentsBloc.forEach((_, value) {
+      if (value.lvl == 1) {
+        result.add(value);
+      }
+    });
+    result.sort((a, b) => a.time.compareTo(b.time));
     return result;
   }
 
   int getNumberOfReplies(String commentUid) {
     Comment c = commentsBloc[commentUid]!;
     int count = 0;
-    for (int i = 0; i < c.replies!.length; i++) {
-      //lvl 2
+    c.replies!.forEach((_, commentLvl2) {
       count++;
-      if (c.replies![i]!.replies!.isNotEmpty) {
-        for (int j = 0; j < c.replies![i]!.replies!.length; j++) {
-          //lvl 3
+      if (commentLvl2.replies!.isNotEmpty) {
+        commentLvl2.replies!.forEach((_, commentLvl3) {
           count++;
-          if (c.replies![i]!.replies![j]!.replies!.isNotEmpty) {
-            for (int k = 0;
-                k < c.replies![i]!.replies![j]!.replies!.length;
-                k++) {
-              //lvl 4
+          if (commentLvl3.replies!.isNotEmpty) {
+            commentLvl3.replies!.forEach((_, commentLvl4) {
               count++;
-            }
+            });
           }
-        }
+        });
       }
-    }
+    });
+
     return count;
   }
 }

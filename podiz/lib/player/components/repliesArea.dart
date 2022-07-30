@@ -12,10 +12,11 @@ class RepliesArea extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     List<Comment> list = [];
     replies.forEach((key, value) => list.add(value));
-    int numberOfReplies = ref.watch(playerManagerProvider).getNumberOfReplies(commentUid);
+    int numberOfReplies =
+        ref.read(playerManagerProvider).getNumberOfReplies(commentUid);
     return Container(
       height: 50,
-      child: Text(list[0].comment),
+      child: Text(numberOfReplies.toString()),
     );
   }
 }
