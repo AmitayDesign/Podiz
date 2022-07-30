@@ -37,7 +37,7 @@ class DiscussionPage extends ConsumerWidget {
                         DiscussionCard(p.podcastPlaying!, list[index]),
                   ),
                 ),
-                DiscussionSnackBar(p),
+                DiscussionSnackBar(),
               ]),
             );
           },

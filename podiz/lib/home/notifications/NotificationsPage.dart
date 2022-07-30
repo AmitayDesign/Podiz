@@ -6,7 +6,6 @@ import 'package:podiz/home/homePage.dart';
 import 'package:podiz/home/notifications/components/tabBarLabel.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/onboarding/components/linearGradientAppBar.dart';
-import 'package:podiz/profile/components.dart/commentCard.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';

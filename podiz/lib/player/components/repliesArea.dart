@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/objects/Comment.dart';
+import 'package:podiz/player/PlayerManager.dart';
 
-class RepliesArea extends StatelessWidget {
+class RepliesArea extends ConsumerWidget {
+  String commentUid;
   Map<String, Comment> replies;
-  RepliesArea(this.replies, {Key? key}) : super(key: key);
+  RepliesArea(this.commentUid, this.replies, {Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     List<Comment> list = [];
     replies.forEach((key, value) => list.add(value));
-    //number of comments!
-    //expansion tile maybe
-    return Container( height: 50, child: Text(list[0].comment),);
+    int numberOfReplies = ref.watch(playerManagerProvider).getNumberOfReplies(commentUid);
+    return Container(
+      height: 50,
+      child: Text(list[0].comment),
+    );
   }
 }

@@ -134,4 +134,28 @@ class PlayerManager {
     commentsBloc.forEach((key, value) => result.add(value));
     return result;
   }
+
+  int getNumberOfReplies(String commentUid) {
+    Comment c = commentsBloc[commentUid]!;
+    int count = 0;
+    for (int i = 0; i < c.replies!.length; i++) {
+      //lvl 2
+      count++;
+      if (c.replies![i]!.replies!.isNotEmpty) {
+        for (int j = 0; j < c.replies![i]!.replies!.length; j++) {
+          //lvl 3
+          count++;
+          if (c.replies![i]!.replies![j]!.replies!.isNotEmpty) {
+            for (int k = 0;
+                k < c.replies![i]!.replies![j]!.replies!.length;
+                k++) {
+              //lvl 4
+              count++;
+            }
+          }
+        }
+      }
+    }
+    return count;
+  }
 }

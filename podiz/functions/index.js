@@ -18,7 +18,6 @@ var client_secret = "10de465afd164e8e9196988aa738a127";
  ******************AUTHENTICATION**************
  *********************************************/
 exports.getAccessTokenWithCode = functions.https.onCall(
-  //Working and tested!!!
   async (data, context) => {
     /*
     data = {
@@ -41,7 +40,7 @@ exports.getAccessTokenWithCode = functions.https.onCall(
         },
         method: "POST",
       });
-      console.log(response);
+
       var result = await response.json();
 
       let userUid = await getUserInfo(result.access_token);
@@ -63,36 +62,35 @@ exports.getAccessTokenWithCode = functions.https.onCall(
 );
 
 async function getAccessTokenWithRefreshToken(userUid) {
-  //need to test
   try {
-    spotifyAuth = getSpotifyAuth(userUid);
+    spotifyAuth = await getSpotifyAuth(userUid);
 
     var response = await fetch(authenticationHost + "api/token", {
       headers: {
-        Accept: "application/json",
+        Authorization: "Basic " + btoa(client_id + ":" + client_secret),
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      form: encodeFormData({
+      body: encodeFormData({
         grant_type: "refresh_token",
-        code: spotifyAuth.refresh_token,
+        refresh_token: spotifyAuth.refresh_token,
         client_id: client_id,
-        client_secret: client_secret,
       }),
       method: "POST",
     });
-
+    if (response["status"] != 200) {
+      return false;
+    }
     var result = await response.json();
-
     await admin
       .firestore()
       .collection("spotifyAuth")
       .doc(userUid)
       .update({ access_token: result.access_token });
 
-    return result.access_token;
+    return true;
   } catch (err) {
     console.log(err);
-    return "0";
+    return false;
   }
 }
 
@@ -103,7 +101,6 @@ async function getSpotifyAuth(userUid) {
 }
 
 async function getUserInfo(code) {
-  //working and tested
   try {
     var response = await fetch(host + "/me", {
       headers: {
@@ -125,7 +122,7 @@ async function getUserInfo(code) {
       following: [],
       lastListened: "",
       comments: [],
-      favPodcasts: []
+      favPodcasts: [],
     });
     return result.uri;
   } catch (err) {
@@ -144,27 +141,28 @@ const encodeFormData = (data) => {
  *********************************************/
 
 exports.play = functions.https.onCall(async (data, context) => {
-  //need to test
   /*
     data = {
         episodeUid : String
         userUid : String
+        position : int
     }
   */
   let episodeUid = data.episodeUid;
   let userUid = data.userUid;
-  let result = await playEpisode(episodeUid, userUid);
-  //catch code in here
-  if (result) {
-    return true;
+  let position = data.position;
+  let result = await playEpisode(episodeUid, userUid, position);
+  if (!result) {
+    result = await getAccessTokenWithRefreshToken(userUid);
+    if (!result) {
+      return false;
+    }
+    result = await playEpisode(episodeUid, userUid, position);
   }
-  // await getAccessTokenWithRefreshToken(userUid); // catch here
-  // await playEpisode(episodeUid, userUid);
-  return false;
+  return result;
 });
 
 exports.pause = functions.https.onCall(async (data, context) => {
-  //need to test
   /*
     data = {
         episodeUid : String
@@ -173,17 +171,18 @@ exports.pause = functions.https.onCall(async (data, context) => {
   */
   let userUid = data.userUid;
   let result = await pauseEpisode(userUid);
-  //catch code in here
-  if (result) {
-    return true;
+
+  if (!result) {
+    result = await getAccessTokenWithRefreshToken(userUid);
+    if (!result) {
+      return false;
+    }
+    result = await pauseEpisode(userUid);
   }
-  // await getAccessTokenWithRefreshToken(userUid); // catch here
-  // await pauseEpisode(userUid);
-  return false;
+  return result;
 });
 
 exports.devices = functions.https.onCall(async (data, context) => {
-  //need to test
   /*
     data = {
         userUid : String
@@ -191,38 +190,47 @@ exports.devices = functions.https.onCall(async (data, context) => {
   */
   let userUid = data.userUid;
   result = await getDevices(userUid);
-  // if (result) {
-  //   await getAccessTokenWithRefreshToken(userUid); // catch here
-  //   await getDevices(userUid);
-  // }
+  if (!result) {
+    result = await getAccessTokenWithRefreshToken(userUid);
+    if (!result) {
+      return false;
+    }
+    result = await getDevices(userUid);
+  }
+  return result;
 });
 
-async function playEpisode(episodeUid, userUid) {
+async function playEpisode(episodeUid, userUid, position) {
   try {
     var spotifyAuth = await getSpotifyAuth(userUid);
-
-    var response = await fetch(host + "/me/player/play", {
-      //TODO add device
-      body: JSON.stringify({
-        uris: [episodeUid],
-        position_ms: 0,
-      }),
-      headers: {
-        Accept: "application/json",
-        Authorization: "Bearer " + spotifyAuth.access_token,
-        "Content-Type": "application/json",
-      },
-      method: "PUT",
-    });
-    return;
+    var response = await fetch(
+      host + "/me/player/play/?device_id=" + spotifyAuth.selectedDevice,
+      {
+        body: JSON.stringify({
+          uris: [episodeUid],
+          position_ms: position,
+        }),
+        headers: {
+          Accept: "application/json",
+          Authorization: "Bearer " + spotifyAuth.access_token,
+          "Content-Type": "application/json",
+        },
+        method: "PUT",
+      }
+    );
+    if (response["status"] != 204) {
+      return false;
+    }
+    return true;
   } catch (err) {
     console.log(err);
+    return false;
   }
 }
 
 async function pauseEpisode(userUid) {
   try {
-    var spotifyAuth = getSpotifyAuth(userUid);
+    var spotifyAuth = await getSpotifyAuth(userUid);
 
     var response = await fetch(host + "/me/player/pause", {
       headers: {
@@ -232,16 +240,19 @@ async function pauseEpisode(userUid) {
       },
       method: "PUT",
     });
-    console.log(response);
-    return;
+    if (response["status"] != 204) {
+      return false;
+    }
+    return true;
   } catch (err) {
     console.log(err);
+    return false;
   }
 }
 
 async function getDevices(userUid) {
   try {
-    var spotifyAuth = getSpotifyAuth(userUid);
+    var spotifyAuth = await getSpotifyAuth(userUid);
 
     var myHeaders = new fetch.Headers();
 
@@ -254,28 +265,67 @@ async function getDevices(userUid) {
       redirect: "follow",
     };
 
-    var response = await fetch(host + "/me/player/devices/", requestOptions);
-
-    var result = await response.json();
-    console.log(result);
-    admin
-      .firestore()
-      .collection("spotifyAuth")
-      .doc(userUid)
-      .update({
-        device: result.devices[0].id,
-        selectedDevice: result.devices[0].id,
-      }); //change the update!!!
-
-    if (
-      result.error_description !== undefined
-      //&& result.error_description === "Invalid access token."
-    ) {
+    var response = await fetch(host + "/me/player/devices", requestOptions);
+    if (response["status"] != 200) {
       return false;
     }
-    return result;
+
+    var result = await response.json();
+
+    let devicesList = [];
+    for (dev of result["devices"]) {
+      devicesList.push({ id: dev["id"], name: dev["name"], type: dev["type"] });
+    }
+    admin.firestore().collection("spotifyAuth").doc(userUid).update({
+      selectedDevice: result.devices[0].id,
+      devices: devicesList,
+    });
+    return true;
   } catch (err) {
     console.log(err);
+    return false;
   }
-  return false;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////NOTIFICATIONS//////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+exports.sendNotificatioToDevice = functions.firestore
+  .document("users/{uid}/notifications/{notificationId}")
+  .onCreate(async (snapshot) => {
+    let notification = snapshot.data();
+    let type = notification.type;
+    if (type == "follower") {
+      data = {
+        type: notification.type,
+        timestamp: notification.timestamp,
+        user: notification.user,
+      };
+    } else {
+      data = {
+        type: notification.type,
+        timestamp: notification.timestamp,
+        user: notification.user,
+        podcast: notification.podcast,
+        comment: notification.comment,
+      };
+    }
+    let token = await getDeviceToken(uid);
+    admin.messaging().sendToDevice(
+      token,
+      {
+        data: data,
+      },
+      {
+        contentAvailable: true,
+        priority: "high",
+      }
+    );
+  });
+
+async function getDeviceToken(userUid) {
+  ref = await admin.firestore().collection("users").doc(userUid).get();
+  let userInfo = ref.data();
+  return userInfo.token;
 }

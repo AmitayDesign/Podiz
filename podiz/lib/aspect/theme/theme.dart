@@ -1,4 +1,5 @@
 import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/theme/themeConfig.dart';
 import 'package:flutter/material.dart';
 
@@ -41,7 +42,7 @@ IconThemeData _iconTheme(ColorScheme colorScheme) => IconThemeData(
 InputDecorationTheme _inputDecorationTheme(ColorScheme colorScheme) =>
     InputDecorationTheme(
       filled: true,
-      fillColor: Color(0xFF404040),
+      fillColor: Palette.grey900,
       border: OutlineInputBorder(
         borderSide: BorderSide.none,
         borderRadius: BorderRadius.circular(30),
@@ -123,7 +124,7 @@ TextTheme _textTheme(ColorScheme colorScheme) => TextTheme(
       button: const TextStyle(
         fontFamily: 'Montserrat',
         fontSize: 16,
-        color: Color(0xFFFFFFFF),
+        color: Palette.pureWhite,
         fontWeight: FontWeight.w700,
       ),
     );
@@ -155,7 +156,7 @@ TextStyle podcastTitle() => const TextStyle(
 TextStyle podcastTitlePlaying() => const TextStyle(
       fontFamily: 'Montserrat',
       fontSize: 18,
-      color: Color(0xFF6310BF),
+      color: Palette.purple,
       height: 1,
       fontWeight: FontWeight.w700,
       overflow: TextOverflow.ellipsis,
@@ -180,7 +181,7 @@ TextStyle podcastTitleQuickNote() => const TextStyle(
 
 TextStyle podcastInsights() => const TextStyle(
       fontFamily: 'Montserrat',
-      color: Color(0xFFFFFFFF),
+      color: Palette.pureWhite,
       height: 1,
       fontWeight: FontWeight.w400,
     );
@@ -212,18 +213,17 @@ TextStyle podcastArtistQuickNote() => const TextStyle(
     );
 
 TextStyle discussionAppBarInsights() => const TextStyle(
-      fontFamily: 'Montserrat',
-      fontSize: 14,
-      color: Color(0xB2FFFFFF),
-      height: 1,
-      fontWeight: FontWeight.w400,
-      overflow: TextOverflow.ellipsis
-    );
+    fontFamily: 'Montserrat',
+    fontSize: 14,
+    color: Color(0xB2FFFFFF),
+    height: 1,
+    fontWeight: FontWeight.w400,
+    overflow: TextOverflow.ellipsis);
 
 TextStyle discussionCardProfile() => const TextStyle(
     fontFamily: 'Montserrat',
     fontSize: 16,
-    color: Color(0xFFFFFFFF),
+    color: Palette.pureWhite,
     height: 1,
     fontWeight: FontWeight.w700,
     overflow: TextOverflow.ellipsis);
@@ -239,7 +239,7 @@ TextStyle discussionCardFollowers() => const TextStyle(
 TextStyle discussionCardComment() => const TextStyle(
       fontFamily: 'Montserrat',
       fontSize: 16,
-      color: Color(0xFFFFFFFF),
+      color: Palette.pureWhite,
       height: 1,
       fontWeight: FontWeight.w400,
     );
@@ -271,7 +271,7 @@ TextStyle discussionSnackCommentHint() => const TextStyle(
 TextStyle discussionSnackPlay() => const TextStyle(
       fontFamily: 'Montserrat',
       fontSize: 16,
-      color: Color(0xFFFFFFFF),
+      color: Palette.pureWhite,
       height: 1,
       fontWeight: FontWeight.w700,
     );
@@ -279,7 +279,7 @@ TextStyle discussionSnackPlay() => const TextStyle(
 TextStyle followerName() => const TextStyle(
       fontFamily: 'Montserrat',
       fontSize: 20,
-      color: Color(0xFFFFFFFF),
+      color: Palette.pureWhite,
       height: 1,
       fontWeight: FontWeight.w700,
     );
@@ -348,7 +348,7 @@ TextStyle showFollowing() => const TextStyle(
 TextStyle showDescription() => const TextStyle(
       fontFamily: 'Montserrat',
       fontSize: 14,
-      color: Color(0xFFFFFFFF),
+      color: Palette.pureWhite,
       height: 1,
       overflow: TextOverflow.ellipsis,
       fontWeight: FontWeight.w400,
@@ -357,7 +357,7 @@ TextStyle showDescription() => const TextStyle(
 TextStyle noInternetTitle() => const TextStyle(
       fontFamily: 'Montserrat',
       fontSize: 36,
-      color: Color(0xFFFFFFFF),
+      color: Palette.pureWhite,
       height: 1,
       overflow: TextOverflow.ellipsis,
       fontWeight: FontWeight.w700,

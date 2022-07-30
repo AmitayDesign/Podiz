@@ -95,7 +95,7 @@ class DiscussionCard extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Container(
-                            width: kScreenWidth - (16 + 20+ 16 +16 ),
+                            width: kScreenWidth - (16 + 20 + 16 + 16),
                             height: 31,
                             child: TextField(
                               // controller: commentController,
@@ -107,7 +107,6 @@ class DiscussionCard extends ConsumerWidget {
                             ),
                           ),
                           const Spacer(),
-                          
                           CardButton(
                             const Icon(
                               Icons.share,
@@ -119,7 +118,7 @@ class DiscussionCard extends ConsumerWidget {
                       ),
                       comment.replies!.isEmpty
                           ? Container()
-                          : RepliesArea(comment.replies!),
+                          : RepliesArea(comment.uid, comment.replies!),
                     ],
                   ),
                 ),
@@ -128,10 +127,10 @@ class DiscussionCard extends ConsumerWidget {
           }
         }
         return Container(
-            color: theme.colorScheme.surface,
-            width: kScreenWidth,
-            height: 50,
-            );
+          color: theme.colorScheme.surface,
+          width: kScreenWidth,
+          height: 50,
+        );
       },
     );
   }

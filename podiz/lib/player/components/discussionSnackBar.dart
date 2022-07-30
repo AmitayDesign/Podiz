@@ -7,14 +7,12 @@ import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/authentication/AuthManager.dart';
 import 'package:podiz/home/components/circleProfile.dart';
-import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/player/components/pinkTimer.dart';
 import 'package:podiz/providers.dart';
 
 class DiscussionSnackBar extends ConsumerStatefulWidget {
-  Player player;
-  DiscussionSnackBar(this.player, {Key? key}) : super(key: key);
+  DiscussionSnackBar({Key? key}) : super(key: key);
 
   @override
   ConsumerState<DiscussionSnackBar> createState() => _DiscussionSnackBarState();
@@ -48,7 +46,6 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
 
   @override
   Widget build(BuildContext context) {
-    print("building");
     return Container(
         height: 127,
         decoration: const BoxDecoration(
@@ -103,7 +100,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                       _controller.text,
                       ref.read(playerProvider).podcastPlaying!.uid!,
                       ref.read(playerProvider).position.inMilliseconds);
-                    
+
                   setState(() {
                     visible = false;
                   });
