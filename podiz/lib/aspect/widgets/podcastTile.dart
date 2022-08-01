@@ -8,6 +8,7 @@ import 'package:podiz/home/search/screens/showPage.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/SearchResult.dart';
 import 'package:podiz/player/PlayerManager.dart';
+import 'package:podiz/player/screens/discussionPage.dart';
 import 'package:podiz/profile/screens/settingsPage.dart';
 
 class PodcastTile extends ConsumerStatefulWidget {
@@ -28,12 +29,17 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: InkWell(
-        onTap: () => widget.result.show_name == null
-            ? Navigator.pushNamed(context, ShowPage.route,
-                arguments: widget.result.searchResultToPodcaster())
-            : ref
+        onTap: () {
+          if (widget.result.show_name == null) {
+            Navigator.pushNamed(context, ShowPage.route,
+                arguments: widget.result.searchResultToPodcaster());
+          } else {
+            ref
                 .read(playerManagerProvider)
-                .playEpisode(widget.result.searchResultToPodcast(), 0),
+                .playEpisode(widget.result.searchResultToPodcast(), 0);
+            Navigator.pushNamed(context, DiscussionPage.route);
+          }
+        },
         child: Container(
           height: 92,
           decoration: BoxDecoration(

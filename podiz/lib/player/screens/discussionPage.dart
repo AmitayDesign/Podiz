@@ -55,7 +55,7 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
             print(c);
             // List<Comment> list = playerManager.showComments(position.inMilliseconds);
             return Scaffold(
-              appBar: DiscussionAppBar(p.podcastPlaying!),
+              appBar: DiscussionAppBar(p.podcastPlaying),
               body: Column(children: [
                 Expanded(
                   child: ListView.builder(

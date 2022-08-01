@@ -8,6 +8,7 @@ import 'package:podiz/aspect/widgets/stackedImages.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/player/PlayerManager.dart';
+import 'package:podiz/player/screens/discussionPage.dart';
 
 class PodcastListTile extends ConsumerWidget {
   String category;
@@ -41,7 +42,10 @@ class PodcastListTile extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: InkWell(
-        onTap: () => ref.read(playerManagerProvider).playEpisode(podcast, 0),
+        onTap: () {
+          ref.read(playerManagerProvider).playEpisode(podcast, 0);
+          Navigator.pushNamed(context, DiscussionPage.route);
+        },
         child: Container(
           height: 148,
           decoration: BoxDecoration(
