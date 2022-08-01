@@ -88,7 +88,8 @@ class PodcastManager {
           image_url: podcast.image_url,
           comments: podcast.comments,
           commentsImg: podcast.commentsImg,
-          release_date: podcast.release_date);
+          release_date: podcast.release_date,
+          watching: podcast.watching);
     }
     return SearchResult(
         uid: "Not_Found",
