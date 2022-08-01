@@ -15,6 +15,7 @@ class SearchResult {
   int? comments;
   List<String>? commentsImg;
   String? release_date;
+  int? watching;
 
   //podcaster
   String? publisher;
@@ -36,21 +37,21 @@ class SearchResult {
       this.comments,
       this.commentsImg,
       this.release_date,
-      this.followers});
+      this.followers,
+      this.watching});
 
   Podcast searchResultToPodcast() {
-    return Podcast(
-      uid,
-      name: name,
-      description: description!,
-      duration_ms: duration_ms!,
-      show_name: show_name!,
-      show_uri: show_uri!,
-      image_url: image_url,
-      comments: comments!,
-      commentsImg: commentsImg!,
-      release_date: release_date!,
-    );
+    return Podcast(uid,
+        name: name,
+        description: description!,
+        duration_ms: duration_ms!,
+        show_name: show_name!,
+        show_uri: show_uri!,
+        image_url: image_url,
+        comments: comments!,
+        commentsImg: commentsImg!,
+        release_date: release_date!,
+        watching: watching!);
   }
 
   Podcaster searchResultToPodcaster() {

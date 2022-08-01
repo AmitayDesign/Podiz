@@ -132,6 +132,7 @@ class PodcastManager {
         image_url: "Not_Found",
         comments: 0,
         commentsImg: [],
-        release_date: "");
+        release_date: "",
+        watching: 0);
   }
 }

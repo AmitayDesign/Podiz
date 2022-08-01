@@ -3,13 +3,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/authentication/AuthManager.dart';
 import 'package:podiz/home/components/circleProfile.dart';
+import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/player/components/pinkTimer.dart';
 import 'package:podiz/providers.dart';
+import 'package:podiz/splashScreen.dart';
 
 class DiscussionSnackBar extends ConsumerStatefulWidget {
   DiscussionSnackBar({Key? key}) : super(key: key);
@@ -46,19 +50,41 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final theme = Theme.of(context);
+    final podcast = ref.watch(podcastProvider);
+    return podcast.maybeWhen(
+      orElse: () => SplashScreen.error(),
+      loading: () => Container(
         height: 127,
         decoration: const BoxDecoration(
           color: Color(0xFF4E4E4E),
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(10), topRight: Radius.circular(10)),
         ),
-        child: visible
-            ? openedTextInputView(context)
-            : closedTextInputView(context));
+        child: Container(
+          width: 20,
+          height: 20,
+          child: LoadingIndicator(
+            indicatorType: Indicator.circleStrokeSpin,
+            colors: [theme.primaryColor],
+            strokeWidth: 4,
+          ),
+        ),
+      ),
+      data: (p) => Container(
+          height: 127,
+          decoration: const BoxDecoration(
+            color: Color(0xFF4E4E4E),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+          ),
+          child: visible
+              ? openedTextInputView(context, p)
+              : closedTextInputView(context, p)),
+    );
   }
 
-  Widget openedTextInputView(BuildContext context) {
+  Widget openedTextInputView(BuildContext context, Podcast episode) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 20),
       child: Column(
@@ -120,7 +146,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
               // StackedImages(23), //TODO change this
               const SizedBox(width: 8),
               Text(
-                "8 listening with you", //TODO change this!!!
+                "${episode.watching} listening with you", //TODO change this!!!
                 style: discussionAppBarInsights(),
               ),
               const Spacer(),
@@ -142,7 +168,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
     );
   }
 
-  Widget closedTextInputView(BuildContext context) {
+  Widget closedTextInputView(BuildContext context, Podcast episode) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
       child: Column(
@@ -152,7 +178,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
               // StackedImages(23), TODO change this
               const SizedBox(width: 8),
               Text(
-                "8 listening with you", //TODO change this!!!
+                "${episode.watching} listening with you", //TODO change this!!!
                 style: discussionAppBarInsights(),
               ),
               Spacer(),

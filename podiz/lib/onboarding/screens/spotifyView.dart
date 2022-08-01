@@ -8,6 +8,7 @@ import 'package:podiz/objects/AuthorizationModel.dart';
 import 'package:podiz/onboarding/SpotifyManager.dart';
 import 'package:podiz/onboarding/onbordingPage.dart';
 import 'package:podiz/player/PlayerManager.dart';
+import 'package:podiz/splashScreen.dart';
 
 class SpotifyView extends ConsumerStatefulWidget {
   static const route = '/spotifyView';
@@ -37,7 +38,7 @@ class _SpotifyViewState extends ConsumerState<SpotifyView> {
           arguments: authManager.userBloc!,
         ),
       );
-      return Center(child: CircularProgressIndicator());
+      return SplashScreen();
     }
 
     return Scaffold(
@@ -59,8 +60,7 @@ class _SpotifyViewState extends ConsumerState<SpotifyView> {
                       builder: ((context, snapshot) {
                         if (snapshot.data == "loading" ||
                             snapshot.connectionState != ConnectionState.done) {
-                          return const Center(
-                              child: CircularProgressIndicator());
+                          return SplashScreen();
                         }
                         return _bienvenido();
                       }),
@@ -68,14 +68,14 @@ class _SpotifyViewState extends ConsumerState<SpotifyView> {
                   } else if (snapshot.hasError) {
                     return Text(snapshot.error.toString());
                   }
-                  return const Center(child: CircularProgressIndicator());
+                  return SplashScreen();
                 },
               );
             }
           } else if (snapshot.hasError) {
             return Text(snapshot.error.toString());
           }
-          return const Center(child: CircularProgressIndicator());
+          return SplashScreen();
         },
       ),
     );

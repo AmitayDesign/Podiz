@@ -44,32 +44,21 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
 
   @override
   Widget build(BuildContext context) {
-    print("building discusion room");
     final comments = ref.watch(commentsStreamProvider);
-    final player = ref.watch(playerStreamProvider);
 
-    return player.maybeWhen(
-      data: (p) {
-        return comments.maybeWhen(
-          data: (c) {
-            print(c);
-            // List<Comment> list = playerManager.showComments(position.inMilliseconds);
-            return Scaffold(
-              appBar: DiscussionAppBar(p.podcastPlaying),
-              body: Column(children: [
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: c.length,
-                    itemBuilder: (context, index) =>
-                        DiscussionCard(p.podcastPlaying!, c[index]),
-                  ),
-                ),
-                DiscussionSnackBar(),
-              ]),
-            );
-          },
-          loading: () => const CircularProgressIndicator(),
-          orElse: () => SplashScreen.error(),
+    return comments.maybeWhen(
+      data: (c) {
+        return Scaffold(
+          appBar: DiscussionAppBar(),
+          body: Column(children: [
+            Expanded(
+              child: ListView.builder(
+                itemCount: c.length,
+                itemBuilder: (context, index) => DiscussionCard(c[index]),
+              ),
+            ),
+            DiscussionSnackBar(),
+          ]),
         );
       },
       loading: () => const CircularProgressIndicator(),

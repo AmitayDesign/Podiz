@@ -73,6 +73,10 @@ final stateProvider = StreamProvider<PlayerState>(
   (ref) => ref.watch(playerProvider).state,
 );
 
+final podcastProvider = StreamProvider.autoDispose<Podcast>(
+  (ref) => ref.watch(playerProvider).podcast,
+);
+
 final commentsStreamProvider = StreamProvider.autoDispose<List<Comment>>(
   (ref) => ref.watch(playerManagerProvider).comments,
 );

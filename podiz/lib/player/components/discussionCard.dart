@@ -15,8 +15,7 @@ import 'package:podiz/profile/userManager.dart';
 class DiscussionCard extends ConsumerWidget {
   //TODO change this to widget
   Comment comment;
-  Podcast podcast;
-  DiscussionCard(this.podcast, this.comment, {Key? key}) : super(key: key);
+  DiscussionCard(this.comment, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -47,19 +47,18 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
     podcasts.forEach(
       (_, value) {
         if (value.name.toLowerCase().contains(query.toLowerCase())) {
-          resultList.add(
-            SearchResult(
-                uid: value.uid!,
-                name: value.name,
-                image_url: value.image_url,
-                duration_ms: value.duration_ms,
-                show_name: value.show_name,
-                description: value.description,
-                show_uri: value.show_uri,
-                comments: value.comments,
-                commentsImg: value.commentsImg,
-                release_date: value.release_date),
-          );
+          resultList.add(SearchResult(
+              uid: value.uid!,
+              name: value.name,
+              image_url: value.image_url,
+              duration_ms: value.duration_ms,
+              show_name: value.show_name,
+              description: value.description,
+              show_uri: value.show_uri,
+              comments: value.comments,
+              commentsImg: value.commentsImg,
+              release_date: value.release_date,
+              watching: value.watching));
         }
       },
     );

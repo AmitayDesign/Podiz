@@ -143,7 +143,7 @@ class PlayerManager {
     }
     if (i > index) {
       if (commentsOrdered.isNotEmpty) {
-        _commentsStream?.add(commentsOrdered.sublist(0, i).reversed.toList());
+        _commentsStream?.add(commentsOrdered.sublist(0, i));
         index = i;
       }
     }

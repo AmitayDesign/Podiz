@@ -112,7 +112,15 @@ async function getUserInfo(code) {
     });
     //TODO verificar o Statuscode das mensagens
     var result = await response.json();
-
+    var docRef = await admin
+      .firestore()
+      .collection("users")
+      .doc(result.uri)
+      .get();
+    var exists = docRef.exists;
+    if (exists) {
+      return result.uri;
+    }
     admin.firestore().collection("users").doc(result.uri).set({
       //TODO verificar se ja existe ou nao!!
       name: result.display_name,

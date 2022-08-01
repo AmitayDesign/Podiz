@@ -11,14 +11,15 @@ part 'Podcast.g.dart';
 class Podcast with EquatableMixin {
   String? uid;
   String name;
-  String description;//
-  int duration_ms;//
+  String description;
+  int duration_ms;
   String show_name;
   String show_uri;
-  String image_url;//
-  int comments;//
+  String image_url;
+  int comments;
   List<String> commentsImg;
   String release_date;
+  int watching;
 
   Podcast(this.uid,
       {required this.name,
@@ -29,7 +30,8 @@ class Podcast with EquatableMixin {
       required this.image_url,
       required this.comments,
       required this.commentsImg,
-      required this.release_date});
+      required this.release_date,
+      required this.watching});
 
   factory Podcast.fromFirestore(Doc doc) =>
       Podcast.fromJson(doc.data()!..['uid'] = doc.id);

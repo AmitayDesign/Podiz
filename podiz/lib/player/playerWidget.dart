@@ -23,7 +23,7 @@ class PlayerWidget extends ConsumerWidget {
     print("building");
     final state = ref.watch(stateProvider);
     return state.maybeWhen(
-      data: (s) {
+      data: (s) {//put stream for podcast here
         if(s == PlayerState.close) return Container();
         final podcast = ref.read(playerProvider).podcastPlaying!;
         final icon = s == PlayerState.play ? Icons.stop : Icons.play_arrow;
@@ -34,7 +34,7 @@ class PlayerWidget extends ConsumerWidget {
           onTap: () => Navigator.pushNamed(context, DiscussionPage.route),
           child: Column(
             children: [
-              PinkProgress(),
+              PinkProgress(podcast.duration_ms),
               Container(
                 height: 100,
                 color: const Color(0xFF3E0979),

@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/aspect/typedefs.dart';
 import 'package:podiz/authentication/AuthManager.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:rxdart/rxdart.dart';
@@ -18,7 +21,17 @@ class Player {
   }
 
   Podcast? podcastPlaying;
+
+  Stream<Podcast> get podcast => _podcastController!.stream;
+
+  BehaviorSubject<Podcast>? _podcastController;
+
+  StreamSubscription<DocumentSnapshot<Object?>>? podcastStreamSubscription;
+
+  bool firstTime = true;
+
   bool error = false;
+
   final StreamController<Duration> _positionController =
       StreamController.broadcast();
 
@@ -44,10 +57,42 @@ class Player {
       position = Duration(milliseconds: position.inMilliseconds + 200);
       await Future.delayed(Duration(milliseconds: 200));
     }
+    if (podcastPlaying!.duration_ms - 200 <= position.inMilliseconds) {
+      decrement(podcastPlaying!.uid!);
+    }
   }
 
-  Future<void> playEpisode(
-      Podcast episode, String userUid, int pos) async {
+  setUpPodcastStream(String podcastUid) async {
+    if (!firstTime) {
+      await podcastStreamSubscription!.cancel();
+      await _podcastController!.close();
+      podcastPlaying = null;
+    }
+    firstTime = false;
+    _podcastController = BehaviorSubject<Podcast>();
+    podcastStreamSubscription = FirebaseFirestore.instance
+        .collection("podcasts")
+        .doc(podcastUid)
+        .snapshots()
+        .listen((snapshot) async {
+      if (snapshot.data() != null) {
+        podcastPlaying = Podcast.fromJson(snapshot.data()!);
+        _podcastController?.add(podcastPlaying!);
+      }
+    });
+  }
+
+  Future<void> playEpisode(Podcast episode, String userUid, int pos) async {
+    if (podcastPlaying == null) {
+      increment(episode.uid!);
+      _podcastController?.add(episode);
+      setUpPodcastStream(episode.uid!);
+    } else if (podcastPlaying!.uid! != episode.uid) {
+      increment(episode.uid!);
+      decrement(podcastPlaying!.uid!);
+      _podcastController?.add(episode);
+      setUpPodcastStream(episode.uid!);
+    }
     HttpsCallableResult<bool> result = await FirebaseFunctions.instance
         .httpsCallable("play")
         .call({"episodeUid": episode.uid, "userUid": userUid, "position": pos});
@@ -79,6 +124,7 @@ class Player {
       _stateController.add(_state);
       return;
     }
+
     error = false;
     _state = PlayerState.play;
     _stateController.add(_state);
@@ -101,5 +147,19 @@ class Player {
     _state = PlayerState.close;
     _stateController.add(_state);
     return;
+  }
+
+  void increment(String episodeUid) {
+    FirebaseFirestore.instance
+        .collection("podcasts")
+        .doc(episodeUid)
+        .update({"watching": FieldValue.increment(1)});
+  }
+
+  void decrement(String episodeUid) {
+    FirebaseFirestore.instance
+        .collection("podcasts")
+        .doc(episodeUid)
+        .update({"watching": FieldValue.increment(-1)});
   }
 }

@@ -25,7 +25,8 @@ class TabBarLabel extends ConsumerWidget {
           image_url: "",
           comments: 0,
           commentsImg: [],
-          release_date: "");
+          release_date: "",
+          watching: 0);
     } else {
       podcast = ref
           .read(podcastManagerProvider)

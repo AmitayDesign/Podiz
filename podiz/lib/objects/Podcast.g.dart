@@ -19,6 +19,7 @@ Podcast _$PodcastFromJson(Map<String, dynamic> json) => Podcast(
           .map((e) => e as String)
           .toList(),
       release_date: json['release_date'] as String,
+      watching: json['watching'] as int,
     );
 
 Map<String, dynamic> _$PodcastToJson(Podcast instance) => <String, dynamic>{
@@ -32,4 +33,5 @@ Map<String, dynamic> _$PodcastToJson(Podcast instance) => <String, dynamic>{
       'comments': instance.comments,
       'commentsImg': instance.commentsImg,
       'release_date': instance.release_date,
+      'watching': instance.watching,
     };

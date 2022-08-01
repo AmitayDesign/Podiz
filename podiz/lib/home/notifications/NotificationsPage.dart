@@ -73,10 +73,6 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                         padding: const EdgeInsets.only(top: 17.0),
                         child: (index != numberValue)
                             ? DiscussionCard(
-                                ref
-                                    .read(podcastManagerProvider)
-                                    .getPodcastById(n[key]![index].episodeUid)
-                                    .searchResultToPodcast(),
                                 n[key]![index].notificationToComment())
                             : SizedBox(height: widget.isPlaying ? 205 : 101),
                       )),
@@ -94,12 +90,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                 itemBuilder: (context, index) => Padding(
                       padding: const EdgeInsets.only(top: 17.0),
                       child: (index != list.length)
-                          ? DiscussionCard(
-                              ref
-                                  .read(podcastManagerProvider)
-                                  .getPodcastById(list[index].episodeUid)
-                                  .searchResultToPodcast(),
-                              list[index].notificationToComment())
+                          ? DiscussionCard(list[index].notificationToComment())
                           : SizedBox(height: widget.isPlaying ? 205 : 101),
                     )),
           );
