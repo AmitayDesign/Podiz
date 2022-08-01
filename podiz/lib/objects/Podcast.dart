@@ -11,12 +11,12 @@ part 'Podcast.g.dart';
 class Podcast with EquatableMixin {
   String? uid;
   String name;
-  String description;
-  int duration_ms;
+  String description;//
+  int duration_ms;//
   String show_name;
   String show_uri;
-  String image_url;
-  int comments;
+  String image_url;//
+  int comments;//
   List<String> commentsImg;
   String release_date;
 

@@ -52,6 +52,7 @@ class PodcastManager {
   addPodcastToBloc(Doc doc) {
     Podcast podcast = Podcast.fromJson(doc.data()!);
     podcast.uid = doc.id;
+
     podcastBloc[doc.id] = podcast;
     feedList.add(podcast);
   }

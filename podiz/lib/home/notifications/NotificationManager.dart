@@ -33,6 +33,7 @@ class NotificationManager {
         .collection("users")
         .doc(userUid)
         .collection("notifications")
+        .orderBy("timestamp", descending: true)
         .snapshots()
         .listen((snapshot) async {
       for (DocChange notificationChange in snapshot.docChanges) {
@@ -41,6 +42,7 @@ class NotificationManager {
         }
       }
       _notificationStream.add(notificationBloc);
+      print(notificationBloc);
     });
   }
 
@@ -49,11 +51,11 @@ class NotificationManager {
   addNotificationToBloc(Doc doc) {
     NotificationPodiz notification = NotificationPodiz.fromJson(doc.data()!);
     notification.uid = doc.id;
-    if (notificationBloc.containsKey(notification.podcast)) {
-      notificationBloc[notification.podcast]!.add(notification);
+    if (notificationBloc.containsKey(notification.episodeUid)) {
+      notificationBloc[notification.episodeUid]!.add(notification);
     } else {
       notificationBloc.addAll({
-        notification.podcast: [notification]
+        notification.episodeUid: [notification]
       });
     }
   }

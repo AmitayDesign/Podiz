@@ -155,7 +155,8 @@ class AuthManager {
         .set({
       "id": doc.id,
       "timestamp": date,
-      "uid": userBloc!.uid,
+      "userUid": userBloc!.uid,
+      "episodeUid": episodeUid,
       "comment": comment,
       "time": time,
       "lvl": 1,
@@ -168,7 +169,8 @@ class AuthManager {
           "id": doc.id,
           "comment": comment,
           "time": time,
-          "uid": episodeUid,
+          "userUid": userBloc!.uid,
+          "episodeUid": episodeUid,
           "timestamp": date,
           "lvl": 1,
           "parents": [],
@@ -176,14 +178,12 @@ class AuthManager {
       ]),
     });
     incrementPodcastCounter(episodeUid);
-    // doReply(Comment(doc.id, uid: episodeUid, timestamp: date, comment: comment, time: time, lvl: 1, parents: []), "reply");
-
   }
 
   doReply(Comment comment, String reply) async {
     DocRef doc = await firestore
         .collection("podcasts")
-        .doc(comment.uid)
+        .doc(comment.episodeUid)
         .collection("comments")
         .doc();
     String date = DateTime.now().toIso8601String();
@@ -191,13 +191,14 @@ class AuthManager {
     parents.add(comment.id);
     firestore
         .collection("podcasts")
-        .doc(comment.uid)
+        .doc(comment.episodeUid)
         .collection("comments")
         .doc(doc.id)
         .set({
       "id": doc.id,
       "timestamp": date,
-      "uid": userBloc!.uid,
+      "userUid": userBloc!.uid,
+      "episodeUid": comment.episodeUid,
       "comment": reply,
       "time": comment.time,
       "lvl": comment.lvl + 1,
@@ -210,14 +211,33 @@ class AuthManager {
           "id": doc.id,
           "comment": reply,
           "time": comment.time,
-          "uid": comment.uid,
+          "userUid": userBloc!.uid,
+          "episodeUid": comment.episodeUid,
           "timestamp": date,
           "lvl": comment.lvl + 1,
           "parents": parents,
         }
       ]),
     });
-    incrementPodcastCounter(comment.uid);
+    incrementPodcastCounter(comment.episodeUid);
+    // if (userBloc!.uid == comment.uid) {
+    //   return;
+    // }
+    firestore
+        .collection("users")
+        .doc(comment.userUid)
+        .collection("notifications")
+        .doc()
+        .set({
+      "id": doc.id,
+      "timestamp": date,
+      "userUid": userBloc!.uid,
+      "episodeUid": comment.episodeUid,
+      "comment": reply,
+      "time": comment.time,
+      "lvl": comment.lvl + 1,
+      "parents": parents,
+    });
   }
 
   incrementPodcastCounter(String episodeUid) {

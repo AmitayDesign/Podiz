@@ -9,7 +9,8 @@ part 'Comment.g.dart';
 @JsonSerializable()
 class Comment with EquatableMixin {
   String id;
-  String uid;
+  String episodeUid;
+  String userUid;
   String timestamp;
   String comment;
   int time;
@@ -20,7 +21,8 @@ class Comment with EquatableMixin {
 
   Comment(
     this.id, {
-    required this.uid,
+    required this.episodeUid,
+    required this.userUid,
     required this.timestamp,
     required this.comment,
     required this.time,
@@ -39,7 +41,8 @@ class Comment with EquatableMixin {
   factory Comment.copyFrom(Comment user) => Comment.fromJson(user.toJson());
 
   @override
-  String toString() => " user + ${this.uid} : \n{(name : ${this.comment}; ${replies}\n";
+  String toString() =>
+      " user + ${this.episodeUid} : \n{(name : ${this.comment}; ${replies}\n";
 
   @override
   // TODO: implement props

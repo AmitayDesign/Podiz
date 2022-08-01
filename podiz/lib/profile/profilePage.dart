@@ -159,7 +159,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     final theme = Theme.of(context);
     Podcast podcast = ref
         .read(podcastManagerProvider)
-        .getPodcastById(c.uid)
+        .getPodcastById(c.episodeUid)
         .searchResultToPodcast();
     return Column(
       children: [
@@ -229,7 +229,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       ),
                     ),
                     const Spacer(),
-                    ButtonPlay(c.uid, c.time),
+                    ButtonPlay(c.episodeUid, c.time),
                   ],
                 ),
                 const SizedBox(height: 12),

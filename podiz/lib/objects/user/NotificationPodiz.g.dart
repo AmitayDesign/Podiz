@@ -9,19 +9,24 @@ part of 'NotificationPodiz.dart';
 NotificationPodiz _$NotificationPodizFromJson(Map<String, dynamic> json) =>
     NotificationPodiz(
       json['uid'] as String?,
-      type: json['type'] as String,
       timestamp: json['timestamp'] as String,
-      user: json['user'] as String,
-      podcast: json['podcast'] as String,
+      userUid: json['userUid'] as String,
+      episodeUid: json['episodeUid'] as String,
       comment: json['comment'] as String,
+      time: json['time'] as int,
+      lvl: json['lvl'] as int,
+      parents:
+          (json['parents'] as List<dynamic>).map((e) => e as String).toList(),
     );
 
 Map<String, dynamic> _$NotificationPodizToJson(NotificationPodiz instance) =>
     <String, dynamic>{
       'uid': instance.uid,
-      'type': instance.type,
       'timestamp': instance.timestamp,
-      'user': instance.user,
-      'podcast': instance.podcast,
+      'userUid': instance.userUid,
+      'episodeUid': instance.episodeUid,
       'comment': instance.comment,
+      'time': instance.time,
+      'lvl': instance.lvl,
+      'parents': instance.parents,
     };

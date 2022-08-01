@@ -92,7 +92,7 @@ class PodcastListTile extends ConsumerWidget {
                                               4 +
                                               12 +
                                               16 +
-                                              62 +
+                                              58 +
                                               16),
                                       child: Text(podcast.show_name,
                                           style: podcastArtist()),

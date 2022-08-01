@@ -23,7 +23,7 @@ class DiscussionCard extends ConsumerWidget {
     final theme = Theme.of(context);
     UserManager userManager = ref.read(userManagerProvider);
     return FutureBuilder(
-      future: userManager.getUserFromUid(comment.uid),
+      future: userManager.getUserFromUid(comment.userUid),
       initialData: "loading",
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
@@ -78,7 +78,7 @@ class DiscussionCard extends ConsumerWidget {
                             ),
                           ),
                           const Spacer(),
-                          ButtonPlay(comment.uid, comment.time),
+                          ButtonPlay(comment.episodeUid, comment.time),
                         ],
                       ),
                       const SizedBox(height: 12),
