@@ -1,8 +1,12 @@
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/aspect/theme/palette.dart';
+import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/home/components/HomeAppBar.dart';
+import 'package:podiz/home/components/circleProfile.dart';
+import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/player/playerWidget.dart';
 import 'package:podiz/home/components/podcastListTile.dart';
 import 'package:podiz/home/feed/components/podcastListTileQuickNote.dart';
@@ -128,8 +132,8 @@ class _FeedPageState extends ConsumerState<FeedPage> {
           visible = false;
         });
       },
-      child: Stack(
-        children:[ Column(
+      child: Stack(children: [
+        Column(
           children: [
             HomeAppBar(title),
             Expanded(
@@ -142,15 +146,19 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                       switch (index) {
                         case 0:
                           return widget.user.lastListened != ""
-                              ? PodcastListTileQuickNote(podcastManager
-                                  .getPodcastById(widget.user.lastListened))
+                              ? PodcastListTileQuickNote(
+                                  podcastManager
+                                      .getPodcastById(widget.user.lastListened),
+                                  quickNote: quickNote(),
+                                )
                               : Container();
                         case 1:
                           return widget.user.favPodcasts.isNotEmpty
                               ? PodcastListTile(categories[1], mycastPodcasts)
                               : Container();
                         case 2:
-                          return PodcastListTile(categories[2], hotlivePodcasts);
+                          return PodcastListTile(
+                              categories[2], hotlivePodcasts);
                         case 3:
                           return SizedBox(height: widget.isPlaying ? 197 : 93);
                         default:
@@ -161,13 +169,121 @@ class _FeedPageState extends ConsumerState<FeedPage> {
             ),
           ],
         ),
-      
+        visible
+            ? Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: commentView(
+                    podcastManager.getPodcastById(widget.user.lastListened)),
+              )
+            : Container(),
       ]),
     );
   }
 
-  Widget commentView() {
-    return Container()
-    ;
+  Widget commentView(Podcast episode) {
+    return Container(
+      height: 127,
+      decoration: const BoxDecoration(
+        color: Color(0xFF4E4E4E),
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 20),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                CircleProfile(
+                  user: ref.read(authManagerProvider).userBloc!,
+                  size: 15.5,
+                ),
+                const SizedBox(width: 8),
+                LimitedBox(
+                  maxWidth: kScreenWidth - (14 + 31 + 8 + 31 + 8 + 14),
+                  maxHeight: 31,
+                  child: TextField(
+                    // key: _key,
+                    maxLines: 5,
+                    keyboardType: TextInputType.multiline,
+                    focusNode: _focusNode,
+                    controller: _controllerText,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: const Color(0xFF262626),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 16),
+                      hintStyle: discussionSnackCommentHint(),
+                      hintText: "Share your insight...",
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                InkWell(
+                  onTap: () {
+                    ref.read(authManagerProvider).doComment(
+                        _controllerText.text,
+                        episode.uid!,
+                        episode.duration_ms);
+
+                    setState(() {
+                      visible = false;
+                    });
+                    _focusNode.unfocus();
+                    _controllerText.clear();
+                  },
+                  child: const Icon(
+                    Icons.send,
+                    size: 31,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Text(
+                  "${episode.watching} listening right now",
+                  style: discussionAppBarInsights(),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget quickNote() {
+    return Container(
+      height: 31,
+      decoration: BoxDecoration(
+        color: Color(0x0DFFFFFF),
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: InkWell(
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            const Icon(
+              Icons.edit,
+              size: 16,
+              color: Color(0xFF9E9E9E),
+            ),
+            const SizedBox(width: 10),
+            Text(Locales.string(context, "quicknote"),
+                style: podcastArtistQuickNote()),
+          ]),
+          onTap: () {
+            setState(() {
+              _focusNode.requestFocus();
+              visible = true;
+            });
+          }),
+    );
   }
 }
