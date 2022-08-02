@@ -21,7 +21,7 @@ class Player {
     _stateController.add(PlayerState.close);
   }
 
-  Podcast? podcastPlaying;
+  Podcast? podcastPlaying = null;
 
   Stream<Podcast> get podcast => _podcastController!.stream;
 
@@ -58,7 +58,8 @@ class Player {
         .listen((snapshot) async {
       if (snapshot.data() != null) {
         podcastPlaying = Podcast.fromJson(snapshot.data()!);
-        _podcastController?.add(podcastPlaying!);
+        podcastPlaying!.uid = podcastUid;
+        _podcastController!.add(podcastPlaying!);
       }
     });
   }

@@ -25,7 +25,6 @@ class PlayerWidget extends ConsumerWidget {
     final state = ref.watch(stateProvider);
     return state.maybeWhen(
       data: (s) {
-        //put stream for podcast here
         if (s == PlayerState.close) return Container();
 
         final icon = s == PlayerState.play ? Icons.stop : Icons.play_arrow;
@@ -36,6 +35,7 @@ class PlayerWidget extends ConsumerWidget {
             loading: () => CircularProgressIndicator(),
             data: (p) {
               final playerManager = ref.read(playerManagerProvider);
+              p = playerManager.playerBloc.podcastPlaying!;
               final onTap = s == PlayerState.play
                   ? () => playerManager.pauseEpisode()
                   : () => playerManager.resumeEpisode(p);
