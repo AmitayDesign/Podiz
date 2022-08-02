@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/authentication/AuthManager.dart';
+import 'package:podiz/home/components/circleProfile.dart';
+import 'package:podiz/home/components/podcastAvatar.dart';
+import 'package:podiz/home/components/replyView.dart';
+import 'package:podiz/home/feed/components/buttonPlay.dart';
+import 'package:podiz/home/feed/components/cardButton.dart';
 import 'package:podiz/home/feed/components/podcastListTileQuickNote.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
+import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/NotificationPodiz.dart';
+import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/player/components/discussionCard.dart';
 import 'package:podiz/home/homePage.dart';
 import 'package:podiz/home/notifications/components/tabBarLabel.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/onboarding/components/linearGradientAppBar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
 
@@ -31,9 +42,17 @@ class NotificationsPage extends ConsumerStatefulWidget with HomePageMixin {
 
 class _NotificationsPageState extends ConsumerState<NotificationsPage>
     with SingleTickerProviderStateMixin {
+  late TextEditingController _controllerText;
+  late FocusNode _focusNode;
+
+  bool visible = false;
+  Comment? commentToReply;
+
   @override
   void initState() {
     super.initState();
+    _focusNode = FocusNode();
+    _controllerText = TextEditingController();
   }
 
   @override
@@ -72,8 +91,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                   itemBuilder: (context, index) => Padding(
                         padding: const EdgeInsets.only(top: 17.0),
                         child: (index != numberValue)
-                            ? DiscussionCard(
-                                n[key]![index].notificationToComment())
+                            ? _buildItem(n[key]![index].notificationToComment())
                             : SizedBox(height: widget.isPlaying ? 205 : 101),
                       )),
             );
@@ -90,48 +108,371 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                 itemBuilder: (context, index) => Padding(
                       padding: const EdgeInsets.only(top: 17.0),
                       child: (index != list.length)
-                          ? DiscussionCard(list[index].notificationToComment())
+                          ? _buildItem(list[index].notificationToComment())
                           : SizedBox(height: widget.isPlaying ? 205 : 101),
                     )),
           );
-          return Align(
-              alignment: Alignment.centerLeft,
-              child: DefaultTabController(
-                length: number + 1,
-                child: NestedScrollView(
-                  headerSliverBuilder: (context, value) {
-                    return [
-                      SliverAppBar(
-                        automaticallyImplyLeading: false,
-                        flexibleSpace: Container(
-                          height: 96,
-                          decoration: BoxDecoration(
-                            gradient: appBarGradient(),
+          return GestureDetector(
+            onTap: () {
+              _focusNode.unfocus();
+              setState(() {
+                visible = false;
+              });
+            },
+            child: Stack(children: [
+              Align(
+                  alignment: Alignment.centerLeft,
+                  child: DefaultTabController(
+                    length: number + 1,
+                    child: NestedScrollView(
+                      headerSliverBuilder: (context, value) {
+                        return [
+                          SliverAppBar(
+                            automaticallyImplyLeading: false,
+                            flexibleSpace: Container(
+                              height: 96,
+                              decoration: BoxDecoration(
+                                gradient: appBarGradient(),
+                              ),
+                            ),
+                            bottom: TabBar(
+                                isScrollable: true,
+                                labelStyle: notificationsSelectedLabel(),
+                                unselectedLabelStyle:
+                                    notificationsUnselectedLabel(),
+                                indicatorSize: TabBarIndicatorSize.tab,
+                                overlayColor: MaterialStateProperty.all(
+                                    const Color(0xFF262626)),
+                                indicator: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  color: theme.primaryColor,
+                                ),
+                                padding: const EdgeInsets.only(left: 16),
+                                tabs: tabs),
+                          )
+                        ];
+                      },
+                      body: Padding(
+                        padding: EdgeInsets.only(top: 20),
+                        child: TabBarView(children: children),
+                      ),
+                    ),
+                  )),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: visible ? replyView() : Container(),
+              )
+            ]),
+          );
+        });
+  }
+
+  Widget _buildItem(Comment c) {
+    final theme = Theme.of(context);
+    Podcast podcast =
+        ref.read(podcastManagerProvider).getPodcastById(c.episodeUid);
+
+    return FutureBuilder(
+        future: ref.read(userManagerProvider).getUserFromUid(c.userUid),
+        initialData: "loading",
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            // If we got an error
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  '${snapshot.error} occurred',
+                  style: TextStyle(fontSize: 18),
+                ),
+              );
+
+              // if we got our data
+            } else if (snapshot.hasData) {
+              final user = snapshot.data as UserPodiz;
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Row(
+                      children: [
+                        PodcastAvatar(imageUrl: podcast.image_url, size: 32),
+                        const SizedBox(width: 8),
+                        Container(
+                          width: 250,
+                          height: 32,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  podcast.name,
+                                  style: discussionCardProfile(),
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(podcast.show_name,
+                                      style: discussionAppBarInsights())),
+                            ],
                           ),
                         ),
-                        bottom: TabBar(
-                            isScrollable: true,
-                            labelStyle: notificationsSelectedLabel(),
-                            unselectedLabelStyle:
-                                notificationsUnselectedLabel(),
-                            indicatorSize: TabBarIndicatorSize.tab,
-                            overlayColor: MaterialStateProperty.all(
-                                const Color(0xFF262626)),
-                            indicator: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              color: theme.primaryColor,
-                            ),
-                            padding: const EdgeInsets.only(left: 16),
-                            tabs: tabs),
-                      )
-                    ];
-                  },
-                  body: Padding(
-                    padding: EdgeInsets.only(top: 20),
-                    child: TabBarView(children: children),
+                      ],
+                    ),
                   ),
-                ),
-              ));
+                  const SizedBox(height: 16),
+                  Container(
+                    color: theme.colorScheme.surface,
+                    width: kScreenWidth,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14.0, vertical: 9),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              CircleProfile(user: user, size: 20),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              SizedBox(
+                                width: 200,
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        user.name,
+                                        style: discussionCardProfile(),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                            "${user.followers.length} followers",
+                                            style: discussionCardFollowers())),
+                                  ],
+                                ),
+                              ),
+                              const Spacer(),
+                              ButtonPlay(c.episodeUid, c.time),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            width: kScreenWidth - 32,
+                            child: Text(
+                              c.comment,
+                              style: discussionCardComment(),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          c.lvl == 4
+                              ? Container()
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          visible = true;
+                                          commentToReply = c;
+                                        });
+                                        _focusNode.requestFocus();
+                                      },
+                                      child: Container(
+                                          width: kScreenWidth -
+                                              (16 + 20 + 16 + 16),
+                                          height: 33,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(30),
+                                            color: Palette.grey900,
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 8.0),
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                "Comment on ${user.name} insight...",
+                                                style:
+                                                    discussionSnackCommentHint(),
+                                              ),
+                                            ),
+                                          )),
+                                    ),
+                                    const Spacer(),
+                                    CardButton(
+                                      const Icon(
+                                        Icons.share,
+                                        color: Color(0xFF9E9E9E),
+                                        size: 20,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              );
+            }
+          }
+          return Container(
+            color: theme.colorScheme.surface,
+            width: kScreenWidth,
+            height: 50,
+          );
         });
+  }
+
+  Widget replyView() {
+    return FutureBuilder(
+      future:
+          ref.read(userManagerProvider).getUserFromUid(commentToReply!.userUid),
+      initialData: "loading",
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          // If we got an error
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                '${snapshot.error} occurred',
+                style: TextStyle(fontSize: 18),
+              ),
+            );
+
+            // if we got our data
+          } else if (snapshot.hasData) {
+            final user = snapshot.data as UserPodiz;
+            return Container(
+              width: kScreenWidth,
+              decoration: const BoxDecoration(
+                color: Color(0xFF4E4E4E),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 24),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Replying to...",
+                        style: podcastInsightsQuickNote(),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        CircleProfile(user: user, size: 20),
+                        const SizedBox(width: 8),
+                        Column(
+                          children: [
+                            Text(
+                              user.name,
+                              style: discussionCardProfile(),
+                            ),
+                            Text("${user.followers.length} Followers",
+                                style: discussionCardFollowers()),
+                          ],
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(commentToReply!.comment,
+                            style: discussionCardComment())),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        CircleProfile(user: user, size: 15.5),
+                        const SizedBox(width: 8),
+                        LimitedBox(
+                          maxWidth: kScreenWidth - (14 + 31 + 8 + 31 + 8 + 14),
+                          maxHeight: 31,
+                          child: TextField(
+                            // key: _key,
+                            maxLines: 5,
+                            keyboardType: TextInputType.multiline,
+                            focusNode: _focusNode,
+                            controller: _controllerText,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: const Color(0xFF262626),
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              contentPadding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              hintStyle: discussionSnackCommentHint(),
+                              hintText: "Comment on ${user.name} insight...",
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        InkWell(
+                          onTap: () {
+                            ref
+                                .read(authManagerProvider)
+                                .doReply(commentToReply!, _controllerText.text);
+                            setState(() {
+                              visible = false;
+                              commentToReply = null;
+                              _controllerText.clear();
+                            });
+                          },
+                          child: Container(
+                            height: 31,
+                            width: 31,
+                            decoration: BoxDecoration(
+                              color: Palette.darkPurple,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: const Icon(
+                              Icons.send,
+                              size: 11,
+                              color: Palette.pureWhite,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                  ],
+                ),
+              ),
+            );
+          }
+        }
+        return Container(
+          width: kScreenWidth,
+          height: 50,
+          decoration: const BoxDecoration(
+            color: Color(0xFF4E4E4E),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+          ),
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
   }
 }

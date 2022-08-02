@@ -6,6 +6,7 @@ import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/authentication/AuthManager.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
+import 'package:podiz/home/components/replyView.dart';
 import 'package:podiz/home/feed/components/buttonPlay.dart';
 import 'package:podiz/home/feed/components/cardButton.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
@@ -15,6 +16,7 @@ import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/profile/components.dart/backAppBar.dart';
 import 'package:podiz/profile/components.dart/followPeopleButton.dart';
+import 'package:podiz/profile/userManager.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
   static const route = '/profile';
@@ -31,6 +33,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
   bool visible = false;
   Comment? commentToReply;
+
   @override
   void initState() {
     super.initState();
@@ -57,95 +60,104 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     ShowManager showManager = ref.read(showManagerProvider);
     AuthManager authManager = ref.read(authManagerProvider);
 
-    return Scaffold(
-      appBar: BackAppBar(),
-      floatingActionButton: authManager.userBloc!.uid != widget.user.uid
-          ? FollowPeopleButton(widget.user)
-          : Container(),
-      body: Stack(children: [
-        Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: CircleAvatar(
-                    backgroundImage: NetworkImage(widget.user.image_url),
-                    radius: 50,
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-                Align(
+    return GestureDetector(
+      onTap: () {
+        _focusNode.unfocus();
+        setState(() {
+          visible = false;
+        });
+      },
+      child: Scaffold(
+        appBar: BackAppBar(),
+        floatingActionButton: authManager.userBloc!.uid != widget.user.uid
+            ? FollowPeopleButton(widget.user)
+            : Container(),
+        body: Stack(children: [
+          Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Align(
                     alignment: Alignment.centerLeft,
-                    child: Text(
-                      widget.user.name,
-                      style: followerName(),
-                    )),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(widget.user.followers.length.toString(),
-                        style: followersNumber()),
-                    const SizedBox(width: 4),
-                    Text("Followers", style: followersText()),
-                    const SizedBox(width: 16),
-                    Text(widget.user.following.length.toString(),
-                        style: followersNumber()),
-                    const SizedBox(width: 4),
-                    Text("Following", style: followersText()),
-                  ],
-                ),
-
-                widget.user.favPodcasts.isNotEmpty
-                    ? Padding(
-                        padding: const EdgeInsets.only(top: 24.0),
-                        child: SizedBox(
-                          width: kScreenWidth,
-                          child: Text(
-                            "${widget.user.name.split(" ")[0]}'s Favorite Podcasts",
-                            textAlign: TextAlign.left,
-                            style: followersFavorite(),
-                          ),
-                        ),
-                      )
-                    : Container(),
-                const SizedBox(height: 8),
-                widget.user.favPodcasts.isNotEmpty
-                    ? SizedBox(
-                        height: 68,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: widget.user.favPodcasts
-                              .map((show) => _buildFavouriteItem(
-                                  showManager.getShowImageUrl(show)))
-                              .toList(),
-                        ),
-                      )
-                    : Container() //change this
-              ],
-            ),
-          ),
-          const SizedBox(height: 54),
-          widget.user.comments.isNotEmpty
-              ? Expanded(
-                  child: ListView(
-                    children:
-                        widget.user.comments.reversed.map(_buildItem).toList(),
+                    child: CircleAvatar(
+                      backgroundImage: NetworkImage(widget.user.image_url),
+                      radius: 50,
+                    ),
                   ),
-                )
-              : Container() //change this
+
+                  const SizedBox(height: 12),
+                  Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        widget.user.name,
+                        style: followerName(),
+                      )),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(widget.user.followers.length.toString(),
+                          style: followersNumber()),
+                      const SizedBox(width: 4),
+                      Text("Followers", style: followersText()),
+                      const SizedBox(width: 16),
+                      Text(widget.user.following.length.toString(),
+                          style: followersNumber()),
+                      const SizedBox(width: 4),
+                      Text("Following", style: followersText()),
+                    ],
+                  ),
+
+                  widget.user.favPodcasts.isNotEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 24.0),
+                          child: SizedBox(
+                            width: kScreenWidth,
+                            child: Text(
+                              "${widget.user.name.split(" ")[0]}'s Favorite Podcasts",
+                              textAlign: TextAlign.left,
+                              style: followersFavorite(),
+                            ),
+                          ),
+                        )
+                      : Container(),
+                  const SizedBox(height: 8),
+                  widget.user.favPodcasts.isNotEmpty
+                      ? SizedBox(
+                          height: 68,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: widget.user.favPodcasts
+                                .map((show) => _buildFavouriteItem(
+                                    showManager.getShowImageUrl(show)))
+                                .toList(),
+                          ),
+                        )
+                      : Container() //change this
+                ],
+              ),
+            ),
+            const SizedBox(height: 54),
+            widget.user.comments.isNotEmpty
+                ? Expanded(
+                    child: ListView(
+                      children: widget.user.comments.reversed
+                          .map(_buildItem)
+                          .toList(),
+                    ),
+                  )
+                : Container() //change this
+          ]),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: visible ? replyView() : Container(),
+          )
         ]),
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: visible ? replyView(commentToReply!) : Container(),
-        )
-      ]),
+      ),
     );
   }
 
@@ -157,9 +169,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
   Widget _buildItem(Comment c) {
     final theme = Theme.of(context);
-    Podcast podcast = ref
-        .read(podcastManagerProvider)
-        .getPodcastById(c.episodeUid);
+    Podcast podcast =
+        ref.read(podcastManagerProvider).getPodcastById(c.episodeUid);
     return Column(
       children: [
         Padding(
@@ -291,106 +302,143 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     );
   }
 
-  Widget replyView(Comment c) {
-    return Container(
-      width: kScreenWidth,
-      decoration: const BoxDecoration(
-        color: Color(0xFF4E4E4E),
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14),
-        child: Column(
-          children: [
-            const SizedBox(height: 24),
-            Align(
-              alignment: Alignment.centerLeft,
+  Widget replyView() {
+    return FutureBuilder(
+      future:
+          ref.read(userManagerProvider).getUserFromUid(commentToReply!.userUid),
+      initialData: "loading",
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          // If we got an error
+          if (snapshot.hasError) {
+            return Center(
               child: Text(
-                "Replying to...",
-                style: podcastInsightsQuickNote(),
+                '${snapshot.error} occurred',
+                style: TextStyle(fontSize: 18),
               ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                CircleProfile(user: widget.user, size: 20),
-                const SizedBox(width: 8),
-                Column(
+            );
+
+            // if we got our data
+          } else if (snapshot.hasData) {
+            final user = snapshot.data as UserPodiz;
+            return Container(
+              width: kScreenWidth,
+              decoration: const BoxDecoration(
+                color: Color(0xFF4E4E4E),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                child: Column(
                   children: [
-                    Text(
-                      widget.user.name,
-                      style: discussionCardProfile(),
-                    ),
-                    Text("${widget.user.followers.length} Followers",
-                        style: discussionCardFollowers()),
-                  ],
-                )
-              ],
-            ),
-            const SizedBox(height: 8),
-            Align(
-                alignment: Alignment.centerLeft,
-                child: Text(c.comment, style: discussionCardComment())),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                CircleProfile(user: widget.user, size: 15.5),
-                const SizedBox(width: 8),
-                LimitedBox(
-                  maxWidth: kScreenWidth - (14 + 31 + 8 + 31 + 8 + 14),
-                  maxHeight: 31,
-                  child: TextField(
-                    // key: _key,
-                    maxLines: 5,
-                    keyboardType: TextInputType.multiline,
-                    focusNode: _focusNode,
-                    controller: _controller,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: const Color(0xFF262626),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(30),
+                    const SizedBox(height: 24),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Replying to...",
+                        style: podcastInsightsQuickNote(),
                       ),
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 16),
-                      hintStyle: discussionSnackCommentHint(),
-                      hintText: "Comment on ${widget.user.name} insight...",
                     ),
-                  ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        CircleProfile(user: user, size: 20),
+                        const SizedBox(width: 8),
+                        Column(
+                          children: [
+                            Text(
+                              user.name,
+                              style: discussionCardProfile(),
+                            ),
+                            Text("${user.followers.length} Followers",
+                                style: discussionCardFollowers()),
+                          ],
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(commentToReply!.comment,
+                            style: discussionCardComment())),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        CircleProfile(user: user, size: 15.5),
+                        const SizedBox(width: 8),
+                        LimitedBox(
+                          maxWidth: kScreenWidth - (14 + 31 + 8 + 31 + 8 + 14),
+                          maxHeight: 31,
+                          child: TextField(
+                            // key: _key,
+                            maxLines: 5,
+                            keyboardType: TextInputType.multiline,
+                            focusNode: _focusNode,
+                            controller: _controller,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: const Color(0xFF262626),
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              contentPadding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              hintStyle: discussionSnackCommentHint(),
+                              hintText: "Comment on ${user.name} insight...",
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        InkWell(
+                          onTap: () {
+                            ref
+                                .read(authManagerProvider)
+                                .doReply(commentToReply!, _controller.text);
+                            setState(() {
+                              visible = false;
+                              commentToReply = null;
+                              _controller.clear();
+                            });
+                          },
+                          child: Container(
+                            height: 31,
+                            width: 31,
+                            decoration: BoxDecoration(
+                              color: Palette.darkPurple,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: const Icon(
+                              Icons.send,
+                              size: 11,
+                              color: Palette.pureWhite,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                InkWell(
-                  onTap: () {
-                    ref.read(authManagerProvider).doReply(c, _controller.text);
-                    setState(() {
-                      visible = false;
-                      commentToReply = null;
-                    });
-                  },
-                  child: Container(
-                    height: 31,
-                    width: 31,
-                    decoration: BoxDecoration(
-                      color: Palette.darkPurple,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: const Icon(
-                      Icons.send,
-                      size: 11,
-                      color: Palette.pureWhite,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 14),
-          ],
-        ),
-      ),
+              ),
+            );
+          }
+        }
+        return Container(
+          width: kScreenWidth,
+          height: 50,
+          decoration: const BoxDecoration(
+            color: Color(0xFF4E4E4E),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+          ),
+          child: CircularProgressIndicator(),
+        );
+      },
     );
   }
 }

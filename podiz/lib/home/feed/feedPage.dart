@@ -34,6 +34,10 @@ class FeedPage extends ConsumerStatefulWidget with HomePageMixin {
 
 class _FeedPageState extends ConsumerState<FeedPage> {
   final _controller = ScrollController();
+
+  late TextEditingController _controllerText;
+  late FocusNode _focusNode;
+
   String title = "";
   int categories = 1;
   int numberCast = 0;
@@ -55,6 +59,8 @@ class _FeedPageState extends ConsumerState<FeedPage> {
     hotlivePodcasts = podcastManager.getHotLive();
     mycastPodcasts = podcastManager.getMyCast();
     _controller.addListener(handleAppBar);
+    _focusNode = FocusNode();
+    _controllerText = TextEditingController();
     super.initState();
   }
 
@@ -96,6 +102,15 @@ class _FeedPageState extends ConsumerState<FeedPage> {
     setState(() {});
   }
 
+  bool visible = false;
+  Function onTap() {
+    return () {
+      setState(() {
+        visible = true;
+      });
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     List<String> categories = [
@@ -106,38 +121,53 @@ class _FeedPageState extends ConsumerState<FeedPage> {
 
     PodcastManager podcastManager = ref.read(podcastManagerProvider);
 
-    return Column(
-      children: [
-        HomeAppBar(title),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: ListView.builder(
-                controller: _controller,
-                itemCount: categories.length + 1,
-                itemBuilder: (context, index) {
-                  switch (index) {
-                    case 0:
-                      return widget.user.lastListened != ""
-                          ? PodcastListTileQuickNote(podcastManager
-                              .getPodcastById(widget.user.lastListened)
-                            )
-                          : Container();
-                    case 1:
-                      return widget.user.favPodcasts.isNotEmpty
-                          ? PodcastListTile(categories[1], mycastPodcasts)
-                          : Container();
-                    case 2:
-                      return PodcastListTile(categories[2], hotlivePodcasts);
-                    case 3:
-                      return SizedBox(height: widget.isPlaying ? 197 : 93);
-                    default:
-                      return Container();
-                  }
-                }),
-          ),
+    return GestureDetector(
+      onTap: () {
+        _focusNode.unfocus();
+        setState(() {
+          visible = false;
+        });
+      },
+      child: Stack(
+        children:[ Column(
+          children: [
+            HomeAppBar(title),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: ListView.builder(
+                    controller: _controller,
+                    itemCount: categories.length + 1,
+                    itemBuilder: (context, index) {
+                      switch (index) {
+                        case 0:
+                          return widget.user.lastListened != ""
+                              ? PodcastListTileQuickNote(podcastManager
+                                  .getPodcastById(widget.user.lastListened))
+                              : Container();
+                        case 1:
+                          return widget.user.favPodcasts.isNotEmpty
+                              ? PodcastListTile(categories[1], mycastPodcasts)
+                              : Container();
+                        case 2:
+                          return PodcastListTile(categories[2], hotlivePodcasts);
+                        case 3:
+                          return SizedBox(height: widget.isPlaying ? 197 : 93);
+                        default:
+                          return Container();
+                      }
+                    }),
+              ),
+            ),
+          ],
         ),
-      ],
+      
+      ]),
     );
+  }
+
+  Widget commentView() {
+    return Container()
+    ;
   }
 }

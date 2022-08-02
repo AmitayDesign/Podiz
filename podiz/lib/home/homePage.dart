@@ -36,8 +36,8 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage>
     with SingleTickerProviderStateMixin {
-  var pageIndex = 1;
-  final pageController = PageController(initialPage: 1);
+  var pageIndex = 0;
+  final pageController = PageController(initialPage: 0);
   bool isPlaying = false;
 
   @override
@@ -71,7 +71,7 @@ class _HomePageState extends ConsumerState<HomePage>
     final player = ref.watch(playerStreamProvider);
     final podcasts = ref.watch(podcastsStreamProvider);
     final shows = ref.watch(showStreamProvider);
-    return shows.maybeWhen(
+    return shows.maybeWhen( //remove this
         data: (_) {
           return podcasts.maybeWhen(
             data: (_) => player.maybeWhen(
