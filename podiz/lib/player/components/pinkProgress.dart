@@ -23,9 +23,9 @@ class _PinkProgressState extends ConsumerState<PinkProgress> {
   @override
   void initState() {
     var player = ref.read(playerProvider);
-    position = player.position;
+    position = player.timer.position;
 
-    subscription = player.onAudioPositionChanged.listen((newPosition) {
+    subscription = player.timer.onAudioPositionChanged.listen((newPosition) {
       setState(() {
         position = newPosition;
       });

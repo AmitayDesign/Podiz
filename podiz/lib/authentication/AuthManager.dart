@@ -189,6 +189,7 @@ class AuthManager {
     String date = DateTime.now().toIso8601String();
     List<String> parents = comment.parents;
     parents.add(comment.id);
+    print(parents);
     firestore
         .collection("podcasts")
         .doc(comment.episodeUid)

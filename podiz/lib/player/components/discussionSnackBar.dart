@@ -10,6 +10,7 @@ import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/authentication/AuthManager.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/objects/Podcast.dart';
+import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/player/components/pinkTimer.dart';
 import 'package:podiz/providers.dart';
@@ -85,6 +86,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
   }
 
   Widget openedTextInputView(BuildContext context, Podcast episode) {
+    final playerManager = ref.read(playerManagerProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 20),
       child: Column(
@@ -121,11 +123,11 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
               const SizedBox(width: 8),
               InkWell(
                 onTap: () {
-                  ref.read(playerManagerProvider).resumeEpisode();
+                  ref.read(playerManagerProvider).resumeEpisode(episode);
                   ref.read(authManagerProvider).doComment(
                       _controller.text,
                       ref.read(playerProvider).podcastPlaying!.uid!,
-                      ref.read(playerProvider).position.inMilliseconds);
+                      ref.read(playerProvider).timer.position.inMilliseconds);
 
                   setState(() {
                     visible = false;
@@ -150,17 +152,24 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                 style: discussionAppBarInsights(),
               ),
               const Spacer(),
-              const Icon(
-                Icons.pause,
-                size: 25,
+
+              IconButton(
+                onPressed: () => playerManager.play30Back(episode),
+                icon: const Icon(
+                  Icons.rotate_90_degrees_ccw_outlined,
+                  size: 25,
+                ),
               ),
               const SizedBox(width: 15),
               PinkTimer(),
               const SizedBox(width: 15),
-              const Icon(
-                Icons.rotate_90_degrees_cw_outlined,
-                size: 25,
-              ),
+              IconButton(
+                onPressed: () => playerManager.play30Up(episode),
+                icon: const Icon(
+                  Icons.rotate_90_degrees_cw_outlined,
+                  size: 25,
+                ),
+              )
             ],
           ),
         ],
@@ -169,67 +178,108 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
   }
 
   Widget closedTextInputView(BuildContext context, Podcast episode) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              // StackedImages(23), TODO change this
-              const SizedBox(width: 8),
-              Text(
-                "${episode.watching} listening with you", //TODO change this!!!
-                style: discussionAppBarInsights(),
+    final playerManager = ref.read(playerManagerProvider);
+    final state = ref.watch(stateProvider);
+    return state.maybeWhen(
+        orElse: () => SplashScreen.error(),
+        loading: () => Container(
+              height: 127,
+              decoration: const BoxDecoration(
+                color: Color(0xFF4E4E4E),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10)),
               ),
-              Spacer(),
-              PinkTimer(),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              InkWell(
-                onTap: () {
-                  ref.read(playerManagerProvider).pauseEpisode();
-                  setState(() {
-                    visible = true;
-                  });
-                  focusNode.requestFocus();
-                },
-                child: Container(
-                    width: 226,
-                    height: 33,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      color: const Color(0xFF262626),
+              child: const CircularProgressIndicator(),
+            ),
+        data: (s) {
+          final icon = s == PlayerState.play ? Icons.stop : Icons.play_arrow;
+          final onTap = s == PlayerState.play
+              ? () => playerManager.pauseEpisode()
+              : () => playerManager.resumeEpisode(episode);
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    // StackedImages(23), TODO change this
+                    const SizedBox(width: 8),
+                    Text(
+                      "${episode.watching} listening with you", //TODO change this!!!
+                      style: discussionAppBarInsights(),
                     ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Share your insight...",
-                        style: discussionSnackCommentHint(),
+                    Spacer(),
+                    PinkTimer(),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        ref.read(playerManagerProvider).pauseEpisode();
+                        setState(() {
+                          visible = true;
+                        });
+                        focusNode.requestFocus();
+                      },
+                      child: LimitedBox(
+                        maxWidth: kScreenWidth - (16 + 90 + 16),
+                        child: Container(
+                            height: 33,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              color: const Color(0xFF262626),
+                            ),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Share your insight...",
+                                style: discussionSnackCommentHint(),
+                              ),
+                            )),
                       ),
-                    )),
-              ),
-              Spacer(),
-              const Icon(
-                Icons.rotate_90_degrees_ccw_outlined,
-                size: 25,
-              ),
-              const SizedBox(width: 25),
-              const Icon(
-                Icons.pause, //TODO change this
-                size: 25,
-              ),
-              const SizedBox(width: 25),
-              const Icon(
-                Icons.rotate_90_degrees_cw_outlined,
-                size: 25,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+                    ),
+                    const SizedBox(width: 10),
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () => playerManager.play30Back(episode),
+                        icon: const Icon(
+                          Icons.rotate_90_degrees_ccw_outlined,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        icon: Icon(icon),
+                        onPressed: onTap,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () => playerManager.play30Up(episode),
+                        icon: const Icon(
+                          Icons.rotate_90_degrees_cw_outlined,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          );
+        });
   }
 }

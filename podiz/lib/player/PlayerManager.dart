@@ -56,12 +56,62 @@ class PlayerManager {
       } else if (key == "play") {
         await playerBloc.playEpisode(
             event[key]["episode"], userUid, event[key]["position"]);
-      } else if (key == "resume") {
-        await playerBloc.resumeEpisode(userUid);
       } else if (key == "close") {
         playerBloc.closePlayer();
       }
       _playerStream.add(playerBloc);
+    });
+  }
+
+  void playEpisode(Podcast podcast, int position) {
+    playerSink.add({
+      "play": {"episode": podcast, "position": position}
+    });
+    authManager.updateLastListened(podcast.uid!);
+    setUpDiscussionPageStream(podcast.uid!);
+  }
+
+  void pauseEpisode() {
+    playerSink.add({"pause": true});
+  }
+
+  void resumeEpisode(Podcast podcast) {
+    playerSink.add({
+      "play": {
+        "episode": podcast,
+        "position": playerBloc.timer.position.inMilliseconds
+      }
+    });
+  }
+
+  void play30Back(Podcast podcast) {
+    Duration pos = playerBloc.timer.position;
+    if (pos.inMilliseconds < Duration(seconds: 30).inMilliseconds) {
+      print("entrei");
+      pos = Duration.zero;
+    } else {
+      pos = Duration(
+          milliseconds:
+              pos.inMilliseconds - Duration(seconds: 30).inMilliseconds);
+    }
+    playerSink.add({
+      "play": {"episode": podcast, "position": pos.inMilliseconds}
+    });
+  }
+
+  void play30Up(Podcast podcast) {
+    Duration pos = playerBloc.timer.position;
+    Duration dur = playerBloc.timer.duration;
+    if ((pos.inMilliseconds + Duration(seconds: 30).inMilliseconds) >
+        dur.inMilliseconds) {
+      pos = dur;
+    } else {
+      pos = Duration(
+          milliseconds:
+              pos.inMilliseconds + Duration(seconds: 30).inMilliseconds);
+    }
+    playerSink.add({
+      "play": {"episode": podcast, "position": pos.inMilliseconds}
     });
   }
 
@@ -116,22 +166,6 @@ class PlayerManager {
           .replies!
           .addAll({doc.id: comment});
     }
-  }
-
-  void playEpisode(Podcast podcast, int position) {
-    playerSink.add({
-      "play": {"episode": podcast, "position": position}
-    });
-    authManager.updateLastListened(podcast.uid!);
-    setUpDiscussionPageStream(podcast.uid!);
-  }
-
-  void pauseEpisode() {
-    playerSink.add({"pause": true});
-  }
-
-  void resumeEpisode() {
-    playerSink.add({"resume": true});
   }
 
   showComments(int time) {

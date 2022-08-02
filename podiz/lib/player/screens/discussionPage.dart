@@ -25,10 +25,10 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
   @override
   void initState() {
     var player = ref.read(playerProvider);
-    position = player.position;
+    position = player.timer.position;
     final playerManager = ref.read(playerManagerProvider);
 
-    subscription = player.onAudioPositionChanged.listen((newPosition) {
+    subscription = player.timer.onAudioPositionChanged.listen((newPosition) {
       position = newPosition;
       playerManager.showComments(position.inMilliseconds);
     });
@@ -45,7 +45,6 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
   @override
   Widget build(BuildContext context) {
     final comments = ref.watch(commentsStreamProvider);
-
     return comments.maybeWhen(
       data: (c) {
         return Scaffold(

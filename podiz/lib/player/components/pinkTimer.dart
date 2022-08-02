@@ -21,8 +21,8 @@ class _PinkTimerState extends ConsumerState<PinkTimer> {
   @override
   void initState() {
     Player player = ref.read(playerProvider);
-    position = player.position;
-    subscription = player.onAudioPositionChanged.listen(
+    position = player.timer.position;
+    subscription = player.timer.onAudioPositionChanged.listen(
       (newPosition) {
         setState(() {
           position = newPosition;

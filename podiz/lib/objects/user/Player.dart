@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/typedefs.dart';
 import 'package:podiz/authentication/AuthManager.dart';
 import 'package:podiz/objects/Podcast.dart';
+import 'package:podiz/objects/user/TimerPodiz.dart';
 import 'package:rxdart/rxdart.dart';
 
 enum PlayerState {
@@ -32,11 +33,6 @@ class Player {
 
   bool error = false;
 
-  final StreamController<Duration> _positionController =
-      StreamController.broadcast();
-
-  Stream<Duration> get onAudioPositionChanged => _positionController.stream;
-
   final BehaviorSubject<PlayerState> _stateController =
       BehaviorSubject<PlayerState>();
 
@@ -46,27 +42,12 @@ class Player {
 
   PlayerState get getState => _state;
 
-  Duration position = Duration.zero;
-
-  startTimer() async {
-    Podcast podcastTimer = podcastPlaying!;
-    while (podcastTimer.uid == podcastPlaying!.uid &&
-        (_state == PlayerState.play &&
-            position.inMilliseconds < podcastPlaying!.duration_ms - 200)) {
-      _positionController.add(position);
-      position = Duration(milliseconds: position.inMilliseconds + 200);
-      await Future.delayed(Duration(milliseconds: 200));
-    }
-    if (podcastPlaying!.duration_ms - 200 <= position.inMilliseconds) {
-      decrement(podcastPlaying!.uid!);
-    }
-  }
+  TimerPodiz timer = TimerPodiz("");
 
   setUpPodcastStream(String podcastUid) async {
     if (!firstTime) {
       await podcastStreamSubscription!.cancel();
       await _podcastController!.close();
-      podcastPlaying = null;
     }
     firstTime = false;
     _podcastController = BehaviorSubject<Podcast>();
@@ -83,53 +64,42 @@ class Player {
   }
 
   Future<void> playEpisode(Podcast episode, String userUid, int pos) async {
-    if (podcastPlaying == null) {
-      increment(episode.uid!);
-      _podcastController?.add(episode);
-      setUpPodcastStream(episode.uid!);
-    } else if (podcastPlaying!.uid! != episode.uid) {
+    if (podcastPlaying != null && podcastPlaying!.uid != episode.uid) {
       increment(episode.uid!);
       decrement(podcastPlaying!.uid!);
-      _podcastController?.add(episode);
+      setUpPodcastStream(episode.uid!);
+    } else if (podcastPlaying == null) {
+      increment(episode.uid!);
       setUpPodcastStream(episode.uid!);
     }
+
     HttpsCallableResult<bool> result = await FirebaseFunctions.instance
         .httpsCallable("play")
         .call({"episodeUid": episode.uid, "userUid": userUid, "position": pos});
     podcastPlaying = episode;
-    position = Duration(milliseconds: pos);
+    _podcastController!.add(episode);
+
     if (!result.data) {
       error = true;
       _state = PlayerState.stop;
       _stateController.add(_state);
       return;
     }
+
+    playTimer(episode, pos);
     error = false;
     _state = PlayerState.play;
     _stateController.add(_state);
-    startTimer();
     return;
   }
 
-  Future<void> resumeEpisode(String userUid) async {
-    HttpsCallableResult<bool> result =
-        await FirebaseFunctions.instance.httpsCallable("play").call({
-      "episodeUid": podcastPlaying!.uid,
-      "userUid": userUid,
-      "position": position.inMilliseconds,
-    });
-    if (!result.data) {
-      error = true;
-      _state = PlayerState.stop;
-      _stateController.add(_state);
-      return;
-    }
-
-    error = false;
-    _state = PlayerState.play;
-    _stateController.add(_state);
-    startTimer();
-    return;
+  void playTimer(Podcast episode, int position) async {
+    timer.setIsPlaying(false);
+    await Future.delayed(const Duration(milliseconds: 200));
+    timer.setPosition(Duration(milliseconds: position));
+    timer.setDuration(Duration(milliseconds: episode.duration_ms));
+    timer.setIsPlaying(true);
+    timer.timerStart();
   }
 
   Future<void> pauseEpisode(String userUid) async {
@@ -139,6 +109,7 @@ class Player {
         .call({"userUid": userUid});
     _state = PlayerState.stop;
     _stateController.add(_state);
+    timer.setIsPlaying(false);
     return;
   }
 
