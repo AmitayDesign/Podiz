@@ -121,7 +121,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                       return widget.user.lastListened != ""
                           ? PodcastListTileQuickNote(podcastManager
                               .getPodcastById(widget.user.lastListened)
-                              .searchResultToPodcast())
+                            )
                           : Container();
                     case 1:
                       return widget.user.favPodcasts.isNotEmpty

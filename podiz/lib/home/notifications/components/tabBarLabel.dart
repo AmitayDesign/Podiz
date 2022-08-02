@@ -28,10 +28,7 @@ class TabBarLabel extends ConsumerWidget {
           release_date: "",
           watching: 0);
     } else {
-      podcast = ref
-          .read(podcastManagerProvider)
-          .getPodcastById(text)
-          .searchResultToPodcast();
+      podcast = ref.read(podcastManagerProvider).getPodcastById(text);
     }
     return Tab(
       height: 32,

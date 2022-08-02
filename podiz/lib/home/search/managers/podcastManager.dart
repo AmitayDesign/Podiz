@@ -75,21 +75,40 @@ class PodcastManager {
         .call({"userUid": userID});
   }
 
-  SearchResult getPodcastById(String podcastId) {
+  Podcast getPodcastById(String podcastId) {
+    if (podcastBloc.containsKey(podcastId)) {
+      Podcast podcast = podcastBloc[podcastId]!;
+      return podcast;
+    }
+    return Podcast("Not_Found",
+        name: "Not_Found",
+        description: "Not_Found",
+        duration_ms: 0,
+        show_name: "Not_Found",
+        show_uri: "Not_Found",
+        image_url: "Not_Found",
+        comments: 0,
+        commentsImg: [],
+        release_date: "",
+        watching: 0);
+  }
+
+  SearchResult getSearchResultById(String podcastId) {
     if (podcastBloc.containsKey(podcastId)) {
       Podcast podcast = podcastBloc[podcastId]!;
       return SearchResult(
-          uid: podcast.uid!,
-          name: podcast.name,
-          description: podcast.description,
-          duration_ms: podcast.duration_ms,
-          show_name: podcast.show_name,
-          show_uri: podcast.show_uri,
-          image_url: podcast.image_url,
-          comments: podcast.comments,
-          commentsImg: podcast.commentsImg,
-          release_date: podcast.release_date,
-          watching: podcast.watching);
+        uid: podcast.uid!,
+        name: podcast.name,
+        description: podcast.description,
+        duration_ms: podcast.duration_ms,
+        show_name: podcast.show_name,
+        show_uri: podcast.show_uri,
+        image_url: podcast.image_url,
+        comments: podcast.comments,
+        commentsImg: podcast.commentsImg,
+        release_date: podcast.release_date,
+        watching: podcast.watching,
+      );
     }
     return SearchResult(
         uid: "Not_Found",
@@ -101,7 +120,8 @@ class PodcastManager {
         image_url: "Not_Found",
         comments: 0,
         commentsImg: [],
-        release_date: "");
+        release_date: "",
+        watching: 0);
   }
 
   List<Podcast> getMyCast() {

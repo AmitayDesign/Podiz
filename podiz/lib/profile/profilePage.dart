@@ -159,8 +159,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     final theme = Theme.of(context);
     Podcast podcast = ref
         .read(podcastManagerProvider)
-        .getPodcastById(c.episodeUid)
-        .searchResultToPodcast();
+        .getPodcastById(c.episodeUid);
     return Column(
       children: [
         Padding(
