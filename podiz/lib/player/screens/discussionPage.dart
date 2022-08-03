@@ -56,6 +56,7 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
           body: Column(children: [
             Expanded(
               child: ListView.builder(
+                reverse: true,
                 itemCount: c.length,
                 itemBuilder: (context, index) => DiscussionCard(c[index]),
               ),
