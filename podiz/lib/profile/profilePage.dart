@@ -180,8 +180,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               PodcastAvatar(imageUrl: podcast.image_url, size: 32),
               const SizedBox(width: 8),
               Container(
-                width: 250,
-                height: 32,
+                width: kScreenWidth - (16 + 32+ 8+16),
+                height: 40,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -192,7 +192,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         style: discussionCardProfile(),
                       ),
                     ),
-                    const SizedBox(height: 2),
                     Align(
                         alignment: Alignment.centerLeft,
                         child: Text(podcast.show_name,
