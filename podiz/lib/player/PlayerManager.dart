@@ -64,6 +64,7 @@ class PlayerManager {
   }
 
   void playEpisode(Podcast podcast, int position) {
+    print(podcast.uid);
     playerSink.add({
       "play": {"episode": podcast, "position": position}
     });

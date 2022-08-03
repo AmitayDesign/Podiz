@@ -329,3 +329,10 @@ TextStyle noInternetTitle() => const TextStyle(
       overflow: TextOverflow.ellipsis,
       fontWeight: FontWeight.w700,
     );
+
+TextStyle FFFFFFFF14700() => const TextStyle(
+      fontFamily: 'Montserrat',
+      fontSize: 14,
+      color: Color(0xFFFFFFFF),
+      fontWeight: FontWeight.w700,
+    );

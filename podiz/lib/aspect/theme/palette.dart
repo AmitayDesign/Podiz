@@ -9,6 +9,8 @@ class Palette {
   static const Color red = Color(0xFFE45858);
   static const Color pureWhite = Color(0xFFFFFFFF);
   static const Color grey900 = Color(0xFF404040);
+  static const Color grey800 = Color(0xFF4E4E4E);
+  static const Color grey600 = Color(0xFF9E9E9E);
 
   static const ColorScheme colorScheme = ColorScheme.dark(
     primary: purple,

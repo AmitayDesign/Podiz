@@ -49,6 +49,7 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
         data: (p) {
           final playerManager = ref.read(playerManagerProvider);
           p = playerManager.playerBloc.podcastPlaying!;
+          print(p.uid);
           return AppBar(
             automaticallyImplyLeading: false,
             backgroundColor: Palette.purpleAppBar,
