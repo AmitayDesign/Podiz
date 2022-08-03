@@ -100,7 +100,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
   Widget openedTextInputView(BuildContext context, Podcast episode) {
     final playerManager = ref.read(playerManagerProvider);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 20),
+      padding: const EdgeInsets.only(left: 14.0, right: 14, top: 20, bottom: 8),
       child: Column(
         children: [
           Row(
@@ -154,7 +154,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
           Row(
             children: [
               // StackedImages(23), //TODO change this
