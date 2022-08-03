@@ -41,16 +41,5 @@ class TimerPodiz {
       position = Duration(milliseconds: position.inMilliseconds + 200);
       await Future.delayed(const Duration(milliseconds: 200));
     }
-    if (position.inMilliseconds >= duration.inMilliseconds - 200) {
-      decrement(podcast);
-      episodeUid = "";
-    }
-  }
-
-  void decrement(String episodeUid) {
-    FirebaseFirestore.instance
-        .collection("podcasts")
-        .doc(episodeUid)
-        .update({"watching": FieldValue.increment(-1)});
   }
 }

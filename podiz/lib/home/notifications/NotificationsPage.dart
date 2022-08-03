@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/widgets/shimmerLoading.dart';
 import 'package:podiz/authentication/AuthManager.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
@@ -69,7 +70,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
     final theme = Theme.of(context);
     final notifications = ref.watch(notificationsStreamProvider);
     return notifications.maybeWhen(
-        loading: () => CircularProgressIndicator(),
+        loading: () => notificationsShimmerLoading(context),
         orElse: () => SplashScreen.error(),
         data: (n) {
           Iterable<String> keys = n.keys;
@@ -199,9 +200,9 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                       children: [
                         PodcastAvatar(imageUrl: podcast.image_url, size: 32),
                         const SizedBox(width: 8),
-                        Container(
-                          width: 250,
-                          height: 32,
+                        LimitedBox(
+                          maxWidth: kScreenWidth - (16 + 8 + 32 + 16),
+                          maxHeight: 40,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -473,6 +474,121 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
           child: CircularProgressIndicator(),
         );
       },
+    );
+  }
+
+  Widget notificationsShimmerLoading(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            children: [
+              ShimmerLoading(
+                  child: Container(
+                height: 32,
+                width: 32,
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(20)),
+              )),
+              const SizedBox(width: 8),
+              Container(
+                width: kScreenWidth - (16 + 8 + 32 + 16),
+                height: 40,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: ShimmerLoading(
+                          child: Container(
+                            height: 16,
+                            width: kScreenWidth - (16 + 8 + 70 + 16),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20)),
+                          ),
+                        )),
+                    const SizedBox(height: 2),
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: ShimmerLoading(
+                          child: Container(
+                            height: 14,
+                            width: kScreenWidth - (16 + 8 + 70 + 16),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20)),
+                          ),
+                        )),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        ShimmerLoading(
+          child: Container(
+            color: theme.colorScheme.surface,
+            width: kScreenWidth,
+            height: 90,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            children: [
+              ShimmerLoading(
+                  child: Container(
+                height: 32,
+                width: 32,
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(20)),
+              )),
+              const SizedBox(width: 8),
+              Container(
+                width: kScreenWidth - (16 + 8 + 32 + 16),
+                height: 40,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: ShimmerLoading(
+                          child: Container(
+                            height: 16,
+                            width: kScreenWidth - (16 + 8 + 70 + 16),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20)),
+                          ),
+                        )),
+                    const SizedBox(height: 2),
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: ShimmerLoading(
+                          child: Container(
+                            height: 14,
+                            width: kScreenWidth - (16 + 8 + 70 + 16),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20)),
+                          ),
+                        )),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        ShimmerLoading(
+          child: Container(
+            color: theme.colorScheme.surface,
+            width: kScreenWidth,
+            height: 90,
+          ),
+        ),
+      ],
     );
   }
 }

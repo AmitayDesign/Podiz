@@ -25,6 +25,7 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(134);
 
+  bool firstTime = true;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
@@ -70,12 +71,12 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
                   ]),
                 ),
               ),
-              const Spacer(),
+              const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: InsightsRow.quickNote(p),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Row(
@@ -92,6 +93,7 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
                             child: Text(
                               p.name,
                               style: discussionAppBarTitle(),
+                              maxLines: 1,
                             ),
                           ),
                         ),

@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/aspect/widgets/shimmerLoading.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/player/components/discussionAppBar.dart';
@@ -21,9 +23,11 @@ class DiscussionPage extends ConsumerStatefulWidget {
 class _DiscussionPageState extends ConsumerState<DiscussionPage> {
   Duration position = Duration.zero;
   StreamSubscription<Duration>? subscription;
+  late String episodeUid;
 
   @override
   void initState() {
+    print("init state");
     var player = ref.read(playerProvider);
     position = player.timer.position;
     final playerManager = ref.read(playerManagerProvider);
@@ -60,7 +64,23 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
           ]),
         );
       },
-      loading: () => const CircularProgressIndicator(),
+      loading: () => Scaffold(
+        body: Column(children: [
+          Spacer(),
+          ShimmerLoading(
+            child: Container(
+              width: kScreenWidth,
+              height: 127,
+              decoration: const BoxDecoration(
+                color: Color(0xFF4E4E4E),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10)),
+              ),
+            ),
+          )
+        ]),
+      ),
       orElse: () => SplashScreen.error(),
     );
   }

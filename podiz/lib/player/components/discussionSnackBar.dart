@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +8,7 @@ import 'package:loading_indicator/loading_indicator.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/widgets/shimmerLoading.dart';
 import 'package:podiz/authentication/AuthManager.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/objects/Podcast.dart';
@@ -28,6 +30,9 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
 
   bool visible = false;
 
+  bool firstTime = true;
+  late String episodeUid;
+
   final Key _key = const Key("textField");
 
   FocusNode focusNode = FocusNode();
@@ -38,9 +43,13 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
 
   @override
   void dispose() {
-    super.dispose();
+    FirebaseFirestore.instance
+        .collection("podcasts")
+        .doc(episodeUid)
+        .update({"watching": FieldValue.increment(-1)});
     focusNode.dispose();
     _controller.dispose();
+    super.dispose();
   }
 
   // @override
@@ -54,35 +63,38 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
     final theme = Theme.of(context);
     final podcast = ref.watch(podcastProvider);
     return podcast.maybeWhen(
-      orElse: () => SplashScreen.error(),
-      loading: () => Container(
-        height: 127,
-        decoration: const BoxDecoration(
-          color: Color(0xFF4E4E4E),
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-        ),
-        child: Container(
-          width: 20,
-          height: 20,
-          child: LoadingIndicator(
-            indicatorType: Indicator.circleStrokeSpin,
-            colors: [theme.primaryColor],
-            strokeWidth: 4,
-          ),
-        ),
-      ),
-      data: (p) => Container(
-          height: 127,
-          decoration: const BoxDecoration(
-            color: Color(0xFF4E4E4E),
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-          ),
-          child: visible
-              ? openedTextInputView(context, p)
-              : closedTextInputView(context, p)),
-    );
+        orElse: () => SplashScreen.error(),
+        loading: () => ShimmerLoading(
+              child: Container(
+                height: 127,
+                width: kScreenWidth,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF4E4E4E),
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10)),
+                ),
+              ),
+            ),
+        data: (p) {
+          final player = ref.read(playerProvider);
+          if (firstTime) {
+            episodeUid = p.uid!;
+            player.increment(episodeUid);
+            firstTime = false;
+          }
+          return Container(
+              height: 127,
+              decoration: const BoxDecoration(
+                color: Color(0xFF4E4E4E),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10)),
+              ),
+              child: visible
+                  ? openedTextInputView(context, p)
+                  : closedTextInputView(context, p));
+        });
   }
 
   Widget openedTextInputView(BuildContext context, Podcast episode) {

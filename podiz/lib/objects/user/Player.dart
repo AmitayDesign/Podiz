@@ -66,11 +66,8 @@ class Player {
 
   Future<void> playEpisode(Podcast episode, String userUid, int pos) async {
     if (podcastPlaying != null && podcastPlaying!.uid != episode.uid) {
-      increment(episode.uid!);
-      decrement(podcastPlaying!.uid!);
       setUpPodcastStream(episode.uid!);
     } else if (podcastPlaying == null) {
-      increment(episode.uid!);
       setUpPodcastStream(episode.uid!);
     }
 
