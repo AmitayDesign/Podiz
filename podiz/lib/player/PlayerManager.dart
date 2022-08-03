@@ -137,12 +137,9 @@ class PlayerManager {
         if (commentChange.type == DocumentChangeType.added) {
           await addCommentToBloc(commentChange.doc);
         }
-        // else if (commentChange.type == DocumentChangeType.modified) {
-        //   await editCommentToBloc(commentChange.doc);
-        // }
       }
       commentsOrdered = getOrderedComments();
-      _commentsStream!.add([]);
+      _commentsStream!.add([]); //TODO Fix this!!!!!!!!
     });
   }
 
