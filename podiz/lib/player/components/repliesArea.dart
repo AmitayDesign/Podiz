@@ -88,7 +88,7 @@ class RepliesArea extends ConsumerWidget {
                             width: 23,
                             thickness: 1,
                             indent: 4,
-                            endIndent: 0,
+                            endIndent: 4,
                             color: Palette.grey600),
                         const SizedBox(width: 8),
                         LimitedBox(
