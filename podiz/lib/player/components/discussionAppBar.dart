@@ -20,7 +20,8 @@ import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
 
 class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
-  DiscussionAppBar({Key? key}) : super(key: key);
+  Podcast p;
+  DiscussionAppBar(this.p, {Key? key}) : super(key: key);
 
   @override
   Size get preferredSize => const Size.fromHeight(134);
@@ -29,111 +30,90 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final podcast = ref.watch(podcastProvider);
-    return podcast.maybeWhen(
-        orElse: () => SplashScreen.error(),
-        loading: () => AppBar(
-            automaticallyImplyLeading: false,
-            backgroundColor: Palette.purpleAppBar,
-            flexibleSpace: Center(
-              child: Container(
-                width: 20,
-                height: 20,
-                child: LoadingIndicator(
-                  indicatorType: Indicator.circleStrokeSpin,
-                  colors: [theme.primaryColor],
-                  strokeWidth: 4,
-                ),
+
+    return AppBar(
+      automaticallyImplyLeading: false,
+      backgroundColor: Palette.purpleAppBar,
+      flexibleSpace: Column(children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 20.0, top: 35),
+          child: InkWell(
+            onTap: () => Navigator.pop(context),
+            child: Row(children: [
+              const Icon(
+                Icons.arrow_back_ios_new,
+                size: 15,
+                color: Color(0xB2FFFFFF),
               ),
-            )),
-        data: (p) {
-          final playerManager = ref.read(playerManagerProvider);
-          p = playerManager.playerBloc.podcastPlaying!;
-          print(p.uid);
-          return AppBar(
-            automaticallyImplyLeading: false,
-            backgroundColor: Palette.purpleAppBar,
-            flexibleSpace: Column(children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 20.0, top: 35),
-                child: InkWell(
-                  onTap: () => Navigator.pop(context),
-                  child: Row(children: [
-                    const Icon(
-                      Icons.arrow_back_ios_new,
-                      size: 15,
-                      color: Color(0xB2FFFFFF),
+              const SizedBox(width: 10),
+              Text(
+                Locales.string(context, "back"),
+                style: discussionAppBarInsights(),
+              )
+            ]),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: InsightsRow.quickNote(p),
+        ),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            children: [
+              PodcastAvatar(imageUrl: p.image_url, size: 52),
+              const SizedBox(width: 8),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  LimitedBox(
+                    maxWidth: kScreenWidth - (16 + 52 + 8 + 16),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        p.name,
+                        style: discussionAppBarTitle(),
+                        maxLines: 1,
+                      ),
                     ),
-                    const SizedBox(width: 10),
-                    Text(
-                      Locales.string(context, "back"),
-                      style: discussionAppBarInsights(),
-                    )
-                  ]),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: InsightsRow.quickNote(p),
-              ),
-              const SizedBox(height: 8),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  children: [
-                    PodcastAvatar(imageUrl: p.image_url, size: 52),
-                    const SizedBox(width: 8),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        LimitedBox(
-                          maxWidth: kScreenWidth - (16 + 52 + 8 + 16),
-                          child: Align(
+                  ),
+                  const SizedBox(height: 8),
+                  LimitedBox(
+                    maxWidth: kScreenWidth - (16 + 52 + 8 + 16),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Align(
                             alignment: Alignment.centerLeft,
-                            child: Text(
-                              p.name,
-                              style: discussionAppBarTitle(),
-                              maxLines: 1,
+                            child: LimitedBox(
+                              maxWidth: kScreenWidth -
+                                  (16 + 52 + 8 + 12 + 4 + 12 + 62 + 16),
+                              child: Text(p.show_name,
+                                  style: discussionAppBarInsights()),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        LimitedBox(
-                          maxWidth: kScreenWidth - (16 + 52 + 8 + 16),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: LimitedBox(
-                                    maxWidth: kScreenWidth -
-                                        (16 + 52 + 8 + 12 + 4 + 12 + 62 + 16),
-                                    child: Text(p.show_name,
-                                        style: discussionAppBarInsights()),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                ClipOval(
-                                    child: Container(
-                                  width: 4,
-                                  height: 4,
-                                  color: const Color(0xB2FFFFFF),
-                                )),
-                                const SizedBox(width: 12),
-                                Text(timeFormatter(p.duration_ms),
-                                    style: discussionAppBarInsights()),
-                              ]),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
-              PinkProgress(p.duration_ms)
-            ]),
-          );
-        });
+                          const SizedBox(width: 12),
+                          ClipOval(
+                              child: Container(
+                            width: 4,
+                            height: 4,
+                            color: const Color(0xB2FFFFFF),
+                          )),
+                          const SizedBox(width: 12),
+                          Text(timeFormatter(p.duration_ms),
+                              style: discussionAppBarInsights()),
+                        ]),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        PinkProgress(p.duration_ms)
+      ]),
+    );
   }
 }

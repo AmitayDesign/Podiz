@@ -214,6 +214,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               // if we got our data
             } else if (snapshot.hasData) {
               final episode = snapshot.data as Podcast;
+              episode.uid = c.episodeUid;
               return Column(
                 children: [
                   Padding(

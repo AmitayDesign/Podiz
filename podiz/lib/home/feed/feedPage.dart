@@ -139,77 +139,162 @@ class _FeedPageState extends ConsumerState<FeedPage> {
     PodcastManager podcastManager = ref.read(podcastManagerProvider);
     final lastListenedEpisode = ref.watch(lastListenedEpisodeFutureProvider);
     return GestureDetector(
-      onTap: () {
-        _focusNode.unfocus();
-        setState(() {
-          visible = false;
-        });
-      },
-      child: Stack(children: [
-        Column(
+        onTap: () {
+          _focusNode.unfocus();
+          setState(() {
+            visible = false;
+          });
+        },
+        child: Stack(
           children: [
-            HomeAppBar(title),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: SingleChildScrollView(
-                  child: Column(children: [
-                    widget.user.lastListened == ""
-                        ? Container()
-                        : lastListenedEpisode.when(
-                            loading: () => const EpisodeLoading(),
-                            error: (_, stackTree) => SplashScreen.error(),
-                            data: (ep) => PodcastListTileQuickNote(ep,
-                                quickNote: quickNote(ep))),
-                    // if (widget.user.favPodcasts.isNotEmpty) ...[ TODO deal with this!!!
-                    //   Align(
-                    //       alignment: Alignment.centerLeft,
-                    //       child: Text("My Cast", style: podcastInsights())),
-                    //   const SizedBox(height: 10),
-                    //   Container(
-                    //     child: FirestoreListView(
-                    //         primary: false,
-                    //         // shrinkWrap: true,
-                    //         query: queryFeed, //TODo change this
-                    //         itemBuilder: (context, snapshot) {
-                    //           Podcast episode = snapshot.data() as Podcast;
-                    //           return PodcastListTile(episode);
-                    //         }),
-                    //   ),
-                    // ],
-                    Align(
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: 104.0, left: 16, right: 16), //TODO size of appbar
+              child: CustomScrollView(controller: _controller, slivers: [
+                widget.user.lastListened == ""
+                    ? Container()
+                    : SliverToBoxAdapter(
+                        child: lastListenedEpisode.when(
+                        loading: () => const EpisodeLoading(),
+                        error: (_, stackTree) => SplashScreen.error(),
+                        data: (ep) => PodcastListTileQuickNote(ep,
+                            quickNote: quickNote(ep)),
+                      )),
+                if (widget.user.favPodcasts.isNotEmpty) ...[
+                  SliverToBoxAdapter(
+                    child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Text("Hot & Live", style: podcastInsights())),
-                    const SizedBox(height: 10),
-                    Container(
-                      child: FirestoreListView(
-                          primary: false,
-                          shrinkWrap: true,
-                          query: queryFeed,
-                          itemBuilder: (context, snapshot) {
-                            Podcast episode = snapshot.data() as Podcast;
-                            episode.uid = snapshot.id;
-                            return PodcastListTile(episode);
-                          }),
-                    ),
-                  ]),
+                        child: Text("My Cast", style: podcastInsights())),
+                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 10)),
+                  //TODO List
+                ],
+                SliverToBoxAdapter(
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text("Hot & Live", style: podcastInsights())),
                 ),
-              ),
+                const SliverToBoxAdapter(child: SizedBox(height: 10)),
+                FirestoreQueryBuilder<Podcast>(
+                  query: queryFeed,
+                  builder: (context, snapshot, _) {
+                    return SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          if (snapshot.hasMore &&
+                              index + 1 == snapshot.docs.length) {
+                            snapshot.fetchMore();
+                          }
+
+                          Podcast episode =
+                              snapshot.docs[index].data() as Podcast;
+                          episode.uid = snapshot.docs[index].id;
+                          return PodcastListTile(episode);
+                        },
+                        childCount: snapshot.docs.length,
+                      ),
+                    );
+                  },
+                ),
+              ]),
             ),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: HomeAppBar(title),
+            ),
+            if (visible) ...[
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: commentView(widget.user.lastListened),
+              )
+            ] else ...[
+              Container(),
+            ]
           ],
-        ),
-        if (visible) ...[
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: commentView(widget.user.lastListened),
-          )
-        ] else ...[
-          Container(),
-        ]
-      ]),
-    );
+        ));
+
+    //       Column(
+    //         children: [
+    //           HomeAppBar(title),
+    //           Expanded(
+    //             child: Padding(
+    //               padding: const EdgeInsets.symmetric(horizontal: 16.0),
+    //               child: SingleChildScrollView(
+    //                 child: Column(children: [
+    //                   widget.user.lastListened == ""
+    //                       ? Container()
+    //                       : lastListenedEpisode.when(
+    //                           loading: () => const EpisodeLoading(),
+    //                           error: (_, stackTree) => SplashScreen.error(),
+    //                           data: (ep) => PodcastListTileQuickNote(ep,
+    //                               quickNote: quickNote(ep))),
+    //                   // if (widget.user.favPodcasts.isNotEmpty) ...[ TODO deal with this!!!
+    //                   //   Align(
+    //                   //       alignment: Alignment.centerLeft,
+    //                   //       child: Text("My Cast", style: podcastInsights())),
+    //                   //   const SizedBox(height: 10),
+    //                   //   Container(
+    //                   //     child: FirestoreListView(
+    //                   //         primary: false,
+    //                   //         // shrinkWrap: true,
+    //                   //         query: queryFeed, //TODo change this
+    //                   //         itemBuilder: (context, snapshot) {
+    //                   //           Podcast episode = snapshot.data() as Podcast;
+    //                   //           return PodcastListTile(episode);
+    //                   //         }),
+    //                   //   ),
+    //                   // ],
+    //                   Align(
+    //                       alignment: Alignment.centerLeft,
+    //                       child: Text("Hot & Live", style: podcastInsights())),
+    //                   const SizedBox(height: 10),
+    //                   FirestoreQueryBuilder(
+    //                       pageSize: 5,
+    //                       query: queryFeed,
+    //                       builder: (context, snapshot, _) {
+    //                         if (snapshot.isFetching) {
+    //                           return const EpisodeLoading();
+    //                         }
+    //                         if (snapshot.hasError) {
+    //                           return Text(
+    //                               'Something went wrong! ${snapshot.error}');
+    //                         }
+    //                         return ListView.builder(
+    //                             shrinkWrap: true,
+    //                             itemCount: snapshot.docs.length,
+    //                             itemBuilder: (context, index) {
+    //                               if (snapshot.hasMore &&
+    //                                   index + 1 == snapshot.docs.length) {
+    //                                 snapshot.fetchMore();
+    //                               }
+    //                               Podcast episode =
+    //                                   snapshot.docs[index].data() as Podcast;
+    //                               episode.uid = snapshot.docs[index].id;
+    //                               return PodcastListTile(episode);
+    //                             });
+    //                       }),
+    //                 ]),
+    //               ),
+    //             ),
+    //           ),
+    //         ],
+    //       ),
+    //       if (visible) ...[
+    //         Positioned(
+    //           bottom: 0,
+    //           left: 0,
+    //           right: 0,
+    //           child: commentView(widget.user.lastListened),
+    //         )
+    //       ] else ...[
+    //         Container(),
+    //       ]
+    //     ]),
+    //   );
   }
 
   Widget commentView(String episodeUid) {

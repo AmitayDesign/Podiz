@@ -18,7 +18,8 @@ import 'package:podiz/profile/userManager.dart';
 
 class DiscussionCard extends ConsumerStatefulWidget {
   Comment comment;
-  DiscussionCard(this.comment, {Key? key}) : super(key: key);
+  Podcast p;
+  DiscussionCard(this.p, this.comment, {Key? key}) : super(key: key);
 
   @override
   ConsumerState<DiscussionCard> createState() => _DiscussionCardState();
@@ -107,8 +108,7 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                               ),
                             ),
                             const Spacer(),
-                            // ButtonPlay(
-                            //     widget.comment.episodeUid, widget.comment.time), TODO change this
+                            ButtonPlay(widget.p, widget.comment.time),
                           ],
                         ),
                         const SizedBox(height: 12),

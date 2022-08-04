@@ -19,7 +19,8 @@ import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
 
 class DiscussionSnackBar extends ConsumerStatefulWidget {
-  DiscussionSnackBar({Key? key}) : super(key: key);
+  Podcast p;
+  DiscussionSnackBar(this.p, {Key? key}) : super(key: key);
 
   @override
   ConsumerState<DiscussionSnackBar> createState() => _DiscussionSnackBarState();
@@ -52,49 +53,26 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
     super.dispose();
   }
 
-  // @override
-  // void didUpdateWidget(DiscussionSnackBar oldWidget) {
-  //   super.didUpdateWidget(oldWidget);
-  //   setState(() {});
-  // }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final podcast = ref.watch(podcastProvider);
-    return podcast.maybeWhen(
-        orElse: () => SplashScreen.error(),
-        loading: () => ShimmerLoading(
-              child: Container(
-                height: 127,
-                width: kScreenWidth,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF4E4E4E),
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10)),
-                ),
-              ),
-            ),
-        data: (p) {
-          final player = ref.read(playerProvider);
-          if (firstTime) {
-            episodeUid = p.uid!;
-            player.increment(episodeUid);
-            firstTime = false;
-          }
-          return Container(
-              height: 127,
-              decoration: const BoxDecoration(
-                color: Color(0xFF4E4E4E),
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10)),
-              ),
-              child: visible
-                  ? openedTextInputView(context, p)
-                  : closedTextInputView(context, p));
-        });
+
+    final player = ref.read(playerProvider);
+    if (firstTime) {
+      episodeUid = widget.p.uid!;
+      player.increment(episodeUid);
+      firstTime = false;
+    }
+    return Container(
+        height: 127,
+        decoration: const BoxDecoration(
+          color: Color(0xFF4E4E4E),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+        ),
+        child: visible
+            ? openedTextInputView(context, widget.p)
+            : closedTextInputView(context, widget.p));
   }
 
   Widget openedTextInputView(BuildContext context, Podcast episode) {
@@ -221,7 +199,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                       "${episode.watching} listening with you", //TODO change this!!!
                       style: discussionAppBarInsights(),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     PinkTimer(),
                   ],
                 ),

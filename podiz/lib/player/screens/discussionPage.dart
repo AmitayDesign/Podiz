@@ -49,20 +49,41 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
   @override
   Widget build(BuildContext context) {
     final comments = ref.watch(commentsStreamProvider);
+    final podcast = ref.watch(podcastProvider);
     return comments.maybeWhen(
       data: (c) {
-        return Scaffold(
-          appBar: DiscussionAppBar(),
-          body: Column(children: [
-            Expanded(
-              child: ListView.builder(
-                reverse: true,
-                itemCount: c.length,
-                itemBuilder: (context, index) => DiscussionCard(c[index]),
+        return podcast.maybeWhen(
+          data: (p) => Scaffold(
+            appBar: DiscussionAppBar(p),
+            body: Column(children: [
+              Expanded(
+                child: ListView.builder(
+                  reverse: true,
+                  itemCount: c.length,
+                  itemBuilder: (context, index) => DiscussionCard(p, c[index]),
+                ),
               ),
-            ),
-            DiscussionSnackBar(),
-          ]),
+              DiscussionSnackBar(p),
+            ]),
+          ),
+          loading: () => Scaffold(
+            body: Column(children: [
+              Spacer(),
+              ShimmerLoading(
+                child: Container(
+                  width: kScreenWidth,
+                  height: 127,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF4E4E4E),
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10)),
+                  ),
+                ),
+              )
+            ]),
+          ),
+          orElse: () => SplashScreen.error(),
         );
       },
       loading: () => Scaffold(

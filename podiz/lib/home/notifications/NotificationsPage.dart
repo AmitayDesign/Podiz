@@ -76,7 +76,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
         orElse: () => SplashScreen.error(),
         data: (n) {
           Iterable<String> keys = n.keys;
-          
+
           int number = keys.length;
 
           List<Widget> tabs = [];
@@ -212,6 +212,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                         // if we got our data
                       } else if (snapshot.hasData) {
                         final podcast = snapshot.data as Podcast;
+                        podcast.uid = c.episodeUid;
                         return Column(
                           children: [
                             Padding(
