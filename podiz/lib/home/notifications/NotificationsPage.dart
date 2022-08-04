@@ -289,7 +289,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                                           ),
                                         ),
                                         const Spacer(),
-                                        ButtonPlay(c.episodeUid, c.time),
+                                        ButtonPlay(podcast, c.time),
                                       ],
                                     ),
                                     const SizedBox(height: 12),

@@ -41,13 +41,6 @@ class PodcastManager {
         .call({"userUid": userID});
   }
 
-  Podcast? getPodcastById(String podcastId) {
-    if (podcastBloc.containsKey(podcastId)) {
-      return podcastBloc[podcastId]!;
-    }
-    return null;
-  }
-
   Future<Podcast> getPodcastFromFirebase(String episodeId) async {
     DocumentSnapshot<Map<String, dynamic>> doc =
         await firestore.collection("podcasts").doc(episodeId).get();
@@ -111,5 +104,20 @@ class PodcastManager {
     //query data base
     // return feedList.sublist(0, 40);
     return [];
+  }
+
+  SearchResult podcastToSearchResult(Podcast episode) {
+    return SearchResult(
+        uid: episode.uid!,
+        name: episode.name,
+        description: episode.description,
+        duration_ms: episode.duration_ms,
+        show_name: episode.show_name,
+        show_uri: episode.show_uri,
+        image_url: episode.image_url,
+        comments: episode.comments,
+        commentsImg: episode.commentsImg,
+        release_date: episode.release_date,
+        watching: episode.watching);
   }
 }

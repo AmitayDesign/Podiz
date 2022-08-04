@@ -5,6 +5,8 @@ import 'package:podiz/home/components/followShowButton.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/home/search/components/podcastShowTile.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
+import 'package:podiz/loading.dart/episodeLoading.dart';
+import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/Podcaster.dart';
 import 'package:podiz/objects/SearchResult.dart';
 import 'package:podiz/objects/user/Player.dart';
@@ -47,18 +49,34 @@ class ShowPage extends ConsumerWidget {
                     shrinkWrap: true,
                     itemCount: show.total_episodes,
                     itemBuilder: (context, i) {
-                      SearchResult? result =
-                          podcastManager.getSearchResultById(show.podcasts[i]);
-                      if (result != null) {
-                        return PodcastShowTile(
-                          result,
-                          isPlaying: p.podcastPlaying == null
-                              ? false
-                              : p.podcastPlaying!.uid == result.uid,
-                        );
-                      } else {
-                        return Container();
-                      }
+                      return FutureBuilder(
+                          future: podcastManager
+                              .getPodcastFromFirebase(show.podcasts[i]),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              // If we got an error
+                              if (snapshot.hasError) {
+                                return Center(
+                                  child: Text(
+                                    '${snapshot.error} occurred',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                );
+
+                                // if we got our data
+                              } else if (snapshot.hasData) {
+                                final podcast = snapshot.data as Podcast;
+                                return PodcastShowTile(
+                                  podcastManager.podcastToSearchResult(podcast),
+                                  isPlaying: p.podcastPlaying == null
+                                      ? false
+                                      : p.podcastPlaying!.uid == podcast.uid,
+                                );
+                              }
+                            }
+                            return const EpisodeLoading();
+                          });
                     },
                   ),
                 ],

@@ -107,8 +107,8 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                               ),
                             ),
                             const Spacer(),
-                            ButtonPlay(
-                                widget.comment.episodeUid, widget.comment.time),
+                            // ButtonPlay(
+                            //     widget.comment.episodeUid, widget.comment.time), TODO change this
                           ],
                         ),
                         const SizedBox(height: 12),

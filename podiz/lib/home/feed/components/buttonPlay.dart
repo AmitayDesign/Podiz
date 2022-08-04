@@ -7,16 +7,14 @@ import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/player/PlayerManager.dart';
 
 class ButtonPlay extends ConsumerWidget {
-  String podcastUid;
+  Podcast podcast;
   int time;
 
-  ButtonPlay(this.podcastUid, this.time, {Key? key}) : super(key: key);
+  ButtonPlay(this.podcast, this.time, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final PlayerManager playerManager = ref.read(playerManagerProvider);
-    final PodcastManager podcastManager = ref.read(podcastManagerProvider);
-    Podcast? podcast = podcastManager.getPodcastById(podcastUid);
     return InkWell(
       onTap: () {
         if (podcast != null) {

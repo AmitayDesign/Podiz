@@ -188,6 +188,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                           query: queryFeed,
                           itemBuilder: (context, snapshot) {
                             Podcast episode = snapshot.data() as Podcast;
+                            episode.uid = snapshot.id;
                             return PodcastListTile(episode);
                           }),
                     ),

@@ -283,7 +283,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                 ),
                               ),
                               const Spacer(),
-                              ButtonPlay(c.episodeUid, c.time),
+                              ButtonPlay(episode, c.time),
                             ],
                           ),
                           const SizedBox(height: 12),
