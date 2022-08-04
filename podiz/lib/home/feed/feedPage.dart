@@ -183,7 +183,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                       Container(
                         child: FirestoreListView(
                             primary: false,
-                            // shrinkWrap: true,
+                            shrinkWrap: true,
                             query: queryFeed,
                             itemBuilder: (context, snapshot) {
                               Podcast episode = snapshot.data() as Podcast;
