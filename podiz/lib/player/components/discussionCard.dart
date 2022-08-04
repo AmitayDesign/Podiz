@@ -158,7 +158,7 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                               ),
                         widget.comment.replies!.isEmpty
                             ? Container()
-                            : ExpandablePanel(
+                            : ExpandablePanel(// TODO this
                                 controller: controller,
                                 collapsed: Column(children: [
                                   // ProfileRow(),
