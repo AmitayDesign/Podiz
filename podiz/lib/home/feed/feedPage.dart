@@ -9,6 +9,7 @@ import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/home/components/HomeAppBar.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/loading.dart/episodeLoading.dart';
+import 'package:podiz/loading.dart/snackBarLoading.dart';
 import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/player/playerWidget.dart';
 import 'package:podiz/home/components/podcastListTile.dart';
@@ -150,92 +151,59 @@ class _FeedPageState extends ConsumerState<FeedPage> {
             HomeAppBar(title),
             Expanded(
               child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: SingleChildScrollView(
-                    child: Column(children: [
-                      widget.user.lastListened == ""
-                          ? Container()
-                          : lastListenedEpisode.when(
-                              loading: () => const EpisodeLoading(),
-                              error: (_, stackTree) => SplashScreen.error(),
-                              data: (ep) => PodcastListTileQuickNote(ep,
-                                  quickNote: quickNote())),
-                      if (widget.user.favPodcasts.isNotEmpty) ...[
-                        Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text("My Cast", style: podcastInsights())),
-                        const SizedBox(height: 10),
-                        Container(
-                          child: FirestoreListView(
-                              primary: false,
-                              // shrinkWrap: true,
-                              query: queryFeed, //TODo change this
-                              itemBuilder: (context, snapshot) {
-                                Podcast episode = snapshot.data() as Podcast;
-                                return PodcastListTile(episode);
-                              }),
-                        ),
-                      ],
-                      Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text("Hot & Live", style: podcastInsights())),
-                      const SizedBox(height: 10),
-                      Container(
-                        child: FirestoreListView(
-                            primary: false,
-                            shrinkWrap: true,
-                            query: queryFeed,
-                            itemBuilder: (context, snapshot) {
-                              Podcast episode = snapshot.data() as Podcast;
-                              return PodcastListTile(episode);
-                            }),
-                      ),
-                    ]),
-                  )
-
-                  // child: ListView.builder(
-                  //     controller: _controller,
-                  //     itemCount: categories.length + 1,
-                  //     itemBuilder: (context, index) {
-                  //       switch (index) {
-                  //         case 0:
-                  //           Podcast? podcast = podcastManager
-                  //               .getPodcastById(widget.user.lastListened);
-                  //           if (podcast == null) {
-                  //             return Container();
-                  //           }
-                  //           return PodcastListTileQuickNote(
-                  //             podcast,
-                  //             quickNote: quickNote(),
-                  //           );
-
-                  //         case 1:
-                  //           return widget.user.favPodcasts.isNotEmpty
-                  //               ? PodcastListTile(categories[1], mycastPodcasts)
-                  //               : Container();
-                  //         case 2:
-                  //           return PodcastListTile(
-                  //               categories[2], hotlivePodcasts);
-                  //         case 3:
-                  //           return SizedBox(height: widget.isPlaying ? 197 : 93);
-                  //         default:
-                  //           return Container();
-                  //       }
-                  //     }),
-                  ),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: SingleChildScrollView(
+                  child: Column(children: [
+                    widget.user.lastListened == ""
+                        ? Container()
+                        : lastListenedEpisode.when(
+                            loading: () => const EpisodeLoading(),
+                            error: (_, stackTree) => SplashScreen.error(),
+                            data: (ep) => PodcastListTileQuickNote(ep,
+                                quickNote: quickNote(ep))),
+                    // if (widget.user.favPodcasts.isNotEmpty) ...[ TODO deal with this!!!
+                    //   Align(
+                    //       alignment: Alignment.centerLeft,
+                    //       child: Text("My Cast", style: podcastInsights())),
+                    //   const SizedBox(height: 10),
+                    //   Container(
+                    //     child: FirestoreListView(
+                    //         primary: false,
+                    //         // shrinkWrap: true,
+                    //         query: queryFeed, //TODo change this
+                    //         itemBuilder: (context, snapshot) {
+                    //           Podcast episode = snapshot.data() as Podcast;
+                    //           return PodcastListTile(episode);
+                    //         }),
+                    //   ),
+                    // ],
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text("Hot & Live", style: podcastInsights())),
+                    const SizedBox(height: 10),
+                    Container(
+                      child: FirestoreListView(
+                          primary: false,
+                          shrinkWrap: true,
+                          query: queryFeed,
+                          itemBuilder: (context, snapshot) {
+                            Podcast episode = snapshot.data() as Podcast;
+                            return PodcastListTile(episode);
+                          }),
+                    ),
+                  ]),
+                ),
+              ),
             ),
           ],
         ),
         if (visible) ...[
-          podcastManager.getPodcastById(widget.user.lastListened) != null
-              ? Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: commentView(
-                      podcastManager.getPodcastById(widget.user.lastListened)!),
-                )
-              : Container(),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: commentView(widget.user.lastListened),
+          )
         ] else ...[
           Container(),
         ]
@@ -243,85 +211,111 @@ class _FeedPageState extends ConsumerState<FeedPage> {
     );
   }
 
-  Widget commentView(Podcast episode) {
-    return Container(
-      height: 127,
-      decoration: const BoxDecoration(
-        color: Color(0xFF4E4E4E),
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 20),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                CircleProfile(
-                  user: ref.read(authManagerProvider).userBloc!,
-                  size: 15.5,
+  Widget commentView(String episodeUid) {
+    return FutureBuilder(
+        future:
+            ref.read(podcastManagerProvider).getPodcastFromFirebase(episodeUid),
+        initialData: "loading",
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            // If we got an error
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  '${snapshot.error} occurred',
+                  style: TextStyle(fontSize: 18),
                 ),
-                const SizedBox(width: 8),
-                LimitedBox(
-                  maxWidth: kScreenWidth - (14 + 31 + 8 + 31 + 8 + 14),
-                  maxHeight: 31,
-                  child: TextField(
-                    // key: _key,
-                    maxLines: 5,
-                    keyboardType: TextInputType.multiline,
-                    focusNode: _focusNode,
-                    controller: _controllerText,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: const Color(0xFF262626),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 16),
-                      hintStyle: discussionSnackCommentHint(),
-                      hintText: "Share your insight...",
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                InkWell(
-                  onTap: () {
-                    ref.read(authManagerProvider).doComment(
-                        _controllerText.text,
-                        episode.uid!,
-                        episode.duration_ms);
+              );
 
-                    setState(() {
-                      visible = false;
-                    });
-                    _focusNode.unfocus();
-                    _controllerText.clear();
-                  },
-                  child: const Icon(
-                    Icons.send,
-                    size: 31,
+              // if we got our data
+            } else if (snapshot.hasData) {
+              final episode = snapshot.data as Podcast;
+
+              return Container(
+                height: 127,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF4E4E4E),
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 14.0, vertical: 20),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          CircleProfile(
+                            user: ref.read(authManagerProvider).userBloc!,
+                            size: 15.5,
+                          ),
+                          const SizedBox(width: 8),
+                          LimitedBox(
+                            maxWidth:
+                                kScreenWidth - (14 + 31 + 8 + 31 + 8 + 14),
+                            maxHeight: 31,
+                            child: TextField(
+                              // key: _key,
+                              maxLines: 5,
+                              keyboardType: TextInputType.multiline,
+                              focusNode: _focusNode,
+                              controller: _controllerText,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: const Color(0xFF262626),
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                contentPadding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                hintStyle: discussionSnackCommentHint(),
+                                hintText: "Share your insight...",
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          InkWell(
+                            onTap: () {
+                              ref.read(authManagerProvider).doComment(
+                                  _controllerText.text,
+                                  episode.uid!,
+                                  episode.duration_ms);
+
+                              setState(() {
+                                visible = false;
+                              });
+                              _focusNode.unfocus();
+                              _controllerText.clear();
+                            },
+                            child: const Icon(
+                              Icons.send,
+                              size: 31,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        children: [
+                          Text(
+                            "${episode.watching} listening right now",
+                            style: discussionAppBarInsights(),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                Text(
-                  "${episode.watching} listening right now",
-                  style: discussionAppBarInsights(),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+              );
+            }
+          }
+          return const SnackBarLoading();
+        });
   }
 
-  Widget quickNote() {
+  Widget quickNote(Podcast ep) {
     return Container(
       height: 31,
       decoration: BoxDecoration(
@@ -341,8 +335,8 @@ class _FeedPageState extends ConsumerState<FeedPage> {
           ]),
           onTap: () {
             setState(() {
-              _focusNode.requestFocus();
               visible = true;
+              _focusNode.requestFocus();
             });
           }),
     );

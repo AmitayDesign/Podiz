@@ -11,8 +11,11 @@ import 'package:podiz/home/feed/components/buttonPlay.dart';
 import 'package:podiz/home/feed/components/cardButton.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/home/search/managers/showManager.dart';
+import 'package:podiz/loading.dart/notificationLoading.dart';
+import 'package:podiz/loading.dart/shimmerContainer.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
+import 'package:podiz/objects/Podcaster.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/profile/components.dart/backAppBar.dart';
 import 'package:podiz/profile/components.dart/followPeopleButton.dart';
@@ -130,12 +133,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           child: ListView(
                             scrollDirection: Axis.horizontal,
                             children: widget.user.favPodcasts.map((show) {
-                              String? result =
-                                  showManager.getShowImageUrl(show);
-                              if (result != null) {
-                                return _buildFavouriteItem(result);
-                              }
-                              return Container();
+                              return _buildFavouriteItem(show);
                             }).toList(),
                           ),
                         )
@@ -165,147 +163,195 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     );
   }
 
-  Widget _buildFavouriteItem(String url) {
-    return Padding(
-        padding: const EdgeInsets.only(right: 16),
-        child: PodcastAvatar(imageUrl: url, size: 68));
+  Widget _buildFavouriteItem(String showUid) {
+    return FutureBuilder(
+        future: ref.read(showManagerProvider).getShowFromFirebase(showUid),
+        initialData: "loading",
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            // If we got an error
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  '${snapshot.error} occurred',
+                  style: TextStyle(fontSize: 18),
+                ),
+              );
+
+              // if we got our data
+            } else if (snapshot.hasData) {
+              final show = snapshot.data as Podcaster;
+              return Padding(
+                  padding: const EdgeInsets.only(right: 16),
+                  child: PodcastAvatar(imageUrl: show.image_url, size: 68));
+            }
+          }
+          return Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: ShimmerContainer(width: 68, height: 68, borderRadius: 20),
+          );
+        });
   }
 
   Widget _buildItem(Comment c) {
     final theme = Theme.of(context);
-    Podcast? podcast =
-        ref.read(podcastManagerProvider).getPodcastById(c.episodeUid);
-    if (podcast == null) {
-      return Container();
-    }
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            children: [
-              PodcastAvatar(imageUrl: podcast.image_url, size: 32),
-              const SizedBox(width: 8),
-              Container(
-                width: kScreenWidth - (16 + 32 + 8 + 16),
-                height: 40,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        podcast.name,
-                        style: discussionCardProfile(),
-                      ),
-                    ),
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(podcast.show_name,
-                            style: discussionAppBarInsights())),
-                  ],
+    return FutureBuilder(
+        future: ref
+            .read(podcastManagerProvider)
+            .getPodcastFromFirebase(c.episodeUid),
+        initialData: "loading",
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            // If we got an error
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  '${snapshot.error} occurred',
+                  style: TextStyle(fontSize: 18),
                 ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
-        Container(
-          color: theme.colorScheme.surface,
-          width: kScreenWidth,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 9),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    CircleProfile(user: widget.user, size: 20),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    SizedBox(
-                      width: 200,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              widget.user.name,
-                              style: discussionCardProfile(),
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                  "${widget.user.followers.length} followers",
-                                  style: discussionCardFollowers())),
-                        ],
-                      ),
-                    ),
-                    const Spacer(),
-                    ButtonPlay(c.episodeUid, c.time),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: kScreenWidth - 32,
-                  child: Text(
-                    c.comment,
-                    style: discussionCardComment(),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                c.lvl == 4
-                    ? Container()
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                visible = true;
-                                commentToReply = c;
-                              });
-                              _focusNode.requestFocus();
-                            },
-                            child: Container(
-                                width: kScreenWidth - (16 + 20 + 16 + 16),
-                                height: 33,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  color: Palette.grey900,
+              );
+
+              // if we got our data
+            } else if (snapshot.hasData) {
+              final episode = snapshot.data as Podcast;
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Row(
+                      children: [
+                        PodcastAvatar(imageUrl: episode.image_url, size: 32),
+                        const SizedBox(width: 8),
+                        Container(
+                          width: kScreenWidth - (16 + 32 + 8 + 16),
+                          height: 40,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  episode.name,
+                                  style: discussionCardProfile(),
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 8.0),
-                                  child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      "Comment on ${widget.user.name} insight...",
-                                      style: discussionSnackCommentHint(),
-                                    ),
-                                  ),
-                                )),
+                              ),
+                              Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(episode.show_name,
+                                      style: discussionAppBarInsights())),
+                            ],
                           ),
-                          const Spacer(),
-                          CardButton(
-                            const Icon(
-                              Icons.share,
-                              color: Color(0xFF9E9E9E),
-                              size: 20,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    color: theme.colorScheme.surface,
+                    width: kScreenWidth,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14.0, vertical: 9),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              CircleProfile(user: widget.user, size: 20),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              SizedBox(
+                                width: 200,
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        widget.user.name,
+                                        style: discussionCardProfile(),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                            "${widget.user.followers.length} followers",
+                                            style: discussionCardFollowers())),
+                                  ],
+                                ),
+                              ),
+                              const Spacer(),
+                              ButtonPlay(c.episodeUid, c.time),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            width: kScreenWidth - 32,
+                            child: Text(
+                              c.comment,
+                              style: discussionCardComment(),
+                              textAlign: TextAlign.left,
                             ),
                           ),
+                          const SizedBox(height: 12),
+                          c.lvl == 4
+                              ? Container()
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          visible = true;
+                                          commentToReply = c;
+                                        });
+                                        _focusNode.requestFocus();
+                                      },
+                                      child: Container(
+                                          width: kScreenWidth -
+                                              (16 + 20 + 16 + 16),
+                                          height: 33,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(30),
+                                            color: Palette.grey900,
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 8.0),
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                "Comment on ${widget.user.name} insight...",
+                                                style:
+                                                    discussionSnackCommentHint(),
+                                              ),
+                                            ),
+                                          )),
+                                    ),
+                                    const Spacer(),
+                                    CardButton(
+                                      const Icon(
+                                        Icons.share,
+                                        color: Color(0xFF9E9E9E),
+                                        size: 20,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                         ],
                       ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-      ],
-    );
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              );
+            }
+          }
+          return const NotificationLoading();
+        });
   }
 
   Widget replyView() {

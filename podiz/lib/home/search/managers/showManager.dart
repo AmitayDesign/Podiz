@@ -61,6 +61,12 @@ class ShowManager {
     // docs.
   }
 
+  Future<Podcaster> getShowFromFirebase(String showUid) async {
+    DocumentSnapshot<Map<String, dynamic>> doc =
+        await firestore.collection("podcasters").doc(showUid).get();
+    return Podcaster.fromJson(doc.data()!);
+  }
+
   List<String> getFavoritePodcasts() {
     return favShow;
   }
