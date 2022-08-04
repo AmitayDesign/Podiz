@@ -4,6 +4,8 @@ import 'package:podiz/aspect/failures/failure.dart';
 import 'package:podiz/aspect/typedefs.dart';
 import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/objects/Comment.dart';
+import 'package:podiz/objects/Podcast.dart';
+import 'package:podiz/objects/Podcaster.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/services/fileHandler.dart';
@@ -29,7 +31,9 @@ class AuthManager {
   FirebaseFirestore get firestore => _read(firestoreProvider);
 
   UserPodiz? userBloc;
+  List<Podcast> castList = [];
 
+  List<Podcast> get myCast => castList;
   final _userCompleter = Completer();
   Future<void> get firstUserLoad => _userCompleter.future;
 
@@ -62,6 +66,38 @@ class AuthManager {
     // await podcastManager.setUpPodcastStream();
   }
 
+  Future<List<Podcast>> getCastList() async {
+    List<Podcast> result = [];
+    int number = userBloc!.favPodcasts.length;
+    int count = 0;
+    if (number >= 6) {
+      for (int i = number - 1; i >= 0; i--) {
+        Podcaster show =
+            await showManager.getShowFromFirebase(userBloc!.favPodcasts[i]);
+        String podcastUid = showManager.getRandomEpisode(show.podcasts);
+        result.add(await podcastManager.getPodcastFromFirebase(podcastUid));
+        count++;
+        if (count == 6) {
+          break;
+        }
+      }
+    } else {
+      while (count != 6) {
+        for (int i = 0; i < number; i++) {
+          Podcaster show =
+              await showManager.getShowFromFirebase(userBloc!.favPodcasts[i]);
+          String podcastUid = showManager.getRandomEpisode(show.podcasts);
+          result.add(await podcastManager.getPodcastFromFirebase(podcastUid));
+          count++;
+          if (i == number - 1) {
+            i = 0;
+          }
+        }
+      }
+    }
+    return result;
+  }
+
   _emptyManagers() {
     podcastManager.resetManager();
     showManager.resetManager();
@@ -70,6 +106,7 @@ class AuthManager {
 
   saveUser() async {
     await FileHandler.writeToFile(userBloc, "user.txt");
+    castList = await getCastList();
     _userStream.add(userBloc);
   }
 
