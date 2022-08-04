@@ -47,9 +47,9 @@ class ShowPage extends ConsumerWidget {
                     shrinkWrap: true,
                     itemCount: show.total_episodes,
                     itemBuilder: (context, i) {
-                      SearchResult result =
+                      SearchResult? result =
                           podcastManager.getSearchResultById(show.podcasts[i]);
-                      if (result.name != "Not_Found") {
+                      if (result != null) {
                         return PodcastShowTile(
                           result,
                           isPlaying: p.podcastPlaying == null

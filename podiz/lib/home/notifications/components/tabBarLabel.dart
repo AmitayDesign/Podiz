@@ -14,7 +14,7 @@ class TabBarLabel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    Podcast podcast;
+    Podcast? podcast;
     if (text == "All") {
       podcast = Podcast("",
           name: "All",
@@ -29,6 +29,9 @@ class TabBarLabel extends ConsumerWidget {
           watching: 0);
     } else {
       podcast = ref.read(podcastManagerProvider).getPodcastById(text);
+    }
+    if (podcast == null) {
+      return Container();
     }
     return Tab(
       height: 32,

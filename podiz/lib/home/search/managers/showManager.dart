@@ -20,77 +20,45 @@ class ShowManager {
   FirebaseFirestore get firestore => _read(firestoreProvider);
   AuthManager get authManager => _read(authManagerProvider);
 
-  List<Podcaster> showBloc = [];
+  Map<String, Podcaster> showBloc = {};
   List<String> favShow = [];
 
-  final _showStream = BehaviorSubject<List<Podcaster>>();
-  Stream<List<Podcaster>> get podcasts => _showStream.stream;
-
-  ShowManager(this._read) {
-    print("Settings up show stream!");
-    firestore.collection("podcasters").snapshots().listen((snapshot) async {
-      for (DocChange showChange in snapshot.docChanges) {
-        if (showChange.type == DocumentChangeType.added) {
-          await addShowToBloc(showChange.doc);
-        }
-        if (showChange.type == DocumentChangeType.modified) {
-          await editShowToBloc(showChange.doc);
-        }
-      }
-      _showStream.add(showBloc);
-    });
-  }
+  ShowManager(this._read) {}
 
   // General Functions
 
-  addShowToBloc(Doc doc) {
-    Podcaster podcaster = Podcaster.fromJson(doc.data()!);
-    podcaster.uid = doc.id;
-    showBloc.add(podcaster);
-    List<String> favPodcasts = authManager.userBloc!.favPodcasts;
-
-    if (favPodcasts.contains(podcaster.uid)) {
-      favShow.add(getRandomEpisode(podcaster.podcasts));
-    }
-  }
-
   String getRandomEpisode(List<String> episodesId) {
-    // return podcastBloc[episodesId[0]]!;
-
     int index = Random().nextInt(episodesId.length);
     return episodesId[index];
-  }
-
-  editShowToBloc(Doc doc) {
-    Podcaster podcaster = Podcaster.fromJson(doc.data()!);
-    podcaster.uid = doc.id;
-    int index = showBloc.indexWhere((element) => element.uid == doc.id);
-    if (index == -1) return;
-    showBloc[index] = podcaster;
   }
 
   resetManager() async {
     // await podcastStreamSubscription?.cancel();
     // await productsStream?.close();
-    showBloc = [];
+    showBloc = {};
   }
 
-  List<String> getEpisodes(String showId) {
-    Iterable<Podcaster> podcaster =
-        showBloc.where((show) => show.uid == showId);
-    if (podcaster != null) {
-      return podcaster.first.podcasts;
+  List<String>? getEpisodes(String showId) {
+    if (showBloc.containsKey(showId)) {
+      return showBloc[showId]!.podcasts;
     }
-    return [];
+    return null;
   }
 
-  String getShowImageUrl(String showUid) {
-    for (int i = 0; i < showBloc.length; i++) {
-      if (showBloc[i].uid == showUid) {
-        return showBloc[i].image_url;
-      }
+  String? getShowImageUrl(String showId) {
+    if (showBloc.containsKey(showId)) {
+      return showBloc[showId]!.image_url;
     }
-    return "not_found";
+    return null;
+  }
+
+  searchShow(String text) async {
+    QuerySnapshot<Map<String, dynamic>> docs = await firestore
+        .collection("podcasters")
+        .where("name", isGreaterThanOrEqualTo: text)
+        .get();
+
+    // docs.
   }
 
   List<String> getFavoritePodcasts() {

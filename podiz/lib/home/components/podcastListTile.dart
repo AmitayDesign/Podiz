@@ -11,33 +11,10 @@ import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/player/screens/discussionPage.dart';
 
 class PodcastListTile extends ConsumerWidget {
-  String category;
-  List<Podcast> podcasts;
-  PodcastListTile(this.category, this.podcasts, {Key? key}) : super(key: key);
+  Podcast podcast;
+  PodcastListTile(this.podcast, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: Column(
-        children: [
-          Align(
-              alignment: Alignment.centerLeft,
-              child: Text(category, style: podcastInsights())),
-          const SizedBox(height: 10),
-          ListView.builder(
-            itemCount: podcasts.length,
-            itemBuilder: (context, index) =>
-                buildItem(context, podcasts[index], ref),
-            shrinkWrap: true,
-            physics: ClampingScrollPhysics(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildItem(BuildContext context, Podcast podcast, WidgetRef ref) {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),

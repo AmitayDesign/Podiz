@@ -16,10 +16,12 @@ class ButtonPlay extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final PlayerManager playerManager = ref.read(playerManagerProvider);
     final PodcastManager podcastManager = ref.read(podcastManagerProvider);
+    Podcast? podcast = podcastManager.getPodcastById(podcastUid);
     return InkWell(
       onTap: () {
-        Podcast podcast = podcastManager.getPodcastById(podcastUid);
-        playerManager.playEpisode(podcast, time);
+        if (podcast != null) {
+          playerManager.playEpisode(podcast, time);
+        }
       },
       child: Container(
         width: 76,

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/typedefs.dart';
+import 'package:podiz/authentication/AuthManager.dart';
 import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
@@ -18,54 +19,19 @@ final podcastManagerProvider = Provider<PodcastManager>(
 class PodcastManager {
   final Reader _read;
 
+  AuthManager get authManager => _read(authManagerProvider);
   ShowManager get showManager => _read(showManagerProvider);
 
   get userStream => _read(userStreamProvider);
   FirebaseFirestore get firestore => _read(firestoreProvider);
 
   Map<String, Podcast> podcastBloc = {};
-  List<Podcast> feedList = [];
 
-  final _podcastStream = BehaviorSubject<Map<String, Podcast>>();
-  Stream<Map<String, Podcast>> get podcasts => _podcastStream.stream;
-
-  PodcastManager(this._read) {
-    firestore
-        .collection("podcasts")
-        .orderBy("release_date", descending: true)
-        .snapshots()
-        .listen((snapshot) async {
-      //\TODO order this
-      for (DocChange podcastChange in snapshot.docChanges) {
-        if (podcastChange.type == DocumentChangeType.added) {
-          await addPodcastToBloc(podcastChange.doc);
-        } else if (podcastChange.type == DocumentChangeType.modified) {
-          await editPodcastToBloc(podcastChange.doc);
-        }
-      }
-      _podcastStream.add(podcastBloc);
-    });
-  }
+  PodcastManager(this._read) {}
 
   // General Functions
 
-  addPodcastToBloc(Doc doc) {
-    Podcast podcast = Podcast.fromJson(doc.data()!);
-    podcast.uid = doc.id;
-
-    podcastBloc[doc.id] = podcast;
-    feedList.add(podcast);
-  }
-
-  editPodcastToBloc(Doc doc) {
-    Podcast podcast = Podcast.fromJson(doc.data()!);
-    podcast.uid = doc.id;
-    podcastBloc[doc.id] = podcast;
-  }
-
   resetManager() async {
-    // await podcastStreamSubscription?.cancel();
-    // await productsStream?.close();
     podcastBloc = {};
   }
 
@@ -75,25 +41,14 @@ class PodcastManager {
         .call({"userUid": userID});
   }
 
-  Podcast getPodcastById(String podcastId) {
+  Podcast? getPodcastById(String podcastId) {
     if (podcastBloc.containsKey(podcastId)) {
-      Podcast podcast = podcastBloc[podcastId]!;
-      return podcast;
+      return podcastBloc[podcastId]!;
     }
-    return Podcast("Not_Found",
-        name: "Not_Found",
-        description: "Not_Found",
-        duration_ms: 0,
-        show_name: "Not_Found",
-        show_uri: "Not_Found",
-        image_url: "Not_Found",
-        comments: 0,
-        commentsImg: [],
-        release_date: "",
-        watching: 0);
+    return null;
   }
 
-  SearchResult getSearchResultById(String podcastId) {
+  SearchResult? getSearchResultById(String podcastId) {
     if (podcastBloc.containsKey(podcastId)) {
       Podcast podcast = podcastBloc[podcastId]!;
       return SearchResult(
@@ -110,29 +65,38 @@ class PodcastManager {
         watching: podcast.watching,
       );
     }
-    return SearchResult(
-        uid: "Not_Found",
-        name: "Not_Found",
-        description: "Not_Found",
-        duration_ms: 0,
-        show_name: "Not_Found",
-        show_uri: "Not_Found",
-        image_url: "Not_Found",
-        comments: 0,
-        commentsImg: [],
-        release_date: "",
-        watching: 0);
+    return null;
   }
+
+  searchEpisode(String text) async {
+    QuerySnapshot<Map<String, dynamic>> docs = await firestore
+        .collection("podcasts")
+        .where("name", isGreaterThanOrEqualTo: text)
+        .get();
+
+    // docs.
+  }
+
+  Future<Podcast> getLastListenedEpisodeFromFirebase() async {
+    String uid = authManager.userBloc!.lastListened;
+    print("UIDDDDDDDDD" + uid);
+    DocumentSnapshot<Map<String, dynamic>> doc =
+        await firestore.collection("podcasts").doc(uid).get();
+        print("DOC" + doc.data()!.toString());
+    return Podcast.fromJson(doc.data()!);
+  }
+
+  fetchFeedList() {}
 
   List<Podcast> getMyCast() {
     List<String> favEpisodes = showManager.getFavoritePodcasts();
     return favEpisodes.map((e) => podcastBloc[e]!).toList();
   }
 
-  Podcast getRandomEpisode(List<String> episodesId) {
+  Podcast? getRandomEpisode(List<String> episodesId) {
     // return podcastBloc[episodesId[0]]!;
     if (episodesId.isEmpty) {
-      return emptyPodcast();
+      return null;
     }
     int index = Random().nextInt(episodesId.length);
     Podcast result = podcastBloc[episodesId[index]]!;
@@ -140,20 +104,8 @@ class PodcastManager {
   }
 
   List<Podcast> getHotLive() {
-    return feedList.sublist(0, 40);
-  }
-
-  Podcast emptyPodcast() {
-    return Podcast("Not_Found",
-        name: "Not_Found",
-        description: "Not_Found",
-        duration_ms: 0,
-        show_name: "Not_Found",
-        show_uri: "Not_Found",
-        image_url: "Not_Found",
-        comments: 0,
-        commentsImg: [],
-        release_date: "",
-        watching: 0);
+    //query data base
+    // return feedList.sublist(0, 40);
+    return [];
   }
 }

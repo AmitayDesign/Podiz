@@ -69,97 +69,84 @@ class _HomePageState extends ConsumerState<HomePage>
       NotificationsPage(isPlaying),
     ];
     final player = ref.watch(playerStreamProvider);
-    final podcasts = ref.watch(podcastsStreamProvider);
-    final shows = ref.watch(showStreamProvider);
-    return shows.maybeWhen( //remove this
-        data: (_) {
-          return podcasts.maybeWhen(
-            data: (_) => player.maybeWhen(
-                orElse: () => SplashScreen.error(),
-                loading: () => SplashScreen(),
-                data: (p) {
-                  p.getState == PlayerState.close
-                      ? isPlaying = false
-                      : isPlaying = true;
-                  if (p.error) {
-                    return SpotifyView();
-                  }
-                  return KeyboardVisibilityBuilder(
-                    builder: (context, isKeyBoardOpen) {
-                      return Scaffold(
-                        body: SafeArea(
-                          child: TapTo.unfocus(
-                            child: Stack(
-                              children: [
-                                PageView(
-                                  controller: pageController,
-                                  onPageChanged: (i) => setState(() {
-                                    pageIndex = i;
-                                  }),
-                                  children: pages,
-                                ),
-                                !isKeyBoardOpen
-                                    ? p.getState != PlayerState.close
-                                        ? Positioned(
-                                            right: 0,
-                                            left: 0,
-                                            bottom: 93,
-                                            child: PlayerWidget())
-                                        : Container()
-                                    : Container(),
-                                !isKeyBoardOpen
-                                    ? Positioned(
-                                        bottom: 0.0,
-                                        left: 0.0,
-                                        right: 0.0,
-                                        child: SizedBox(
-                                          height: 93,
-                                          child: ClipRect(
-                                            child: BackdropFilter(
-                                              filter: ImageFilter.blur(
-                                                sigmaX: 5,
-                                                sigmaY: 10,
-                                              ),
-                                              child: Opacity(
-                                                opacity: 0.9,
-                                                child: BottomNavigationBar(
-                                                  iconSize: 30,
-                                                  showSelectedLabels: true,
-                                                  showUnselectedLabels: true,
-                                                  selectedItemColor:
-                                                      Color(0xFFD74EFF),
-                                                  unselectedItemColor:
-                                                      Color(0xB2FFFFFF),
-                                                  currentIndex: pageIndex,
-                                                  onTap: changeTab,
-                                                  items: pages.map((page) {
-                                                    return BottomNavigationBarItem(
-                                                      icon: page.icon,
-                                                      activeIcon:
-                                                          page.activeIcon,
-                                                      label: page.label,
-                                                    );
-                                                  }).toList(),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    : Container(),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                }),
-            loading: () => SplashScreen(),
-            orElse: () => SplashScreen.error(),
-          );
-        },
+    return player.maybeWhen(
+        orElse: () => SplashScreen.error(),
         loading: () => SplashScreen(),
-        orElse: () => SplashScreen.error());
+        data: (p) {
+          p.getState == PlayerState.close
+              ? isPlaying = false
+              : isPlaying = true;
+          if (p.error) {
+            return SpotifyView();
+          }
+          return KeyboardVisibilityBuilder(
+            builder: (context, isKeyBoardOpen) {
+              return Scaffold(
+                body: SafeArea(
+                  child: TapTo.unfocus(
+                    child: Stack(
+                      children: [
+                        PageView(
+                          controller: pageController,
+                          onPageChanged: (i) => setState(() {
+                            pageIndex = i;
+                          }),
+                          children: pages,
+                        ),
+                        !isKeyBoardOpen
+                            ? p.getState != PlayerState.close
+                                ? Positioned(
+                                    right: 0,
+                                    left: 0,
+                                    bottom: 93,
+                                    child: PlayerWidget())
+                                : Container()
+                            : Container(),
+                        !isKeyBoardOpen
+                            ? Positioned(
+                                bottom: 0.0,
+                                left: 0.0,
+                                right: 0.0,
+                                child: SizedBox(
+                                  height: 93,
+                                  child: ClipRect(
+                                    child: BackdropFilter(
+                                      filter: ImageFilter.blur(
+                                        sigmaX: 5,
+                                        sigmaY: 10,
+                                      ),
+                                      child: Opacity(
+                                        opacity: 0.9,
+                                        child: BottomNavigationBar(
+                                          iconSize: 30,
+                                          showSelectedLabels: true,
+                                          showUnselectedLabels: true,
+                                          selectedItemColor: Color(0xFFD74EFF),
+                                          unselectedItemColor:
+                                              Color(0xB2FFFFFF),
+                                          currentIndex: pageIndex,
+                                          onTap: changeTab,
+                                          items: pages.map((page) {
+                                            return BottomNavigationBarItem(
+                                              icon: page.icon,
+                                              activeIcon: page.activeIcon,
+                                              label: page.label,
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Container(),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        });
   }
 }

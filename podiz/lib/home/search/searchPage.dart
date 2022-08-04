@@ -86,8 +86,6 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
   @override
   Widget build(BuildContext context) {
     List<SearchResult> result = [];
-    result = filterPodcaster(ref.watch(showProvider), result);
-    result = filterPodcast(ref.watch(podcastsProvider), result);
     final player = ref.watch(playerStreamProvider);
     return player.maybeWhen(
       orElse: () => SplashScreen.error(),

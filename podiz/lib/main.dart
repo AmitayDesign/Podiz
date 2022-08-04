@@ -94,7 +94,6 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
             data: (user) {
               print("USER " + user.toString());
               if (user == null) return OnBoardingPage();
-              final shows = ref.watch(showStreamProvider); //see this
               return HomePage(user);
             },
             loading: () => SplashScreen(),

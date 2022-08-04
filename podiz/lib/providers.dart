@@ -45,22 +45,6 @@ final userProvider = Provider<UserPodiz>(
   (ref) => ref.watch(userStreamProvider).value!,
 );
 
-final podcastsStreamProvider = StreamProvider<Map<String, Podcast>>(
-  (ref) => ref.watch(podcastManagerProvider).podcasts,
-);
-
-final podcastsProvider = Provider<Map<String, Podcast>>(
-  (ref) => ref.watch(podcastsStreamProvider).value!,
-);
-
-final showStreamProvider = StreamProvider<List<Podcaster>>(
-  (ref) => ref.watch(showManagerProvider).podcasts,
-);
-
-final showProvider = Provider<List<Podcaster>>(
-  (ref) => ref.watch(showStreamProvider).value!,
-);
-
 final playerStreamProvider = StreamProvider<Player>(
   (ref) => ref.watch(playerManagerProvider).player,
 );
@@ -84,3 +68,9 @@ final commentsStreamProvider = StreamProvider.autoDispose<List<Comment>>(
 final notificationsStreamProvider =
     StreamProvider<Map<String, List<NotificationPodiz>>>(
         (ref) => ref.watch(notificationManagerProvider).notifications);
+
+final feedListFutureProvider = FutureProvider<List<Podcast>>(
+    (ref) => ref.watch(podcastManagerProvider).fetchFeedList());
+
+final lastListenedEpisodeFutureProvider = FutureProvider<Podcast>((ref) async =>
+    ref.watch(podcastManagerProvider).getLastListenedEpisodeFromFirebase());

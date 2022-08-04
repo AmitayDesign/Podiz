@@ -129,10 +129,14 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           height: 68,
                           child: ListView(
                             scrollDirection: Axis.horizontal,
-                            children: widget.user.favPodcasts
-                                .map((show) => _buildFavouriteItem(
-                                    showManager.getShowImageUrl(show)))
-                                .toList(),
+                            children: widget.user.favPodcasts.map((show) {
+                              String? result =
+                                  showManager.getShowImageUrl(show);
+                              if (result != null) {
+                                return _buildFavouriteItem(result);
+                              }
+                              return Container();
+                            }).toList(),
                           ),
                         )
                       : Container() //change this
@@ -169,8 +173,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
   Widget _buildItem(Comment c) {
     final theme = Theme.of(context);
-    Podcast podcast =
+    Podcast? podcast =
         ref.read(podcastManagerProvider).getPodcastById(c.episodeUid);
+    if (podcast == null) {
+      return Container();
+    }
     return Column(
       children: [
         Padding(
@@ -180,7 +187,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               PodcastAvatar(imageUrl: podcast.image_url, size: 32),
               const SizedBox(width: 8),
               Container(
-                width: kScreenWidth - (16 + 32+ 8+16),
+                width: kScreenWidth - (16 + 32 + 8 + 16),
                 height: 40,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,

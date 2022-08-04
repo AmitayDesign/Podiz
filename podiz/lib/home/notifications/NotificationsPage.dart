@@ -172,9 +172,11 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
 
   Widget _buildItem(Comment c) {
     final theme = Theme.of(context);
-    Podcast podcast =
+    Podcast? podcast =
         ref.read(podcastManagerProvider).getPodcastById(c.episodeUid);
-
+    if (podcast == null) {
+      return Container();
+    }
     return FutureBuilder(
         future: ref.read(userManagerProvider).getUserFromUid(c.userUid),
         initialData: "loading",
