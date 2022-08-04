@@ -44,7 +44,9 @@ class PodcastManager {
   Future<Podcast> getPodcastFromFirebase(String episodeId) async {
     DocumentSnapshot<Map<String, dynamic>> doc =
         await firestore.collection("podcasts").doc(episodeId).get();
-    return Podcast.fromJson(doc.data()!);
+    Podcast episode = Podcast.fromJson(doc.data()!);
+    episode.uid = episodeId;
+    return episode;
   }
 
   SearchResult? getSearchResultById(String podcastId) {

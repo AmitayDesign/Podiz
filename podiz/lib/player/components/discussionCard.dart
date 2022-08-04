@@ -19,7 +19,9 @@ import 'package:podiz/profile/userManager.dart';
 class DiscussionCard extends ConsumerStatefulWidget {
   Comment comment;
   Podcast p;
-  DiscussionCard(this.p, this.comment, {Key? key}) : super(key: key);
+  final void Function(Comment) onTap;
+  DiscussionCard(this.p, this.comment, {Key? key, required this.onTap})
+      : super(key: key);
 
   @override
   ConsumerState<DiscussionCard> createState() => _DiscussionCardState();
@@ -125,15 +127,14 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Container(
+                              // decoration: ,
                               width: kScreenWidth - (14 + 16 + 31 + 14),
                               height: 31,
-                              child: TextField(
-                                // controller: commentController,
-                                keyboardType: TextInputType.text,
-                                decoration: InputDecoration(
-                                    hintText: "Comment on " +
-                                        user.name.split(" ")[0] +
-                                        "'s insight..."), //TODO change this
+                              child: InkWell(
+                                onTap: () => widget.onTap(widget.comment),
+                                child: Text("Comment on " +
+                                    user.name.split(" ")[0] +
+                                    "'s insight..."),
                               ),
                             ),
                             const Spacer(),
@@ -173,7 +174,7 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                                       style: podcastArtist()),
                                 ]),
                                 expanded: RepliesArea(
-                                    widget.comment.id, widget.comment.replies!),
+                                    widget.comment.id, widget.comment.replies!, onTap: widget.onTap,),
                                 builder: (_, collapsed, expanded) {
                                   return Expandable(
                                       collapsed: collapsed, expanded: expanded);

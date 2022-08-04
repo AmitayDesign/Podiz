@@ -123,7 +123,6 @@ class PlayerManager {
       commentsBloc = {};
       commentsOrdered = [];
     }
-    index = 0;
     firstTime = false;
     _commentsStream = BehaviorSubject<List<Comment>>();
     commentsStreamSubscription = firestore
@@ -138,8 +137,8 @@ class PlayerManager {
           await addCommentToBloc(commentChange.doc);
         }
       }
+      index = 0;
       commentsOrdered = getOrderedComments();
-      _commentsStream!.add([]); //TODO Fix this!!!!!!!!
     });
   }
 

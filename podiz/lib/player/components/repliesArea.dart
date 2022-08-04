@@ -14,9 +14,11 @@ import 'package:podiz/player/components/profileRow.dart';
 import 'package:podiz/profile/userManager.dart';
 
 class RepliesArea extends ConsumerWidget {
+  final void Function(Comment) onTap;
   String commentUid;
   Map<String, Comment> replies;
-  RepliesArea(this.commentUid, this.replies, {Key? key}) : super(key: key);
+  RepliesArea(this.commentUid, this.replies, {Key? key, required this.onTap})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -37,11 +39,9 @@ class RepliesArea extends ConsumerWidget {
         Container(
           width: kScreenWidth - (14 + lvl * (23 + 8) + 16 + 31 + 14),
           height: 31,
-          child: TextField(
-            // controller: commentController,
-            keyboardType: TextInputType.text,
-            decoration: InputDecoration(
-                hintText: "Comment on ${user.name.split(" ")[0]}'s insight..."),
+          child: InkWell(
+            onTap: () => onTap(c),
+            child: Text("Comment on ${user.name.split(" ")[0]}'s insight..."),
           ),
         ),
         const SizedBox(width: 16),

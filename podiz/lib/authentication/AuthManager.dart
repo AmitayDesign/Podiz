@@ -258,9 +258,9 @@ class AuthManager {
       ]),
     });
     incrementPodcastCounter(comment.episodeUid);
-    // if (userBloc!.uid == comment.uid) {
-    //   return;
-    // }
+    if (userBloc!.uid == comment.userUid) {
+      return;
+    }
     firestore
         .collection("users")
         .doc(comment.userUid)

@@ -13,30 +13,36 @@ import 'package:podiz/authentication/AuthManager.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/Player.dart';
+import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/player/components/pinkTimer.dart';
+import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
 
 class DiscussionSnackBar extends ConsumerStatefulWidget {
   Podcast p;
-  DiscussionSnackBar(this.p, {Key? key}) : super(key: key);
+  bool visible;
+  FocusNode focusNode;
+  TextEditingController controller;
+  DiscussionSnackBar(
+    this.p, {
+    Key? key,
+    required this.visible,
+    required this.focusNode,
+    required this.controller,
+  }) : super(key: key);
 
   @override
   ConsumerState<DiscussionSnackBar> createState() => _DiscussionSnackBarState();
 }
 
 class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
-  final TextEditingController _controller = TextEditingController();
-
-  bool visible = false;
-
   bool firstTime = true;
   late String episodeUid;
 
   final Key _key = const Key("textField");
 
-  FocusNode focusNode = FocusNode();
   @override
   void initState() {
     super.initState();
@@ -48,8 +54,6 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
         .collection("podcasts")
         .doc(episodeUid)
         .update({"watching": FieldValue.increment(-1)});
-    focusNode.dispose();
-    _controller.dispose();
     super.dispose();
   }
 
@@ -70,7 +74,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(10), topRight: Radius.circular(10)),
         ),
-        child: visible
+        child: widget.visible
             ? openedTextInputView(context, widget.p)
             : closedTextInputView(context, widget.p));
   }
@@ -95,8 +99,8 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                   // key: _key,
                   maxLines: 5,
                   keyboardType: TextInputType.multiline,
-                  focusNode: focusNode,
-                  controller: _controller,
+                  focusNode: widget.focusNode,
+                  controller: widget.controller,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: const Color(0xFF262626),
@@ -115,15 +119,15 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                 onTap: () {
                   ref.read(playerManagerProvider).resumeEpisode(episode);
                   ref.read(authManagerProvider).doComment(
-                      _controller.text,
+                      widget.controller.text,
                       ref.read(playerProvider).podcastPlaying!.uid!,
                       ref.read(playerProvider).timer.position.inMilliseconds);
 
                   setState(() {
-                    visible = false;
+                    widget.visible = false;
                   });
-                  focusNode.unfocus();
-                  _controller.clear();
+                  widget.focusNode.unfocus();
+                  widget.controller.clear();
                 },
                 child: const Icon(
                   Icons.send,
@@ -166,6 +170,8 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
       ),
     );
   }
+
+ 
 
   Widget closedTextInputView(BuildContext context, Podcast episode) {
     final playerManager = ref.read(playerManagerProvider);
@@ -210,9 +216,9 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                       onTap: () {
                         ref.read(playerManagerProvider).pauseEpisode();
                         setState(() {
-                          visible = true;
+                          widget.visible = true;
                         });
-                        focusNode.requestFocus();
+                        widget.focusNode.requestFocus();
                       },
                       child: LimitedBox(
                         maxWidth: kScreenWidth - (16 + 90 + 16),
