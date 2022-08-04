@@ -37,6 +37,10 @@ class RepliesArea extends ConsumerWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            color: Palette.grey900,
+          ),
           width: kScreenWidth - (14 + lvl * (23 + 8) + 16 + 31 + 14),
           height: 31,
           child: InkWell(

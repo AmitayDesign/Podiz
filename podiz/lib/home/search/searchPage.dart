@@ -1,9 +1,14 @@
 import 'package:after_layout/after_layout.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutterfire_ui/database.dart';
+import 'package:flutterfire_ui/firestore.dart';
 import 'package:podiz/aspect/constants.dart';
 
 import 'package:podiz/home/homePage.dart';
 import 'package:podiz/aspect/widgets/podcastTile.dart';
 import 'package:podiz/home/search/components/searchBar.dart';
+import 'package:podiz/home/search/managers/podcastManager.dart';
+import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/Podcaster.dart';
 import 'package:podiz/objects/SearchResult.dart';
@@ -32,7 +37,18 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
   @override
   void initState() {
     super.initState();
-    searchController.addListener(() => setState(() {}));
+    searchController.addListener(_onSearchChanged);
+  }
+
+  _onSearchChanged() {
+    print("habdleing");
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -42,74 +58,93 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
 
   String get query => searchController.text;
 
-  List<SearchResult> filterPodcast(
-      Map<String, Podcast> podcasts, List<SearchResult> resultList) {
-    podcasts.forEach(
-      (_, value) {
-        if (value.name.toLowerCase().contains(query.toLowerCase())) {
-          resultList.add(SearchResult(
-              uid: value.uid!,
-              name: value.name,
-              image_url: value.image_url,
-              duration_ms: value.duration_ms,
-              show_name: value.show_name,
-              description: value.description,
-              show_uri: value.show_uri,
-              comments: value.comments,
-              commentsImg: value.commentsImg,
-              release_date: value.release_date,
-              watching: value.watching));
-        }
-      },
-    );
-    return resultList;
-  }
-
-  List<SearchResult> filterPodcaster(
-      List<Podcaster> podcasters, List<SearchResult> resultList) {
-    for (Podcaster podcaster in podcasters) {
-      if (podcaster.name.toLowerCase().contains(query.toLowerCase())) {
-        resultList.add(SearchResult(
-            uid: podcaster.uid!,
-            name: podcaster.name,
-            image_url: podcaster.image_url,
-            publisher: podcaster.publisher,
-            description: podcaster.description,
-            total_episodes: podcaster.total_episodes,
-            podcasts: podcaster.podcasts,
-            followers: podcaster.followers));
-      }
-    }
-    return resultList;
-  }
-
   @override
   Widget build(BuildContext context) {
-    List<SearchResult> result = [];
     final player = ref.watch(playerStreamProvider);
+    final podcastManager = ref.watch(podcastManagerProvider);
+    final showManager = ref.watch(showManagerProvider);
     return player.maybeWhen(
       orElse: () => SplashScreen.error(),
       loading: () => SplashScreen(),
       data: (p) => Stack(
         children: [
           if (searchBarHeight != null)
-            result.isEmpty
-                ? Padding(
-                    padding: EdgeInsets.only(top: searchBarHeight! + 8).add(
-                        EdgeInsets.symmetric(horizontal: kScreenPadding * 2)),
-                    child: Text(
-                      Locales.string(context, "search2") + ' \"$query\"',
-                    ),
-                  )
-                : ListView.builder(
-                    padding: EdgeInsets.only(
-                        top: searchBarHeight!, right: 16, left: 16),
-                    itemCount: result.length,
-                    itemBuilder: (context, i) => PodcastTile(result[i],
-                        isPlaying: p.podcastPlaying == null
-                            ? false
-                            : p.podcastPlaying!.uid == result[i].uid),
-                  ),
+            CustomScrollView(
+              slivers: [
+                // FirestoreQueryBuilder<SearchResult>(
+                //   query: FirebaseFirestore.instance
+                //       .collection("podcasts")
+                //       .where("name", isGreaterThanOrEqualTo: query)
+                //       .withConverter(fromFirestore: (podcast, _) {
+                //     Podcast p = Podcast.fromJson(podcast.data()!);
+                //     p.uid = podcast.id;
+                //     return podcastManager.podcastToSearchResult(p);
+                //   }, toFirestore: (podcast, _) {
+                //     return {};
+                //   }),
+                //   builder: (context, snapshot, _) {
+                //     return SliverList(
+                //       delegate: SliverChildBuilderDelegate(
+                //         (context, index) {
+                //           if (snapshot.hasMore &&
+                //               index + 1 == snapshot.docs.length) {
+                //             snapshot.fetchMore();
+                //           }
+
+                //           SearchResult episode =
+                //               snapshot.docs[index].data() as SearchResult;
+                //           episode.uid = snapshot.docs[index].id;
+                //           if (!episode.name.contains(query)) {
+                //             return Container();
+                //           }
+                //           return PodcastTile(episode,
+                //               isPlaying: p.podcastPlaying == null
+                //                   ? false
+                //                   : p.podcastPlaying!.uid == episode.uid);
+                //         },
+                //         childCount: snapshot.docs.length,
+                //       ),
+                //     );
+                //   },
+                // ),
+                FirestoreQueryBuilder<SearchResult>(
+                  query: FirebaseFirestore.instance
+                      .collection("podcasters")
+                      .where("name", isGreaterThanOrEqualTo: query)
+                      .withConverter(fromFirestore: (podcast, _) {
+                    Podcaster p = Podcaster.fromJson(podcast.data()!);
+                    p.uid = podcast.id;
+                    return showManager.podcasterToSearchResult(p);
+                  }, toFirestore: (podcast, _) {
+                    return {};
+                  }),
+                  builder: (context, snapshot, _) {
+                    return SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          if (snapshot.hasMore &&
+                              index + 1 == snapshot.docs.length) {
+                            snapshot.fetchMore();
+                          }
+
+                          SearchResult show =
+                              snapshot.docs[index].data() as SearchResult;
+                          show.uid = snapshot.docs[index].id;
+                          if (!show.name.contains(query)) {
+                            return Container();
+                          }
+                          return PodcastTile(show,
+                              isPlaying: p.podcastPlaying == null
+                                  ? false
+                                  : p.podcastPlaying!.uid == show.uid);
+                        },
+                        childCount: snapshot.docs.length,
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           Padding(
             key: searchBarKey,
             padding: EdgeInsets.symmetric(

@@ -127,7 +127,10 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Container(
-                              // decoration: ,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: Palette.grey900,
+                              ),
                               width: kScreenWidth - (14 + 16 + 31 + 14),
                               height: 31,
                               child: InkWell(
@@ -158,27 +161,33 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                               ),
                         widget.comment.replies!.isEmpty
                             ? Container()
-                            : ExpandablePanel(// TODO this
-                                controller: controller,
-                                collapsed: Column(children: [
-                                  // ProfileRow(),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    widget.comment.replies!.entries.first.value
-                                        .comment,
-                                    maxLines: 1,
-                                    style: discussionCardComment(),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text("$numberOfReplies more replays...",
-                                      style: podcastArtist()),
-                                ]),
-                                expanded: RepliesArea(
-                                    widget.comment.id, widget.comment.replies!, onTap: widget.onTap,),
-                                builder: (_, collapsed, expanded) {
-                                  return Expandable(
-                                      collapsed: collapsed, expanded: expanded);
-                                }),
+                            :
+                            // ExpandablePanel(
+                            //     // TODO this
+                            //     controller: controller,
+                            //     collapsed: Column(children: [
+                            //       // ProfileRow(),
+                            //       const SizedBox(height: 4),
+                            //       Text(
+                            //         widget.comment.replies!.entries.first.value
+                            //             .comment,
+                            //         maxLines: 1,
+                            //         style: discussionCardComment(),
+                            //       ),
+                            //       const SizedBox(height: 8),
+                            //       Text("$numberOfReplies more replays...",
+                            //           style: podcastArtist()),
+                            //     ]),
+                            //     expanded:
+                            RepliesArea(
+                                widget.comment.id,
+                                widget.comment.replies!,
+                                onTap: widget.onTap,
+                              ),
+                        // builder: (_, collapsed, expanded) {
+                        //   return Expandable(
+                        //       collapsed: collapsed, expanded: expanded);
+                        // }),
                       ],
                     ),
                   ),

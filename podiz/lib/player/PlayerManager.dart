@@ -123,7 +123,9 @@ class PlayerManager {
       commentsBloc = {};
       commentsOrdered = [];
     }
+    index = 0;
     firstTime = false;
+    bool flag = true;
     _commentsStream = BehaviorSubject<List<Comment>>();
     commentsStreamSubscription = firestore
         .collection("podcasts")
@@ -137,8 +139,11 @@ class PlayerManager {
           await addCommentToBloc(commentChange.doc);
         }
       }
-      index = 0;
       commentsOrdered = getOrderedComments();
+      if (!flag) {
+        _commentsStream!.add([]);
+      }
+      flag = true;
     });
   }
 

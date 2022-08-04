@@ -69,13 +69,18 @@ class PodcastManager {
     return null;
   }
 
-  searchEpisode(String text) async {
+  Future<List<SearchResult>> searchEpisode(String text) async {
     QuerySnapshot<Map<String, dynamic>> docs = await firestore
         .collection("podcasts")
         .where("name", isGreaterThanOrEqualTo: text)
         .get();
+    List<SearchResult> result = [];
+    for (int i = 0; i < docs.docs.length; i++) {
+      Podcast episode = Podcast.fromJson(docs.docs[i].data());
+      result.add(podcastToSearchResult(episode));
+    }
 
-    // docs.
+    return result;
   }
 
   Future<Podcast> getLastListenedEpisodeFromFirebase() async {

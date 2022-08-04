@@ -61,47 +61,51 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
 
   void onTap(Comment c) {
     setState(() {
-      focusNode.requestFocus();
       commentToReply = c;
       isComment = true;
     });
+    focusNode.requestFocus();
   }
 
   @override
   Widget build(BuildContext context) {
     final comments = ref.watch(commentsStreamProvider);
     final podcast = ref.watch(podcastProvider);
-    return comments.maybeWhen(
-      data: (c) {
-        return podcast.maybeWhen(
-          data: (p) => GestureDetector(
-            onTap: (() => setState(
-                  () {
-                    visible = false;
-                    focusNode.unfocus();
-                    isComment = false;
-                  },
-                )),
-            child: Scaffold(
-              appBar: DiscussionAppBar(p),
-              body: Column(children: [
-                Expanded(
-                  child: ListView.builder(
-                    reverse: true,
-                    itemCount: c.length,
-                    itemBuilder: (context, index) =>
-                        DiscussionCard(p, c[index], onTap: onTap),
+    return podcast.maybeWhen(
+      data: (p) {
+        print("podcast");
+        return comments.maybeWhen(
+          data: (c) {
+            print("comments");
+            return GestureDetector(
+              onTap: (() => setState(
+                    () {
+                      visible = false;
+                      focusNode.unfocus();
+                      isComment = false;
+                    },
+                  )),
+              child: Scaffold(
+                appBar: DiscussionAppBar(p),
+                body: Column(children: [
+                  Expanded(
+                    child: ListView.builder(
+                      reverse: true,
+                      itemCount: c.length,
+                      itemBuilder: (context, index) =>
+                          DiscussionCard(p, c[index], onTap: onTap),
+                    ),
                   ),
-                ),
-                isComment
-                    ? replyView()
-                    : DiscussionSnackBar(p,
-                        visible: visible,
-                        focusNode: focusNode,
-                        controller: controller)
-              ]),
-            ),
-          ),
+                  isComment
+                      ? replyView()
+                      : DiscussionSnackBar(p,
+                          visible: visible,
+                          focusNode: focusNode,
+                          controller: controller)
+                ]),
+              ),
+            );
+          },
           loading: () => Scaffold(
             body: Column(children: [
               Spacer(),

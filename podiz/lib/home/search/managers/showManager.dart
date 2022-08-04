@@ -6,6 +6,7 @@ import 'package:podiz/aspect/typedefs.dart';
 import 'package:podiz/authentication/AuthManager.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/Podcaster.dart';
+import 'package:podiz/objects/SearchResult.dart';
 import 'package:podiz/providers.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -52,13 +53,18 @@ class ShowManager {
     return null;
   }
 
-  searchShow(String text) async {
+  Future<List<SearchResult>> searchShow(String text) async {
     QuerySnapshot<Map<String, dynamic>> docs = await firestore
         .collection("podcasters")
         .where("name", isGreaterThanOrEqualTo: text)
         .get();
+    List<SearchResult> result = [];
+    for (int i = 0; i < docs.docs.length; i++) {
+      Podcaster show = Podcaster.fromJson(docs.docs[i].data());
+      result.add(podcasterToSearchResult(show));
+    }
 
-    // docs.
+    return result;
   }
 
   Future<Podcaster> getShowFromFirebase(String showUid) async {
@@ -71,5 +77,17 @@ class ShowManager {
 
   List<String> getFavoritePodcasts() {
     return favShow;
+  }
+
+  SearchResult podcasterToSearchResult(Podcaster show) {
+    return SearchResult(
+        uid: show.uid!,
+        name: show.name,
+        description: show.description,
+        image_url: show.image_url,
+        publisher: show.publisher,
+        total_episodes: show.total_episodes,
+        podcasts: show.podcasts,
+        followers: show.followers);
   }
 }
