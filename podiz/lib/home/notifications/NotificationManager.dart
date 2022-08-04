@@ -42,7 +42,6 @@ class NotificationManager {
         }
       }
       _notificationStream.add(notificationBloc);
-      print(notificationBloc);
     });
   }
 
@@ -61,8 +60,6 @@ class NotificationManager {
   }
 
   resetManager() async {
-    // await podcastStreamSubscription?.cancel();
-    // await productsStream?.close();
     notificationBloc = {};
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
+import 'package:podiz/loading.dart/tabBarLabelLoading.dart';
 import 'package:podiz/objects/Podcast.dart';
 
 class TabBarLabel extends ConsumerWidget {
@@ -27,65 +28,59 @@ class TabBarLabel extends ConsumerWidget {
           commentsImg: [],
           release_date: "",
           watching: 0);
-    } else {
-      podcast = ref.read(podcastManagerProvider).getPodcastById(text);
+      return _buildItem(podcast, number);
     }
-    if (podcast == null) {
-      return Container();
-    }
-    return Tab(
-      height: 32,
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4.0),
-          child: Row(
-            children: [
-              Text(number.toString()),
-              text != "All"
-                  ? Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child:
-                          PodcastAvatar(imageUrl: podcast.image_url, size: 20),
-                    )
-                  : Container(),
-              const SizedBox(width: 8),
-              LimitedBox(
-                  maxWidth: 200,
-                  child: Text(
-                    podcast.name,
-                    maxLines: 1,
-                  ))
-            ],
-          ),
-        ),
-      ),
-    );
+    return FutureBuilder(
+        future: ref.read(podcastManagerProvider).getPodcastFromFirebase(text),
+        initialData: "loading",
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            // If we got an error
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  '${snapshot.error} occurred',
+                  style: TextStyle(fontSize: 18),
+                ),
+              );
+
+              // if we got our data
+            } else if (snapshot.hasData) {
+              final episode = snapshot.data as Podcast;
+              return _buildItem(episode, number);
+            }
+          }
+          return const TabBarLabelLoading();
+        });
   }
 }
 
-// class CircleTabIndicator extends Decoration {
-//   final Color color;
-//   double radius;
-
-//   CircleTabIndicator(this.color, this.radius);
-
-//   @override
-//   BoxPainter createBoxPainter([VoidCallback? onChanged]) {
-//     return _CirclePainter(color: color, radius: radius);
-//   }
-// }
-
-// class _CirclePainter extends BoxPainter {
-//   final Color color;
-//   double radius;
-
-//   _CirclePainter({required this.color, required this.radius});
-//   @override
-//   void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
-//     Paint _paint = Paint();
-//     _paint.color = color;
-//     _paint.isAntiAlias = true;
-
-//     canvas.drawCircle(offset, radius, _paint);
-//   }
-// }
+Widget _buildItem(Podcast episode, int number) {
+  return Tab(
+    height: 32,
+    child: Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+        child: Row(
+          children: [
+            Text(number.toString()),
+            episode.name != "All"
+                ? Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: PodcastAvatar(imageUrl: episode.image_url, size: 20),
+                  )
+                : Container(),
+            const SizedBox(width: 8),
+            LimitedBox(
+                maxWidth: 120,
+                child: Text(
+                  episode.name,
+                  maxLines: 1,
+                ))
+          ],
+        ),
+      ),
+    ),
+  );
+  ;
+}

@@ -48,6 +48,12 @@ class PodcastManager {
     return null;
   }
 
+  Future<Podcast> getPodcastFromFirebase(String episodeId) async {
+    DocumentSnapshot<Map<String, dynamic>> doc =
+        await firestore.collection("podcasts").doc(episodeId).get();
+    return Podcast.fromJson(doc.data()!);
+  }
+
   SearchResult? getSearchResultById(String podcastId) {
     if (podcastBloc.containsKey(podcastId)) {
       Podcast podcast = podcastBloc[podcastId]!;
@@ -79,10 +85,8 @@ class PodcastManager {
 
   Future<Podcast> getLastListenedEpisodeFromFirebase() async {
     String uid = authManager.userBloc!.lastListened;
-    print("UIDDDDDDDDD" + uid);
     DocumentSnapshot<Map<String, dynamic>> doc =
         await firestore.collection("podcasts").doc(uid).get();
-        print("DOC" + doc.data()!.toString());
     return Podcast.fromJson(doc.data()!);
   }
 
