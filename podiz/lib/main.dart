@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -34,12 +35,12 @@ void main() async {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   //TODO call no internet dialog
-  await Firebase.initializeApp()
+  var firebaseApp = await Firebase.initializeApp()
       .catchError((onError) => print("call no internet dialog"));
 
   preferences = await SharedPreferences.getInstance();
   await Locales.init(['en']);
-
+  
   // PushNotificationService.init(container.read);
   runApp(UncontrolledProviderScope(container: container, child: MyApp()));
 }

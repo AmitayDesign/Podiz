@@ -10,6 +10,7 @@ class SearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller,
       textInputAction: TextInputAction.search,
       decoration: InputDecoration(
         hintText: Locales.string(context, "search1"),

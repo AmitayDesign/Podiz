@@ -71,46 +71,47 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
           if (searchBarHeight != null)
             CustomScrollView(
               slivers: [
-                // FirestoreQueryBuilder<SearchResult>(
-                //   query: FirebaseFirestore.instance
-                //       .collection("podcasts")
-                //       .where("name", isGreaterThanOrEqualTo: query)
-                //       .withConverter(fromFirestore: (podcast, _) {
-                //     Podcast p = Podcast.fromJson(podcast.data()!);
-                //     p.uid = podcast.id;
-                //     return podcastManager.podcastToSearchResult(p);
-                //   }, toFirestore: (podcast, _) {
-                //     return {};
-                //   }),
-                //   builder: (context, snapshot, _) {
-                //     return SliverList(
-                //       delegate: SliverChildBuilderDelegate(
-                //         (context, index) {
-                //           if (snapshot.hasMore &&
-                //               index + 1 == snapshot.docs.length) {
-                //             snapshot.fetchMore();
-                //           }
+                const SliverToBoxAdapter(child: SizedBox(height: 70)),
+                FirestoreQueryBuilder<SearchResult>(
+                  query: FirebaseFirestore.instance
+                      .collection("podcasts")
+                      .where("searchArray", arrayContains: query.toLowerCase())
+                      .orderBy("name")
+                      .withConverter(fromFirestore: (podcast, _) {
+                    Podcast p = Podcast.fromJson(podcast.data()!);
+                    p.uid = podcast.id;
+                    return podcastManager.podcastToSearchResult(p);
+                  }, toFirestore: (podcast, _) {
+                    return {};
+                  }),
+                  builder: (context, snapshot, _) {
+                    return SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          if (snapshot.hasMore &&
+                              index + 1 == snapshot.docs.length) {
+                            snapshot.fetchMore();
+                          }
 
-                //           SearchResult episode =
-                //               snapshot.docs[index].data() as SearchResult;
-                //           episode.uid = snapshot.docs[index].id;
-                //           if (!episode.name.contains(query)) {
-                //             return Container();
-                //           }
-                //           return PodcastTile(episode,
-                //               isPlaying: p.podcastPlaying == null
-                //                   ? false
-                //                   : p.podcastPlaying!.uid == episode.uid);
-                //         },
-                //         childCount: snapshot.docs.length,
-                //       ),
-                //     );
-                //   },
-                // ),
+                          SearchResult episode =
+                              snapshot.docs[index].data() as SearchResult;
+                          episode.uid = snapshot.docs[index].id;
+
+                          return PodcastTile(episode,
+                              isPlaying: p.podcastPlaying == null
+                                  ? false
+                                  : p.podcastPlaying!.uid == episode.uid);
+                        },
+                        childCount: snapshot.docs.length,
+                      ),
+                    );
+                  },
+                ),
                 FirestoreQueryBuilder<SearchResult>(
                   query: FirebaseFirestore.instance
                       .collection("podcasters")
-                      .where("name", isGreaterThanOrEqualTo: query)
+                      .where("searchArray", arrayContains: query.toLowerCase())
+                      .orderBy("name")
                       .withConverter(fromFirestore: (podcast, _) {
                     Podcaster p = Podcaster.fromJson(podcast.data()!);
                     p.uid = podcast.id;
@@ -130,9 +131,7 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
                           SearchResult show =
                               snapshot.docs[index].data() as SearchResult;
                           show.uid = snapshot.docs[index].id;
-                          if (!show.name.contains(query)) {
-                            return Container();
-                          }
+
                           return PodcastTile(show,
                               isPlaying: p.podcastPlaying == null
                                   ? false
