@@ -121,8 +121,16 @@ async function getUserInfo(code) {
     if (exists) {
       return result.uri;
     }
+    prev = "";
+    searchArray = [];
+
+    for (letter in result.display_name) {
+      prev += letter;
+      searchArray.push(prev);
+    }
+
     admin.firestore().collection("users").doc(result.uri).set({
-      //TODO verificar se ja existe ou nao!!
+
       name: result.display_name,
       email: result.email,
       image_url: result.images[0].url,
@@ -131,6 +139,7 @@ async function getUserInfo(code) {
       lastListened: "",
       comments: [],
       favPodcasts: [],
+      searchArray: searchArray,
     });
     return result.uri;
   } catch (err) {

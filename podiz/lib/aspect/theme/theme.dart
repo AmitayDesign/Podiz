@@ -260,6 +260,7 @@ TextStyle followerName() => const TextStyle(
       color: Palette.pureWhite,
       fontWeight: FontWeight.w800,
     );
+    
 
 TextStyle followersNumber() => const TextStyle(
       fontFamily: 'Montserrat',

@@ -47,6 +47,5 @@ class SpotifyManager {
 
   Future<void> setUpAuthStream(AsyncSnapshot snapshot) async {
     await authManager.fetchUserInfo(snapshot.data);
-    print("USERRRRRRRRRRRRRR");
   }
 }

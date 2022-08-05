@@ -1,39 +1,39 @@
 {
-    "project_info": {
-      "project_number": "426283659703",
-      "project_id": "podiz-130ca",
-      "storage_bucket": "podiz-130ca.appspot.com"
-    },
-    "client": [
-      {
-        "client_info": {
-          "mobilesdk_app_id": "1:426283659703:android:a142997a2910f1b1b5b832",
-          "android_client_info": {
-            "package_name": "com.example.podiz"
-          }
-        },
-        "oauth_client": [
-          {
-            "client_id": "426283659703-d4l6u2kglhlcfd3cqotu5vfbjuouogp7.apps.googleusercontent.com",
-            "client_type": 3
-          }
-        ],
-        "api_key": [
-          {
-            "current_key": "AIzaSyB02n46BfhFf_r56zrk1EMmpsgo5ezImck"
-          }
-        ],
-        "services": {
-          "appinvite_service": {
-            "other_platform_oauth_client": [
-              {
-                "client_id": "426283659703-d4l6u2kglhlcfd3cqotu5vfbjuouogp7.apps.googleusercontent.com",
-                "client_type": 3
-              }
-            ]
-          }
+  "project_info": {
+    "project_number": "426283659703",
+    "project_id": "podiz-130ca",
+    "storage_bucket": "podiz-130ca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:426283659703:android:a142997a2910f1b1b5b832",
+        "android_client_info": {
+          "package_name": "com.example.podiz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "426283659703-d4l6u2kglhlcfd3cqotu5vfbjuouogp7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB02n46BfhFf_r56zrk1EMmpsgo5ezImck"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "426283659703-d4l6u2kglhlcfd3cqotu5vfbjuouogp7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
-    ],
-    "configuration_version": "1"
-  }
+    }
+  ],
+  "configuration_version": "1"
+}

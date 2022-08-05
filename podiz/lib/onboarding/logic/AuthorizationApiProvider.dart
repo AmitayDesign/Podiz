@@ -19,7 +19,7 @@ class AuthorizationApiProvider {
       "&scope=$scope" +
       "&state=$state";
 
-  Future<String> fetchCode() async {
+  Future<String> fetchCode() async {//TODO web view
     final response = await FlutterWebAuth.authenticate(
         url: urlDireccion, callbackUrlScheme: "podiz");
     final error = Uri.parse(response).queryParameters['error'];
