@@ -116,6 +116,8 @@ class PlayerManager {
     });
   }
 
+ 
+
   setUpDiscussionPageStream(String podcastUid) async {
     if (!firstTime) {
       await commentsStreamSubscription!.cancel();

@@ -39,6 +39,19 @@ class PodcastManager {
     HttpsCallableResult result = await FirebaseFunctions.instance
         .httpsCallable("devices")
         .call({"userUid": userID});
+    print("devices");
+  }
+
+  Future<void> fetchUserPlayer(String userID) async {
+    HttpsCallableResult result = await FirebaseFunctions.instance
+        .httpsCallable("fetchUserPlayer")
+        .call({"userUid": userID});
+    print(result.data);
+    //{"uid: String
+    // isPlaying: bool
+    // position : int
+    //"}
+    //procurar o podcast e dps por a aparecer no player com o state e a position!
   }
 
   Future<Podcast> getPodcastFromFirebase(String episodeId) async {

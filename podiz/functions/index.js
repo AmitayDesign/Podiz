@@ -130,7 +130,6 @@ async function getUserInfo(code) {
     }
 
     admin.firestore().collection("users").doc(result.uri).set({
-
       name: result.display_name,
       email: result.email,
       image_url: result.images[0].url,
@@ -216,6 +215,60 @@ exports.devices = functions.https.onCall(async (data, context) => {
   }
   return result;
 });
+
+exports.fetchUserPlayer = functions.https.onCall(async (data, context) => {
+  /*
+    data = {
+        userUid : String
+    }
+  */
+  let userUid = data.userUid;
+  result = await fecthUser(userUid);
+  // if (!result) {
+  //   result = await getAccessTokenWithRefreshToken(userUid);
+  //   if (!result) {
+  //     return false;
+  //   }
+  //   result = await fecthUser(userUid);
+  // }
+  return result;
+});
+
+async function fecthUser(userUid) {
+  try {
+    var spotifyAuth = await getSpotifyAuth(userUid);
+    var response = await fetch(
+      host + "/me/player/currently-playing?additional_types=episode",
+      {
+        headers: {
+          Accept: "application/json",
+          Authorization: "Bearer " + spotifyAuth.access_token,
+          "Content-Type": "application/json",
+        },
+        method: "GET",
+      }
+    );
+    if (response["status"] != 200) {
+      return false;
+    }
+
+    result = await response.json();
+    if (result["item"]["type"] != "episode") {
+      return false;
+    }
+    //TODO verificar se existe??
+    info = {
+      uid: result["item"]["uri"],
+      isPlaying: result["is_playing"],
+      position: result["progress_ms"],
+    };
+
+    return info;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+}
 
 async function playEpisode(episodeUid, userUid, position) {
   try {

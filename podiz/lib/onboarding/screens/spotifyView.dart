@@ -54,7 +54,7 @@ class _SpotifyViewState extends ConsumerState<SpotifyView> {
                 stream: spotifyManager.authorizationToken,
                 builder: (context, AsyncSnapshot<dynamic> snapshot) {
                   if (snapshot.hasData) {
-                    return FutureBuilder(
+                    return FutureBuilder( //todo bug
                       initialData: "loading",
                       future: spotifyManager.setUpAuthStream(snapshot),
                       builder: ((context, snapshot) {
