@@ -47,6 +47,7 @@ class PodcastManager {
         .httpsCallable("fetchUserPlayer")
         .call({"userUid": userID});
     print(result.data);
+    //false se nao tiver nada ou se nao for um podcast!
     //{"uid: String
     // isPlaying: bool
     // position : int

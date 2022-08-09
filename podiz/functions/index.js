@@ -43,8 +43,6 @@ exports.getAccessTokenWithCode = functions.https.onCall(
 
       var result = await response.json();
 
-      let userUid = await getUserInfo(result.access_token);
-
       await admin.firestore().collection("spotifyAuth").doc(userUid).set({
         access_token: result.access_token,
         token_type: result.token_type,
@@ -52,6 +50,8 @@ exports.getAccessTokenWithCode = functions.https.onCall(
         refresh_token: result.refresh_token,
         scope: result.scope,
       });
+
+      let userUid = await getUserInfo(result.access_token);
 
       return userUid;
     } catch (err) {
@@ -129,20 +129,59 @@ async function getUserInfo(code) {
       searchArray.push(prev);
     }
 
+    favShows = getUserFavoriteShow(resul.uri);
+
     admin.firestore().collection("users").doc(result.uri).set({
       name: result.display_name,
       email: result.email,
       image_url: result.images[0].url,
       followers: [],
-      following: [],
+      following: favShows,
       lastListened: "",
       comments: [],
-      favPodcasts: [],
+      favPodcasts: favShows,
       searchArray: searchArray,
     });
+
     return result.uri;
   } catch (err) {
     console.log(err);
+  }
+}
+
+async function getUserFavoriteShow(userUid) {
+  let favPodcasts = [];
+
+  var spotifyAuth = await getSpotifyAuth(userUid);
+
+  var response = await fetch(host + "/me/shows?offset=0&limit=50", {
+    headers: {
+      Accept: "application/json",
+      Authorization: "Bearer " + spotifyAuth.access_token,
+      "Content-Type": "application/json",
+    },
+    method: "GET",
+  });
+  if (response["status"] != 200) {
+    return false;
+  }
+  result = await response.json();
+  //TODO iterate over result["items"]
+  //verify if they are in database otherwise put them
+  //Push all the episodes
+  //favPodcasts.push() id do show
+
+  let total = result["total"];
+  if (total < 50) {
+    return;
+  }
+  for (let i = 50; i < total; i += 50) {
+    //REquest more with offset = i limit 50
+    //FUNCTION TO DO THIS
+    //TODO iterate over result["items"]
+    //verify if they are in database otherwise put them
+    //Push all the episodes
+    //favPodcasts.push() id do show
   }
 }
 
@@ -256,7 +295,7 @@ async function fecthUser(userUid) {
     if (result["item"]["type"] != "episode") {
       return false;
     }
-    //TODO verificar se existe??
+    //TODO colocar a funcao!! 
     info = {
       uid: result["item"]["uri"],
       isPlaying: result["is_playing"],
