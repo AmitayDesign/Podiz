@@ -87,7 +87,7 @@ class PodcastManager {
         .get();
     List<SearchResult> result = [];
     for (int i = 0; i < docs.docs.length; i++) {
-      Podcast episode = Podcast.fromJson(docs.docs[i].data());
+      Podcast episode = Podcast.fromFirestore(docs.docs[i]);
       result.add(podcastToSearchResult(episode));
     }
 

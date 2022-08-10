@@ -143,7 +143,7 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
                         .where("searchArray",
                             arrayContains: query.toLowerCase())
                         .withConverter(fromFirestore: (user, _) {
-                      UserPodiz u = UserPodiz.fromJson(user.data()!);
+                      UserPodiz u = UserPodiz.fromFirestore(user);
                       u.uid = user.id;
                       isEmpty = false;
                       return u;

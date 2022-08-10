@@ -57,7 +57,7 @@ class ShowManager {
         .get();
     List<SearchResult> result = [];
     for (int i = 0; i < docs.docs.length; i++) {
-      Podcaster show = Podcaster.fromJson(docs.docs[i].data());
+      Podcaster show = Podcaster.fromFirestore(docs.docs[i]);
       result.add(podcasterToSearchResult(show));
     }
 

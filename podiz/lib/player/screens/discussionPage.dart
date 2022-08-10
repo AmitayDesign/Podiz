@@ -72,10 +72,10 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
     final podcast = ref.watch(podcastProvider);
     return podcast.maybeWhen(
       data: (p) {
-        print("podcast");
+        print("podcast" + p.uid.toString());
         return comments.maybeWhen(
           data: (c) {
-            print("comments");
+            print("comments" );
             return GestureDetector(
               onTap: (() => setState(
                     () {
