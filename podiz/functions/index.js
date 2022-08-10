@@ -397,6 +397,27 @@ exports.devices = functions.https.onCall(async (data, context) => {
   return result;
 });
 
+exports.searchInSpotify = functions.https.onCall(async (data, context) => {
+  /*
+  data = {
+    query: String,
+    userUid: String
+  }
+  */
+  let userUid = data.userUid;
+  let query = data.query;
+
+  result = await search(userUid, query);
+  if (!result) {
+    result = await getAccessTokenWithRefreshToken(userUid);
+    if (!result) {
+      return false;
+    }
+    result = await search(userUid, query);
+  }
+  return result;
+});
+
 exports.fetchUserPlayer = functions.https.onCall(async (data, context) => {
   /*
     data = {
@@ -452,7 +473,7 @@ async function fecthUser(userUid) {
       commentsImg: [],
       release_date: e["release_date"],
       watching: 0,
-      searchArray: searchArrayEpisode
+      searchArray: searchArrayEpisode,
     };
 
     searchArrayShow = [];
@@ -470,7 +491,7 @@ async function fecthUser(userUid) {
       total_episodes: s["total_episodes"],
       podcasts: [],
       followers: [],
-      searchArray: searchArrayShow
+      searchArray: searchArrayShow,
     };
     if (!(await checkEpisodeExists(result["item"]["uri"]))) {
       await addEpisodeToDataBase(episode);
@@ -493,6 +514,111 @@ async function fecthUser(userUid) {
   }
 }
 
+async function search(userUid, query) {
+  try {
+    var spotifyAuth = await getSpotifyAuth(userUid);
+    var response = await fetch(
+      host + "/search?q=" + query + "&type=episode&limit=50&offset=0",
+      {
+        headers: {
+          Accept: "application/json",
+          Authorization: "Bearer " + spotifyAuth.access_token,
+          "Content-Type": "application/json",
+        },
+        method: "GET",
+      }
+    );
+    if (response["status"] != 200) {
+      return false;
+    }
+
+    let result = await response.json();
+
+    for (e in result["episodes"]["items"]) {
+      final_result = getEpisode(e["id"]);
+      if (!(await checkEpisodeExists(episode["uri"]))) {
+        addEpisodeToDataBase(final_result["episode"]);
+      }
+      if (!(await checkShowExists(episode["show_uri"]))) {
+        addShowToDataBase(final_result["show"]);
+        getShowEpisodes(
+          final_result["show"]["uri"],
+          final_result["show"]["total_episodes"]
+        );
+      }
+    }
+
+    return true;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+}
+
+async function getEpisode(episodeUid) {
+  try {
+    var spotifyAuth = await getSpotifyAuth(userUid);
+    var response = await fetch(host + "/episodes/" + episodeUid, {
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + spotifyAuth.access_token,
+        "Content-Type": "application/json",
+      },
+      method: "GET",
+    });
+    if (response["status"] != 200) {
+      return false;
+    }
+
+    let result = await response.json();
+
+    searchArrayEpisode = [];
+    prev = "";
+    for (letter in e["name"]) {
+      prev += letter;
+      searchArrayEpisode.push(prev);
+    }
+
+    searchArrayShow = [];
+    prev = "";
+    for (letter in e["name"]) {
+      prev += letter;
+      searchArrayShow.push(prev);
+    }
+    s = result["show"];
+    final_result = {
+      episode: {
+        uid: result["uri"],
+        name: result["name"],
+        description: result["description"],
+        duration_ms: result["duration_ms"],
+        show_name: s["name"],
+        show_uri: s["uri"],
+        image_url: result["images"][0]["url"],
+        comments: 0,
+        commentsImg: [],
+        release_date: result["release_date"],
+        watching: 0,
+        searchArray: searchArrayEpisode,
+      },
+      show: {
+        uid: s["uri"],
+        name: s["name"],
+        publisher: s["publisher"],
+        description: s["description"],
+        image_url: s["images"][0]["url"],
+        total_episodes: s["total_episodes"],
+        podcasts: [],
+        followers: [],
+        searchArray: searchArrayShow,
+      },
+    };
+    return final_result;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+}
 async function playEpisode(episodeUid, userUid, position) {
   try {
     var spotifyAuth = await getSpotifyAuth(userUid);
