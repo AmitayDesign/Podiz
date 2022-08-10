@@ -534,11 +534,11 @@ async function search(userUid, query) {
     let result = await response.json();
 
     for (e in result["episodes"]["items"]) {
-      final_result = getEpisode(e["id"]);
-      if (!(await checkEpisodeExists(episode["uri"]))) {
+      final_result = getEpisode(e["id"], userUid);
+      if (!(await checkEpisodeExists(final_result["episode"]["uri"]))) {
         addEpisodeToDataBase(final_result["episode"]);
       }
-      if (!(await checkShowExists(episode["show_uri"]))) {
+      if (!(await checkShowExists(final_result["episode"]["show_uri"]))) {
         addShowToDataBase(final_result["show"]);
         getShowEpisodes(
           final_result["show"]["uri"],
@@ -554,7 +554,7 @@ async function search(userUid, query) {
   }
 }
 
-async function getEpisode(episodeUid) {
+async function getEpisode(episodeUid, userUid) {
   try {
     var spotifyAuth = await getSpotifyAuth(userUid);
     var response = await fetch(host + "/episodes/" + episodeUid, {
@@ -580,10 +580,11 @@ async function getEpisode(episodeUid) {
 
     searchArrayShow = [];
     prev = "";
-    for (letter in e["name"]) {
+    for (letter in e["show"]["name"]) {
       prev += letter;
       searchArrayShow.push(prev);
     }
+
     s = result["show"];
     final_result = {
       episode: {
