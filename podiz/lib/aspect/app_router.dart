@@ -20,7 +20,6 @@ enum AppRoute {
   show,
 }
 
-//TODO check all ref.read 's
 //TODO when logged in (no premium?) -> stuck on black screen
 
 final goRouterProvider = Provider<GoRouter>((ref) {
@@ -30,7 +29,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     debugLogDiagnostics: false,
     redirect: (state) {
       final isLoggedIn = authManager.currentUser != null;
-      print('REDIRECT: $isLoggedIn');
       if (isLoggedIn) {
         if (state.location.contains('/on-boarding')) return '/';
       } else {

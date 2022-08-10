@@ -9,11 +9,10 @@ import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/profile/components.dart/backAppBar.dart';
 
 class CommentPage extends ConsumerWidget {
-  static const route = '/commentPage';
-  Podcast podcast;
+  final Podcast podcast;
   CommentPage(this.podcast, {Key? key}) : super(key: key);
 
-  final TextEditingController controller = TextEditingController();
+  final controller = TextEditingController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -46,7 +45,7 @@ class CommentPage extends ConsumerWidget {
                   hintStyle: podcastInsightsQuickNote()),
               controller: controller,
             ),
-            Spacer(),
+            const Spacer(),
             AsyncElevatedButton(
               onPressed: () => ref.read(authManagerProvider).doComment(
                   controller.text, podcast.uid!, podcast.duration_ms),

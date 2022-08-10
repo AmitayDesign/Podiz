@@ -1,10 +1,10 @@
+import 'package:connectivity/connectivity.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/failures/errorBar.dart';
 import 'package:podiz/aspect/failures/failure.dart';
 import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/providers.dart';
-import 'package:connectivity/connectivity.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 mixin Authentication<T extends ConsumerStatefulWidget> on ConsumerState<T> {
   bool _isLoading = false;
@@ -17,7 +17,7 @@ mixin Authentication<T extends ConsumerStatefulWidget> on ConsumerState<T> {
     _isLoading = true;
     try {
       FocusScope.of(context).unfocus();
-      _checkConnection();
+      await _checkConnection();
 
       if (formKey != null) {
         final isValid = formKey.currentState!.validate();
@@ -35,9 +35,10 @@ mixin Authentication<T extends ConsumerStatefulWidget> on ConsumerState<T> {
     _isLoading = false;
   }
 
-  void _checkConnection() {
-    final connectivity = ref.read(connectivityProvider);
-    if (connectivity == ConnectivityResult.none)
+  Future<void> _checkConnection() async {
+    final connectivity = await ref.read(connectivityProvider.future);
+    if (mounted && connectivity == ConnectivityResult.none) {
       throw Failure.noConection(context);
+    }
   }
 }

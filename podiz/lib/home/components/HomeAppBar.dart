@@ -15,7 +15,7 @@ class HomeAppBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.read(currentUserProvider);
+    final user = ref.watch(currentUserProvider);
     return AppBar(
       flexibleSpace: Container(
         height: 96,

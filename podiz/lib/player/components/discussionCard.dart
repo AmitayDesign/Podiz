@@ -10,17 +10,14 @@ import 'package:podiz/home/feed/components/cardButton.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/User.dart';
-import 'package:podiz/player/PlayerManager.dart';
-import 'package:podiz/player/components/profileRow.dart';
 import 'package:podiz/player/components/repliesArea.dart';
-import 'package:podiz/profile/profilePage.dart';
 import 'package:podiz/profile/userManager.dart';
 
 class DiscussionCard extends ConsumerStatefulWidget {
-  Comment comment;
-  Podcast p;
+  final Comment comment;
+  final Podcast p;
   final void Function(Comment) onTap;
-  DiscussionCard(this.p, this.comment, {Key? key, required this.onTap})
+  const DiscussionCard(this.p, this.comment, {Key? key, required this.onTap})
       : super(key: key);
 
   @override
@@ -48,9 +45,9 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    UserManager userManager = ref.read(userManagerProvider);
-    int numberOfReplies =
-        ref.read(playerManagerProvider).getNumberOfReplies(widget.comment.id);
+    UserManager userManager = ref.watch(userManagerProvider);
+    // final numberOfReplies =
+    //     ref.read(playerManagerProvider).getNumberOfReplies(widget.comment.id);
     return FutureBuilder(
       future: userManager.getUserFromUid(widget.comment.userUid),
       initialData: "loading",
@@ -61,7 +58,7 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
             return Center(
               child: Text(
                 '${snapshot.error} occurred',
-                style: TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 18),
               ),
             );
 
@@ -135,9 +132,8 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                               height: 31,
                               child: InkWell(
                                 onTap: () => widget.onTap(widget.comment),
-                                child: Text("Comment on " +
-                                    user.name.split(" ")[0] +
-                                    "'s insight..."),
+                                child: Text(
+                                    "Comment on ${user.name.split(" ")[0]}'s insight..."),
                               ),
                             ),
                             const Spacer(),

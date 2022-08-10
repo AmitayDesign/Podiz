@@ -13,11 +13,11 @@ import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
 
 class DiscussionSnackBar extends ConsumerStatefulWidget {
-  Podcast p;
-  bool visible;
-  FocusNode focusNode;
-  TextEditingController controller;
-  DiscussionSnackBar(
+  final Podcast p;
+  final bool visible;
+  final FocusNode focusNode;
+  final TextEditingController controller;
+  const DiscussionSnackBar(
     this.p, {
     Key? key,
     required this.visible,
@@ -31,9 +31,10 @@ class DiscussionSnackBar extends ConsumerStatefulWidget {
 
 class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
   bool firstTime = true;
+  late bool visible = widget.visible;
   late String episodeUid;
 
-  final Key _key = const Key("textField");
+  // final Key _key = const Key("textField");
 
   @override
   void initState() {
@@ -71,7 +72,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
 
   Widget openedTextInputView(BuildContext context, Podcast episode) {
     final user = ref.watch(currentUserProvider);
-    final playerManager = ref.read(playerManagerProvider);
+    final playerManager = ref.watch(playerManagerProvider);
     return Padding(
       padding: const EdgeInsets.only(left: 14.0, right: 14, top: 20, bottom: 8),
       child: Column(
@@ -113,10 +114,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                       widget.controller.text,
                       ref.read(playerProvider).podcastPlaying!.uid!,
                       ref.read(playerProvider).timer.position.inMilliseconds);
-
-                  setState(() {
-                    widget.visible = false;
-                  });
+                  setState(() => visible = false);
                   widget.focusNode.unfocus();
                   widget.controller.clear();
                 },
@@ -163,7 +161,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
   }
 
   Widget closedTextInputView(BuildContext context, Podcast episode) {
-    final playerManager = ref.read(playerManagerProvider);
+    final playerManager = ref.watch(playerManagerProvider);
     final state = ref.watch(stateProvider);
     return state.maybeWhen(
         orElse: () => SplashScreen.error(),
@@ -204,9 +202,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                     InkWell(
                       onTap: () {
                         ref.read(playerManagerProvider).pauseEpisode();
-                        setState(() {
-                          widget.visible = true;
-                        });
+                        setState(() => visible = true);
                         widget.focusNode.requestFocus();
                       },
                       child: LimitedBox(

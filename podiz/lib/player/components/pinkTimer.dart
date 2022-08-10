@@ -8,7 +8,7 @@ import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/providers.dart';
 
 class PinkTimer extends ConsumerStatefulWidget {
-  PinkTimer({Key? key}) : super(key: key);
+  const PinkTimer({Key? key}) : super(key: key);
 
   @override
   ConsumerState<PinkTimer> createState() => _PinkTimerState();
@@ -39,21 +39,21 @@ class _PinkTimerState extends ConsumerState<PinkTimer> {
     subscription!.cancel();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: 64,
+      height: 23,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          color: const Color(0xFFD74EFF)),
       child: Center(
         child: Text(
           timePlayerFormatter(position.inMilliseconds),
           style: discussionSnackPlay(),
         ),
       ),
-      width: 64,
-      height: 23,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          color: const Color(0xFFD74EFF)),
     );
   }
 }

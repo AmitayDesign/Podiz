@@ -51,8 +51,7 @@ class NotificationLoading extends StatelessWidget {
                     const SizedBox(
                       width: 8,
                     ),
-                    SizedBox(
-                      width: 200,
+                    Expanded(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [

@@ -59,11 +59,14 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final currentUser = ref.watch(currentUserProvider);
-    final userValue = ref.watch(userProvider(widget.userId));
+    final userValue = currentUser.uid == widget.userId
+        ? AsyncData(currentUser)
+        : ref.watch(userProvider(widget.userId));
 
     return userValue.when(
         error: (e, _) => Text(e.toString()),
-        loading: () => const CircularProgressIndicator(), //TODO shimmer?
+        loading: () =>
+            const Center(child: CircularProgressIndicator()), //TODO shimmer?
         data: (user) {
           return GestureDetector(
             onTap: () {

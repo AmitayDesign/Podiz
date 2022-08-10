@@ -3,8 +3,6 @@ import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/aspect/widgets/insightsRow.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
-import 'package:podiz/home/feed/components/quickNote.dart';
-import 'package:podiz/aspect/widgets/stackedImages.dart';
 import 'package:podiz/objects/Podcast.dart';
 
 class PodcastListTileQuickNote extends StatelessWidget {
@@ -33,8 +31,7 @@ class PodcastListTileQuickNote extends StatelessWidget {
               children: [
                 PodcastAvatar(imageUrl: podcast.image_url, size: 52),
                 const SizedBox(width: 8),
-                Container(
-                  width: 250, //TODO see this
+                Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
