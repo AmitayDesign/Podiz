@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/app_router.dart';
-import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/user/Player.dart';
@@ -53,12 +52,11 @@ class PlayerWidget extends ConsumerWidget {
                           children: [
                             PodcastAvatar(imageUrl: p.image_url, size: 52),
                             const SizedBox(width: 8),
-                            SizedBox(
-                              width: kScreenWidth - (14 + 52 + 8 + 8 + 80 + 14),
+                            Expanded(
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Align(
+                                  const Align(
                                     alignment: Alignment.centerLeft,
                                     child: PinkTimer(),
                                   ),
@@ -71,9 +69,10 @@ class PlayerWidget extends ConsumerWidget {
                                 ],
                               ),
                             ),
-                            SizedBox(
-                              width: 20,
-                              height: 20,
+                            Container(
+                              width: 24,
+                              height: 24,
+                              margin: const EdgeInsets.all(8),
                               child: IconButton(
                                 padding: EdgeInsets.zero,
                                 onPressed: () => playerManager.play30Back(p),
@@ -82,20 +81,22 @@ class PlayerWidget extends ConsumerWidget {
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 10),
-                            SizedBox(
-                              width: 20,
-                              height: 20,
+                            // const SizedBox(width: 18),
+                            Container(
+                              width: 24,
+                              height: 24,
+                              margin: const EdgeInsets.all(8),
                               child: IconButton(
                                 padding: EdgeInsets.zero,
                                 icon: Icon(icon),
                                 onPressed: onTap,
                               ),
                             ),
-                            const SizedBox(width: 10),
-                            SizedBox(
-                              width: 20,
-                              height: 20,
+                            // const SizedBox(width: 18),
+                            Container(
+                              width: 24,
+                              height: 24,
+                              margin: const EdgeInsets.all(8),
                               child: IconButton(
                                 padding: EdgeInsets.zero,
                                 onPressed: () => playerManager.play30Up(p),
