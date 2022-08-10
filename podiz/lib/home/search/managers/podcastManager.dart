@@ -98,7 +98,7 @@ class PodcastManager {
     String uid = authManager.currentUser!.lastListened;
     DocumentSnapshot<Map<String, dynamic>> doc =
         await firestore.collection("podcasts").doc(uid).get();
-    return Podcast.fromJson(doc.data()!);
+    return Podcast.fromFirestore(doc);
   }
 
   fetchFeedList() {}
