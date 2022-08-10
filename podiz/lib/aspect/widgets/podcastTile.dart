@@ -55,8 +55,7 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
               children: [
                 PodcastAvatar(imageUrl: widget.result.image_url, size: 68),
                 const SizedBox(width: 8),
-                SizedBox(
-                  width: 250,
+                Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
