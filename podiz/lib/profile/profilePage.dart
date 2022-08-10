@@ -3,10 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/theme/theme.dart';
-import 'package:podiz/authentication/AuthManager.dart';
+import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
-import 'package:podiz/home/components/replyView.dart';
 import 'package:podiz/home/feed/components/buttonPlay.dart';
 import 'package:podiz/home/feed/components/cardButton.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
@@ -20,11 +19,11 @@ import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/profile/components.dart/backAppBar.dart';
 import 'package:podiz/profile/components.dart/followPeopleButton.dart';
 import 'package:podiz/profile/userManager.dart';
+import 'package:podiz/providers.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
-  static const route = '/profile';
-  UserPodiz user;
-  ProfilePage(this.user, {Key? key}) : super(key: key);
+  final String userId;
+  const ProfilePage({Key? key, required this.userId}) : super(key: key);
 
   @override
   ConsumerState<ProfilePage> createState() => _ProfilePageState();
@@ -59,108 +58,112 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    ShowManager showManager = ref.read(showManagerProvider);
-    AuthManager authManager = ref.read(authManagerProvider);
+    final currentUser = ref.watch(currentUserProvider);
+    final userValue = ref.watch(userProvider(widget.userId));
 
-    return GestureDetector(
-      onTap: () {
-        _focusNode.unfocus();
-        setState(() {
-          visible = false;
-        });
-      },
-      child: Scaffold(
-        appBar: BackAppBar(),
-        floatingActionButton: authManager.userBloc!.uid != widget.user.uid
-            ? FollowPeopleButton(widget.user)
-            : Container(),
-        body: Stack(children: [
-          Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: CircleAvatar(
-                      backgroundImage: NetworkImage(widget.user.image_url),
-                      radius: 50,
+    return userValue.when(
+        error: (e, _) => Text(e.toString()),
+        loading: () => const CircularProgressIndicator(), //TODO shimmer?
+        data: (user) {
+          return GestureDetector(
+            onTap: () {
+              _focusNode.unfocus();
+              setState(() {
+                visible = false;
+              });
+            },
+            child: Scaffold(
+              appBar: BackAppBar(),
+              floatingActionButton: currentUser.uid != user.uid
+                  ? FollowPeopleButton(user)
+                  : Container(),
+              body: Stack(children: [
+                Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: CircleAvatar(
+                            backgroundImage: NetworkImage(user.image_url),
+                            radius: 50,
+                          ),
+                        ),
+
+                        const SizedBox(height: 12),
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              user.name,
+                              style: followerName(),
+                            )),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(user.followers.length.toString(),
+                                style: followersNumber()),
+                            const SizedBox(width: 4),
+                            Text("Followers", style: followersText()),
+                            const SizedBox(width: 16),
+                            Text(user.following.length.toString(),
+                                style: followersNumber()),
+                            const SizedBox(width: 4),
+                            Text("Following", style: followersText()),
+                          ],
+                        ),
+
+                        user.favPodcasts.isNotEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.only(top: 24.0),
+                                child: SizedBox(
+                                  width: kScreenWidth,
+                                  child: Text(
+                                    "${user.name.split(" ")[0]}'s Favorite Podcasts",
+                                    textAlign: TextAlign.left,
+                                    style: followersFavorite(),
+                                  ),
+                                ),
+                              )
+                            : Container(),
+                        const SizedBox(height: 8),
+                        user.favPodcasts.isNotEmpty
+                            ? SizedBox(
+                                height: 68,
+                                child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  children: user.favPodcasts.map((show) {
+                                    return _buildFavouriteItem(show);
+                                  }).toList(),
+                                ),
+                              )
+                            : Container() //change this
+                      ],
                     ),
                   ),
-
-                  const SizedBox(height: 12),
-                  Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        widget.user.name,
-                        style: followerName(),
-                      )),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(widget.user.followers.length.toString(),
-                          style: followersNumber()),
-                      const SizedBox(width: 4),
-                      Text("Followers", style: followersText()),
-                      const SizedBox(width: 16),
-                      Text(widget.user.following.length.toString(),
-                          style: followersNumber()),
-                      const SizedBox(width: 4),
-                      Text("Following", style: followersText()),
-                    ],
-                  ),
-
-                  widget.user.favPodcasts.isNotEmpty
-                      ? Padding(
-                          padding: const EdgeInsets.only(top: 24.0),
-                          child: SizedBox(
-                            width: kScreenWidth,
-                            child: Text(
-                              "${widget.user.name.split(" ")[0]}'s Favorite Podcasts",
-                              textAlign: TextAlign.left,
-                              style: followersFavorite(),
-                            ),
-                          ),
-                        )
-                      : Container(),
-                  const SizedBox(height: 8),
-                  widget.user.favPodcasts.isNotEmpty
-                      ? SizedBox(
-                          height: 68,
+                  const SizedBox(height: 54),
+                  user.comments.isNotEmpty
+                      ? Expanded(
                           child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            children: widget.user.favPodcasts.map((show) {
-                              return _buildFavouriteItem(show);
-                            }).toList(),
+                            children: user.comments.reversed
+                                .map((c) => _buildItem(user, c))
+                                .toList(),
                           ),
                         )
                       : Container() //change this
-                ],
-              ),
+                ]),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: visible ? replyView() : Container(),
+                )
+              ]),
             ),
-            const SizedBox(height: 54),
-            widget.user.comments.isNotEmpty
-                ? Expanded(
-                    child: ListView(
-                      children: widget.user.comments.reversed
-                          .map(_buildItem)
-                          .toList(),
-                    ),
-                  )
-                : Container() //change this
-          ]),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: visible ? replyView() : Container(),
-          )
-        ]),
-      ),
-    );
+          );
+        });
   }
 
   Widget _buildFavouriteItem(String showUid) {
@@ -174,7 +177,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               return Center(
                 child: Text(
                   '${snapshot.error} occurred',
-                  style: TextStyle(fontSize: 18),
+                  style: const TextStyle(fontSize: 18),
                 ),
               );
 
@@ -193,7 +196,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         });
   }
 
-  Widget _buildItem(Comment c) {
+  Widget _buildItem(UserPodiz user, Comment c) {
     final theme = Theme.of(context);
     return FutureBuilder(
         future: ref
@@ -207,7 +210,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               return Center(
                 child: Text(
                   '${snapshot.error} occurred',
-                  style: TextStyle(fontSize: 18),
+                  style: const TextStyle(fontSize: 18),
                 ),
               );
 
@@ -223,7 +226,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       children: [
                         PodcastAvatar(imageUrl: episode.image_url, size: 32),
                         const SizedBox(width: 8),
-                        Container(
+                        SizedBox(
                           width: kScreenWidth - (16 + 32 + 8 + 16),
                           height: 40,
                           child: Column(
@@ -257,7 +260,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         children: [
                           Row(
                             children: [
-                              CircleProfile(user: widget.user, size: 20),
+                              CircleProfile(user: user, size: 20),
                               const SizedBox(
                                 width: 8,
                               ),
@@ -270,7 +273,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                     Align(
                                       alignment: Alignment.centerLeft,
                                       child: Text(
-                                        widget.user.name,
+                                        user.name,
                                         style: discussionCardProfile(),
                                       ),
                                     ),
@@ -278,7 +281,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                     Align(
                                         alignment: Alignment.centerLeft,
                                         child: Text(
-                                            "${widget.user.followers.length} followers",
+                                            "${user.followers.length} followers",
                                             style: discussionCardFollowers())),
                                   ],
                                 ),
@@ -325,7 +328,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                             child: Align(
                                               alignment: Alignment.centerLeft,
                                               child: Text(
-                                                "Comment on ${widget.user.name} insight...",
+                                                "Comment on ${user.name} insight...",
                                                 style:
                                                     discussionSnackCommentHint(),
                                               ),
@@ -367,7 +370,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             return Center(
               child: Text(
                 '${snapshot.error} occurred',
-                style: TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 18),
               ),
             );
 
@@ -489,7 +492,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(10), topRight: Radius.circular(10)),
           ),
-          child: CircularProgressIndicator(),
+          child: const CircularProgressIndicator(),
         );
       },
     );

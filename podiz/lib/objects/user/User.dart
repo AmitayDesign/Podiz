@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:podiz/aspect/typedefs.dart';
@@ -9,7 +7,7 @@ part 'User.g.dart';
 
 @JsonSerializable()
 class UserPodiz with EquatableMixin {
-  String? uid;
+  late String uid;
   String name;
   String email;
   List<String> followers;
@@ -42,7 +40,7 @@ class UserPodiz with EquatableMixin {
 
   @override
   String toString() =>
-      " user + ${this.uid} : \n{(name : ${this.name};\nemail : ${this.email}; ${this.followers.length}; ${this.following.length}\n";
+      " user + $uid : \n{(name : $name;\nemail : $email; ${followers.length}; ${following.length}\n";
 
   @override
   List<Object> get props => [name];

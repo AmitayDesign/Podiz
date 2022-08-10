@@ -2,10 +2,6 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/typedefs.dart';
-import 'package:podiz/authentication/AuthManager.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/TimerPodiz.dart';
 import 'package:rxdart/rxdart.dart';
@@ -21,7 +17,7 @@ class Player {
     _stateController.add(PlayerState.close);
   }
 
-  Podcast? podcastPlaying = null;
+  Podcast? podcastPlaying;
 
   Stream<Podcast> get podcast => _podcastController!.stream;
 

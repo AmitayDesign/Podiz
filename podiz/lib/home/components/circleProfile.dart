@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/objects/user/User.dart';
-import 'package:podiz/profile/profilePage.dart';
 
 class CircleProfile extends StatelessWidget {
-  UserPodiz user;
-  double size;
-  CircleProfile({Key? key, required this.user, required this.size})
+  final UserPodiz user;
+  final double size;
+  const CircleProfile({Key? key, required this.user, required this.size})
       : super(key: key);
 
   @override
@@ -14,8 +15,11 @@ class CircleProfile extends StatelessWidget {
       radius: size,
       backgroundImage: NetworkImage(user.image_url),
       child: InkWell(
-          onTap: () => Navigator.pushNamed(context, ProfilePage.route,
-              arguments: user)),
+        onTap: () => context.pushNamed(
+          AppRoute.profile.name,
+          params: {'userId': user.uid},
+        ),
+      ),
     );
   }
 }

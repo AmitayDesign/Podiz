@@ -1,22 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_locales/flutter_locales.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/aspect/routerConfig.dart';
 import 'package:podiz/aspect/theme/themeConfig.dart';
-import 'package:podiz/aspect/widgets/routeAwareState.dart';
-import 'package:podiz/authentication/AuthManager.dart';
-import 'package:podiz/home/homePage.dart';
-import 'package:podiz/home/notifications/PushNotificationService.dart';
-import 'package:podiz/onboarding/onbordingPage.dart';
-import 'package:podiz/providers.dart';
-import 'package:podiz/splashScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 late SharedPreferences preferences;
@@ -26,28 +16,31 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 void main() async {
-  final container = ProviderContainer();
-  // WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.removeAfter((context) async {
-    await container.read(authManagerProvider).firstUserLoad;
-  });
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  // FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await Locales.init(['en']);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  preferences = await SharedPreferences.getInstance();
+  final container = ProviderContainer();
 
   //TODO call no internet dialog
-  var firebaseApp = await Firebase.initializeApp()
+  await Firebase.initializeApp()
       .catchError((onError) => print("call no internet dialog"));
 
-  preferences = await SharedPreferences.getInstance();
-  await Locales.init(['en']);
-  
+  // container.read(authManagerProvider).firstUserLoad.then(
+  //       (_) => FlutterNativeSplash.remove(),
+  //     );
+
   // PushNotificationService.init(container.read);
-  runApp(UncontrolledProviderScope(container: container, child: MyApp()));
+  runApp(UncontrolledProviderScope(container: container, child: const MyApp()));
 }
 
 class MyApp extends ConsumerStatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
-  _MyAppState createState() => _MyAppState();
+  ConsumerState<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
@@ -75,31 +68,24 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(userStreamProvider);
-    print("building main");
+    final goRouter = ref.watch(goRouterProvider);
     return LocaleBuilder(
-      builder: (locale) => MaterialApp(
-          debugShowCheckedModeBanner: false,
-          navigatorObservers: [RouteAwareState.observer],
-          localizationsDelegates: Locales.delegates,
-          supportedLocales: Locales.supportedLocales,
-          theme: ThemeConfig.light,
-          themeMode: ref.watch(themeModeProvider),
-          routes: RouterConfig.routes,
-          builder: (context, child) {
-            setScreenSize(context);
-            return child!;
-          },
-          locale: locale,
-          home: user.maybeWhen(
-            data: (user) {
-              print("USER " + user.toString());
-              if (user == null) return OnBoardingPage();
-              return HomePage(user);
-            },
-            loading: () => SplashScreen(),
-            orElse: () => SplashScreen.error(),
-          )),
+      builder: (locale) => MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        localizationsDelegates: Locales.delegates,
+        supportedLocales: Locales.supportedLocales,
+        locale: locale,
+        routerDelegate: goRouter.routerDelegate,
+        routeInformationParser: goRouter.routeInformationParser,
+        routeInformationProvider: goRouter.routeInformationProvider,
+        restorationScopeId: 'app',
+        theme: ThemeConfig.light,
+        themeMode: ref.watch(themeModeProvider),
+        builder: (context, child) {
+          setScreenSize(context);
+          return child!;
+        },
+      ),
     );
   }
 }

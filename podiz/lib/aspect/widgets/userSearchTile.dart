@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/objects/user/User.dart';
-import 'package:podiz/profile/profilePage.dart';
 
-class UserSeachTile extends StatelessWidget {
-  UserPodiz user;
-  UserSeachTile(this.user, {Key? key}) : super(key: key);
+class UserSearchTile extends StatelessWidget {
+  final UserPodiz user;
+  const UserSearchTile(this.user, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return InkWell(
-      onTap: () =>
-          Navigator.pushNamed(context, ProfilePage.route, arguments: user),
+      onTap: () => context.goNamed(
+        AppRoute.profile.name,
+        params: {'userId': user.uid},
+      ),
       child: Container(
         height: 68,
         width: kScreenWidth - 32,
@@ -30,9 +33,9 @@ class UserSeachTile extends StatelessWidget {
             LimitedBox(
                 maxWidth: kScreenWidth - (16 + 16 + 20 + 11 + 40 + 16 + 16),
                 child: Text(user.name, style: followerName())),
-            Spacer(),
+            const Spacer(),
             Column(children: [
-              Spacer(),
+              const Spacer(),
               Row(children: [
                 Text(
                   user.followers.length.toString(),
@@ -56,7 +59,7 @@ class UserSeachTile extends StatelessWidget {
                   style: followersText(),
                 ),
               ]),
-              Spacer(),
+              const Spacer(),
             ]),
             const SizedBox(width: 16),
           ],

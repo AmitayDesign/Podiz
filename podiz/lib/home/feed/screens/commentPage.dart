@@ -3,7 +3,7 @@ import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/aspect/widgets/asyncElevatedButton.dart';
-import 'package:podiz/authentication/AuthManager.dart';
+import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/profile/components.dart/backAppBar.dart';
@@ -48,9 +48,8 @@ class CommentPage extends ConsumerWidget {
             ),
             Spacer(),
             AsyncElevatedButton(
-              onPressed: () => ref
-                  .read(authManagerProvider)
-                  .doComment(controller.text, podcast.uid!, podcast.duration_ms),
+              onPressed: () => ref.read(authManagerProvider).doComment(
+                  controller.text, podcast.uid!, podcast.duration_ms),
               child: Text(
                 Locales.string(context, "doComent"),
                 style: theme.textTheme.button,

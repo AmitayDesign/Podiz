@@ -2,13 +2,10 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/typedefs.dart';
-import 'package:podiz/authentication/AuthManager.dart';
-import 'package:podiz/objects/Podcast.dart';
+import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/objects/Podcaster.dart';
 import 'package:podiz/objects/SearchResult.dart';
 import 'package:podiz/providers.dart';
-import 'package:rxdart/rxdart.dart';
 
 final showManagerProvider = Provider<ShowManager>(
   (ref) => ShowManager(ref.read),
@@ -24,7 +21,7 @@ class ShowManager {
   Map<String, Podcaster> showBloc = {};
   List<String> favShow = [];
 
-  ShowManager(this._read) {}
+  ShowManager(this._read);
 
   // General Functions
 

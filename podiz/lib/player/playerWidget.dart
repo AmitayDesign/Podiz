@@ -1,26 +1,22 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loading_indicator/loading_indicator.dart';
+import 'package:go_router/go_router.dart';
+import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
+import 'package:podiz/objects/user/Player.dart';
+import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/player/components/pinkProgress.dart';
 import 'package:podiz/player/components/pinkTimer.dart';
-import 'package:podiz/player/screens/discussionPage.dart';
-import 'package:podiz/player/PlayerManager.dart';
-import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
 
 class PlayerWidget extends ConsumerWidget {
-  PlayerWidget({Key? key}) : super(key: key);
+  const PlayerWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     print("building");
     final state = ref.watch(stateProvider);
     return state.maybeWhen(
@@ -32,7 +28,7 @@ class PlayerWidget extends ConsumerWidget {
         final podcast = ref.watch(podcastProvider);
         return podcast.maybeWhen(
             orElse: () => SplashScreen.error(),
-            loading: () => CircularProgressIndicator(),
+            loading: () => const CircularProgressIndicator(),
             data: (p) {
               final playerManager = ref.read(playerManagerProvider);
               p = playerManager.playerBloc.podcastPlaying!;
@@ -40,7 +36,10 @@ class PlayerWidget extends ConsumerWidget {
                   ? () => playerManager.pauseEpisode()
                   : () => playerManager.resumeEpisode(p);
               return InkWell(
-                onTap: () => Navigator.pushNamed(context, DiscussionPage.route),
+                onTap: () => context.pushNamed(
+                  AppRoute.discussion.name,
+                  params: {'showId': p.uid!},
+                ),
                 child: Column(
                   children: [
                     PinkProgress(p.duration_ms),

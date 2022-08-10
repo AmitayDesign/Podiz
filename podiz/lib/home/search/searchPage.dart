@@ -1,13 +1,12 @@
 import 'package:after_layout/after_layout.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutterfire_ui/database.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutterfire_ui/firestore.dart';
 import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/aspect/widgets/podcastTile.dart';
 import 'package:podiz/aspect/widgets/showSearchTile.dart';
 import 'package:podiz/aspect/widgets/userSearchTile.dart';
-
-import 'package:podiz/home/homePage.dart';
-import 'package:podiz/aspect/widgets/podcastTile.dart';
 import 'package:podiz/home/search/components/searchBar.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/home/search/managers/showManager.dart';
@@ -16,20 +15,13 @@ import 'package:podiz/objects/Podcaster.dart';
 import 'package:podiz/objects/SearchResult.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/providers.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_locales/flutter_locales.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/splashScreen.dart';
 
-class SearchPage extends ConsumerStatefulWidget with HomePageMixin {
+class SearchPage extends ConsumerStatefulWidget {
+  const SearchPage({Key? key}) : super(key: key);
+
   @override
-  final String label = 'Search';
-  @override
-  final Widget icon = const Icon(Icons.search);
-  @override
-  final Widget activeIcon = const Icon(Icons.search);
-  @override
-  _SearchPageState createState() => _SearchPageState();
+  ConsumerState<SearchPage> createState() => _SearchPageState();
 }
 
 class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
@@ -98,8 +90,7 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
                               snapshot.fetchMore();
                             }
 
-                            SearchResult episode =
-                                snapshot.docs[index].data() as SearchResult;
+                            final episode = snapshot.docs[index].data();
                             episode.uid = snapshot.docs[index].id;
 
                             return PodcastTile(episode,
@@ -133,8 +124,7 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
                               snapshot.fetchMore();
                             }
 
-                            Podcaster show =
-                                snapshot.docs[index].data() as Podcaster;
+                            Podcaster show = snapshot.docs[index].data();
                             show.uid = snapshot.docs[index].id;
 
                             return ShowSearchTile(show);
@@ -165,11 +155,10 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
                               snapshot.fetchMore();
                             }
 
-                            UserPodiz user =
-                                snapshot.docs[index].data() as UserPodiz;
+                            UserPodiz user = snapshot.docs[index].data();
                             user.uid = snapshot.docs[index].id;
 
-                            return UserSeachTile(user);
+                            return UserSearchTile(user);
                           },
                           childCount: snapshot.docs.length,
                         ),
@@ -181,7 +170,7 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
             ),
           Padding(
             key: searchBarKey,
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               vertical: 8,
               horizontal: kScreenPadding,
             ),

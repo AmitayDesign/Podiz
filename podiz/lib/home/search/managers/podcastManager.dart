@@ -3,14 +3,11 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/typedefs.dart';
-import 'package:podiz/authentication/AuthManager.dart';
+import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/home/search/managers/showManager.dart';
-import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/SearchResult.dart';
 import 'package:podiz/providers.dart';
-import 'package:rxdart/rxdart.dart';
 
 final podcastManagerProvider = Provider<PodcastManager>(
   (ref) => PodcastManager(ref.read),
@@ -27,7 +24,7 @@ class PodcastManager {
 
   Map<String, Podcast> podcastBloc = {};
 
-  PodcastManager(this._read) {}
+  PodcastManager(this._read);
 
   // General Functions
 
@@ -84,7 +81,7 @@ class PodcastManager {
   }
 
   Future<Podcast> getLastListenedEpisodeFromFirebase() async {
-    String uid = authManager.userBloc!.lastListened;
+    String uid = authManager.currentUser!.lastListened;
     DocumentSnapshot<Map<String, dynamic>> doc =
         await firestore.collection("podcasts").doc(uid).get();
     return Podcast.fromJson(doc.data()!);

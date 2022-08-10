@@ -1,4 +1,3 @@
-import 'package:podiz/objects/AuthorizationModel.dart';
 import 'package:podiz/onboarding/logic/AuthorizationApiProvider.dart';
 import 'package:podiz/onboarding/logic/AuthorizationTokenApiProvider.dart';
 

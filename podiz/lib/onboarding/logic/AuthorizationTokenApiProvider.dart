@@ -1,9 +1,7 @@
 import 'dart:async';
+
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:http/http.dart' show Client;
-import 'dart:convert';
-
-import 'package:podiz/objects/AuthorizationModel.dart';
 
 class AuthorizationTokenApiProvider {
   Client client = Client();
@@ -13,6 +11,9 @@ class AuthorizationTokenApiProvider {
         .httpsCallable("getAccessTokenWithCode")
         .call({"code": code});
 
-    return result.data;
+    final String token = result.data;
+
+    if (token == '0') throw Exception();
+    return token;
   }
 }

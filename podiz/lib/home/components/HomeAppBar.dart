@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/theme.dart';
-import 'package:podiz/authentication/AuthManager.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/onboarding/components/linearGradientAppBar.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/profile/screens/settingsPage.dart';
+import 'package:podiz/providers.dart';
 
 class HomeAppBar extends ConsumerWidget {
-  String title;
-  HomeAppBar(this.title, {Key? key}) : super(key: key);
+  final String title;
+  const HomeAppBar(this.title, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    AuthManager authManager = ref.read(authManagerProvider);
+    final user = ref.read(currentUserProvider);
     return AppBar(
       flexibleSpace: Container(
         height: 96,
@@ -29,12 +30,11 @@ class HomeAppBar extends ConsumerWidget {
             children: [
               Text(Locales.string(context, title), style: podcastArtist()),
               const Spacer(),
-              CircleProfile(user: authManager.userBloc!, size: 20),
+              CircleProfile(user: user, size: 20),
               const SizedBox(width: 8),
               IconButton(
-                icon: Icon(Icons.settings, color: Colors.grey),
-                onPressed: () =>
-                    Navigator.pushNamed(context, SettingsPage.route),
+                icon: const Icon(Icons.settings, color: Colors.grey),
+                onPressed: () => context.goNamed(AppRoute.settings.name),
               ),
             ],
           ),

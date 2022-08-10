@@ -1,11 +1,7 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/typedefs.dart';
-import 'package:podiz/authentication/AuthManager.dart';
-import 'package:podiz/home/search/managers/showManager.dart';
+import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/objects/user/NotificationPodiz.dart';
 import 'package:podiz/providers.dart';
 import 'package:rxdart/rxdart.dart';
@@ -28,7 +24,7 @@ class NotificationManager {
       _notificationStream.stream;
 
   NotificationManager(this._read) {
-    String userUid = authManager.userBloc!.uid!;
+    String userUid = authManager.currentUser!.uid;
     firestore
         .collection("users")
         .doc(userUid)

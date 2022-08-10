@@ -1,36 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutterfire_ui/firestore.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/theme.dart';
-import 'package:podiz/authentication/AuthManager.dart';
+import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/home/components/HomeAppBar.dart';
 import 'package:podiz/home/components/circleProfile.dart';
-import 'package:podiz/loading.dart/episodeLoading.dart';
-import 'package:podiz/loading.dart/snackBarLoading.dart';
 import 'package:podiz/home/components/podcastListTile.dart';
 import 'package:podiz/home/feed/components/podcastListTileQuickNote.dart';
-import 'package:podiz/home/homePage.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
+import 'package:podiz/loading.dart/episodeLoading.dart';
+import 'package:podiz/loading.dart/snackBarLoading.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
 
-class FeedPage extends ConsumerStatefulWidget with HomePageMixin {
-  @override
-  final String label = 'Home';
-  @override
-  final Widget icon = const Icon(Icons.home);
-  @override
-  final Widget activeIcon = const Icon(Icons.home, color: Color(0xFFD74EFF));
-
-  bool isPlaying;
-  UserPodiz user;
-
-  FeedPage(this.isPlaying, {Key? key, required this.user}) : super(key: key);
+class FeedPage extends ConsumerStatefulWidget {
+  final bool isPlaying;
+  const FeedPage(this.isPlaying, {Key? key}) : super(key: key);
 
   @override
   ConsumerState<FeedPage> createState() => _FeedPageState();
@@ -39,8 +29,8 @@ class FeedPage extends ConsumerStatefulWidget with HomePageMixin {
 class _FeedPageState extends ConsumerState<FeedPage> {
   final _controller = ScrollController();
 
-  late TextEditingController _controllerText;
-  late FocusNode _focusNode;
+  final _controllerText = TextEditingController();
+  final _focusNode = FocusNode();
 
   String title = "";
   int categories = 1;
@@ -51,25 +41,28 @@ class _FeedPageState extends ConsumerState<FeedPage> {
 
   @override
   void initState() {
-    if (widget.user.lastListened != "") {
+    super.initState();
+    final user = ref.read(currentUserProvider);
+    numberCast = user.favPodcasts.length;
+    if (user.lastListened != "") {
       title = "lastlistened";
       lastListened = true;
-    } else if (widget.user.favPodcasts.isNotEmpty) {
+    } else if (user.favPodcasts.isNotEmpty) {
       title = "mycasts";
     } else if (!lastListened && numberCast == 0) {
       title = "hotlive";
     }
+
     PodcastManager podcastManager = ref.read(podcastManagerProvider);
     hotlivePodcasts = podcastManager.getHotLive();
     mycastPodcasts = podcastManager.getMyCast();
+
     _controller.addListener(handleAppBar);
-    _focusNode = FocusNode();
-    _controllerText = TextEditingController();
-    super.initState();
   }
 
   handleAppBar() {
-    numberCast = widget.user.favPodcasts.length;
+    final user = ref.read(currentUserProvider);
+    numberCast = user.favPodcasts.length;
 
     int lastListenedSize = lastListened ? 196 : 0;
     int myCastsSize =
@@ -96,6 +89,8 @@ class _FeedPageState extends ConsumerState<FeedPage> {
   @override
   void dispose() {
     _controller.dispose();
+    _controllerText.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -125,7 +120,8 @@ class _FeedPageState extends ConsumerState<FeedPage> {
 
   @override
   Widget build(BuildContext context) {
-    AuthManager authManager = ref.read(authManagerProvider);
+    final user = ref.watch(currentUserProvider);
+    final authManager = ref.watch(authManagerProvider);
     final lastListenedEpisode = ref.watch(lastListenedEpisodeFutureProvider);
     return GestureDetector(
         onTap: () {
@@ -140,7 +136,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
               padding: const EdgeInsets.only(
                   top: 104.0, left: 16, right: 16), //TODO size of appbar
               child: CustomScrollView(controller: _controller, slivers: [
-                widget.user.lastListened == ""
+                user.lastListened == ""
                     ? Container()
                     : SliverToBoxAdapter(
                         child: lastListenedEpisode.when(
@@ -149,7 +145,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                         data: (ep) => PodcastListTileQuickNote(ep,
                             quickNote: quickNote(ep)),
                       )),
-                if (widget.user.favPodcasts.isNotEmpty) ...[
+                if (user.favPodcasts.isNotEmpty) ...[
                   SliverToBoxAdapter(
                     child: Align(
                         alignment: Alignment.centerLeft,
@@ -181,8 +177,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                             snapshot.fetchMore();
                           }
 
-                          Podcast episode =
-                              snapshot.docs[index].data() as Podcast;
+                          Podcast episode = snapshot.docs[index].data();
                           episode.uid = snapshot.docs[index].id;
                           return PodcastListTile(episode);
                         },
@@ -204,7 +199,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                child: commentView(widget.user.lastListened),
+                child: commentView(user),
               )
             ] else ...[
               Container(),
@@ -213,10 +208,11 @@ class _FeedPageState extends ConsumerState<FeedPage> {
         ));
   }
 
-  Widget commentView(String episodeUid) {
+  Widget commentView(UserPodiz user) {
     return FutureBuilder(
-        future:
-            ref.read(podcastManagerProvider).getPodcastFromFirebase(episodeUid),
+        future: ref
+            .read(podcastManagerProvider)
+            .getPodcastFromFirebase(user.lastListened),
         initialData: "loading",
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
@@ -225,7 +221,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
               return Center(
                 child: Text(
                   '${snapshot.error} occurred',
-                  style: TextStyle(fontSize: 18),
+                  style: const TextStyle(fontSize: 18),
                 ),
               );
 
@@ -248,10 +244,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                     children: [
                       Row(
                         children: [
-                          CircleProfile(
-                            user: ref.read(authManagerProvider).userBloc!,
-                            size: 15.5,
-                          ),
+                          CircleProfile(user: user, size: 15.5),
                           const SizedBox(width: 8),
                           LimitedBox(
                             maxWidth:
@@ -321,7 +314,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
     return Container(
       height: 31,
       decoration: BoxDecoration(
-        color: Color(0x0DFFFFFF),
+        color: const Color(0x0DFFFFFF),
         borderRadius: BorderRadius.circular(30),
       ),
       child: InkWell(

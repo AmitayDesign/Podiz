@@ -7,7 +7,7 @@ part of 'User.dart';
 // **************************************************************************
 
 UserPodiz _$UserPodizFromJson(Map<String, dynamic> json) => UserPodiz(
-      json['uid'] as String?,
+      json['uid'] as String,
       name: json['name'] as String,
       email: json['email'] as String,
       followers:

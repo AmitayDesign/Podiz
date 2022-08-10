@@ -1,22 +1,14 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loading_indicator/loading_indicator.dart';
 import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/theme/theme.dart';
-import 'package:podiz/aspect/widgets/shimmerLoading.dart';
-import 'package:podiz/authentication/AuthManager.dart';
+import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/Player.dart';
-import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/player/components/pinkTimer.dart';
-import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
 
@@ -59,9 +51,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    final player = ref.read(playerProvider);
+    final player = ref.watch(playerProvider);
     if (firstTime) {
       episodeUid = widget.p.uid!;
       player.increment(episodeUid);
@@ -80,6 +70,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
   }
 
   Widget openedTextInputView(BuildContext context, Podcast episode) {
+    final user = ref.watch(currentUserProvider);
     final playerManager = ref.read(playerManagerProvider);
     return Padding(
       padding: const EdgeInsets.only(left: 14.0, right: 14, top: 20, bottom: 8),
@@ -88,7 +79,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
           Row(
             children: [
               CircleProfile(
-                user: ref.read(authManagerProvider).userBloc!,
+                user: user,
                 size: 15.5,
               ),
               const SizedBox(width: 8),
@@ -170,8 +161,6 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
       ),
     );
   }
-
- 
 
   Widget closedTextInputView(BuildContext context, Podcast episode) {
     final playerManager = ref.read(playerManagerProvider);

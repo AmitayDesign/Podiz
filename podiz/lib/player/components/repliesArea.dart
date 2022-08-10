@@ -4,12 +4,9 @@ import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/aspect/widgets/shimmerLoading.dart';
-import 'package:podiz/authentication/AuthManager.dart';
-import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/home/feed/components/cardButton.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/user/User.dart';
-import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/player/components/profileRow.dart';
 import 'package:podiz/profile/userManager.dart';
 

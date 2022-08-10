@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/aspect/widgets/insightsRow.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
-import 'package:podiz/aspect/widgets/stackedImages.dart';
-import 'package:podiz/home/search/screens/showPage.dart';
-import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/SearchResult.dart';
 import 'package:podiz/player/PlayerManager.dart';
-import 'package:podiz/player/screens/discussionPage.dart';
-import 'package:podiz/profile/screens/settingsPage.dart';
 
 class PodcastShowTile extends ConsumerStatefulWidget {
-  SearchResult result;
-  bool isPlaying;
+  final SearchResult result;
+  final bool isPlaying;
 
-  PodcastShowTile(this.result, {required this.isPlaying, Key? key})
+  const PodcastShowTile(this.result, {required this.isPlaying, Key? key})
       : super(key: key);
 
   @override
@@ -35,7 +32,10 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
           ref
               .read(playerManagerProvider)
               .playEpisode(widget.result.searchResultToPodcast(), 0);
-          Navigator.pushNamed(context, DiscussionPage.route);
+          context.goNamed(
+            AppRoute.discussion.name,
+            params: {'showId': widget.result.uid},
+          );
         },
         child: Container(
           height: 188,

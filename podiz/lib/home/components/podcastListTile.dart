@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/aspect/widgets/insightsRow.dart';
-import 'package:podiz/aspect/widgets/stackedImages.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/player/PlayerManager.dart';
-import 'package:podiz/player/screens/discussionPage.dart';
 
 class PodcastListTile extends ConsumerWidget {
-  Podcast podcast;
-  PodcastListTile(this.podcast, {Key? key}) : super(key: key);
+  final Podcast podcast;
+  const PodcastListTile(this.podcast, {Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
@@ -21,7 +21,10 @@ class PodcastListTile extends ConsumerWidget {
       child: InkWell(
         onTap: () {
           ref.read(playerManagerProvider).playEpisode(podcast, 0);
-          Navigator.pushNamed(context, DiscussionPage.route);
+          context.pushNamed(
+            AppRoute.discussion.name,
+            params: {'showId': podcast.uid!},
+          );
         },
         child: Container(
           height: 148,

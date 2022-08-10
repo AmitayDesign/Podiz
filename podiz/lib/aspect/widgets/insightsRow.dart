@@ -5,9 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/aspect/widgets/stackedImages.dart';
-import 'package:podiz/authentication/AuthManager.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/objects/Podcast.dart';
+import 'package:podiz/providers.dart';
 
 class InsightsRow extends ConsumerWidget {
   Podcast podcast;
@@ -21,6 +21,7 @@ class InsightsRow extends ConsumerWidget {
   double size = 32;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(currentUserProvider);
     if (podcast.comments == 0) {
       return SizedBox(
         height: size,
@@ -28,9 +29,8 @@ class InsightsRow extends ConsumerWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            CircleProfile(
-                user: ref.read(authManagerProvider).userBloc!, size: 16),
-            SizedBox(width: 8),
+            CircleProfile(user: user, size: 16),
+            const SizedBox(width: 8),
             LimitedBox(
               maxWidth: kScreenWidth - (16 + 16 + 32 + 8 + 12 + 12),
               child: AutoSizeText(

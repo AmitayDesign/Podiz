@@ -1,43 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/theme/theme.dart';
-import 'package:podiz/aspect/widgets/shimmerLoading.dart';
-import 'package:podiz/authentication/AuthManager.dart';
+import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
-import 'package:podiz/home/components/replyView.dart';
 import 'package:podiz/home/feed/components/buttonPlay.dart';
 import 'package:podiz/home/feed/components/cardButton.dart';
-import 'package:podiz/home/feed/components/podcastListTileQuickNote.dart';
+import 'package:podiz/home/notifications/components/tabBarLabel.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/loading.dart/notificationLoading.dart';
-import 'package:podiz/loading.dart/shimmerContainer.dart';
+import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/NotificationPodiz.dart';
 import 'package:podiz/objects/user/User.dart';
-import 'package:podiz/player/components/discussionCard.dart';
-import 'package:podiz/home/homePage.dart';
-import 'package:podiz/home/notifications/components/tabBarLabel.dart';
-import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/onboarding/components/linearGradientAppBar.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
 
-class NotificationsPage extends ConsumerStatefulWidget with HomePageMixin {
-  @override
-  final String label = 'Notifications';
-  @override
-  final Widget icon = const Icon(Icons.notifications);
-  @override
-  final Widget activeIcon = const Icon(Icons.notifications);
-
-  static const route = '/profile';
-
-  bool isPlaying;
-  NotificationsPage(this.isPlaying, {Key? key}) : super(key: key);
+class NotificationsPage extends ConsumerStatefulWidget {
+  final bool isPlaying;
+  const NotificationsPage(this.isPlaying, {Key? key}) : super(key: key);
 
   @override
   ConsumerState<NotificationsPage> createState() => _NotificationsPageState();
@@ -157,7 +142,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                         ];
                       },
                       body: Padding(
-                        padding: EdgeInsets.only(top: 20),
+                        padding: const EdgeInsets.only(top: 20),
                         child: TabBarView(children: children),
                       ),
                     ),
@@ -186,7 +171,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
               return Center(
                 child: Text(
                   '${snapshot.error} occurred',
-                  style: TextStyle(fontSize: 18),
+                  style: const TextStyle(fontSize: 18),
                 ),
               );
 
@@ -205,7 +190,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                         return Center(
                           child: Text(
                             '${snapshot.error} occurred',
-                            style: TextStyle(fontSize: 18),
+                            style: const TextStyle(fontSize: 18),
                           ),
                         );
 
@@ -381,7 +366,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
             return Center(
               child: Text(
                 '${snapshot.error} occurred',
-                style: TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 18),
               ),
             );
 
@@ -503,7 +488,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(10), topRight: Radius.circular(10)),
           ),
-          child: CircularProgressIndicator(),
+          child: const CircularProgressIndicator(),
         );
       },
     );

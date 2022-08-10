@@ -1,21 +1,20 @@
 import 'dart:async';
 
-import 'package:podiz/aspect/failures/failure.dart';
-import 'package:podiz/aspect/typedefs.dart';
-import 'package:podiz/home/search/managers/showManager.dart';
-import 'package:podiz/objects/Comment.dart';
-import 'package:podiz/objects/Podcast.dart';
-import 'package:podiz/objects/Podcaster.dart';
-import 'package:podiz/objects/user/User.dart';
-import 'package:podiz/providers.dart';
-import 'package:podiz/services/fileHandler.dart';
-
-import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/aspect/failures/failure.dart';
+import 'package:podiz/aspect/typedefs.dart';
+import 'package:podiz/home/search/managers/podcastManager.dart';
+import 'package:podiz/home/search/managers/showManager.dart';
+import 'package:podiz/main.dart';
+import 'package:podiz/objects/Comment.dart';
+import 'package:podiz/objects/Podcast.dart';
+import 'package:podiz/objects/Podcaster.dart';
+import 'package:podiz/objects/user/User.dart';
+import 'package:podiz/providers.dart';
 import 'package:rxdart/rxdart.dart';
 
 final authManagerProvider = Provider<AuthManager>(
@@ -30,50 +29,67 @@ class AuthManager {
   FirebaseAuth get firebaseAuth => _read(authProvider);
   FirebaseFirestore get firestore => _read(firestoreProvider);
 
-  UserPodiz? userBloc;
-  List<Podcast> castList = [];
+  List<Podcast> myCast = [];
 
-  List<Podcast> get myCast => castList;
   final _userCompleter = Completer();
   Future<void> get firstUserLoad => _userCompleter.future;
 
+  UserPodiz? currentUser;
   final _userStream = BehaviorSubject<UserPodiz?>();
   Stream<UserPodiz?> get user => _userStream.stream;
 
   AuthManager(this._read) {
-    _loadUserInfo();
+    _init();
   }
 
-  _loadUserInfo() async {
-    try {
-      if (await FileHandler.fileExists("user.txt")) {
-        final json = await FileHandler.readFromFile("user.txt");
-        userBloc = UserPodiz.fromJson(json!);
-        await fetchUserInfo(userBloc!.uid!);
-      } else {
-        userBloc = null;
-        _userStream.add(userBloc);
-      }
-    } catch (e) {
-      return "error";
+  /// this can only be called once
+  Future<void> _init() async {
+    final loggedInUser = preferences.getString('userId');
+    if (loggedInUser != null) {
+      await fetchUserInfo(loggedInUser);
+    } else {
+      _saveUser(null);
     }
-    if (!_userCompleter.isCompleted) _userCompleter.complete(); //TODO
   }
 
-  fetchUserInfo(String userID) async {
-    await setUpUserStream(userID);
-    await podcastManager.getDevices(userID);
+  Future<void> fetchUserInfo(String userId) async {
+    print('fetchUserInfo 1');
+    setUpUserStream(userId);
+    print('fetchUserInfo 2');
+    await podcastManager.getDevices(userId);
+    print('fetchUserInfo 3');
     // await podcastManager.setUpPodcastStream();
+  }
+
+  void setUpUserStream(String userId) {
+    print(userId);
+    firestore.collection("users").doc(userId).snapshots().listen((doc) async {
+      final data = doc.data();
+      if (data == null) return;
+      final user = UserPodiz.fromJson(data)..uid = userId;
+      _saveUser(user);
+    });
+  }
+
+  void _saveUser(UserPodiz? user) {
+    user == null
+        ? preferences.remove('userId')
+        : preferences.setString('userId', user.uid);
+    currentUser = user;
+    _userStream.add(user);
+    if (!_userCompleter.isCompleted) _userCompleter.complete();
+    print('userSaved $user');
+    print('currentUser $currentUser');
   }
 
   Future<List<Podcast>> getCastList() async {
     List<Podcast> result = [];
-    int number = userBloc!.favPodcasts.length;
+    int number = currentUser!.favPodcasts.length;
     int count = 0;
     if (number >= 6) {
       for (int i = number - 1; i >= 0; i--) {
         Podcaster show =
-            await showManager.getShowFromFirebase(userBloc!.favPodcasts[i]);
+            await showManager.getShowFromFirebase(currentUser!.favPodcasts[i]);
         String podcastUid = showManager.getRandomEpisode(show.podcasts);
         result.add(await podcastManager.getPodcastFromFirebase(podcastUid));
         count++;
@@ -84,8 +100,8 @@ class AuthManager {
     } else {
       while (count != 6) {
         for (int i = 0; i < number; i++) {
-          Podcaster show =
-              await showManager.getShowFromFirebase(userBloc!.favPodcasts[i]);
+          Podcaster show = await showManager
+              .getShowFromFirebase(currentUser!.favPodcasts[i]);
           String podcastUid = showManager.getRandomEpisode(show.podcasts);
           result.add(await podcastManager.getPodcastFromFirebase(podcastUid));
           count++;
@@ -98,47 +114,10 @@ class AuthManager {
     return result;
   }
 
-  _emptyManagers() {
+  void _emptyManagers() {
     podcastManager.resetManager();
     showManager.resetManager();
     // appManager.selectedRestaurantEvent.add(null);
-  }
-
-  saveUser() async {
-    await FileHandler.writeToFile(userBloc, "user.txt");
-    castList = await getCastList();
-    _userStream.add(userBloc);
-  }
-
-  deleteUserFile() async {
-    userBloc = null;
-    await FileHandler.deleteFile("user.txt");
-    _userStream.add(userBloc);
-  }
-
-  setUpUserStream(String uid) async {
-    final userReference = firestore.collection('users').doc(uid);
-    Doc userData = await userReference.get();
-    int totalTimeWaiting = 0;
-    while (userData.data() == null && totalTimeWaiting < 2000) {
-      await Future.delayed(Duration(milliseconds: 100));
-      userData = await userReference.get();
-      totalTimeWaiting += 100;
-    }
-
-    userBloc = UserPodiz.fromFirestore(userData);
-    await saveUser();
-
-    firestore.collection("users").doc(uid).snapshots().listen((snapshot) async {
-      if (snapshot.data() != null) {
-        userBloc = UserPodiz.fromJson(snapshot.data()!);
-        userBloc!.uid = uid;
-        await saveUser();
-        print("done");
-      } else {
-        print("upsssss");
-      }
-    });
   }
 
   ///public
@@ -159,26 +138,26 @@ class AuthManager {
     }
   }
 
-  Future<void> signOut(BuildContext context) async {
-    await _emptyManagers();
-    await deleteUserFile();
+  void signOut(BuildContext context) async {
+    _emptyManagers();
+    _saveUser(null);
   }
 
   Future<void> requestUserData(Map<String, String> request, context) async {
     //TODO review (had a loading before)
-    await firestore.collection("clientInfo").doc(userBloc!.uid).set(request);
+    await firestore.collection("clientInfo").doc(currentUser!.uid).set(request);
     Navigator.pop(context);
   } //GDPR conserns
 
   Future<void> updateLastListened(String episodeUid) async {
     await firestore
         .collection("users")
-        .doc(userBloc!.uid)
+        .doc(currentUser!.uid)
         .update({"lastListened": episodeUid});
   }
 
   doComment(String comment, String episodeUid, int time) async {
-    DocRef doc = await firestore
+    DocRef doc = firestore
         .collection("podcasts")
         .doc(episodeUid)
         .collection("comments")
@@ -192,7 +171,7 @@ class AuthManager {
         .set({
       "id": doc.id,
       "timestamp": date,
-      "userUid": userBloc!.uid,
+      "userUid": currentUser!.uid,
       "episodeUid": episodeUid,
       "comment": comment,
       "time": time,
@@ -200,13 +179,13 @@ class AuthManager {
       "parents": [],
     });
 
-    firestore.collection("users").doc(userBloc!.uid).update({
+    firestore.collection("users").doc(currentUser!.uid).update({
       "comments": FieldValue.arrayUnion([
         {
           "id": doc.id,
           "comment": comment,
           "time": time,
-          "userUid": userBloc!.uid,
+          "userUid": currentUser!.uid,
           "episodeUid": episodeUid,
           "timestamp": date,
           "lvl": 1,
@@ -218,7 +197,7 @@ class AuthManager {
   }
 
   doReply(Comment comment, String reply) async {
-    DocRef doc = await firestore
+    DocRef doc = firestore
         .collection("podcasts")
         .doc(comment.episodeUid)
         .collection("comments")
@@ -235,7 +214,7 @@ class AuthManager {
         .set({
       "id": doc.id,
       "timestamp": date,
-      "userUid": userBloc!.uid,
+      "userUid": currentUser!.uid,
       "episodeUid": comment.episodeUid,
       "comment": reply,
       "time": comment.time,
@@ -243,13 +222,13 @@ class AuthManager {
       "parents": parents,
     });
 
-    firestore.collection("users").doc(userBloc!.uid).update({
+    firestore.collection("users").doc(currentUser!.uid).update({
       "comments": FieldValue.arrayUnion([
         {
           "id": doc.id,
           "comment": reply,
           "time": comment.time,
-          "userUid": userBloc!.uid,
+          "userUid": currentUser!.uid,
           "episodeUid": comment.episodeUid,
           "timestamp": date,
           "lvl": comment.lvl + 1,
@@ -258,7 +237,7 @@ class AuthManager {
       ]),
     });
     incrementPodcastCounter(comment.episodeUid);
-    if (userBloc!.uid == comment.userUid) {
+    if (currentUser!.uid == comment.userUid) {
       return;
     }
     firestore
@@ -269,7 +248,7 @@ class AuthManager {
         .set({
       "id": doc.id,
       "timestamp": date,
-      "userUid": userBloc!.uid,
+      "userUid": currentUser!.uid,
       "episodeUid": comment.episodeUid,
       "comment": reply,
       "time": comment.time,
@@ -280,13 +259,13 @@ class AuthManager {
 
   incrementPodcastCounter(String episodeUid) {
     firestore.collection("podcasts").doc(episodeUid).update({
-      "commentsImg": FieldValue.arrayUnion([userBloc!.image_url]),
+      "commentsImg": FieldValue.arrayUnion([currentUser!.image_url]),
       "comments": FieldValue.increment(1)
     });
   }
 
   followPeople(String uid) {
-    String userUid = userBloc!.uid!;
+    String userUid = currentUser!.uid;
     firestore.collection("users").doc(uid).update({
       "followers": FieldValue.arrayUnion([userUid])
     });
@@ -296,7 +275,7 @@ class AuthManager {
   }
 
   unfollowPeople(String uid) {
-    String userUid = userBloc!.uid!;
+    String userUid = currentUser!.uid;
     firestore.collection("users").doc(uid).update({
       "followers": FieldValue.arrayRemove([userUid])
     });
@@ -307,7 +286,7 @@ class AuthManager {
   }
 
   followShow(String uid) {
-    String userUid = userBloc!.uid!;
+    String userUid = currentUser!.uid;
     firestore.collection("podcasters").doc(uid).update({
       "followers": FieldValue.arrayUnion([userUid])
     });
@@ -318,7 +297,7 @@ class AuthManager {
   }
 
   unfollowShow(String uid) {
-    String userUid = userBloc!.uid!;
+    String userUid = currentUser!.uid;
     firestore.collection("podcasters").doc(uid).update({
       "followers": FieldValue.arrayRemove([userUid])
     });
@@ -329,6 +308,6 @@ class AuthManager {
   }
 
   bool isFollowing(String showUid) {
-    return userBloc!.favPodcasts.contains(showUid);
+    return currentUser!.favPodcasts.contains(showUid);
   }
 }

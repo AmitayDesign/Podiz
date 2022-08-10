@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
-import 'package:podiz/aspect/widgets/asyncElevatedButton.dart';
+import 'package:go_router/go_router.dart';
+import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/onboarding/components/podizAppBar.dart';
-import 'package:podiz/onboarding/connectBudz.dart';
 
 class OnBoardingPage extends StatelessWidget {
   const OnBoardingPage({Key? key}) : super(key: key);
-  static const route = '/onBoarding';
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -47,9 +47,9 @@ class OnBoardingPage extends StatelessWidget {
                               fit: BoxFit.cover)),
                     ),
                     const Spacer(),
-                    AsyncElevatedButton(
+                    ElevatedButton(
                       onPressed: () =>
-                          Navigator.pushNamed(context, ConnectBudzPage.route),
+                          context.goNamed(AppRoute.connectBudz.name),
                       child: Text(
                         Locales.string(context, "intro2"),
                         style: theme.textTheme.button,

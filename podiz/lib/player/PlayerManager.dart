@@ -1,13 +1,11 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/typedefs.dart';
-import 'package:podiz/authentication/AuthManager.dart';
+import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
-import 'package:podiz/objects/SearchResult.dart';
 import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/providers.dart';
 import 'package:rxdart/rxdart.dart';
@@ -47,7 +45,7 @@ class PlayerManager {
 
   PlayerManager(this._read) {
     _playerStream.add(playerBloc);
-    String userUid = authManager.userBloc!.uid!;
+    String userUid = authManager.currentUser!.uid;
 
     _playerSinkController.stream.listen((event) async {
       String key = event.keys.first;
@@ -87,13 +85,13 @@ class PlayerManager {
 
   void play30Back(Podcast podcast) {
     Duration pos = playerBloc.timer.position;
-    if (pos.inMilliseconds < Duration(seconds: 30).inMilliseconds) {
+    if (pos.inMilliseconds < const Duration(seconds: 30).inMilliseconds) {
       print("entrei");
       pos = Duration.zero;
     } else {
       pos = Duration(
           milliseconds:
-              pos.inMilliseconds - Duration(seconds: 30).inMilliseconds);
+              pos.inMilliseconds - const Duration(seconds: 30).inMilliseconds);
     }
     playerSink.add({
       "play": {"episode": podcast, "position": pos.inMilliseconds}
@@ -103,13 +101,13 @@ class PlayerManager {
   void play30Up(Podcast podcast) {
     Duration pos = playerBloc.timer.position;
     Duration dur = playerBloc.timer.duration;
-    if ((pos.inMilliseconds + Duration(seconds: 30).inMilliseconds) >
+    if ((pos.inMilliseconds + const Duration(seconds: 30).inMilliseconds) >
         dur.inMilliseconds) {
       pos = dur;
     } else {
       pos = Duration(
           milliseconds:
-              pos.inMilliseconds + Duration(seconds: 30).inMilliseconds);
+              pos.inMilliseconds + const Duration(seconds: 30).inMilliseconds);
     }
     playerSink.add({
       "play": {"episode": podcast, "position": pos.inMilliseconds}

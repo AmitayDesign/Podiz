@@ -6,7 +6,7 @@ import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/aspect/widgets/shimmerLoading.dart';
-import 'package:podiz/authentication/AuthManager.dart';
+import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/user/User.dart';
@@ -19,8 +19,7 @@ import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
 
 class DiscussionPage extends ConsumerStatefulWidget {
-  static const route = '/discussionPage';
-  DiscussionPage({Key? key}) : super(key: key);
+  const DiscussionPage({Key? key}) : super(key: key);
 
   @override
   ConsumerState<DiscussionPage> createState() => _DiscussionPageState();
@@ -108,7 +107,7 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
           },
           loading: () => Scaffold(
             body: Column(children: [
-              Spacer(),
+              const Spacer(),
               ShimmerLoading(
                 child: Container(
                   width: kScreenWidth,
@@ -128,7 +127,7 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
       },
       loading: () => Scaffold(
         body: Column(children: [
-          Spacer(),
+          const Spacer(),
           ShimmerLoading(
             child: Container(
               width: kScreenWidth,
@@ -159,7 +158,7 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
             return Center(
               child: Text(
                 '${snapshot.error} occurred',
-                style: TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 18),
               ),
             );
 
@@ -281,7 +280,7 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(10), topRight: Radius.circular(10)),
           ),
-          child: CircularProgressIndicator(),
+          child: const CircularProgressIndicator(),
         );
       },
     );

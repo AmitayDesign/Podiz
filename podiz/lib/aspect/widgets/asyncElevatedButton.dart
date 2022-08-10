@@ -1,11 +1,12 @@
-import 'package:podiz/aspect/constants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:podiz/aspect/constants.dart';
 
 class AsyncElevatedButton extends StatefulWidget {
   final AsyncCallback? onPressed;
   final Widget child;
-  AsyncElevatedButton({Key? key, required this.onPressed, required this.child})
+  const AsyncElevatedButton(
+      {Key? key, required this.onPressed, required this.child})
       : super(key: key);
 
   @override

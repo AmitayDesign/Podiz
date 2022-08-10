@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
-import 'package:podiz/home/search/screens/showPage.dart';
 import 'package:podiz/objects/Podcaster.dart';
 
 class ShowSearchTile extends StatelessWidget {
-  Podcaster show;
-  ShowSearchTile(this.show, {Key? key}) : super(key: key);
+  final Podcaster show;
+  const ShowSearchTile(this.show, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +16,10 @@ class ShowSearchTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: InkWell(
-        onTap: () {
-          Navigator.pushNamed(context, ShowPage.route, arguments: show);
-        },
+        onTap: () => context.goNamed(
+          AppRoute.show.name,
+          params: {'showId': show.uid!},
+        ),
         child: Container(
           height: 148,
           decoration: BoxDecoration(

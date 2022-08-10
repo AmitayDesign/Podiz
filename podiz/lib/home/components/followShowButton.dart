@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/theme/theme.dart';
-import 'package:podiz/authentication/AuthManager.dart';
+import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
-import 'package:podiz/providers.dart';
 
 class FollowShowButton extends ConsumerWidget {
   String showUid;
