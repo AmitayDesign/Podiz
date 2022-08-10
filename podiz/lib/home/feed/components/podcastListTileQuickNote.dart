@@ -3,8 +3,6 @@ import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/aspect/widgets/insightsRow.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
-import 'package:podiz/home/feed/components/quickNote.dart';
-import 'package:podiz/aspect/widgets/stackedImages.dart';
 import 'package:podiz/objects/Podcast.dart';
 
 class PodcastListTileQuickNote extends StatelessWidget {
@@ -33,24 +31,26 @@ class PodcastListTileQuickNote extends StatelessWidget {
               children: [
                 PodcastAvatar(imageUrl: podcast.image_url, size: 52),
                 const SizedBox(width: 8),
-                Container(
-                  width: 250, //TODO see this
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          podcast.name,
-                          style: podcastTitleQuickNote(),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Align(
+                Expanded(
+                  child: SizedBox(
+                    width: 250, //TODO see this
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Align(
                           alignment: Alignment.centerLeft,
-                          child: Text(podcast.show_name,
-                              style: podcastArtistQuickNote())),
-                    ],
+                          child: Text(
+                            podcast.name,
+                            style: podcastTitleQuickNote(),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(podcast.show_name,
+                                style: podcastArtistQuickNote())),
+                      ],
+                    ),
                   ),
                 )
               ],
