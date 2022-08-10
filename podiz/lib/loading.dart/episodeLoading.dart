@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/aspect/widgets/shimmerLoading.dart';
 import 'package:podiz/loading.dart/shimmerContainer.dart';
 
 class EpisodeLoading extends StatelessWidget {
@@ -8,23 +7,23 @@ class EpisodeLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 148,
       width: kScreenWidth - 32,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
           children: [
-            ShimmerContainer(width: 120, height: 31, borderRadius: 20),
+            const ShimmerContainer(width: 120, height: 31, borderRadius: 20),
             const SizedBox(height: 16),
             Row(
               children: [
-                ShimmerContainer(width: 68, height: 68, borderRadius: 5),
+                const ShimmerContainer(width: 68, height: 68, borderRadius: 5),
                 const SizedBox(width: 8),
                 Column(
-                  children: [
+                  children: const [
                     ShimmerContainer(width: 120, height: 21, borderRadius: 20),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     ShimmerContainer(width: 120, height: 19, borderRadius: 20),
                   ],
                 )

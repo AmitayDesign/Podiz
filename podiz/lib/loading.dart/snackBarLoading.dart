@@ -20,19 +20,19 @@ class SnackBarLoading extends StatelessWidget {
           children: [
             Row(
               children: [
-                ShimmerContainer(width: 31, height: 31, borderRadius: 30),
+                const ShimmerContainer(width: 31, height: 31, borderRadius: 30),
                 const SizedBox(width: 8),
                 ShimmerContainer(
                     width: kScreenWidth - (14 + 31 + 8 + 31 + 8 + 14),
                     height: 31,
                     borderRadius: 20),
                 const SizedBox(width: 8),
-                ShimmerContainer(width: 31, height: 31, borderRadius: 30),
+                const ShimmerContainer(width: 31, height: 31, borderRadius: 30),
               ],
             ),
             const SizedBox(height: 24),
             Row(
-              children: [
+              children: const [
                 ShimmerContainer(width: 120, height: 17, borderRadius: 30),
               ],
             ),

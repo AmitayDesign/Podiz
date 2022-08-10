@@ -141,7 +141,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                     : SliverToBoxAdapter(
                         child: lastListenedEpisode.when(
                         loading: () => const EpisodeLoading(),
-                        error: (_, stackTree) => SplashScreen.error(),
+                        error: (_, stackTree) => const SplashScreen.error(),
                         data: (ep) => PodcastListTileQuickNote(ep,
                             quickNote: quickNote(ep)),
                       )),

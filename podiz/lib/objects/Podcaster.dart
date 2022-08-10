@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:podiz/aspect/typedefs.dart';
@@ -16,7 +14,7 @@ class Podcaster with EquatableMixin {
   int total_episodes;
   List<String> podcasts;
   List<String> followers;
-  
+
   Podcaster(
     this.uid, {
     required this.name,
@@ -40,8 +38,7 @@ class Podcaster with EquatableMixin {
       Podcaster.fromJson(user.toJson());
 
   @override
-  String toString() =>
-      " user + ${this.uid} : \n{(name : ${this.name};\n";
+  String toString() => " user + $uid : \n{(name : $name;\n";
 
   @override
   List<Object> get props => [name];

@@ -7,9 +7,10 @@ class TapTo extends StatelessWidget {
 
   const TapTo(
     this.onTap, {
+    Key? key,
     this.behavior = HitTestBehavior.translucent,
     required this.child,
-  });
+  }) : super(key: key);
 
   factory TapTo.unfocus({required Widget child}) => TapTo(
         (context) => FocusScope.of(context).unfocus(),

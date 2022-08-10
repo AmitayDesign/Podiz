@@ -83,9 +83,9 @@ class _HomePageState extends ConsumerState<HomePage>
     return player.when(
         error: (e, _) {
           print(e);
-          return SplashScreen.error();
+          return const SplashScreen.error();
         },
-        loading: () => SplashScreen(),
+        loading: () => const SplashScreen(),
         data: (p) {
           p.getState == PlayerState.close
               ? isPlaying = false

@@ -1,5 +1,4 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_locales/flutter_locales.dart';
@@ -11,12 +10,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 late SharedPreferences preferences;
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-}
+// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+//   await Firebase.initializeApp();
+// }
 
 void main() async {
-  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   // FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   await Locales.init(['en']);
@@ -25,8 +24,9 @@ void main() async {
   final container = ProviderContainer();
 
   //TODO call no internet dialog
-  await Firebase.initializeApp()
-      .catchError((onError) => print("call no internet dialog"));
+  await Firebase.initializeApp().catchError((onError) {
+    print("call no internet dialog");
+  });
 
   // container.read(authManagerProvider).firstUserLoad.then(
   //       (_) => FlutterNativeSplash.remove(),

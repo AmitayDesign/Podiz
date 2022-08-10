@@ -192,8 +192,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   child: PodcastAvatar(imageUrl: show.image_url, size: 68));
             }
           }
-          return Padding(
-            padding: const EdgeInsets.only(right: 16),
+          return const Padding(
+            padding: EdgeInsets.only(right: 16),
             child: ShimmerContainer(width: 68, height: 68, borderRadius: 20),
           );
         });
@@ -339,8 +339,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                           )),
                                     ),
                                     const Spacer(),
-                                    CardButton(
-                                      const Icon(
+                                    const CardButton(
+                                      Icon(
                                         Icons.share,
                                         color: Color(0xFF9E9E9E),
                                         size: 20,

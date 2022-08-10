@@ -10,7 +10,6 @@ import 'package:podiz/aspect/widgets/userSearchTile.dart';
 import 'package:podiz/home/search/components/searchBar.dart';
 import 'package:podiz/home/search/components/searchInSpotify.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
-import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/Podcaster.dart';
 import 'package:podiz/objects/SearchResult.dart';
@@ -58,11 +57,10 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
   Widget build(BuildContext context) {
     final player = ref.watch(playerStreamProvider);
     final podcastManager = ref.watch(podcastManagerProvider);
-    final showManager = ref.watch(showManagerProvider);
     bool isEmpty = true;
     return player.maybeWhen(
-      orElse: () => SplashScreen.error(),
-      loading: () => SplashScreen(),
+      orElse: () => const SplashScreen.error(),
+      loading: () => const SplashScreen(),
       data: (p) => Stack(
         children: [
           if (searchBarHeight != null)

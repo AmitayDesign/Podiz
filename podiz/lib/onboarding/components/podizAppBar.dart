@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/onboarding/components/linearGradientAppBar.dart';
 
 class PodizAppBar extends StatelessWidget {
   const PodizAppBar({Key? key}) : super(key: key);
 
+  // @override
+  // Size get preferredSize => const Size.fromHeight(96);
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(gradient: appBarGradient()),
       height: 96,
@@ -40,7 +41,4 @@ class PodizAppBar extends StatelessWidget {
       ),
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(96);
 }

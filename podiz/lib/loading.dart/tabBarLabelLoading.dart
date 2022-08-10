@@ -6,6 +6,6 @@ class TabBarLabelLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ShimmerContainer(width: 50, height: 32, borderRadius: 20);
+    return const ShimmerContainer(width: 50, height: 32, borderRadius: 20);
   }
 }

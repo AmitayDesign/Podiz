@@ -14,19 +14,19 @@ class NotificationLoading extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Row(
             children: [
-              ShimmerContainer(width: 32, height: 32, borderRadius: 30),
+              const ShimmerContainer(width: 32, height: 32, borderRadius: 30),
               const SizedBox(width: 8),
               LimitedBox(
                 maxWidth: kScreenWidth - (16 + 8 + 32 + 16),
                 maxHeight: 40,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
+                  children: const [
                     Align(
                         alignment: Alignment.centerLeft,
                         child: ShimmerContainer(
                             width: 100, height: 21, borderRadius: 20)),
-                    const SizedBox(height: 2),
+                    SizedBox(height: 2),
                     Align(
                         alignment: Alignment.centerLeft,
                         child: ShimmerContainer(
@@ -47,7 +47,8 @@ class NotificationLoading extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    ShimmerContainer(width: 40, height: 40, borderRadius: 30),
+                    const ShimmerContainer(
+                        width: 40, height: 40, borderRadius: 30),
                     const SizedBox(
                       width: 8,
                     ),
@@ -55,13 +56,13 @@ class NotificationLoading extends StatelessWidget {
                       width: 200,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
+                        children: const [
                           Align(
                             alignment: Alignment.centerLeft,
                             child: ShimmerContainer(
                                 width: 100, height: 19, borderRadius: 20),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4),
                           Align(
                               alignment: Alignment.centerLeft,
                               child: ShimmerContainer(
@@ -70,7 +71,8 @@ class NotificationLoading extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
-                    ShimmerContainer(width: 100, height: 19, borderRadius: 20)
+                    const ShimmerContainer(
+                        width: 100, height: 19, borderRadius: 20)
                   ],
                 ),
                 const SizedBox(height: 12),

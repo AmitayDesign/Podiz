@@ -1,12 +1,13 @@
-import 'package:podiz/aspect/constants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:podiz/aspect/constants.dart';
 
 class AsyncElevatedButtonColor extends StatefulWidget {
   final AsyncCallback? onPressed;
   final List<Widget> children;
   final Color color;
-  AsyncElevatedButtonColor(
+
+  const AsyncElevatedButtonColor(
       {Key? key,
       required this.onPressed,
       required this.color,
@@ -50,7 +51,7 @@ class _AsyncElevatedButtonColorState extends State<AsyncElevatedButtonColor> {
                     ),
                   )
                 : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: widget.children,
                   )),
       ),

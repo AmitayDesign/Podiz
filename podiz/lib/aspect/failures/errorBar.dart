@@ -7,8 +7,8 @@ void showErrorBar(BuildContext context, String message) {
   Flushbar(
     flushbarPosition: FlushbarPosition.TOP,
     flushbarStyle: FlushbarStyle.GROUNDED,
-    duration: Duration(seconds: 4),
-    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+    duration: const Duration(seconds: 4),
+    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
     backgroundColor: theme.colorScheme.error,
     icon: Icon(LucideIcons.alertCircle, color: theme.colorScheme.onError),
     shouldIconPulse: false,

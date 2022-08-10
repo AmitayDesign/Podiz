@@ -10,15 +10,20 @@ import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/providers.dart';
 
 class InsightsRow extends ConsumerWidget {
-  Podcast podcast;
-  InsightsRow(this.podcast, {Key? key}) : super(key: key);
+  final Podcast podcast;
+  final TextStyle style;
+  final double size;
+
+  InsightsRow(this.podcast, {Key? key})
+      : style = podcastInsights(),
+        size = 32,
+        super(key: key);
+
   InsightsRow.quickNote(this.podcast, {Key? key})
       : style = podcastArtistQuickNote(),
         size = 23,
         super(key: key);
 
-  TextStyle style = podcastInsights();
-  double size = 32;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserProvider);

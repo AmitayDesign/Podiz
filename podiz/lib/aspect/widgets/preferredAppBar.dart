@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
 class PreferredAppBar extends StatelessWidget with PreferredSizeWidget {
-  bool automaticImplyLeading;
+  final bool automaticImplyLeading;
 
-  PreferredAppBar(this.automaticImplyLeading,{Key? key})
-      : super(key: key);
+  PreferredAppBar(this.automaticImplyLeading, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

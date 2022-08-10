@@ -24,7 +24,7 @@ class ConnectBudzPage extends ConsumerWidget {
       }
     });
     final state = ref.watch(spotifyControllerProvider);
-    if (state.isLoading) return SplashScreen();
+    if (state.isLoading) return const SplashScreen();
     final theme = Theme.of(context);
     return Scaffold(
       body: Stack(

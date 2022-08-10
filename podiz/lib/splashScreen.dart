@@ -1,15 +1,20 @@
-import 'package:podiz/aspect/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:loading_indicator/loading_indicator.dart';
+import 'package:podiz/aspect/constants.dart';
 
 enum SplashType { loading, error }
 
 class SplashScreen extends StatelessWidget {
   final SplashType type;
 
-  SplashScreen() : type = SplashType.loading;
-  SplashScreen.error() : type = SplashType.error;
+  const SplashScreen({Key? key})
+      : type = SplashType.loading,
+        super(key: key);
+
+  const SplashScreen.error({Key? key})
+      : type = SplashType.error,
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +38,9 @@ class SplashScreen extends StatelessWidget {
           ),
           Container(
             alignment: Alignment.center,
-            padding: EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.only(bottom: 16),
             child: type == SplashType.error
-                ? LocaleText(
+                ? const LocaleText(
                     'error1',
                     textAlign: TextAlign.center,
                   )

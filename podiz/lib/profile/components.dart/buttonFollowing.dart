@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 
 class ButtonFollowing extends StatefulWidget {
-  ButtonFollowing({Key? key}) : super(key: key);
+  const ButtonFollowing({Key? key}) : super(key: key);
 
   @override
   State<ButtonFollowing> createState() => _ButtonFollowingState();
@@ -14,8 +14,14 @@ class _ButtonFollowingState extends State<ButtonFollowing> {
     return Container(
       width: 190,
       height: 40,
-      decoration: BoxDecoration(color: Color(0xFFD74EFF), borderRadius: BorderRadius.circular(30)),
-      child: Center(child: Text("FOLLOWING JENIFER", style: discussionCardPlay(),)),
+      decoration: BoxDecoration(
+          color: const Color(0xFFD74EFF),
+          borderRadius: BorderRadius.circular(30)),
+      child: Center(
+          child: Text(
+        "FOLLOWING JENIFER",
+        style: discussionCardPlay(),
+      )),
     );
   }
 }

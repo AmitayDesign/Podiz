@@ -1,7 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/theme/themeConfig.dart';
-import 'package:flutter/material.dart';
 
 ThemeData theme(ColorScheme colorScheme) => ThemeData(
       colorScheme: colorScheme,
@@ -47,7 +47,7 @@ InputDecorationTheme _inputDecorationTheme(ColorScheme colorScheme) =>
         borderSide: BorderSide.none,
         borderRadius: BorderRadius.circular(30),
       ),
-      contentPadding: EdgeInsets.symmetric(
+      contentPadding: const EdgeInsets.symmetric(
         horizontal: 16,
       ),
       hintStyle: discussionCardCommentHint(),
@@ -59,8 +59,8 @@ ElevatedButtonThemeData _elevatedButtonTheme() => ElevatedButtonThemeData(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
-        padding: EdgeInsets.symmetric(horizontal: 24),
-        minimumSize: Size.fromHeight(kButtonHeight),
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        minimumSize: const Size.fromHeight(kButtonHeight),
       ),
     );
 
@@ -78,9 +78,9 @@ BottomNavigationBarThemeData _bottomNavigationBarTheme(
       selectedLabelStyle: selectedLabel(),
       unselectedLabelStyle: unselectedLabel(),
       elevation: 0,
-      backgroundColor: Color(0xE6090909),
-      selectedItemColor: Color(0xFFD74EFF),
-      unselectedItemColor: Color(0xB2FFFFFF),
+      backgroundColor: const Color(0xE6090909),
+      selectedItemColor: const Color(0xFFD74EFF),
+      unselectedItemColor: const Color(0xB2FFFFFF),
       showSelectedLabels: true,
       showUnselectedLabels: true,
     );
@@ -260,7 +260,6 @@ TextStyle followerName() => const TextStyle(
       color: Palette.pureWhite,
       fontWeight: FontWeight.w800,
     );
-    
 
 TextStyle followersNumber() => const TextStyle(
       fontFamily: 'Montserrat',
@@ -331,7 +330,7 @@ TextStyle noInternetTitle() => const TextStyle(
       fontWeight: FontWeight.w800,
     );
 
-TextStyle FFFFFFFF14700() => const TextStyle(
+TextStyle ffffffff14700() => const TextStyle(
       fontFamily: 'Montserrat',
       fontSize: 14,
       color: Color(0xFFFFFFFF),
