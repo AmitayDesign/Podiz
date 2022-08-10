@@ -43,6 +43,8 @@ exports.getAccessTokenWithCode = functions.https.onCall(
 
       var result = await response.json();
 
+      let userUid = await getUserInfo(result.access_token);
+
       await admin.firestore().collection("spotifyAuth").doc(userUid).set({
         access_token: result.access_token,
         token_type: result.token_type,
@@ -50,9 +52,6 @@ exports.getAccessTokenWithCode = functions.https.onCall(
         refresh_token: result.refresh_token,
         scope: result.scope,
       });
-
-      let userUid = await getUserInfo(result.access_token);
-
       return userUid;
     } catch (err) {
       console.log(err);

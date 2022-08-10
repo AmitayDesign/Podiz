@@ -65,7 +65,7 @@ class AuthManager {
     firestore.collection("users").doc(userId).snapshots().listen((doc) async {
       final data = doc.data();
       if (data == null) return;
-      final user = UserPodiz.fromJson(data)..uid = userId;
+      final user = UserPodiz.fromFirestore(doc);
       _saveUser(user);
     });
   }

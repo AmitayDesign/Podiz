@@ -6,6 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/widgets/tapTo.dart';
+import 'package:podiz/home/feed/feedPage.dart';
+import 'package:podiz/home/notifications/NotificationsPage.dart';
+import 'package:podiz/home/search/searchPage.dart';
 import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/player/playerWidget.dart';
 import 'package:podiz/providers.dart';
@@ -100,12 +103,12 @@ class _HomePageState extends ConsumerState<HomePage>
                         PageView(
                           controller: pageController,
                           children: [
-                            // FeedPage(isPlaying),
-                            Container(),
-                            Container(),
-                            Container(),
-                            // const SearchPage(),
-                            // NotificationsPage(isPlaying),
+                            FeedPage(isPlaying),
+                            // Container(),
+                            // Container(),
+                            // Container(),
+                            const SearchPage(),
+                            NotificationsPage(isPlaying),
                           ],
                         ),
                         if (!isKeyBoardOpen && p.getState != PlayerState.close)

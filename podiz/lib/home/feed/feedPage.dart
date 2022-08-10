@@ -137,7 +137,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                   top: 104.0, left: 16, right: 16), //TODO size of appbar
               child: CustomScrollView(controller: _controller, slivers: [
                 user.lastListened == ""
-                    ? Container()
+                    ? SliverToBoxAdapter(child: Container())
                     : SliverToBoxAdapter(
                         child: lastListenedEpisode.when(
                         loading: () => const EpisodeLoading(),
