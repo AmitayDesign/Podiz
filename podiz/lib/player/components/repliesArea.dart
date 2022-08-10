@@ -12,9 +12,10 @@ import 'package:podiz/profile/userManager.dart';
 
 class RepliesArea extends ConsumerWidget {
   final void Function(Comment) onTap;
-  String commentUid;
-  Map<String, Comment> replies;
-  RepliesArea(this.commentUid, this.replies, {Key? key, required this.onTap})
+  final String commentUid;
+  final Map<String, Comment> replies;
+  const RepliesArea(this.commentUid, this.replies,
+      {Key? key, required this.onTap})
       : super(key: key);
 
   @override
@@ -70,7 +71,7 @@ class RepliesArea extends ConsumerWidget {
             return Center(
               child: Text(
                 '${snapshot.error} occurred',
-                style: TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 18),
               ),
             );
 

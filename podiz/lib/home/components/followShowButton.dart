@@ -5,16 +5,16 @@ import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 
 class FollowShowButton extends ConsumerWidget {
-  String showUid;
-  String imageUrl;
-  bool isPlaying;
-  FollowShowButton(this.showUid,
+  final String showUid;
+  final String imageUrl;
+  final bool isPlaying;
+  const FollowShowButton(this.showUid,
       {Key? key, required this.imageUrl, required this.isPlaying})
       : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    AuthManager authManager = ref.read(authManagerProvider);
+    AuthManager authManager = ref.watch(authManagerProvider);
     bool isFollowing = authManager.isFollowing(showUid);
     String follow = isFollowing ? "UNFOLLOW CAST" : "FOLLOW CAST";
     double bottomPad = isPlaying ? 100.0 : 0;
@@ -23,7 +23,7 @@ class FollowShowButton extends ConsumerWidget {
       child: FloatingActionButton.extended(
           icon: PodcastAvatar(imageUrl: imageUrl, size: 23),
           label: Text(follow, style: discussionCardPlay()),
-          backgroundColor: Color(0xFF7101EE),
+          backgroundColor: const Color(0xFF7101EE),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           onPressed: () => isFollowing

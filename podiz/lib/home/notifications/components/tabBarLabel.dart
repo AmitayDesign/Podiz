@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
@@ -7,14 +6,13 @@ import 'package:podiz/loading.dart/tabBarLabelLoading.dart';
 import 'package:podiz/objects/Podcast.dart';
 
 class TabBarLabel extends ConsumerWidget {
-  String text;
-  int number;
+  final String text;
+  final int number;
 
-  TabBarLabel(this.text, this.number, {Key? key}) : super(key: key);
+  const TabBarLabel(this.text, this.number, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     Podcast? podcast;
     if (text == "All") {
       podcast = Podcast("",
@@ -40,7 +38,7 @@ class TabBarLabel extends ConsumerWidget {
               return Center(
                 child: Text(
                   '${snapshot.error} occurred',
-                  style: TextStyle(fontSize: 18),
+                  style: const TextStyle(fontSize: 18),
                 ),
               );
 
@@ -82,5 +80,4 @@ Widget _buildItem(Podcast episode, int number) {
       ),
     ),
   );
-  ;
 }

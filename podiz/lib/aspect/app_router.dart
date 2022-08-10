@@ -20,7 +20,6 @@ enum AppRoute {
   show,
 }
 
-//TODO check all ref.read 's
 //TODO when logged in (no premium?) -> stuck on black screen
 
 final goRouterProvider = Provider<GoRouter>((ref) {

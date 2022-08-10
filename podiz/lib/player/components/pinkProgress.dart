@@ -4,12 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/providers.dart';
 
 class PinkProgress extends ConsumerStatefulWidget {
-  int duration;
-  PinkProgress(this.duration,{Key? key}) : super(key: key);
+  final int duration;
+  const PinkProgress(this.duration, {Key? key}) : super(key: key);
 
   @override
   ConsumerState<PinkProgress> createState() => _PinkProgressState();
@@ -18,7 +17,6 @@ class PinkProgress extends ConsumerStatefulWidget {
 class _PinkProgressState extends ConsumerState<PinkProgress> {
   Duration position = Duration.zero;
   StreamSubscription<Duration>? subscription;
-
 
   @override
   void initState() {

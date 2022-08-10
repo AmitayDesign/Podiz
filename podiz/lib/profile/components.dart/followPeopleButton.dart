@@ -11,7 +11,7 @@ class FollowPeopleButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    AuthManager authManager = ref.read(authManagerProvider);
+    AuthManager authManager = ref.watch(authManagerProvider);
     bool isFollowing = authManager.isFollowing(user.uid);
     String follow =
         isFollowing ? "UNFOLLOW ${user.name}" : "FOLLOW ${user.name}";

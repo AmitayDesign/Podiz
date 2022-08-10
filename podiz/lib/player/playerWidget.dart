@@ -30,7 +30,7 @@ class PlayerWidget extends ConsumerWidget {
             orElse: () => SplashScreen.error(),
             loading: () => const CircularProgressIndicator(),
             data: (p) {
-              final playerManager = ref.read(playerManagerProvider);
+              final playerManager = ref.watch(playerManagerProvider);
               p = playerManager.playerBloc.podcastPlaying!;
               final onTap = s == PlayerState.play
                   ? () => playerManager.pauseEpisode()

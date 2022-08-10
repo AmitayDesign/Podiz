@@ -9,11 +9,11 @@ import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/profile/userManager.dart';
 
 class ReplyView extends ConsumerWidget {
-  Comment comment;
+  final Comment comment;
   final void Function() onTap;
-  FocusNode focusNode;
-  TextEditingController controller;
-  ReplyView({
+  final FocusNode focusNode;
+  final TextEditingController controller;
+  const ReplyView({
     Key? key,
     required this.comment,
     required this.onTap,
@@ -23,7 +23,6 @@ class ReplyView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     return FutureBuilder(
       future: ref.read(userManagerProvider).getUserFromUid(comment.userUid),
       initialData: "loading",
@@ -34,7 +33,7 @@ class ReplyView extends ConsumerWidget {
             return Center(
               child: Text(
                 '${snapshot.error} occurred',
-                style: TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 18),
               ),
             );
 
@@ -147,7 +146,7 @@ class ReplyView extends ConsumerWidget {
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(10), topRight: Radius.circular(10)),
           ),
-          child: CircularProgressIndicator(),
+          child: const CircularProgressIndicator(),
         );
       },
     );
