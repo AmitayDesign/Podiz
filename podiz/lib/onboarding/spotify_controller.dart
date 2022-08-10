@@ -22,7 +22,9 @@ class SpotifyController extends StateNotifier<AsyncValue> {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final code = await manager.fetchAuthorizationCode();
+      print(code);
       final token = await manager.fetchAuthorizationToken(code);
+      print(token);
       await authManager.fetchUserInfo(token);
     });
   }

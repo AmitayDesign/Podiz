@@ -13,7 +13,11 @@ class AuthorizationTokenApiProvider {
 
     final String token = result.data;
 
-    if (token == '0') throw Exception();
+    if (token == '0') {
+      throw Exception(
+        'Something went wrong, check your internet connection or try again later!',
+      );
+    }
     return token;
   }
 }

@@ -14,6 +14,7 @@ import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/Podcaster.dart';
 import 'package:podiz/objects/user/User.dart';
+import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/providers.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -26,6 +27,7 @@ class AuthManager {
 
   PodcastManager get podcastManager => _read(podcastManagerProvider);
   ShowManager get showManager => _read(showManagerProvider);
+  PlayerManager get playerManager => _read(playerManagerProvider);
   FirebaseAuth get firebaseAuth => _read(authProvider);
   FirebaseFirestore get firestore => _read(firestoreProvider);
 
@@ -53,12 +55,9 @@ class AuthManager {
   }
 
   Future<void> fetchUserInfo(String userId) async {
-    print('fetchUserInfo 1');
     setUpUserStream(userId);
-    print('fetchUserInfo 2');
     await podcastManager.getDevices(userId);
-    print('fetchUserInfo 3');
-    // await podcastManager.setUpPodcastStream();
+    await podcastManager.fetchUserPlayer(userId);
   }
 
   void setUpUserStream(String userId) {
@@ -78,8 +77,6 @@ class AuthManager {
     currentUser = user;
     _userStream.add(user);
     if (!_userCompleter.isCompleted) _userCompleter.complete();
-    print('userSaved $user');
-    print('currentUser $currentUser');
   }
 
   Future<List<Podcast>> getCastList() async {

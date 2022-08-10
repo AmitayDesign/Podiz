@@ -24,54 +24,49 @@ class ConnectBudzPage extends ConsumerWidget {
       }
     });
     final state = ref.watch(spotifyControllerProvider);
-    return state.maybeWhen(
-      loading: () => SplashScreen(),
-      orElse: () {
-        final theme = Theme.of(context);
-        return Scaffold(
-          body: Stack(
-            children: [
-              Container(
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage('assets/images/backgroundImage.png'),
-                      fit: BoxFit.cover),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 96),
-                      const Spacer(),
-                      const SpotifyContainer(),
-                      const Spacer(),
-                      ElevatedButton(
-                        onPressed: () => ref
-                            .read(spotifyControllerProvider.notifier)
-                            .signIn(),
-                        child: Text(
-                          Locales.string(context, "intro4"),
-                          style: theme.textTheme.button,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                    ],
+    if (state.isLoading) return SplashScreen();
+    final theme = Theme.of(context);
+    return Scaffold(
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('assets/images/backgroundImage.png'),
+                  fit: BoxFit.cover),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 96),
+                  const Spacer(),
+                  const SpotifyContainer(),
+                  const Spacer(),
+                  ElevatedButton(
+                    onPressed: () =>
+                        ref.read(spotifyControllerProvider.notifier).signIn(),
+                    child: Text(
+                      Locales.string(context, "intro4"),
+                      style: theme.textTheme.button,
+                    ),
                   ),
-                ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                ],
               ),
-              const Positioned(
-                top: 0.0,
-                left: 0.0,
-                right: 0.0,
-                child: PodizAppBar(),
-              ),
-            ],
+            ),
           ),
-        );
-      },
+          const Positioned(
+            top: 0.0,
+            left: 0.0,
+            right: 0.0,
+            child: PodizAppBar(),
+          ),
+        ],
+      ),
     );
   }
 }

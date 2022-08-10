@@ -11,7 +11,7 @@ class AuthorizationApiProvider {
   static String response_type = "code";
   static String redirect_uri = "podiz:/";
   static String scope =
-      "user-follow-read user-read-private user-read-email user-modify-playback-state user-read-playback-state"; //TODO change this
+      "user-follow-read user-read-private user-read-email user-modify-playback-state user-read-playback-state user-read-currently-playing user-library-read user-read-playback-position"; //TODO change this
   static String state = "34fFs29kd09";
 
   String urlDireccion =

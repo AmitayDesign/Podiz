@@ -27,13 +27,19 @@ class OnBoardingPage extends StatelessWidget {
                     const SizedBox(
                       height: 134,
                     ),
-                    Text(Locales.string(context, "intro1_1"),
-                        style: theme.textTheme.headline6),
+                    Text(
+                      Locales.string(context, "intro1_1"),
+                      style: theme.textTheme.headline6,
+                      textAlign: TextAlign.center,
+                    ),
                     const SizedBox(
                       height: 10,
                     ),
-                    Text(Locales.string(context, "intro1_2"),
-                        style: theme.textTheme.headline5),
+                    Text(
+                      Locales.string(context, "intro1_2"),
+                      style: theme.textTheme.headline5,
+                      textAlign: TextAlign.center,
+                    ),
                     const SizedBox(
                       height: 100,
                     ),

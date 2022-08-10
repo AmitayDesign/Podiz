@@ -8,6 +8,7 @@ import 'package:podiz/aspect/widgets/podcastTile.dart';
 import 'package:podiz/aspect/widgets/showSearchTile.dart';
 import 'package:podiz/aspect/widgets/userSearchTile.dart';
 import 'package:podiz/home/search/components/searchBar.dart';
+import 'package:podiz/home/search/components/searchInSpotify.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/objects/Podcast.dart';
@@ -25,7 +26,7 @@ class SearchPage extends ConsumerStatefulWidget {
 }
 
 class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
-  final searchController = TextEditingController();
+  final searchController = TextEditingController(text: "");
   final searchBarKey = GlobalKey();
   double? searchBarHeight;
 
@@ -58,6 +59,7 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
     final player = ref.watch(playerStreamProvider);
     final podcastManager = ref.watch(podcastManagerProvider);
     final showManager = ref.watch(showManagerProvider);
+    bool isEmpty = true;
     return player.maybeWhen(
       orElse: () => SplashScreen.error(),
       loading: () => SplashScreen(),
@@ -89,10 +91,10 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
                                 index + 1 == snapshot.docs.length) {
                               snapshot.fetchMore();
                             }
+                            isEmpty = false;
 
                             final episode = snapshot.docs[index].data();
                             episode.uid = snapshot.docs[index].id;
-
                             return PodcastTile(episode,
                                 isPlaying: p.podcastPlaying == null
                                     ? false
@@ -123,6 +125,7 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
                                 index + 1 == snapshot.docs.length) {
                               snapshot.fetchMore();
                             }
+                            isEmpty = false;
 
                             Podcaster show = snapshot.docs[index].data();
                             show.uid = snapshot.docs[index].id;
@@ -142,6 +145,7 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
                         .withConverter(fromFirestore: (user, _) {
                       UserPodiz u = UserPodiz.fromJson(user.data()!);
                       u.uid = user.id;
+                      isEmpty = false;
                       return u;
                     }, toFirestore: (podcast, _) {
                       return {};
@@ -165,6 +169,11 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
                       );
                     },
                   ),
+                  if (isEmpty && query.isNotEmpty) ...[
+                    SliverToBoxAdapter(
+                      child: SearchInSpotify(query),
+                    )
+                  ]
                 ],
               ),
             ),
