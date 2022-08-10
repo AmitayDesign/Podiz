@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/typedefs.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/providers.dart';
 
@@ -21,10 +20,9 @@ class UserManager {
     if (users.containsKey(userUid)) {
       return users[userUid]!;
     }
-    Doc docRef = await firestore.collection("users").doc(userUid).get();
-    UserPodiz user = UserPodiz.fromJson(docRef.data()!);
-    user.uid = userUid;
-    users.addAll({userUid: user});
+    final doc = await firestore.collection("users").doc(userUid).get();
+    final user = UserPodiz.fromFirestore(doc);
+    users.addAll({user.uid: user});
     return user;
   }
 }

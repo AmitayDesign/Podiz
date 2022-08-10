@@ -29,7 +29,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     debugLogDiagnostics: false,
     redirect: (state) {
       final isLoggedIn = authManager.currentUser != null;
-      print('REDIRECT: $isLoggedIn');
       if (isLoggedIn) {
         if (state.location.contains('/on-boarding')) return '/';
       } else {
