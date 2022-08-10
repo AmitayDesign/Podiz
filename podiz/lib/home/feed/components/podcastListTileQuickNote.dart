@@ -32,25 +32,22 @@ class PodcastListTileQuickNote extends StatelessWidget {
                 PodcastAvatar(imageUrl: podcast.image_url, size: 52),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: SizedBox(
-                    width: 250, //TODO see this
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            podcast.name,
-                            style: podcastTitleQuickNote(),
-                          ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          podcast.name,
+                          style: podcastTitleQuickNote(),
                         ),
-                        const SizedBox(height: 8),
-                        Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(podcast.show_name,
-                                style: podcastArtistQuickNote())),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 8),
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(podcast.show_name,
+                              style: podcastArtistQuickNote())),
+                    ],
                   ),
                 )
               ],
