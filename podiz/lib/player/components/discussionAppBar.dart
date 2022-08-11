@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/theme/palette.dart';
-import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/aspect/widgets/insightsRow.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/Podcast.dart';
@@ -36,7 +36,7 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
               const SizedBox(width: 10),
               Text(
                 Locales.string(context, "back"),
-                style: discussionAppBarInsights(),
+                style: context.textTheme.bodyMedium,
               )
             ]),
           ),
@@ -62,7 +62,8 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         p.name,
-                        style: discussionAppBarTitle(),
+                        style: context.textTheme.titleMedium!
+                            .copyWith(color: Colors.grey.shade50),
                         maxLines: 1,
                       ),
                     ),
@@ -78,8 +79,10 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
                             child: LimitedBox(
                               maxWidth: kScreenWidth -
                                   (16 + 52 + 8 + 12 + 4 + 12 + 62 + 16),
-                              child: Text(p.show_name,
-                                  style: discussionAppBarInsights()),
+                              child: Text(
+                                p.show_name,
+                                style: context.textTheme.bodyMedium,
+                              ),
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -90,8 +93,10 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
                             color: const Color(0xB2FFFFFF),
                           )),
                           const SizedBox(width: 12),
-                          Text(timeFormatter(p.duration_ms),
-                              style: discussionAppBarInsights()),
+                          Text(
+                            timeFormatter(p.duration_ms),
+                            style: context.textTheme.bodyMedium,
+                          ),
                         ]),
                   ),
                 ],

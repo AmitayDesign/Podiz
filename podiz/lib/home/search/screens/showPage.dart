@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/home/components/followShowButton.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/home/search/components/podcastShowTile.dart';
@@ -40,10 +40,10 @@ class ShowPage extends ConsumerWidget {
                 children: [
                   PodcastAvatar(imageUrl: show.image_url, size: 124),
                   const SizedBox(height: 16),
-                  Text(show.name, style: iconStyle()),
+                  Text(show.name, style: context.textTheme.headlineLarge),
                   const SizedBox(height: 8),
                   Text("${show.followers.length} Following",
-                      style: showFollowing()),
+                      style: context.textTheme.bodyLarge),
                   const SizedBox(height: 24),
                   Expanded(
                     child: ListView.builder(

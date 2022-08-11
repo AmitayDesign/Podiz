@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
-import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/widgets/appBarGradient.dart';
 
 class BackAppBar extends StatelessWidget with PreferredSizeWidget {
@@ -28,7 +28,7 @@ class BackAppBar extends StatelessWidget with PreferredSizeWidget {
                 const SizedBox(width: 10),
                 Text(
                   Locales.string(context, "back"),
-                  style: discussionAppBarInsights(),
+                  style: context.textTheme.bodyMedium,
                 )
               ]),
             ),

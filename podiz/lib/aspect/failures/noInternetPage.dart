@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
-import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/extensions.dart';
 
 class NoInternetPage extends StatelessWidget {
   const NoInternetPage({Key? key}) : super(key: key);
@@ -16,10 +16,10 @@ class NoInternetPage extends StatelessWidget {
               Image.asset("assets/images/noInternetImage.png"),
               const SizedBox(height: 32),
               Text(Locales.string(context, "nointernet_1"),
-                  style: noInternetTitle()),
+                  style: context.textTheme.displaySmall),
               const SizedBox(height: 32),
               Text(Locales.string(context, "nointernet_2"),
-                  style: podcastInsights()),
+                  style: context.textTheme.bodyLarge),
             ],
           )),
     );

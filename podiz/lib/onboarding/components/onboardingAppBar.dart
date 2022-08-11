@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/widgets/appBarGradient.dart';
 
 class OnboardingAppBar extends StatelessWidget with PreferredSizeWidget {
@@ -23,7 +23,7 @@ class OnboardingAppBar extends StatelessWidget with PreferredSizeWidget {
             fit: BoxFit.contain,
           ),
           const SizedBox(width: 8),
-          Text('Podiz', style: podizStyle())
+          Text('Podiz', style: context.textTheme.headlineLarge)
         ],
       ),
       flexibleSpace: Container(

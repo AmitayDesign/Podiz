@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/app_router.dart';
-import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/player/PlayerManager.dart';
@@ -62,10 +62,13 @@ class PlayerWidget extends ConsumerWidget {
                                   ),
                                   const SizedBox(height: 8),
                                   Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(p.name,
-                                          style: discussionAppBarInsights(),
-                                          maxLines: 1)),
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      p.name,
+                                      style: context.textTheme.bodyMedium,
+                                      maxLines: 1,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),

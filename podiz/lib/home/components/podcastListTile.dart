@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/formatters.dart';
-import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/widgets/insightsRow.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/Podcast.dart';
@@ -54,7 +55,9 @@ class PodcastListTile extends ConsumerWidget {
                               alignment: Alignment.centerLeft,
                               child: Text(
                                 podcast.name,
-                                style: podcastTitle(),
+                                style: context.textTheme.titleLarge!.copyWith(
+                                  color: Colors.grey.shade50,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -78,8 +81,13 @@ class PodcastListTile extends ConsumerWidget {
                                                 16 +
                                                 58 +
                                                 16),
-                                        child: Text(podcast.show_name,
-                                            style: podcastArtist()),
+                                        child: Text(
+                                          podcast.show_name,
+                                          style: context.textTheme.bodyLarge!
+                                              .copyWith(
+                                            color: Palette.grey600,
+                                          ),
+                                        ),
                                       )),
                                   const SizedBox(width: 12),
                                   ClipOval(
@@ -89,8 +97,13 @@ class PodcastListTile extends ConsumerWidget {
                                     color: const Color(0xFFD9D9D9),
                                   )),
                                   const SizedBox(width: 12),
-                                  Text(timeFormatter(podcast.duration_ms),
-                                      style: podcastArtist()),
+                                  Text(
+                                    timeFormatter(podcast.duration_ms),
+                                    style:
+                                        context.textTheme.bodyLarge!.copyWith(
+                                      color: Palette.grey600,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),

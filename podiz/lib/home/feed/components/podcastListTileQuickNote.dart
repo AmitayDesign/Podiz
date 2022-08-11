@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/widgets/insightsRow.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/Podcast.dart';
@@ -43,14 +44,21 @@ class PodcastListTileQuickNote extends StatelessWidget {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           podcast.name,
-                          style: podcastTitleQuickNote(),
+                          style: context.textTheme.titleMedium!.copyWith(
+                            color: Palette.grey600,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 8),
                       Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(podcast.show_name,
-                              style: podcastArtistQuickNote())),
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          podcast.show_name,
+                          style: context.textTheme.bodyMedium!.copyWith(
+                            color: Palette.grey800,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 )

@@ -3,7 +3,8 @@ import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/app_router.dart';
-import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/widgets/appBarGradient.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/providers.dart';
@@ -24,7 +25,7 @@ class HomeAppBar extends ConsumerWidget with PreferredSizeWidget {
       toolbarHeight: preferredSize.height,
       title: Text(
         Locales.string(context, title),
-        style: podcastArtist(),
+        style: context.textTheme.bodyLarge!.copyWith(color: Palette.grey600),
       ),
       actions: [
         CircleProfile(user: user, size: 20),

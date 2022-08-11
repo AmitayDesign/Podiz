@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutterfire_ui/firestore.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/home/components/HomeAppBar.dart';
 import 'package:podiz/home/components/circleProfile.dart';
@@ -101,7 +101,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     Locales.string(context, "mycasts"),
-                    style: podcastInsights(),
+                    style: context.textTheme.bodyLarge,
                     key: myCastsKey,
                   ),
                 ),
@@ -114,7 +114,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
               alignment: Alignment.centerLeft,
               child: Text(
                 Locales.string(context, "hotlive"),
-                style: podcastInsights(),
+                style: context.textTheme.bodyLarge,
                 key: hotliveKey,
               ),
             ),
@@ -152,16 +152,23 @@ class _FeedPageState extends ConsumerState<FeedPage> {
         borderRadius: BorderRadius.circular(30),
       ),
       child: InkWell(
-          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            const Icon(
-              Icons.edit,
-              size: 16,
-              color: Color(0xFF9E9E9E),
-            ),
-            const SizedBox(width: 10),
-            Text(Locales.string(context, "quicknote"),
-                style: podcastArtistQuickNote()),
-          ]),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.edit,
+                size: 16,
+                color: Color(0xFF9E9E9E),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                Locales.string(context, "quicknote"),
+                style: context.textTheme.bodyMedium!.copyWith(
+                  color: Palette.grey600,
+                ),
+              ),
+            ],
+          ),
           onTap: () {
             showModalBottomSheet(
               context: context,
@@ -211,7 +218,9 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                       ),
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 16),
-                      hintStyle: discussionSnackCommentHint(),
+                      hintStyle: context.textTheme.bodySmall!.copyWith(
+                        color: Palette.white90,
+                      ),
                       hintText: "Share your insight...",
                     ),
                   ),
@@ -237,7 +246,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
               children: [
                 Text(
                   "${episode.watching} listening right now",
-                  style: discussionAppBarInsights(),
+                  style: context.textTheme.bodyMedium,
                 ),
               ],
             ),

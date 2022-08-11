@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/widgets/stackedImages.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/objects/Podcast.dart';
@@ -11,22 +11,24 @@ import 'package:podiz/providers.dart';
 
 class InsightsRow extends ConsumerWidget {
   final Podcast podcast;
-  final TextStyle style;
-  final double size;
+  final bool isQuickNote;
 
-  InsightsRow(this.podcast, {Key? key})
-      : style = podcastInsights(),
-        size = 32,
+  const InsightsRow(this.podcast, {Key? key})
+      : isQuickNote = false,
         super(key: key);
 
-  InsightsRow.quickNote(this.podcast, {Key? key})
-      : style = podcastArtistQuickNote(),
-        size = 23,
+  const InsightsRow.quickNote(this.podcast, {Key? key})
+      : isQuickNote = true,
         super(key: key);
+
+  double get size => isQuickNote ? 24 : 32;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserProvider);
+    final textStyle = isQuickNote
+        ? context.textTheme.bodyMedium!.copyWith(color: Colors.grey.shade500)
+        : context.textTheme.bodyLarge;
     if (podcast.comments == 0) {
       return SizedBox(
         height: size,
@@ -40,7 +42,7 @@ class InsightsRow extends ConsumerWidget {
               maxWidth: kScreenWidth - (16 + 16 + 32 + 8 + 12 + 12),
               child: AutoSizeText(
                 Locales.string(context, "noinsigths"),
-                style: style,
+                style: textStyle,
                 minFontSize: 12,
                 maxFontSize: 16,
               ),
@@ -53,10 +55,7 @@ class InsightsRow extends ConsumerWidget {
       children: [
         StackedImages(podcast, size: size),
         const SizedBox(width: 8),
-        Text(
-          "${podcast.comments} Insights",
-          style: podcastInsights(),
-        ),
+        Text("${podcast.comments} Insights", style: textStyle),
       ],
     );
   }

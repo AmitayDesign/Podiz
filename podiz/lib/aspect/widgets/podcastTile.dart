@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/formatters.dart';
-import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/SearchResult.dart';
 import 'package:podiz/player/PlayerManager.dart';
@@ -63,9 +64,11 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           widget.result.name,
-                          style: widget.isPlaying
-                              ? podcastTitlePlaying()
-                              : podcastTitle(),
+                          style: context.textTheme.titleLarge!.copyWith(
+                            color: widget.isPlaying
+                                ? context.colorScheme.primary
+                                : Colors.grey.shade50,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -77,8 +80,13 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
                                     alignment: Alignment.centerLeft,
                                     child: SizedBox(
                                       width: 150, //see this
-                                      child: Text(widget.result.show_name!,
-                                          style: podcastArtist()),
+                                      child: Text(
+                                        widget.result.show_name!,
+                                        style: context.textTheme.bodyLarge!
+                                            .copyWith(
+                                          color: Palette.grey600,
+                                        ),
+                                      ),
                                     )),
                                 const SizedBox(width: 12),
                                 ClipOval(
@@ -88,9 +96,12 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
                                   color: const Color(0xFFD9D9D9),
                                 )),
                                 const SizedBox(width: 12),
-                                Text(timeFormatter(widget.result.duration_ms!),
-                                    style:
-                                        podcastArtist()), //TODO formatter here
+                                Text(
+                                  timeFormatter(widget.result.duration_ms!),
+                                  style: context.textTheme.bodyLarge!.copyWith(
+                                    color: Palette.grey600,
+                                  ),
+                                ), //TODO formatter here
                               ],
                             )
                           : Container(),

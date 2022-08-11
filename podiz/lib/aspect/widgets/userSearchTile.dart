@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/objects/user/User.dart';
 
@@ -31,32 +32,44 @@ class UserSearchTile extends StatelessWidget {
             CircleProfile(user: user, size: 20),
             const SizedBox(width: 11),
             LimitedBox(
-                maxWidth: kScreenWidth - (16 + 16 + 20 + 11 + 40 + 16 + 16),
-                child: Text(user.name, style: followerName())),
+              maxWidth: kScreenWidth - (16 + 16 + 20 + 11 + 40 + 16 + 16),
+              child: Text(
+                user.name,
+                style: context.textTheme.titleLarge,
+              ),
+            ),
             const Spacer(),
             Column(children: [
               const Spacer(),
               Row(children: [
                 Text(
                   user.followers.length.toString(),
-                  style: followersNumber(),
+                  style: context.textTheme.titleLarge!.copyWith(
+                    color: Palette.white90,
+                  ),
                 ),
                 const SizedBox(width: 4),
                 Text(
                   "Followers",
-                  style: followersText(),
+                  style: context.textTheme.bodyLarge!.copyWith(
+                    color: Colors.white70,
+                  ),
                 ),
               ]),
               const SizedBox(height: 8),
               Row(children: [
                 Text(
                   user.following.length.toString(),
-                  style: followersNumber(),
+                  style: context.textTheme.titleLarge!.copyWith(
+                    color: Palette.white90,
+                  ),
                 ),
                 const SizedBox(width: 4),
                 Text(
                   "Following",
-                  style: followersText(),
+                  style: context.textTheme.bodyLarge!.copyWith(
+                    color: Colors.white70,
+                  ),
                 ),
               ]),
               const Spacer(),

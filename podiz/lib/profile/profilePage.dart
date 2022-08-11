@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/theme/palette.dart';
-import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
@@ -100,21 +100,39 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               user.name,
-                              style: followerName(),
+                              style: context.textTheme.titleLarge,
                             )),
                         const SizedBox(height: 16),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Text(user.followers.length.toString(),
-                                style: followersNumber()),
+                            Text(
+                              user.followers.length.toString(),
+                              style: context.textTheme.titleLarge!.copyWith(
+                                color: Palette.white90,
+                              ),
+                            ),
                             const SizedBox(width: 4),
-                            Text("Followers", style: followersText()),
+                            Text(
+                              "Followers",
+                              style: context.textTheme.bodyLarge!.copyWith(
+                                color: Colors.white70,
+                              ),
+                            ),
                             const SizedBox(width: 16),
-                            Text(user.following.length.toString(),
-                                style: followersNumber()),
+                            Text(
+                              user.following.length.toString(),
+                              style: context.textTheme.titleLarge!.copyWith(
+                                color: Palette.white90,
+                              ),
+                            ),
                             const SizedBox(width: 4),
-                            Text("Following", style: followersText()),
+                            Text(
+                              "Following",
+                              style: context.textTheme.bodyLarge!.copyWith(
+                                color: Colors.white70,
+                              ),
+                            ),
                           ],
                         ),
 
@@ -126,7 +144,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                   child: Text(
                                     "${user.name.split(" ")[0]}'s Favorite Podcasts",
                                     textAlign: TextAlign.left,
-                                    style: followersFavorite(),
+                                    style: context.textTheme.titleSmall,
                                   ),
                                 ),
                               )
@@ -239,13 +257,16 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   episode.name,
-                                  style: discussionCardProfile(),
+                                  style: context.textTheme.titleMedium,
                                 ),
                               ),
                               Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(episode.show_name,
-                                      style: discussionAppBarInsights())),
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  episode.show_name,
+                                  style: context.textTheme.bodyMedium,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -277,15 +298,20 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                       alignment: Alignment.centerLeft,
                                       child: Text(
                                         user.name,
-                                        style: discussionCardProfile(),
+                                        style: context.textTheme.titleMedium,
                                       ),
                                     ),
                                     const SizedBox(height: 4),
                                     Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                            "${user.followers.length} followers",
-                                            style: discussionCardFollowers())),
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        "${user.followers.length} followers",
+                                        style: context.textTheme.bodyMedium!
+                                            .copyWith(
+                                          color: Palette.grey600,
+                                        ),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -298,7 +324,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                             width: kScreenWidth - 32,
                             child: Text(
                               c.comment,
-                              style: discussionCardComment(),
+                              style: context.textTheme.bodyLarge,
                               textAlign: TextAlign.left,
                             ),
                           ),
@@ -331,10 +357,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                             child: Align(
                                               alignment: Alignment.centerLeft,
                                               child: Text(
-                                                "Comment on ${user.name} insight...",
-                                                style:
-                                                    discussionSnackCommentHint(),
-                                              ),
+                                                  "Comment on ${user.name} insight...",
+                                                  style: context
+                                                      .textTheme.bodySmall),
                                             ),
                                           )),
                                     ),
@@ -397,7 +422,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Replying to...",
-                        style: podcastInsightsQuickNote(),
+                        style: context.textTheme.bodyMedium!.copyWith(
+                          color: Palette.grey600,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -410,19 +437,26 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           children: [
                             Text(
                               user.name,
-                              style: discussionCardProfile(),
+                              style: context.textTheme.titleMedium,
                             ),
-                            Text("${user.followers.length} Followers",
-                                style: discussionCardFollowers()),
+                            Text(
+                              "${user.followers.length} Followers",
+                              style: context.textTheme.bodyMedium!.copyWith(
+                                color: Palette.grey600,
+                              ),
+                            ),
                           ],
                         )
                       ],
                     ),
                     const SizedBox(height: 8),
                     Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(commentToReply!.comment,
-                            style: discussionCardComment())),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        commentToReply!.comment,
+                        style: context.textTheme.bodyLarge,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -447,7 +481,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                               ),
                               contentPadding:
                                   const EdgeInsets.symmetric(horizontal: 16),
-                              hintStyle: discussionSnackCommentHint(),
+                              hintStyle: context.textTheme.bodyMedium!.copyWith(
+                                color: Palette.white90,
+                              ),
                               hintText: "Comment on ${user.name} insight...",
                             ),
                           ),
