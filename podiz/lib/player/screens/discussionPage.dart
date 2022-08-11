@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/theme/palette.dart';
-import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/aspect/widgets/shimmerLoading.dart';
 import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/home/components/circleProfile.dart';
@@ -162,7 +162,9 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Replying to...",
-                        style: podcastInsightsQuickNote(),
+                        style: context.textTheme.bodyMedium!.copyWith(
+                          color: Palette.grey600,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -175,19 +177,27 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
                           children: [
                             Text(
                               user.name,
-                              style: discussionCardProfile(),
+                              style: context.textTheme.titleMedium,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            Text("${user.followers.length} Followers",
-                                style: discussionCardFollowers()),
+                            Text(
+                              "${user.followers.length} Followers",
+                              style: context.textTheme.bodyMedium!.copyWith(
+                                color: Palette.grey600,
+                              ),
+                            ),
                           ],
                         )
                       ],
                     ),
                     const SizedBox(height: 8),
                     Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(commentToReply!.comment,
-                            style: discussionCardComment())),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        commentToReply!.comment,
+                        style: context.textTheme.bodyLarge,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -212,7 +222,7 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
                               ),
                               contentPadding:
                                   const EdgeInsets.symmetric(horizontal: 16),
-                              hintStyle: discussionSnackCommentHint(),
+                              hintStyle: context.textTheme.bodyMedium,
                               hintText: "Comment on ${user.name} insight...",
                             ),
                           ),

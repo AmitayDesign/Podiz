@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/aspect/theme/palette.dart';
 
 class ButtonFollowing extends StatefulWidget {
   const ButtonFollowing({Key? key}) : super(key: key);
@@ -18,10 +19,13 @@ class _ButtonFollowingState extends State<ButtonFollowing> {
           color: const Color(0xFFD74EFF),
           borderRadius: BorderRadius.circular(30)),
       child: Center(
-          child: Text(
-        "FOLLOWING JENIFER",
-        style: discussionCardPlay(),
-      )),
+        child: Text(
+          "FOLLOWING JENIFER",
+          style: context.textTheme.titleMedium!.copyWith(
+            color: Palette.white90,
+          ),
+        ),
+      ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 
@@ -22,12 +23,18 @@ class FollowShowButton extends ConsumerWidget {
     bool isFollowing = authManager.isFollowing(showUid);
     String follow = isFollowing ? "UNFOLLOW CAST" : "FOLLOW CAST";
     return FloatingActionButton.extended(
-        icon: PodcastAvatar(imageUrl: imageUrl, size: 23),
-        label: Text(follow, style: discussionCardPlay()),
-        backgroundColor: const Color(0xFF7101EE),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        onPressed: () => isFollowing
-            ? authManager.unfollowShow(showUid)
-            : authManager.followShow(showUid));
+      icon: PodcastAvatar(imageUrl: imageUrl, size: 23),
+      label: Text(
+        follow,
+        style: context.textTheme.titleMedium!.copyWith(
+          color: Palette.white90,
+        ),
+      ),
+      backgroundColor: const Color(0xFF7101EE),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+      onPressed: () => isFollowing
+          ? authManager.unfollowShow(showUid)
+          : authManager.followShow(showUid),
+    );
   }
 }

@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/formatters.dart';
-import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/widgets/insightsRow.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/Podcast.dart';
@@ -27,63 +28,67 @@ class PodcastListTile extends ConsumerWidget {
           );
         },
         child: Container(
-          height: 148,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(kBorderRadius),
             color: theme.colorScheme.surface,
           ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                InsightsRow(podcast),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    PodcastAvatar(imageUrl: podcast.image_url, size: 68),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: SizedBox(
-                        height: 68,
-                        child: Column(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              InsightsRow(podcast),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  PodcastAvatar(imageUrl: podcast.image_url, size: 68),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 4),
+                        Text(
+                          podcast.name,
+                          style: context.textTheme.titleLarge!.copyWith(
+                            color: Colors.grey.shade50,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            const SizedBox(height: 4),
-                            Text(
-                              podcast.name,
-                              style: podcastTitle(),
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    podcast.show_name,
-                                    style: podcastArtist(),
-                                  ),
+                            Flexible(
+                              child: Text(
+                                podcast.show_name,
+                                style: context.textTheme.bodyLarge!.copyWith(
+                                  color: Palette.grey600,
                                 ),
-                                const SizedBox(width: 12),
-                                ClipOval(
-                                    child: Container(
-                                  width: 4,
-                                  height: 4,
-                                  color: const Color(0xFFD9D9D9),
-                                )),
-                                const SizedBox(width: 12),
-                                Text(timeFormatter(podcast.duration_ms),
-                                    style: podcastArtist()),
-                              ],
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            ClipOval(
+                                child: Container(
+                              width: 4,
+                              height: 4,
+                              color: const Color(0xFFD9D9D9),
+                            )),
+                            const SizedBox(width: 12),
+                            Text(
+                              timeFormatter(podcast.duration_ms),
+                              style: context.textTheme.bodyLarge!.copyWith(
+                                color: Palette.grey600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                )
-              ],
-            ),
+                  ),
+                ],
+              )
+            ],
           ),
         ),
       ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/Podcaster.dart';
 
@@ -43,7 +43,7 @@ class ShowSearchTile extends StatelessWidget {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               show.name,
-                              style: followersNumber(),
+                              style: context.textTheme.labelLarge,
                             ),
                           ),
                           const SizedBox(height: 8),
@@ -54,7 +54,14 @@ class ShowSearchTile extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              Text(show.description, maxLines: 2, style: showDescription())
+              Text(
+                show.description,
+                style: context.textTheme.bodyMedium!.copyWith(
+                  color: Colors.white,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              )
             ]),
           ),
         ),

@@ -2,8 +2,8 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/theme/palette.dart';
-import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/home/feed/components/buttonPlay.dart';
 import 'package:podiz/home/feed/components/cardButton.dart';
@@ -94,15 +94,21 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                                     alignment: Alignment.centerLeft,
                                     child: Text(
                                       user.name,
-                                      style: discussionCardProfile(),
+                                      style: context.textTheme.titleMedium,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                   const SizedBox(height: 4),
                                   Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                          "${user.followers.length} followers",
-                                          style: discussionCardFollowers())),
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      "${user.followers.length} followers",
+                                      style: context.textTheme.bodyMedium!
+                                          .copyWith(
+                                        color: Palette.grey600,
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -115,7 +121,7 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                           width: kScreenWidth - 28,
                           child: Text(
                             widget.comment.comment,
-                            style: discussionCardComment(),
+                            style: context.textTheme.bodyLarge,
                             textAlign: TextAlign.left,
                           ),
                         ),
@@ -169,6 +175,7 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                             //             .comment,
                             //         maxLines: 1,
                             //         style: discussionCardComment(),
+                            //         overflow: TextOverflow.ellipsis,
                             //       ),
                             //       const SizedBox(height: 8),
                             //       Text("$numberOfReplies more replays...",

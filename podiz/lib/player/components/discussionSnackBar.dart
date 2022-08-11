@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/objects/Podcast.dart';
@@ -101,7 +102,9 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                       borderRadius: BorderRadius.circular(30),
                     ),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                    hintStyle: discussionSnackCommentHint(),
+                    hintStyle: context.textTheme.bodyMedium!.copyWith(
+                      color: Palette.white90,
+                    ),
                     hintText: "Share your insight...",
                   ),
                 ),
@@ -132,7 +135,8 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
               const SizedBox(width: 8),
               Text(
                 "${episode.watching} listening with you", //TODO change this!!!
-                style: discussionAppBarInsights(),
+                style: context.textTheme.bodyMedium,
+                overflow: TextOverflow.ellipsis,
               ),
               const Spacer(),
 
@@ -193,7 +197,8 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                     const SizedBox(width: 8),
                     Text(
                       "${episode.watching} listening with you", //TODO change this!!!
-                      style: discussionAppBarInsights(),
+                      style: context.textTheme.bodyMedium,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const Spacer(),
                     const PinkTimer(),
@@ -220,7 +225,9 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                               alignment: Alignment.centerLeft,
                               child: Text(
                                 "Share your insight...",
-                                style: discussionSnackCommentHint(),
+                                style: context.textTheme.bodyMedium!.copyWith(
+                                  color: Palette.white90,
+                                ),
                               ),
                             )),
                       ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/theme/palette.dart';
-import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/aspect/widgets/appBarGradient.dart';
 import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/home/components/circleProfile.dart';
@@ -129,9 +129,14 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                             ),
                             bottom: TabBar(
                                 isScrollable: true,
-                                labelStyle: notificationsSelectedLabel(),
+                                labelStyle:
+                                    context.textTheme.titleMedium!.copyWith(
+                                  color: Palette.white90,
+                                ),
                                 unselectedLabelStyle:
-                                    notificationsUnselectedLabel(),
+                                    context.textTheme.bodyLarge!.copyWith(
+                                  color: Colors.white70,
+                                ),
                                 indicatorSize: TabBarIndicatorSize.tab,
                                 overlayColor: MaterialStateProperty.all(
                                     const Color(0xFF262626)),
@@ -222,15 +227,23 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                                           alignment: Alignment.centerLeft,
                                           child: Text(
                                             podcast.name,
-                                            style: discussionCardProfile(),
+                                            style:
+                                                context.textTheme.titleMedium,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
                                         const SizedBox(height: 2),
                                         Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(podcast.show_name,
-                                                style:
-                                                    discussionAppBarInsights())),
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            podcast.show_name,
+                                            style: context.textTheme.bodyMedium!
+                                                .copyWith(
+                                              color: Colors.white70,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -262,18 +275,24 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                                                 alignment: Alignment.centerLeft,
                                                 child: Text(
                                                   user.name,
-                                                  style:
-                                                      discussionCardProfile(),
+                                                  style: context
+                                                      .textTheme.titleMedium,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                               ),
                                               const SizedBox(height: 4),
                                               Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: Text(
-                                                      "${user.followers.length} followers",
-                                                      style:
-                                                          discussionCardFollowers())),
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  "${user.followers.length} followers",
+                                                  style: context
+                                                      .textTheme.bodyMedium!
+                                                      .copyWith(
+                                                    color: Palette.grey600,
+                                                  ),
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -286,7 +305,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                                       width: kScreenWidth - 32,
                                       child: Text(
                                         c.comment,
-                                        style: discussionCardComment(),
+                                        style: context.textTheme.bodyLarge,
                                         textAlign: TextAlign.left,
                                       ),
                                     ),
@@ -324,8 +343,9 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                                                             .centerLeft,
                                                         child: Text(
                                                           "Comment on ${user.name} insight...",
-                                                          style:
-                                                              discussionSnackCommentHint(),
+                                                          style: context
+                                                              .textTheme
+                                                              .bodySmall,
                                                         ),
                                                       ),
                                                     )),
@@ -393,7 +413,9 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Replying to...",
-                        style: podcastInsightsQuickNote(),
+                        style: context.textTheme.bodyMedium!.copyWith(
+                          color: Palette.grey600,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -406,19 +428,27 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                           children: [
                             Text(
                               user.name,
-                              style: discussionCardProfile(),
+                              style: context.textTheme.titleMedium,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            Text("${user.followers.length} Followers",
-                                style: discussionCardFollowers()),
+                            Text(
+                              "${user.followers.length} Followers",
+                              style: context.textTheme.bodyMedium!.copyWith(
+                                color: Palette.grey600,
+                              ),
+                            ),
                           ],
                         )
                       ],
                     ),
                     const SizedBox(height: 8),
                     Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(commentToReply!.comment,
-                            style: discussionCardComment())),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        commentToReply!.comment,
+                        style: context.textTheme.bodyLarge,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -443,7 +473,9 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                               ),
                               contentPadding:
                                   const EdgeInsets.symmetric(horizontal: 16),
-                              hintStyle: discussionSnackCommentHint(),
+                              hintStyle: context.textTheme.bodySmall!.copyWith(
+                                color: Palette.white90,
+                              ),
                               hintText: "Comment on ${user.name} insight...",
                             ),
                           ),

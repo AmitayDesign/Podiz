@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/formatters.dart';
-import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/providers.dart';
 
@@ -51,7 +51,7 @@ class _PinkTimerState extends ConsumerState<PinkTimer> {
       child: Center(
         child: Text(
           timePlayerFormatter(position.inMilliseconds),
-          style: discussionSnackPlay(),
+          style: context.textTheme.titleMedium,
         ),
       ),
     );

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/extensions.dart';
 
 class ConnectBudz extends ConsumerWidget {
   const ConnectBudz({Key? key}) : super(key: key);
@@ -24,13 +24,17 @@ class ConnectBudz extends ConsumerWidget {
           children: [
             Text(
               Locales.string(context, "intro3_1"),
-              style: theme.textTheme.bodyText1,
+              style: theme.textTheme.labelLarge!.copyWith(
+                color: Colors.grey.shade100,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
             Text(
               Locales.string(context, "intro3_2"),
-              style: theme.textTheme.bodyText2,
+              style: theme.textTheme.titleSmall!.copyWith(
+                color: Colors.grey.shade100,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
@@ -69,7 +73,7 @@ class ConnectSign extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Text(sign, style: iconStyle()),
+      child: Text(sign, style: context.textTheme.headlineLarge),
     );
   }
 }

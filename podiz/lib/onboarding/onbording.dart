@@ -15,13 +15,13 @@ class Onboarding extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             Locales.string(context, 'intro1_1'),
-            style: theme.textTheme.headline5,
+            style: theme.textTheme.headlineSmall,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
             Locales.string(context, 'intro1_2'),
-            style: theme.textTheme.headline4,
+            style: theme.textTheme.displaySmall,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),

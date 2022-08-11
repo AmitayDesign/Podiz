@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/objects/user/User.dart';
 
@@ -13,10 +13,12 @@ class ProfileRow extends StatelessWidget {
       children: [
         CircleProfile(user: user, size: 12.5),
         const SizedBox(width: 8),
-        Text(user.name, style: ffffffff14700()),
+        Text(user.name, style: context.textTheme.titleSmall),
         const SizedBox(width: 8),
-        Text("${user.followers.length.toString()} Followers",
-            style: discussionCardCommentHint())
+        Text(
+          "${user.followers.length.toString()} Followers",
+          style: context.textTheme.bodySmall,
+        )
       ],
     );
   }

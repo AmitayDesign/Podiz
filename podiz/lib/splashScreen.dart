@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:loading_indicator/loading_indicator.dart';
-import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/extensions.dart';
 
 enum SplashType { loading, error }
 
@@ -34,7 +34,7 @@ class SplashScreen extends StatelessWidget {
               fit: BoxFit.contain,
             ),
             const SizedBox(height: 8),
-            Text("Podiz", style: podizStyle()),
+            Text("Podiz", style: context.textTheme.headlineLarge),
             const SizedBox(height: 8),
             type == SplashType.loading
                 ? SizedBox(
@@ -48,7 +48,7 @@ class SplashScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 8),
                     child: LocaleText(
                       'error1',
-                      style: podcastInsights(),
+                      style: context.textTheme.bodyLarge,
                       textAlign: TextAlign.center,
                     ),
                   ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/theme/palette.dart';
-import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/aspect/widgets/shimmerLoading.dart';
 import 'package:podiz/home/feed/components/cardButton.dart';
 import 'package:podiz/objects/Comment.dart';
@@ -101,8 +101,10 @@ class RepliesArea extends ConsumerWidget {
                                 padding: const EdgeInsets.only(top: 4),
                                 child: Align(
                                   alignment: Alignment.centerLeft,
-                                  child: Text(c.comment,
-                                      style: discussionCardComment()),
+                                  child: Text(
+                                    c.comment,
+                                    style: context.textTheme.bodyLarge,
+                                  ),
                                 ),
                               ),
                               if (lvl == 3) ...[

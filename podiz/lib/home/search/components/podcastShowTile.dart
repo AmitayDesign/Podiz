@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/formatters.dart';
-import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/widgets/insightsRow.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/SearchResult.dart';
@@ -59,9 +60,12 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
                         children: [
                           Text(
                             widget.result.name,
-                            style: widget.isPlaying
-                                ? podcastTitlePlaying()
-                                : podcastTitle(),
+                            style: context.textTheme.titleLarge!.copyWith(
+                              color: widget.isPlaying
+                                  ? context.colorScheme.primary
+                                  : Colors.grey.shade50,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 8),
                           Row(
@@ -69,7 +73,10 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
                             children: [
                               Text(
                                 dateFormatter(widget.result.release_date!),
-                                style: podcastArtist(),
+                                style: context.textTheme.bodyLarge!.copyWith(
+                                  color: Palette.grey600,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(width: 12),
                               ClipOval(
@@ -81,7 +88,9 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
                               const SizedBox(width: 12),
                               Text(
                                 timeFormatter(widget.result.duration_ms!),
-                                style: podcastArtist(),
+                                style: context.textTheme.bodyLarge!
+                                    .copyWith(color: Palette.grey600),
+                                overflow: TextOverflow.ellipsis,
                               ), //TODO formatter here
                             ],
                           )
@@ -93,8 +102,11 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
                 const SizedBox(height: 20),
                 Text(
                   widget.result.description!,
-                  style: showDescription(),
+                  style: context.textTheme.bodyMedium!.copyWith(
+                    color: Colors.white,
+                  ),
                   maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 )
               ],
             ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/theme/palette.dart';
-import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/aspect/widgets/insightsRow.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/Podcast.dart';
@@ -50,7 +50,8 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
                             children: [
                               Text(
                                 podcast!.name + podcast!.name,
-                                style: discussionAppBarTitle(),
+                                style: context.textTheme.titleMedium!
+                                    .copyWith(color: Colors.grey.shade50),
                                 maxLines: 1,
                               ),
                               const SizedBox(height: 8),
@@ -60,7 +61,8 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
                                     Flexible(
                                       child: Text(
                                         podcast!.show_name,
-                                        style: discussionAppBarInsights(),
+                                        style: context.textTheme.bodyMedium,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                     const SizedBox(width: 12),
@@ -74,7 +76,8 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
                                     const SizedBox(width: 12),
                                     Text(
                                       timeFormatter(podcast!.duration_ms),
-                                      style: discussionAppBarInsights(),
+                                      style: context.textTheme.bodyMedium,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ]),
                             ],
