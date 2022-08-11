@@ -247,23 +247,26 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         PodcastAvatar(imageUrl: episode.image_url, size: 32),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  episode.name,
-                                style: context.textTheme.titleMedium,
-                                ),
-                              ),
-                              Align(
+                          child: SizedBox(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Align(
                                   alignment: Alignment.centerLeft,
-                                  child: Text(episode.show_name,
-                                style: context.textTheme.bodyMedium,),),
-                            ],
-                          ),
->>>>>>> dfb77cc6f6b09f2c1c349280eae6fa5272157ff8
+                                  child: Text(
+                                    episode.name,
+                                    style: context.textTheme.titleMedium,
+                                  ),
+                                ),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    episode.show_name,
+                                    style: context.textTheme.bodyMedium,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -375,7 +378,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   ),
                   const SizedBox(height: 16),
                 ],
-              )
+              );
             }
           }
           return const NotificationLoading();
