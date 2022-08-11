@@ -16,8 +16,7 @@ class PlayerWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print("building");
-    final state = ref.watch(stateProvider);
+    final state = ref.watch(stateStreamProvider);
     return state.maybeWhen(
       data: (s) {
         if (s == PlayerState.close) return Container();
@@ -40,6 +39,7 @@ class PlayerWidget extends ConsumerWidget {
                   params: {'showId': p.uid!},
                 ),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     PinkProgress(p.duration_ms),
                     Container(

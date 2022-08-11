@@ -50,7 +50,7 @@ class AuthManager {
     if (loggedInUser != null) {
       await fetchUserInfo(loggedInUser);
     } else {
-      _saveUser(null);
+      await _saveUser(null);
     }
   }
 
@@ -61,32 +61,34 @@ class AuthManager {
   }
 
   void setUpUserStream(String userId) {
-    print(userId);
     firestore.collection("users").doc(userId).snapshots().listen((doc) async {
       final data = doc.data();
       if (data == null) return;
       final user = UserPodiz.fromFirestore(doc);
-      _saveUser(user);
+      await _saveUser(user);
     });
   }
 
-  void _saveUser(UserPodiz? user) {
-    user == null
-        ? preferences.remove('userId')
-        : preferences.setString('userId', user.uid);
+  Future<void> _saveUser(UserPodiz? user) async {
+    if (user == null) {
+      preferences.remove('userId');
+    } else {
+      preferences.setString('userId', user.uid);
+      myCast = await getCastList(user);
+    }
     currentUser = user;
     _userStream.add(user);
     if (!_userCompleter.isCompleted) _userCompleter.complete();
   }
 
-  Future<List<Podcast>> getCastList() async {
+  Future<List<Podcast>> getCastList(UserPodiz user) async {
     List<Podcast> result = [];
-    int number = currentUser!.favPodcasts.length;
+    int number = user.favPodcasts.length;
     int count = 0;
     if (number >= 6) {
       for (int i = number - 1; i >= 0; i--) {
         Podcaster show =
-            await showManager.getShowFromFirebase(currentUser!.favPodcasts[i]);
+            await showManager.getShowFromFirebase(user.favPodcasts[i]);
         String podcastUid = showManager.getRandomEpisode(show.podcasts);
         result.add(await podcastManager.getPodcastFromFirebase(podcastUid));
         count++;
@@ -97,8 +99,8 @@ class AuthManager {
     } else {
       while (count != 6) {
         for (int i = 0; i < number; i++) {
-          Podcaster show = await showManager
-              .getShowFromFirebase(currentUser!.favPodcasts[i]);
+          Podcaster show =
+              await showManager.getShowFromFirebase(user.favPodcasts[i]);
           String podcastUid = showManager.getRandomEpisode(show.podcasts);
           result.add(await podcastManager.getPodcastFromFirebase(podcastUid));
           count++;

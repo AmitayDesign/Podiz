@@ -9,9 +9,11 @@ class PodcastListTileQuickNote extends StatelessWidget {
   final Podcast podcast;
   final Widget quickNote;
 
-  const PodcastListTileQuickNote(this.podcast,
-      {Key? key, required this.quickNote})
-      : super(key: key);
+  const PodcastListTileQuickNote(
+    this.podcast, {
+    Key? key,
+    required this.quickNote,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

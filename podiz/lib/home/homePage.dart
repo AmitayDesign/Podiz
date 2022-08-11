@@ -5,14 +5,13 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/app_router.dart';
-import 'package:podiz/aspect/widgets/tapTo.dart';
+import 'package:podiz/aspect/widgets/tap_to_unfocus.dart';
 import 'package:podiz/home/feed/feedPage.dart';
 import 'package:podiz/home/notifications/NotificationsPage.dart';
 import 'package:podiz/home/search/searchPage.dart';
 import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/player/playerWidget.dart';
 import 'package:podiz/providers.dart';
-import 'package:podiz/splashScreen.dart';
 
 enum HomeDestination { feed, search, notifications }
 
@@ -79,6 +78,7 @@ class _HomePageState extends ConsumerState<HomePage>
     // call 'super.build' when using 'AutomaticKeepAliveClientMixin'
     super.build(context);
 
+<<<<<<< HEAD
     final player = ref.watch(playerStreamProvider);
     return player.when(
         error: (e, _) {
@@ -110,72 +110,78 @@ class _HomePageState extends ConsumerState<HomePage>
                             const SearchPage(),
                             NotificationsPage(isPlaying),
                           ],
+=======
+    ref.listen<AsyncValue<PlayerState>>(stateStreamProvider, (_, stateValue) {
+      final state = stateValue.valueOrNull;
+      // Future.microtask(() {});
+      setState(() => isPlaying = state != null && state != PlayerState.close);
+    });
+
+    return KeyboardVisibilityBuilder(
+      builder: (context, isKeyBoardOpen) {
+        return TapToUnfocus(
+          child: Scaffold(
+            body: Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                PageView(
+                  controller: pageController,
+                  children: [
+                    FeedPage(isPlaying),
+                    const SearchPage(),
+                    NotificationsPage(isPlaying),
+                  ],
+                ),
+                if (!isKeyBoardOpen && isPlaying) const PlayerWidget(),
+              ],
+            ),
+            bottomNavigationBar: SizedBox(
+              height: 93,
+              child: ClipRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(
+                    sigmaX: 5,
+                    sigmaY: 10,
+                  ),
+                  child: Opacity(
+                    opacity: 0.9,
+                    child: BottomNavigationBar(
+                      iconSize: 30,
+                      showSelectedLabels: true,
+                      showUnselectedLabels: true,
+                      selectedItemColor: const Color(0xFFD74EFF),
+                      unselectedItemColor: const Color(0xB2FFFFFF),
+                      onTap: goToDestination,
+                      currentIndex: destination.index,
+                      items: const [
+                        BottomNavigationBarItem(
+                          label: 'Home',
+                          icon: Icon(Icons.home),
+                          activeIcon: Icon(
+                            Icons.home,
+                            color: Color(0xFFD74EFF),
+                          ),
                         ),
-                        if (!isKeyBoardOpen && p.getState != PlayerState.close)
-                          const Positioned(
-                            right: 0,
-                            left: 0,
-                            bottom: 93,
-                            child: PlayerWidget(),
-                          ),
-                        if (!isKeyBoardOpen)
-                          Positioned(
-                            bottom: 0.0,
-                            left: 0.0,
-                            right: 0.0,
-                            child: SizedBox(
-                              height: 93,
-                              child: ClipRect(
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(
-                                    sigmaX: 5,
-                                    sigmaY: 10,
-                                  ),
-                                  child: Opacity(
-                                    opacity: 0.9,
-                                    child: BottomNavigationBar(
-                                      iconSize: 30,
-                                      showSelectedLabels: true,
-                                      showUnselectedLabels: true,
-                                      selectedItemColor:
-                                          const Color(0xFFD74EFF),
-                                      unselectedItemColor:
-                                          const Color(0xB2FFFFFF),
-                                      onTap: goToDestination,
-                                      currentIndex: destination.index,
-                                      items: const [
-                                        BottomNavigationBarItem(
-                                          label: 'Home',
-                                          icon: Icon(Icons.home),
-                                          activeIcon: Icon(
-                                            Icons.home,
-                                            color: Color(0xFFD74EFF),
-                                          ),
-                                        ),
-                                        BottomNavigationBarItem(
-                                          label: 'Search',
-                                          icon: Icon(Icons.search),
-                                          activeIcon: Icon(Icons.search),
-                                        ),
-                                        BottomNavigationBarItem(
-                                          label: 'Notifications',
-                                          icon: Icon(Icons.notifications),
-                                          activeIcon: Icon(Icons.notifications),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+                        BottomNavigationBarItem(
+                          label: 'Search',
+                          icon: Icon(Icons.search),
+                          activeIcon: Icon(Icons.search),
+                        ),
+                        BottomNavigationBarItem(
+                          label: 'Notifications',
+                          icon: Icon(Icons.notifications),
+                          activeIcon: Icon(Icons.notifications),
+>>>>>>> 8c55c4337e103ab3f96881f6249ffdf04673769a
+                        ),
                       ],
                     ),
                   ),
                 ),
-              );
-            },
-          );
-        });
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }
