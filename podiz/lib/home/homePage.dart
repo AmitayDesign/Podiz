@@ -78,39 +78,6 @@ class _HomePageState extends ConsumerState<HomePage>
     // call 'super.build' when using 'AutomaticKeepAliveClientMixin'
     super.build(context);
 
-<<<<<<< HEAD
-    final player = ref.watch(playerStreamProvider);
-    return player.when(
-        error: (e, _) {
-          print(e);
-          return SplashScreen.error();
-        },
-        loading: () => SplashScreen(),
-        data: (p) {
-          p.getState == PlayerState.close
-              ? isPlaying = false
-              : isPlaying = true;
-          // if (p.error) {
-          //   return const SpotifyView();
-          // }
-          return KeyboardVisibilityBuilder(
-            builder: (context, isKeyBoardOpen) {
-              return Scaffold(
-                body: SafeArea(
-                  child: TapTo.unfocus(
-                    child: Stack(
-                      children: [
-                        PageView(
-                          controller: pageController,
-                          children: [
-                            FeedPage(isPlaying),
-                            // Container(),
-                            // Container(),
-                            // Container(),
-                            const SearchPage(),
-                            NotificationsPage(isPlaying),
-                          ],
-=======
     ref.listen<AsyncValue<PlayerState>>(stateStreamProvider, (_, stateValue) {
       final state = stateValue.valueOrNull;
       // Future.microtask(() {});
@@ -121,6 +88,7 @@ class _HomePageState extends ConsumerState<HomePage>
       builder: (context, isKeyBoardOpen) {
         return TapToUnfocus(
           child: Scaffold(
+            extendBody: true,
             body: Stack(
               alignment: Alignment.bottomCenter,
               children: [
@@ -139,10 +107,7 @@ class _HomePageState extends ConsumerState<HomePage>
               height: 93,
               child: ClipRect(
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(
-                    sigmaX: 5,
-                    sigmaY: 10,
-                  ),
+                  filter: ImageFilter.blur(sigmaX: 5, sigmaY: 10),
                   child: Opacity(
                     opacity: 0.9,
                     child: BottomNavigationBar(
@@ -171,7 +136,6 @@ class _HomePageState extends ConsumerState<HomePage>
                           label: 'Notifications',
                           icon: Icon(Icons.notifications),
                           activeIcon: Icon(Icons.notifications),
->>>>>>> 8c55c4337e103ab3f96881f6249ffdf04673769a
                         ),
                       ],
                     ),
