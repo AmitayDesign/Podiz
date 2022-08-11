@@ -51,10 +51,9 @@ class Player {
         .collection("podcasts")
         .doc(podcastUid)
         .snapshots()
-        .listen((snapshot) async {
-      if (snapshot.data() != null) {
-        podcastPlaying = Podcast.fromJson(snapshot.data()!);
-        podcastPlaying!.uid = podcastUid;
+        .listen((doc) async {
+      if (doc.data() != null) {
+        podcastPlaying = Podcast.fromFirestore(doc);
         _podcastController!.add(podcastPlaying!);
       }
     });

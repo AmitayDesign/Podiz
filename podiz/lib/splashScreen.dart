@@ -16,7 +16,8 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Material(
-      child: DecoratedBox(
+      child: Container(
+        alignment: Alignment.center,
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage("assets/images/backgroundImage.png"),
@@ -24,7 +25,7 @@ class SplashScreen extends StatelessWidget {
           ),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Image.asset(
               "assets/images/brandIcon.png",

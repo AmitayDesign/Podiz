@@ -50,49 +50,31 @@ class PodcastListTile extends ConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             const SizedBox(height: 4),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                podcast.name,
-                                style: podcastTitle(),
-                              ),
+                            Text(
+                              podcast.name,
+                              style: podcastTitle(),
                             ),
                             const SizedBox(height: 8),
-                            LimitedBox(
-                              maxWidth:
-                                  kScreenWidth - (16 + 16 + 68 + 8 + 16 + 16),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: LimitedBox(
-                                        maxWidth: kScreenWidth -
-                                            (16 +
-                                                16 +
-                                                68 +
-                                                8 +
-                                                12 +
-                                                4 +
-                                                12 +
-                                                16 +
-                                                58 +
-                                                16),
-                                        child: Text(podcast.show_name,
-                                            style: podcastArtist()),
-                                      )),
-                                  const SizedBox(width: 12),
-                                  ClipOval(
-                                      child: Container(
-                                    width: 4,
-                                    height: 4,
-                                    color: const Color(0xFFD9D9D9),
-                                  )),
-                                  const SizedBox(width: 12),
-                                  Text(timeFormatter(podcast.duration_ms),
-                                      style: podcastArtist()),
-                                ],
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    podcast.show_name,
+                                    style: podcastArtist(),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                ClipOval(
+                                    child: Container(
+                                  width: 4,
+                                  height: 4,
+                                  color: const Color(0xFFD9D9D9),
+                                )),
+                                const SizedBox(width: 12),
+                                Text(timeFormatter(podcast.duration_ms),
+                                    style: podcastArtist()),
+                              ],
                             ),
                           ],
                         ),

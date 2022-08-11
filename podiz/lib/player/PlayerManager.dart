@@ -62,7 +62,6 @@ class PlayerManager {
   }
 
   void playEpisode(Podcast podcast, int position) {
-    print(podcast.uid);
     playerSink.add({
       "play": {"episode": podcast, "position": position}
     });
@@ -114,8 +113,6 @@ class PlayerManager {
     });
   }
 
- 
-
   setUpDiscussionPageStream(String podcastUid) async {
     if (!firstTime) {
       await commentsStreamSubscription!.cancel();
@@ -148,8 +145,7 @@ class PlayerManager {
   }
 
   addCommentToBloc(Doc doc) {
-    Comment comment = Comment.fromJson(doc.data()!);
-    comment.id = doc.id;
+    Comment comment = Comment.fromFirestore(doc);
     Map<String, Comment> replies = {};
     comment.replies = replies;
     if (comment.lvl == 1) {
