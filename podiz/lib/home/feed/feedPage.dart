@@ -44,9 +44,9 @@ class _FeedPageState extends ConsumerState<FeedPage> {
 
     var title = ref.read(homeBarTitleProvider);
 
-    if (hotlivePosition == null || hotlivePosition < 96) {
+    if (hotlivePosition == null || hotlivePosition < HomeAppBar.height) {
       title = 'hotlive';
-    } else if (myCastsPosition == null || myCastsPosition < 96) {
+    } else if (myCastsPosition == null || myCastsPosition < HomeAppBar.height) {
       title = 'myCasts';
     } else {
       title = 'lastListened';
@@ -76,10 +76,14 @@ class _FeedPageState extends ConsumerState<FeedPage> {
     final authManager = ref.watch(authManagerProvider);
     final lastListenedEpisode = ref.watch(lastListenedEpisodeFutureProvider);
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: const HomeAppBar(),
       body: CustomScrollView(
         controller: _controller,
         slivers: [
+          const SliverToBoxAdapter(
+            child: SizedBox(height: HomeAppBar.backgroundHeight),
+          ),
           if (user.lastListened.isNotEmpty)
             SliverToBoxAdapter(
               child: lastListenedEpisode.when(
