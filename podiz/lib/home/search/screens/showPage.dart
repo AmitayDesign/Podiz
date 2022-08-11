@@ -13,8 +13,6 @@ import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
 
 class ShowPage extends ConsumerWidget {
-  static const route = '/showPage';
-
   final String showId;
   const ShowPage(this.showId, {Key? key}) : super(key: key);
 

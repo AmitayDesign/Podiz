@@ -77,9 +77,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             },
             child: Scaffold(
               appBar: BackAppBar(),
-              floatingActionButton: currentUser.uid != user.uid
-                  ? FollowPeopleButton(user)
-                  : Container(),
               body: Stack(children: [
                 Column(mainAxisAlignment: MainAxisAlignment.start, children: [
                   Padding(
@@ -164,6 +161,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   child: visible ? replyView() : Container(),
                 )
               ]),
+              floatingActionButton:
+                  currentUser.uid == user.uid ? null : FollowPeopleButton(user),
             ),
           );
         });
