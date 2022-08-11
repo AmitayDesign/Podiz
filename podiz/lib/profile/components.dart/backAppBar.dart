@@ -41,6 +41,7 @@ class BackAppBarButton extends StatelessWidget {
           Text(
             Locales.string(context, "back"),
             style: context.textTheme.bodyMedium,
+            overflow: TextOverflow.ellipsis,
           )
         ],
       ),

@@ -44,6 +44,7 @@ class InsightsRow extends ConsumerWidget {
                 style: textStyle,
                 minFontSize: 12,
                 maxFontSize: 16,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],

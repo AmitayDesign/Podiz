@@ -65,6 +65,7 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
                                   ? context.colorScheme.primary
                                   : Colors.grey.shade50,
                             ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 8),
                           Row(
@@ -75,6 +76,7 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
                                 style: context.textTheme.bodyLarge!.copyWith(
                                   color: Palette.grey600,
                                 ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(width: 12),
                               ClipOval(
@@ -88,6 +90,7 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
                                 timeFormatter(widget.result.duration_ms!),
                                 style: context.textTheme.bodyLarge!
                                     .copyWith(color: Palette.grey600),
+                                overflow: TextOverflow.ellipsis,
                               ), //TODO formatter here
                             ],
                           )
@@ -103,6 +106,7 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
                     color: Colors.white,
                   ),
                   maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 )
               ],
             ),

@@ -95,6 +95,7 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                                     child: Text(
                                       user.name,
                                       style: context.textTheme.titleMedium,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                   const SizedBox(height: 4),
@@ -174,6 +175,7 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                             //             .comment,
                             //         maxLines: 1,
                             //         style: discussionCardComment(),
+                            //         overflow: TextOverflow.ellipsis,
                             //       ),
                             //       const SizedBox(height: 8),
                             //       Text("$numberOfReplies more replays...",

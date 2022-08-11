@@ -225,9 +225,12 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                                       children: [
                                         Align(
                                           alignment: Alignment.centerLeft,
-                                          child: Text(podcast.name,
-                                              style: context
-                                                  .textTheme.titleMedium),
+                                          child: Text(
+                                            podcast.name,
+                                            style:
+                                                context.textTheme.titleMedium,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         ),
                                         const SizedBox(height: 2),
                                         Align(
@@ -238,6 +241,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                                                 .copyWith(
                                               color: Colors.white70,
                                             ),
+                                            overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
                                       ],
@@ -273,6 +277,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                                                   user.name,
                                                   style: context
                                                       .textTheme.titleMedium,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                               ),
                                               const SizedBox(height: 4),
@@ -423,6 +429,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                             Text(
                               user.name,
                               style: context.textTheme.titleMedium,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             Text(
                               "${user.followers.length} Followers",

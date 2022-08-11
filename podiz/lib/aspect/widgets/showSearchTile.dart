@@ -56,10 +56,11 @@ class ShowSearchTile extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 show.description,
-                maxLines: 2,
                 style: context.textTheme.bodyMedium!.copyWith(
                   color: Colors.white,
                 ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               )
             ]),
           ),

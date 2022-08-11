@@ -70,6 +70,7 @@ class PlayerWidget extends ConsumerWidget {
                                       p.name,
                                       style: context.textTheme.bodyMedium,
                                       maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ],

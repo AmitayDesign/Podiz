@@ -136,6 +136,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
               Text(
                 "${episode.watching} listening with you", //TODO change this!!!
                 style: context.textTheme.bodyMedium,
+                overflow: TextOverflow.ellipsis,
               ),
               const Spacer(),
 
@@ -197,6 +198,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                     Text(
                       "${episode.watching} listening with you", //TODO change this!!!
                       style: context.textTheme.bodyMedium,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const Spacer(),
                     const PinkTimer(),

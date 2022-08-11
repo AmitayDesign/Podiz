@@ -73,6 +73,7 @@ class ReplyView extends ConsumerWidget {
                             Text(
                               user.name,
                               style: context.textTheme.titleMedium,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             Text(
                               "${user.followers.length} Followers",

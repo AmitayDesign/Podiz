@@ -62,6 +62,7 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
                                       child: Text(
                                         podcast!.show_name,
                                         style: context.textTheme.bodyMedium,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                     const SizedBox(width: 12),
@@ -76,6 +77,7 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
                                     Text(
                                       timeFormatter(podcast!.duration_ms),
                                       style: context.textTheme.bodyMedium,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ]),
                             ],

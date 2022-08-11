@@ -180,6 +180,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                 style: context.textTheme.bodyMedium!.copyWith(
                   color: Palette.grey600,
                 ),
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
@@ -261,6 +262,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                 Text(
                   "${episode.watching} listening right now",
                   style: context.textTheme.bodyMedium,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),

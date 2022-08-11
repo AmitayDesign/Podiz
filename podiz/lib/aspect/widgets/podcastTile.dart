@@ -69,6 +69,7 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
                                 ? context.colorScheme.primary
                                 : Colors.grey.shade50,
                           ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -83,6 +84,7 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
                                         context.textTheme.bodyLarge!.copyWith(
                                       color: Palette.grey600,
                                     ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                                 const SizedBox(width: 12),
@@ -99,6 +101,7 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
                                   style: context.textTheme.bodyLarge!.copyWith(
                                     color: Palette.grey600,
                                   ),
+                                  overflow: TextOverflow.ellipsis,
                                 ), //TODO formatter here
                               ],
                             )

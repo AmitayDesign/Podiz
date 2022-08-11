@@ -31,6 +31,7 @@ class HomeAppBar extends ConsumerWidget with PreferredSizeWidget {
       title: Text(
         Locales.string(context, title),
         style: context.textTheme.bodyLarge!.copyWith(color: Palette.grey600),
+        overflow: TextOverflow.ellipsis,
       ),
       actions: [
         CircleProfile(user: user, size: 20),

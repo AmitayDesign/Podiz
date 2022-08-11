@@ -256,6 +256,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                   child: Text(
                                     episode.name,
                                     style: context.textTheme.titleMedium,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                                 Align(
@@ -263,6 +264,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                   child: Text(
                                     episode.show_name,
                                     style: context.textTheme.bodyMedium,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
@@ -298,6 +300,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                       child: Text(
                                         user.name,
                                         style: context.textTheme.titleMedium,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                     const SizedBox(height: 4),
@@ -437,6 +440,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                             Text(
                               user.name,
                               style: context.textTheme.titleMedium,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             Text(
                               "${user.followers.length} Followers",
