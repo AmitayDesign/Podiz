@@ -24,7 +24,7 @@ class PodcastListTile extends ConsumerWidget {
           ref.read(playerManagerProvider).playEpisode(podcast, 0);
           context.pushNamed(
             AppRoute.discussion.name,
-            params: {'showId': podcast.uid!},
+            params: {'showId': podcast.show_uri},
           );
         },
         child: Container(
@@ -51,61 +51,40 @@ class PodcastListTile extends ConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             const SizedBox(height: 4),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                podcast.name,
-                                style: context.textTheme.titleLarge!.copyWith(
-                                  color: Colors.grey.shade50,
-                                ),
+                            Text(
+                              podcast.name,
+                              style: context.textTheme.titleLarge!.copyWith(
+                                color: Colors.grey.shade50,
                               ),
                             ),
                             const SizedBox(height: 8),
-                            LimitedBox(
-                              maxWidth:
-                                  kScreenWidth - (16 + 16 + 68 + 8 + 16 + 16),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: LimitedBox(
-                                        maxWidth: kScreenWidth -
-                                            (16 +
-                                                16 +
-                                                68 +
-                                                8 +
-                                                12 +
-                                                4 +
-                                                12 +
-                                                16 +
-                                                58 +
-                                                16),
-                                        child: Text(
-                                          podcast.show_name,
-                                          style: context.textTheme.bodyLarge!
-                                              .copyWith(
-                                            color: Palette.grey600,
-                                          ),
-                                        ),
-                                      )),
-                                  const SizedBox(width: 12),
-                                  ClipOval(
-                                      child: Container(
-                                    width: 4,
-                                    height: 4,
-                                    color: const Color(0xFFD9D9D9),
-                                  )),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    timeFormatter(podcast.duration_ms),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    podcast.show_name,
                                     style:
                                         context.textTheme.bodyLarge!.copyWith(
                                       color: Palette.grey600,
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                                const SizedBox(width: 12),
+                                ClipOval(
+                                    child: Container(
+                                  width: 4,
+                                  height: 4,
+                                  color: const Color(0xFFD9D9D9),
+                                )),
+                                const SizedBox(width: 12),
+                                Text(
+                                  timeFormatter(podcast.duration_ms),
+                                  style: context.textTheme.bodyLarge!.copyWith(
+                                    color: Palette.grey600,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),

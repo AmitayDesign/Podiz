@@ -77,9 +77,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             },
             child: Scaffold(
               appBar: BackAppBar(),
-              floatingActionButton: currentUser.uid != user.uid
-                  ? FollowPeopleButton(user)
-                  : Container(),
               body: Stack(children: [
                 Column(mainAxisAlignment: MainAxisAlignment.start, children: [
                   Padding(
@@ -182,6 +179,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   child: visible ? replyView() : Container(),
                 )
               ]),
+              floatingActionButton:
+                  currentUser.uid == user.uid ? null : FollowPeopleButton(user),
             ),
           );
         });
@@ -247,9 +246,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       children: [
                         PodcastAvatar(imageUrl: episode.image_url, size: 32),
                         const SizedBox(width: 8),
-                        SizedBox(
-                          width: kScreenWidth - (16 + 32 + 8 + 16),
-                          height: 40,
+                        Expanded(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -257,17 +254,16 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   episode.name,
-                                  style: context.textTheme.titleMedium,
+                                style: context.textTheme.titleMedium,
                                 ),
                               ),
                               Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  episode.show_name,
-                                  style: context.textTheme.bodyMedium,
-                                ),
-                              ),
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(episode.show_name,
+                                style: context.textTheme.bodyMedium,),),
                             ],
+                          ),
+>>>>>>> dfb77cc6f6b09f2c1c349280eae6fa5272157ff8
                           ),
                         ),
                       ],
@@ -379,7 +375,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   ),
                   const SizedBox(height: 16),
                 ],
-              );
+              )
             }
           }
           return const NotificationLoading();

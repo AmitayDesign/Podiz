@@ -22,23 +22,19 @@ class FollowShowButton extends ConsumerWidget {
     AuthManager authManager = ref.watch(authManagerProvider);
     bool isFollowing = authManager.isFollowing(showUid);
     String follow = isFollowing ? "UNFOLLOW CAST" : "FOLLOW CAST";
-    double bottomPad = isPlaying ? 100.0 : 0;
-    return Padding(
-      padding: EdgeInsets.only(bottom: bottomPad),
-      child: FloatingActionButton.extended(
-        icon: PodcastAvatar(imageUrl: imageUrl, size: 23),
-        label: Text(
-          follow,
-          style: context.textTheme.titleMedium!.copyWith(
-            color: Palette.white90,
-          ),
+    return FloatingActionButton.extended(
+      icon: PodcastAvatar(imageUrl: imageUrl, size: 23),
+      label: Text(
+        follow,
+        style: context.textTheme.titleMedium!.copyWith(
+          color: Palette.white90,
         ),
-        backgroundColor: const Color(0xFF7101EE),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        onPressed: () => isFollowing
-            ? authManager.unfollowShow(showUid)
-            : authManager.followShow(showUid),
       ),
+      backgroundColor: const Color(0xFF7101EE),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+      onPressed: () => isFollowing
+          ? authManager.unfollowShow(showUid)
+          : authManager.followShow(showUid),
     );
   }
 }

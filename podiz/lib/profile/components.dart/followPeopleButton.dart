@@ -17,17 +17,18 @@ class FollowPeopleButton extends ConsumerWidget {
     String follow =
         isFollowing ? "UNFOLLOW ${user.name}" : "FOLLOW ${user.name}";
     return FloatingActionButton.extended(
-        icon: PodcastAvatar(imageUrl: user.image_url, size: 23),
-        label: Text(
-          follow,
-          style: context.textTheme.titleMedium!.copyWith(
-            color: Palette.white90,
-          ),
+      icon: PodcastAvatar(imageUrl: user.image_url, size: 23),
+      label: Text(
+        follow,
+        style: context.textTheme.titleMedium!.copyWith(
+          color: Palette.white90,
         ),
-        backgroundColor: const Color(0xFF7101EE),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        onPressed: () => isFollowing
-            ? authManager.unfollowShow(user.uid)
-            : authManager.followShow(user.uid));
+      ),
+      backgroundColor: const Color(0xFF7101EE),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+      onPressed: () => isFollowing
+          ? authManager.unfollowShow(user.uid)
+          : authManager.followShow(user.uid),
+    );
   }
 }

@@ -39,6 +39,10 @@ final connectivityProvider = StreamProvider<ConnectivityResult>(
 
 // AUTH
 
+final userLoadingProvider = FutureProvider<void>(
+  (ref) => ref.watch(authManagerProvider).firstUserLoad,
+);
+
 final userStreamProvider = StreamProvider<UserPodiz?>(
   (ref) => ref.watch(authManagerProvider).user,
 );
@@ -78,12 +82,11 @@ final playerProvider = Provider<Player>(
   (ref) => ref.watch(playerStreamProvider).value!,
 );
 
-final stateStreamProvider = StreamProvider<PlayerState>((ref) {
-  final playerValue = ref.watch(playerStreamProvider);
-  return playerValue.valueOrNull?.state ?? Stream.value(PlayerState.close);
-});
+final stateProvider = StreamProvider<PlayerState>(
+  (ref) => ref.watch(playerProvider).state,
+);
 
-final podcastProvider = StreamProvider.autoDispose<Podcast>(
+final playerPodcastProvider = StreamProvider.autoDispose<Podcast>(
   (ref) => ref.watch(playerProvider).podcast,
 );
 
@@ -94,5 +97,11 @@ final commentsStreamProvider = StreamProvider.autoDispose<List<Comment>>(
 final feedListFutureProvider = FutureProvider<List<Podcast>>(
     (ref) => ref.watch(podcastManagerProvider).fetchFeedList());
 
-final lastListenedEpisodeFutureProvider = FutureProvider<Podcast>((ref) async =>
-    ref.watch(podcastManagerProvider).getLastListenedEpisodeFromFirebase());
+final lastListenedEpisodeFutureProvider = FutureProvider<Podcast>(
+  (ref) =>
+      ref.watch(podcastManagerProvider).getLastListenedEpisodeFromFirebase(),
+);
+
+final podcastProvider = FutureProvider.family<Podcast, String>(
+  (ref, id) => ref.watch(podcastManagerProvider).getPodcastFromFirebase(id),
+);

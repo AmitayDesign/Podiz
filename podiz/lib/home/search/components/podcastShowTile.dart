@@ -35,7 +35,7 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
               .playEpisode(widget.result.searchResultToPodcast(), 0);
           context.goNamed(
             AppRoute.discussion.name,
-            params: {'showId': widget.result.uid},
+            params: {'showId': widget.result.show_uri!},
           );
         },
         child: Container(
@@ -54,32 +54,26 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
                   children: [
                     PodcastAvatar(imageUrl: widget.result.image_url, size: 52),
                     const SizedBox(width: 8),
-                    SizedBox(
-                      width: 250,
+                    Expanded(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              widget.result.name,
-                              style: context.textTheme.titleLarge!.copyWith(
-                                color: widget.isPlaying
-                                    ? context.colorScheme.primary
-                                    : Colors.grey.shade50,
-                              ),
+                          Text(
+                            widget.result.name,
+                            style: context.textTheme.titleLarge!.copyWith(
+                              color: widget.isPlaying
+                                  ? context.colorScheme.primary
+                                  : Colors.grey.shade50,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  dateFormatter(widget.result.release_date!),
-                                  style: context.textTheme.bodyLarge!
-                                      .copyWith(color: Palette.grey600),
+                              Text(
+                                dateFormatter(widget.result.release_date!),
+                                style: context.textTheme.bodyLarge!.copyWith(
+                                  color: Palette.grey600,
                                 ),
                               ),
                               const SizedBox(width: 12),

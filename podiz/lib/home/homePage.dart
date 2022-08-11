@@ -19,6 +19,8 @@ class HomePage extends ConsumerStatefulWidget {
   final HomeDestination? destination;
   const HomePage({Key? key, this.destination}) : super(key: key);
 
+  static const bottomBarHeigh = 93.0;
+
   @override
   ConsumerState<HomePage> createState() => _HomePageState();
 }
@@ -78,7 +80,7 @@ class _HomePageState extends ConsumerState<HomePage>
     // call 'super.build' when using 'AutomaticKeepAliveClientMixin'
     super.build(context);
 
-    ref.listen<AsyncValue<PlayerState>>(stateStreamProvider, (_, stateValue) {
+    ref.listen<AsyncValue<PlayerState>>(stateProvider, (_, stateValue) {
       final state = stateValue.valueOrNull;
       // Future.microtask(() {});
       setState(() => isPlaying = state != null && state != PlayerState.close);
@@ -100,11 +102,16 @@ class _HomePageState extends ConsumerState<HomePage>
                     NotificationsPage(isPlaying),
                   ],
                 ),
-                if (!isKeyBoardOpen && isPlaying) const PlayerWidget(),
+                //TODO playerwidget
+                if (!isKeyBoardOpen && isPlaying)
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: HomePage.bottomBarHeigh),
+                    child: PlayerWidget(),
+                  ),
               ],
             ),
             bottomNavigationBar: SizedBox(
-              height: 93,
+              height: HomePage.bottomBarHeigh,
               child: ClipRect(
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 5, sigmaY: 10),

@@ -38,8 +38,7 @@ class InsightsRow extends ConsumerWidget {
           children: [
             CircleProfile(user: user, size: 16),
             const SizedBox(width: 8),
-            LimitedBox(
-              maxWidth: kScreenWidth - (16 + 16 + 32 + 8 + 12 + 12),
+            Expanded(
               child: AutoSizeText(
                 Locales.string(context, "noinsigths"),
                 style: textStyle,

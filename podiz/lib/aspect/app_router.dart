@@ -18,7 +18,7 @@ enum AppRoute {
   show,
 }
 
-//TODO when logged in (no premium?) -> stuck on black screen
+//TODO test login in no premium account
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authManager = ref.watch(authManagerProvider);

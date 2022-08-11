@@ -14,15 +14,20 @@ final homeBarTitleProvider = StateProvider<String>((ref) => 'lastListened');
 class HomeAppBar extends ConsumerWidget with PreferredSizeWidget {
   const HomeAppBar({Key? key}) : super(key: key);
 
+  static const height = 64.0;
+  static const backgroundHeight = height * 1.25;
+
   @override
-  Size get preferredSize => const Size.fromHeight(96);
+  Size get preferredSize => const Size.fromHeight(backgroundHeight);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserProvider);
     final title = ref.watch(homeBarTitleProvider);
+    final backgroundColor = Theme.of(context).colorScheme.background;
     return AppBar(
-      toolbarHeight: preferredSize.height,
+      backgroundColor: Colors.transparent,
+      toolbarHeight: height,
       title: Text(
         Locales.string(context, title),
         style: context.textTheme.bodyLarge!.copyWith(color: Palette.grey600),
@@ -35,7 +40,9 @@ class HomeAppBar extends ConsumerWidget with PreferredSizeWidget {
         ),
       ],
       flexibleSpace: Container(
-        decoration: BoxDecoration(gradient: appBarGradient()),
+        decoration: BoxDecoration(
+          gradient: extendedAppBarGradient(backgroundColor),
+        ),
         height: preferredSize.height + MediaQuery.of(context).padding.top,
       ),
     );

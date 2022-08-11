@@ -32,7 +32,7 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
           if (widget.result.show_name == null) {
             context.goNamed(
               AppRoute.show.name,
-              params: {'showId': widget.result.uid},
+              params: {'showId': widget.result.show_uri!},
             );
           } else {
             ref
@@ -40,7 +40,7 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
                 .playEpisode(widget.result.searchResultToPodcast(), 0);
             context.pushNamed(
               AppRoute.discussion.name,
-              params: {'showId': widget.result.uid},
+              params: {'showId': widget.result.show_uri!},
             );
           }
         },
@@ -76,25 +76,23 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: SizedBox(
-                                      width: 150, //see this
-                                      child: Text(
-                                        widget.result.show_name!,
-                                        style: context.textTheme.bodyLarge!
-                                            .copyWith(
-                                          color: Palette.grey600,
-                                        ),
-                                      ),
-                                    )),
+                                Expanded(
+                                  child: Text(
+                                    widget.result.show_name!,
+                                    style:
+                                        context.textTheme.bodyLarge!.copyWith(
+                                      color: Palette.grey600,
+                                    ),
+                                  ),
+                                ),
                                 const SizedBox(width: 12),
                                 ClipOval(
-                                    child: Container(
-                                  width: 4,
-                                  height: 4,
-                                  color: const Color(0xFFD9D9D9),
-                                )),
+                                  child: Container(
+                                    width: 4,
+                                    height: 4,
+                                    color: const Color(0xFFD9D9D9),
+                                  ),
+                                ),
                                 const SizedBox(width: 12),
                                 Text(
                                   timeFormatter(widget.result.duration_ms!),
