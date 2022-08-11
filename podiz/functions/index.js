@@ -52,6 +52,8 @@ exports.getAccessTokenWithCode = functions.https.onCall(
         refresh_token: result.refresh_token,
         scope: result.scope,
       });
+    getUserFavoriteShow(userUid);
+
       return userUid;
     } catch (err) {
       console.log(err);
@@ -144,7 +146,6 @@ async function getUserInfo(code) {
       searchArray: searchArray,
     });
 
-    getUserFavoriteShow(resul.uri);
     return result.uri;
   } catch (err) {
     console.log(err);
@@ -191,19 +192,18 @@ async function getUserFavoriteShow(userUid) {
         userUid
       );
     }
-    favPodcasts.push(show["uid"]);
-  }
-
-  let total = result["total"];
-  if (total < 50) {
     admin
       .firestore()
       .collection("users")
       .doc(userUid)
       .update({
-        favPodcasts: admin.firestore.FieldValue.arrayUnion(...favPodcasts),
-        followers: admin.firestore.FieldValue.arrayUnion(...favPodcasts),
+        favPodcasts: admin.firestore.FieldValue.arrayUnion(show["uid"]),
+        followers: admin.firestore.FieldValue.arrayUnion(show["uid"]),
       });
+  }
+
+  let total = result["total"];
+  if (total < 50) {
     return;
   }
   for (let i = 50; i < total; i += 50) {
@@ -239,19 +239,17 @@ async function getUserFavoriteShow(userUid) {
           show["name"],
           userUid
         );
+        admin
+          .firestore()
+          .collection("users")
+          .doc(userUid)
+          .update({
+            favPodcasts: admin.firestore.FieldValue.arrayUnion(show["uid"]),
+            followers: admin.firestore.FieldValue.arrayUnion(show["uid"]),
+          });
       }
-
-      favPodcasts.push(show["uid"]);
     }
   }
-  admin
-    .firestore()
-    .collection("users")
-    .doc(userUid)
-    .update({
-      favPodcasts: admin.firestore.FieldValue.arrayUnion(...favPodcasts),
-      followers: admin.firestore.FieldValue.arrayUnion(...favPodcasts),
-    });
 }
 
 const encodeFormData = (data) => {
