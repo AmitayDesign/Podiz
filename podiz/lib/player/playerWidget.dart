@@ -25,7 +25,7 @@ class PlayerWidget extends ConsumerWidget {
 
         final podcast = ref.watch(podcastProvider);
         return podcast.maybeWhen(
-            orElse: () => const SplashScreen.error(),
+            orElse: () => SplashScreen.error(),
             loading: () => const CircularProgressIndicator(),
             data: (p) {
               final playerManager = ref.watch(playerManagerProvider);
@@ -114,7 +114,7 @@ class PlayerWidget extends ConsumerWidget {
               );
             });
       },
-      orElse: () => const SplashScreen.error(),
+      orElse: () => SplashScreen.error(),
     );
   }
 }

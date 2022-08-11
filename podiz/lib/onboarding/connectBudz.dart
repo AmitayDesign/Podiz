@@ -1,72 +1,75 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/onboarding/components/podizAppBar.dart';
-import 'package:podiz/onboarding/components/spotifyContainer.dart';
-import 'package:podiz/splashScreen.dart';
+import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/aspect/theme/theme.dart';
 
-import 'spotify_controller.dart';
-
-class ConnectBudzPage extends ConsumerWidget {
-  const ConnectBudzPage({Key? key}) : super(key: key);
+class ConnectBudz extends ConsumerWidget {
+  const ConnectBudz({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen<AsyncValue>(spotifyControllerProvider, (_, state) {
-      if (!state.isRefreshing && state.hasError) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Error'),
-            content: Text(state.error.toString()),
-          ),
-        );
-      }
-    });
-    final state = ref.watch(spotifyControllerProvider);
-    if (state.isLoading) return const SplashScreen();
     final theme = Theme.of(context);
-    return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('assets/images/backgroundImage.png'),
-                  fit: BoxFit.cover),
+    return Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 360),
+        padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+        decoration: BoxDecoration(
+          color: const Color(0xFF090909),
+          borderRadius: BorderRadius.circular(kBorderRadius),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              Locales.string(context, "intro3_1"),
+              style: theme.textTheme.bodyText1,
+              textAlign: TextAlign.center,
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 96),
-                  const Spacer(),
-                  const SpotifyContainer(),
-                  const Spacer(),
-                  ElevatedButton(
-                    onPressed: () =>
-                        ref.read(spotifyControllerProvider.notifier).signIn(),
-                    child: Text(
-                      Locales.string(context, "intro4"),
-                      style: theme.textTheme.button,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                ],
-              ),
+            const SizedBox(height: 16),
+            Text(
+              Locales.string(context, "intro3_2"),
+              style: theme.textTheme.bodyText2,
+              textAlign: TextAlign.center,
             ),
-          ),
-          const Positioned(
-            top: 0.0,
-            left: 0.0,
-            right: 0.0,
-            child: PodizAppBar(),
-          ),
-        ],
+            const SizedBox(height: 32),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                ConnectImage('assets/images/brandIcon.png'),
+                ConnectSign("+"),
+                ConnectImage('assets/images/spotifyLogo.png'),
+                ConnectSign("="),
+                ConnectImage('assets/images/heart.png'),
+              ],
+            )
+          ],
+        ),
       ),
+    );
+  }
+}
+
+class ConnectImage extends StatelessWidget {
+  final String asset;
+  const ConnectImage(this.asset, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Image.asset(asset, width: 48, height: 48, fit: BoxFit.contain);
+  }
+}
+
+class ConnectSign extends StatelessWidget {
+  final String sign;
+  const ConnectSign(this.sign, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Text(sign, style: iconStyle()),
     );
   }
 }

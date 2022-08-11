@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/widgets/appBarGradient.dart';
 import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
@@ -15,7 +16,6 @@ import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/NotificationPodiz.dart';
 import 'package:podiz/objects/user/User.dart';
-import 'package:podiz/onboarding/components/linearGradientAppBar.dart';
 import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
@@ -58,7 +58,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
     final notifications = ref.watch(notificationsStreamProvider);
     return notifications.maybeWhen(
         loading: () => notificationsShimmerLoading(context),
-        orElse: () => const SplashScreen.error(),
+        orElse: () => SplashScreen.error(),
         data: (n) {
           Iterable<String> keys = n.keys;
 

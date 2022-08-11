@@ -164,7 +164,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
     final playerManager = ref.watch(playerManagerProvider);
     final state = ref.watch(stateStreamProvider);
     return state.maybeWhen(
-        orElse: () => const SplashScreen.error(),
+        orElse: () => SplashScreen.error(),
         loading: () => Container(
               height: 127,
               decoration: const BoxDecoration(

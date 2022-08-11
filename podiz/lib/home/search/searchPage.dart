@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutterfire_ui/firestore.dart';
-import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/widgets/podcastTile.dart';
 import 'package:podiz/aspect/widgets/showSearchTile.dart';
 import 'package:podiz/aspect/widgets/userSearchTile.dart';
@@ -59,8 +58,8 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
     final podcastManager = ref.watch(podcastManagerProvider);
     bool isEmpty = true;
     return player.maybeWhen(
-      orElse: () => const SplashScreen.error(),
-      loading: () => const SplashScreen(),
+      orElse: () => SplashScreen.error(),
+      loading: () => SplashScreen(),
       data: (p) => Stack(
         children: [
           if (searchBarHeight != null)
@@ -179,7 +178,7 @@ class _SearchPageState extends ConsumerState<SearchPage> with AfterLayoutMixin {
             key: searchBarKey,
             padding: const EdgeInsets.symmetric(
               vertical: 8,
-              horizontal: kScreenPadding,
+              horizontal: 16,
             ),
             child: SearchBar(controller: searchController),
           ),

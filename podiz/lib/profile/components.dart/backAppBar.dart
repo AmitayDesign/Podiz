@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:podiz/aspect/theme/theme.dart';
-import 'package:podiz/onboarding/components/linearGradientAppBar.dart';
+import 'package:podiz/aspect/widgets/appBarGradient.dart';
 
 class BackAppBar extends StatelessWidget with PreferredSizeWidget {
   BackAppBar({Key? key}) : super(key: key);

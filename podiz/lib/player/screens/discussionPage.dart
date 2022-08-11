@@ -122,7 +122,7 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
               )
             ]),
           ),
-          orElse: () => const SplashScreen.error(),
+          orElse: () => SplashScreen.error(),
         );
       },
       loading: () => Scaffold(
@@ -142,7 +142,7 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
           )
         ]),
       ),
-      orElse: () => const SplashScreen.error(),
+      orElse: () => SplashScreen.error(),
     );
   }
 

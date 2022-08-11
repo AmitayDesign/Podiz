@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/widgets/appBarGradient.dart';
 import 'package:podiz/home/components/circleProfile.dart';
-import 'package:podiz/onboarding/components/linearGradientAppBar.dart';
 import 'package:podiz/providers.dart';
 
 final homeBarTitleProvider = StateProvider<String>((ref) => 'lastListened');

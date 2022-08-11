@@ -26,11 +26,11 @@ class ShowPage extends ConsumerWidget {
     final player = ref
         .watch(playerStreamProvider); //TODO put a stream in where for the show
     return showValue.when(
-      error: (e, _) => const SplashScreen.error(),
-      loading: () => const SplashScreen(),
+      error: (e, _) => SplashScreen.error(),
+      loading: () => SplashScreen(),
       data: (show) => player.when(
-        error: (e, _) => const SplashScreen.error(),
-        loading: () => const SplashScreen(),
+        error: (e, _) => SplashScreen.error(),
+        loading: () => SplashScreen(),
         data: (p) => Scaffold(
           appBar: BackAppBar(),
           body: Stack(children: [
@@ -84,7 +84,7 @@ class ShowPage extends ConsumerWidget {
                 ],
               ),
             ),
-            p.state != PlayerState.close
+            p.getState != PlayerState.close
                 ? const Positioned(
                     bottom: 0.0,
                     left: 0.0,
