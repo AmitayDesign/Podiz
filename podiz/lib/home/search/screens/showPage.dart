@@ -81,7 +81,7 @@ class ShowPage extends ConsumerWidget {
                                 });
                           },
                         ),
-                        childCount: show.total_episodes,
+                        childCount: show.podcasts.length,
                       ),
                       // p.getState != PlayerState.close
                       //     ? const Positioned(
