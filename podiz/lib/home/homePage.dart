@@ -10,6 +10,7 @@ import 'package:podiz/home/feed/feedPage.dart';
 import 'package:podiz/home/notifications/NotificationsPage.dart';
 import 'package:podiz/home/search/searchPage.dart';
 import 'package:podiz/objects/user/Player.dart';
+import 'package:podiz/player/playerWidget.dart';
 import 'package:podiz/providers.dart';
 
 enum HomeDestination { feed, search, notifications }
@@ -102,11 +103,11 @@ class _HomePageState extends ConsumerState<HomePage>
                   ],
                 ),
                 //TODO playerwidget
-                // if (!isKeyBoardOpen && isPlaying)
-                //   const Positioned(
-                //     bottom: HomePage.bottomBarHeigh,
-                //     child: PlayerWidget(),
-                //   ),
+                if (!isKeyBoardOpen && isPlaying)
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: HomePage.bottomBarHeigh),
+                    child: PlayerWidget(),
+                  ),
               ],
             ),
             bottomNavigationBar: SizedBox(
