@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_locales/flutter_locales.dart';
@@ -22,6 +23,13 @@ void main() async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   preferences = await SharedPreferences.getInstance();
   final container = ProviderContainer();
+
+  LicenseRegistry.addLicense(() async* {
+    final license = await rootBundle.loadString(
+      'assets/google_fonts/montserratOFL.txt',
+    );
+    yield LicenseEntryWithLineBreaks(['google_fonts'], license);
+  });
 
   //TODO call no internet dialog
   await Firebase.initializeApp().catchError((onError) {

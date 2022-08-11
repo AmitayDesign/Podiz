@@ -1,79 +1,116 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
-import 'package:go_router/go_router.dart';
-import 'package:podiz/aspect/app_router.dart';
-import 'package:podiz/onboarding/components/podizAppBar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/splashScreen.dart';
 
-class OnBoardingPage extends StatelessWidget {
-  const OnBoardingPage({Key? key}) : super(key: key);
+import 'components/onboardingAppBar.dart';
+import 'connectBudz.dart';
+import 'onbording.dart';
+import 'spotify_controller.dart';
+
+/// The sub-routes that are presented as part of the on boarding page.
+enum OnboardingView { start, connect }
+
+/// This is the root widget of the on boarding page, which is composed of 2 views
+///
+/// UI updates are handled by a [PageController].
+class OnboardingPage extends ConsumerStatefulWidget {
+  const OnboardingPage({Key? key}) : super(key: key);
+
+  @override
+  ConsumerState<OnboardingPage> createState() => _OnboardingPageState();
+}
+
+class _OnboardingPageState extends ConsumerState<OnboardingPage> {
+  final controller = PageController();
+  var view = OnboardingView.start;
+
+  bool get isStartView => view == OnboardingView.start;
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  void goToView(OnboardingView newView) {
+    setState(() => view = newView);
+    // perform a nice scroll animation to reveal the next view
+    controller.animateToPage(
+      view.index,
+      duration: kTabScrollDuration,
+      curve: Curves.ease,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('assets/images/backgroundImage.png'),
-                  fit: BoxFit.cover),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(
-                      height: 134,
+    ref.listen<AsyncValue>(spotifyControllerProvider, (_, state) {
+      if (!state.isRefreshing && state.hasError) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Error'),
+            content: Text(state.error.toString()),
+          ),
+        );
+      }
+    });
+    final state = ref.watch(spotifyControllerProvider);
+    if (state.isLoading) return SplashScreen();
+
+    // Return a Scaffold with a PageView containing the views.
+    // This allows for a nice scroll animation when switching between pages.
+    // Note: only the currently active view will be visible.
+    return WillPopScope(
+      onWillPop: () async {
+        if (isStartView) return true;
+        goToView(OnboardingView.start);
+        return false;
+      },
+      child: DecoratedBox(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/backgroundImage.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Scaffold(
+          appBar: const OnboardingAppBar(),
+          backgroundColor: Colors.transparent,
+          body: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: PageView(
+                    // disable swiping between pages
+                    physics: const NeverScrollableScrollPhysics(),
+                    controller: controller,
+                    children: const [Onboarding(), ConnectBudz()],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 16,
+                  ),
+                  child: ElevatedButton(
+                    onPressed: () async => isStartView
+                        ? goToView(OnboardingView.connect)
+                        : ref.read(spotifyControllerProvider.notifier).signIn(),
+                    child: Text(
+                      isStartView
+                          ? Locales.string(context, "intro2")
+                          : Locales.string(context, "intro4"),
                     ),
-                    Text(
-                      Locales.string(context, "intro1_1"),
-                      style: theme.textTheme.headline6,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      Locales.string(context, "intro1_2"),
-                      style: theme.textTheme.headline5,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(
-                      height: 100,
-                    ),
-                    Container(
-                      width: 321,
-                      height: 236,
-                      decoration: const BoxDecoration(
-                          image: DecorationImage(
-                              image:
-                                  AssetImage('assets/images/onBoardingMen.png'),
-                              fit: BoxFit.cover)),
-                    ),
-                    const Spacer(),
-                    ElevatedButton(
-                      onPressed: () =>
-                          context.goNamed(AppRoute.connectBudz.name),
-                      child: Text(
-                        Locales.string(context, "intro2"),
-                        style: theme.textTheme.button,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                  ]),
+                  ),
+                ),
+              ],
             ),
           ),
-          const Positioned(
-            top: 0.0,
-            left: 0.0,
-            right: 0.0,
-            child: PodizAppBar(),
-          ),
-        ],
+        ),
       ),
     );
   }
