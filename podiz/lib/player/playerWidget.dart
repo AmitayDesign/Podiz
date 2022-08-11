@@ -16,7 +16,7 @@ class PlayerWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(stateStreamProvider);
+    final state = ref.watch(stateProvider);
     return state.maybeWhen(
       data: (s) {
         if (s == PlayerState.close) return Container();

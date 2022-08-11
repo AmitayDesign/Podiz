@@ -73,24 +73,23 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: SizedBox(
-                                      width: 150, //see this
-                                      child: Text(widget.result.show_name!,
-                                          style: podcastArtist()),
-                                    )),
+                                Expanded(
+                                  child: Text(widget.result.show_name!,
+                                      style: podcastArtist()),
+                                ),
                                 const SizedBox(width: 12),
                                 ClipOval(
-                                    child: Container(
-                                  width: 4,
-                                  height: 4,
-                                  color: const Color(0xFFD9D9D9),
-                                )),
+                                  child: Container(
+                                    width: 4,
+                                    height: 4,
+                                    color: const Color(0xFFD9D9D9),
+                                  ),
+                                ),
                                 const SizedBox(width: 12),
-                                Text(timeFormatter(widget.result.duration_ms!),
-                                    style:
-                                        podcastArtist()), //TODO formatter here
+                                Text(
+                                  timeFormatter(widget.result.duration_ms!),
+                                  style: podcastArtist(),
+                                ), //TODO formatter here
                               ],
                             )
                           : Container(),

@@ -78,10 +78,9 @@ final playerProvider = Provider<Player>(
   (ref) => ref.watch(playerStreamProvider).value!,
 );
 
-final stateStreamProvider = StreamProvider<PlayerState>((ref) {
-  final playerValue = ref.watch(playerStreamProvider);
-  return playerValue.valueOrNull?.state ?? Stream.value(PlayerState.close);
-});
+final stateProvider = StreamProvider<PlayerState>(
+  (ref) => ref.watch(playerProvider).state,
+);
 
 final podcastProvider = StreamProvider.autoDispose<Podcast>(
   (ref) => ref.watch(playerProvider).podcast,

@@ -162,7 +162,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
 
   Widget closedTextInputView(BuildContext context, Podcast episode) {
     final playerManager = ref.watch(playerManagerProvider);
-    final state = ref.watch(stateStreamProvider);
+    final state = ref.watch(stateProvider);
     return state.maybeWhen(
         orElse: () => SplashScreen.error(),
         loading: () => Container(

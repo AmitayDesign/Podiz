@@ -11,6 +11,7 @@ import 'package:podiz/home/components/HomeAppBar.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/home/components/podcastListTile.dart';
 import 'package:podiz/home/feed/components/podcastListTileQuickNote.dart';
+import 'package:podiz/home/homePage.dart';
 import 'package:podiz/loading.dart/episodeLoading.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/User.dart';
@@ -83,6 +84,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
         child: CustomScrollView(
           controller: _controller,
           slivers: [
+            // so it doesnt start behind the app bar
             const SliverToBoxAdapter(
               child: SizedBox(height: HomeAppBar.backgroundHeight),
             ),
@@ -145,6 +147,10 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                   ),
                 );
               },
+            ),
+            // so it doesnt end behind the bottom bar
+            const SliverToBoxAdapter(
+              child: SizedBox(height: HomePage.bottomBarHeigh),
             ),
           ],
         ),
