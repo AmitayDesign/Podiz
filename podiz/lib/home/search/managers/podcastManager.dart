@@ -33,7 +33,7 @@ class PodcastManager {
   }
 
   Future<void> getDevices(String userID) async {
-    HttpsCallableResult result = await FirebaseFunctions.instance
+    await FirebaseFunctions.instance
         .httpsCallable("devices")
         .call({"userUid": userID});
     print("devices");

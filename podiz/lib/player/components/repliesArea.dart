@@ -47,8 +47,8 @@ class RepliesArea extends ConsumerWidget {
           ),
         ),
         const SizedBox(width: 16),
-        CardButton(
-          const Icon(
+        const CardButton(
+          Icon(
             Icons.share,
             color: Color(0xFF9E9E9E),
             size: 20,

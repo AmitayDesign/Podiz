@@ -98,7 +98,7 @@ class Player {
 
   Future<void> pauseEpisode(String userUid) async {
     // TODO verify arguments
-    HttpsCallableResult result = await FirebaseFunctions.instance
+    await FirebaseFunctions.instance
         .httpsCallable("pause")
         .call({"userUid": userUid});
     _state = PlayerState.stop;

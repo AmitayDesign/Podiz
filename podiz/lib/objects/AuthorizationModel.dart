@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-AuthorizationModel AuthorizationModelFromJson(String str) =>
+AuthorizationModel authorizationModelFromJson(String str) =>
     AuthorizationModel.fromJson(json.decode(str));
 
-String AuthorizationModelToJson(AuthorizationModel data) =>
+String authorizationModelToJson(AuthorizationModel data) =>
     json.encode(data.toJson());
 
 class AuthorizationModel {

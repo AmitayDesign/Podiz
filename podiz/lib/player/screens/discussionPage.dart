@@ -72,10 +72,10 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
     final podcast = ref.watch(podcastProvider);
     return podcast.maybeWhen(
       data: (p) {
-        print("podcast" + p.uid.toString());
+        print("podcast${p.uid}");
         return comments.maybeWhen(
           data: (c) {
-            print("comments" );
+            print("comments");
             return GestureDetector(
               onTap: (() => setState(
                     () {
@@ -122,7 +122,7 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
               )
             ]),
           ),
-          orElse: () => SplashScreen.error(),
+          orElse: () => const SplashScreen.error(),
         );
       },
       loading: () => Scaffold(
@@ -142,7 +142,7 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
           )
         ]),
       ),
-      orElse: () => SplashScreen.error(),
+      orElse: () => const SplashScreen.error(),
     );
   }
 

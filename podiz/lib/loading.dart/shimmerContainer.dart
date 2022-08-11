@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:podiz/aspect/widgets/shimmerLoading.dart';
 
 class ShimmerContainer extends StatelessWidget {
-  double width;
-  double height;
-  double borderRadius;
-  ShimmerContainer(
+  final double width;
+  final double height;
+  final double borderRadius;
+
+  const ShimmerContainer(
       {Key? key,
       required this.width,
       required this.height,

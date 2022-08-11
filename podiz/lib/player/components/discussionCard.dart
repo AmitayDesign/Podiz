@@ -137,8 +137,8 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                               ),
                             ),
                             const Spacer(),
-                            CardButton(
-                              const Icon(
+                            const CardButton(
+                              Icon(
                                 Icons.share,
                                 color: Color(0xFF9E9E9E),
                                 size: 20,

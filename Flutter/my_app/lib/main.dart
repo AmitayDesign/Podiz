@@ -6,7 +6,6 @@ void main() async {
   //TODO call no internet dialog
   await Firebase.initializeApp();
 
-
   // WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
@@ -55,7 +54,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  final int _counter = 0;
 
   void _incrementCounter() {
     FirebaseFirestore.instance.collection("users").doc().set({"text": "ami"});

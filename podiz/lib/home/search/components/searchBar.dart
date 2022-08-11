@@ -14,8 +14,9 @@ class SearchBar extends StatelessWidget {
       textInputAction: TextInputAction.search,
       decoration: InputDecoration(
         hintText: Locales.string(context, "search1"),
-        contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        prefixIcon: Icon(LucideIcons.search),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        prefixIcon: const Icon(LucideIcons.search),
         suffixIcon: controller.text.isNotEmpty
             ? SuffixIcon(LucideIcons.x, onTap: () => controller.text = '')
             : null,

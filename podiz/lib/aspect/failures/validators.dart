@@ -21,9 +21,11 @@ abstract class EmailFieldValidator {
 
 abstract class PasswordFieldValidator {
   static String? validate(BuildContext context, String value) {
-    if (value.length < 6)
+    if (value.length < 6) {
       return Locales.string(context, "validate9");
-    else if (value.length > 20) return Locales.string(context, "validate10");
+    } else if (value.length > 20) {
+      return Locales.string(context, "validate10");
+    }
     return null;
   }
 

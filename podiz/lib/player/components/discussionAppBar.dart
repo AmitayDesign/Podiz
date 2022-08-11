@@ -1,36 +1,24 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loading_indicator/loading_indicator.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/theme/theme.dart';
 import 'package:podiz/aspect/widgets/insightsRow.dart';
-import 'package:podiz/aspect/widgets/stackedImages.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/Podcast.dart';
-import 'package:podiz/objects/user/Player.dart';
-import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/player/components/pinkProgress.dart';
-import 'package:podiz/providers.dart';
-import 'package:podiz/splashScreen.dart';
 
 class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
-  Podcast p;
+  final Podcast p;
   DiscussionAppBar(this.p, {Key? key}) : super(key: key);
 
   @override
   Size get preferredSize => const Size.fromHeight(134);
 
-  bool firstTime = true;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-
     return AppBar(
       automaticallyImplyLeading: false,
       backgroundColor: Palette.purpleAppBar,

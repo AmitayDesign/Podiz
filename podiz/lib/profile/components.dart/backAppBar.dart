@@ -8,7 +8,6 @@ class BackAppBar extends StatelessWidget with PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return PreferredSize(
       preferredSize: preferredSize,
       child: AppBar(

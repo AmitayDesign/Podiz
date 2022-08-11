@@ -58,7 +58,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
     final notifications = ref.watch(notificationsStreamProvider);
     return notifications.maybeWhen(
         loading: () => notificationsShimmerLoading(context),
-        orElse: () => SplashScreen.error(),
+        orElse: () => const SplashScreen.error(),
         data: (n) {
           Iterable<String> keys = n.keys;
 
@@ -328,8 +328,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                                                     )),
                                               ),
                                               const Spacer(),
-                                              CardButton(
-                                                const Icon(
+                                              const CardButton(
+                                                Icon(
                                                   Icons.share,
                                                   color: Color(0xFF9E9E9E),
                                                   size: 20,
@@ -495,7 +495,6 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
   }
 
   Widget notificationsShimmerLoading(BuildContext context) {
-    final theme = Theme.of(context);
     return Column(
       children: const [
         NotificationLoading(),
