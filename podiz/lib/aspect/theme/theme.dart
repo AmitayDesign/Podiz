@@ -58,11 +58,11 @@ InputDecorationTheme _inputDecorationTheme(ColorScheme colorScheme) =>
 ElevatedButtonThemeData _elevatedButtonTheme() => ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(kBorderRadius),
         ),
         onPrimary: Palette.pureWhite,
         padding: const EdgeInsets.symmetric(horizontal: 24),
-        minimumSize: const Size.fromHeight(kButtonHeight),
+        minimumSize: const Size.fromHeight(56),
       ),
     );
 
