@@ -84,7 +84,7 @@ class ShowPage extends ConsumerWidget {
                 ],
               ),
             ),
-            p.state != PlayerState.close
+            p.getState != PlayerState.close
                 ? const Positioned(
                     bottom: 0.0,
                     left: 0.0,
