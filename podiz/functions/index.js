@@ -52,7 +52,6 @@ exports.getAccessTokenWithCode = functions.https.onCall(
         refresh_token: result.refresh_token,
         scope: result.scope,
       });
-    getUserFavoriteShow(userUid);
 
       return userUid;
     } catch (err) {
@@ -114,15 +113,16 @@ async function getUserInfo(code) {
 
     var result = await response.json();
 
+
     var docRef = await admin
       .firestore()
       .collection("users")
       .doc(result.uri)
       .get();
+
     var exists = docRef.exists;
 
     if (exists) {
-      // getUserFavoriteShow(resul.uri); TODOcheck with this
       return result.uri;
     }
     prev = "";
@@ -146,6 +146,7 @@ async function getUserInfo(code) {
       searchArray: searchArray,
     });
 
+    // getUserFavoriteShow(userUid);
     return result.uri;
   } catch (err) {
     console.log(err);
