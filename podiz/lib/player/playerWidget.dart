@@ -17,15 +17,18 @@ class PlayerWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(stateProvider);
-    return state.maybeWhen(
+    return state.when(
       data: (s) {
         if (s == PlayerState.close) return Container();
 
         final icon = s == PlayerState.play ? Icons.stop : Icons.play_arrow;
 
-        final podcast = ref.watch(podcastProvider);
-        return podcast.maybeWhen(
-            orElse: () => SplashScreen.error(),
+        final podcast = ref.watch(playerPodcastProvider);
+        return podcast.when(
+            error: (e, _) {
+              print('playerWidget: ${e.toString()}');
+              return SplashScreen.error();
+            },
             loading: () => const CircularProgressIndicator(),
             data: (p) {
               final playerManager = ref.watch(playerManagerProvider);
@@ -36,7 +39,7 @@ class PlayerWidget extends ConsumerWidget {
               return InkWell(
                 onTap: () => context.pushNamed(
                   AppRoute.discussion.name,
-                  params: {'showId': p.uid!},
+                  params: {'showId': p.show_uri},
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -114,7 +117,11 @@ class PlayerWidget extends ConsumerWidget {
               );
             });
       },
-      orElse: () => SplashScreen.error(),
+      error: (e, _) {
+        print('playerWidget: ${e.toString()}');
+        return SplashScreen.error();
+      },
+      loading: () => SplashScreen(),
     );
   }
 }

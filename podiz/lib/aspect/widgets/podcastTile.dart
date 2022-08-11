@@ -31,7 +31,7 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
           if (widget.result.show_name == null) {
             context.goNamed(
               AppRoute.show.name,
-              params: {'showId': widget.result.uid},
+              params: {'showId': widget.result.show_uri!},
             );
           } else {
             ref
@@ -39,7 +39,7 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
                 .playEpisode(widget.result.searchResultToPodcast(), 0);
             context.pushNamed(
               AppRoute.discussion.name,
-              params: {'showId': widget.result.uid},
+              params: {'showId': widget.result.show_uri!},
             );
           }
         },

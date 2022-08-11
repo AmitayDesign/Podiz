@@ -56,9 +56,12 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
     // return Container();
     final theme = Theme.of(context);
     final notifications = ref.watch(notificationsStreamProvider);
-    return notifications.maybeWhen(
+    return notifications.when(
         loading: () => notificationsShimmerLoading(context),
-        orElse: () => SplashScreen.error(),
+        error: (e, _) {
+          print('notificationPage: ${e.toString()}');
+          return SplashScreen.error();
+        },
         data: (n) {
           Iterable<String> keys = n.keys;
 

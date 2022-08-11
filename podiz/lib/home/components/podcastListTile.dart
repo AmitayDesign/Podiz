@@ -22,8 +22,8 @@ class PodcastListTile extends ConsumerWidget {
         onTap: () {
           ref.read(playerManagerProvider).playEpisode(podcast, 0);
           context.pushNamed(
-            AppRoute.discussion.name,
-            params: {'showId': podcast.uid!},
+            AppRoute.show.name,
+            params: {'showId': podcast.show_uri},
           );
         },
         child: Container(

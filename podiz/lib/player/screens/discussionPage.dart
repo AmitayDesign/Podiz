@@ -81,17 +81,24 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
   @override
   Widget build(BuildContext context) {
     final commentsValue = ref.watch(commentsStreamProvider);
-    final podcastValue = ref.watch(podcastProvider);
+    final podcastValue = ref.watch(playerPodcastProvider);
     return Scaffold(
       appBar: DiscussionAppBar(podcastValue.valueOrNull),
       body: podcastValue.when(
-          error: (e, _) => SplashScreen.error(),
+          error: (e, _) {
+            print('discussionPage: ${e.toString()}');
+            return SplashScreen.error();
+          },
           loading: () => loadingWidget,
           data: (podcast) {
             return commentsValue.when(
-                error: (e, _) => SplashScreen.error(),
+                error: (e, _) {
+                  print('discussionPage: ${e.toString()}');
+                  return SplashScreen.error();
+                },
                 loading: () => loadingWidget,
                 data: (comments) {
+                  return Container();
                   return Column(children: [
                     Expanded(
                       child: ListView.builder(

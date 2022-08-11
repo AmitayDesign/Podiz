@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/theme/palette.dart';
@@ -8,6 +7,7 @@ import 'package:podiz/aspect/widgets/insightsRow.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/player/components/pinkProgress.dart';
+import 'package:podiz/profile/components.dart/backAppBar.dart';
 
 class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
   final Podcast? podcast;
@@ -26,23 +26,7 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
       toolbarHeight: height,
       automaticallyImplyLeading: false,
       backgroundColor: Palette.purpleAppBar,
-      title: InkWell(
-        onTap: () => Navigator.pop(context),
-        child: Row(
-          children: [
-            const Icon(
-              Icons.arrow_back_ios_new,
-              size: 12,
-              color: Color(0xB2FFFFFF),
-            ),
-            const SizedBox(width: 10),
-            Text(
-              Locales.string(context, "back"),
-              style: discussionAppBarInsights(),
-            )
-          ],
-        ),
-      ),
+      title: const BackAppBarButton(),
       flexibleSpace: podcast == null
           ? null
           : Padding(

@@ -122,7 +122,7 @@ class PlayerManager {
     }
     index = 0;
     firstTime = false;
-    bool flag = true;
+    bool flag = false;
     _commentsStream = BehaviorSubject<List<Comment>>();
     commentsStreamSubscription = firestore
         .collection("podcasts")

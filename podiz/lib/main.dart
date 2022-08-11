@@ -93,7 +93,10 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
         theme: ThemeConfig.light,
         themeMode: ref.watch(themeModeProvider),
         builder: (context, child) => userLoadingValue.when(
-          error: (e, _) => SplashScreen.error(),
+          error: (e, _) {
+            print('main: ${e.toString()}');
+            return SplashScreen.error();
+          },
           loading: () => SplashScreen(),
           data: (_) {
             setScreenSize(context);

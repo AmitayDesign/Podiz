@@ -34,7 +34,7 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
               .playEpisode(widget.result.searchResultToPodcast(), 0);
           context.goNamed(
             AppRoute.discussion.name,
-            params: {'showId': widget.result.uid},
+            params: {'showId': widget.result.show_uri!},
           );
         },
         child: Container(
@@ -53,30 +53,24 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
                   children: [
                     PodcastAvatar(imageUrl: widget.result.image_url, size: 52),
                     const SizedBox(width: 8),
-                    SizedBox(
-                      width: 250,
+                    Expanded(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              widget.result.name,
-                              style: widget.isPlaying
-                                  ? podcastTitlePlaying()
-                                  : podcastTitle(),
-                            ),
+                          Text(
+                            widget.result.name,
+                            style: widget.isPlaying
+                                ? podcastTitlePlaying()
+                                : podcastTitle(),
                           ),
                           const SizedBox(height: 8),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                      dateFormatter(
-                                          widget.result.release_date!),
-                                      style: podcastArtist())),
+                              Text(
+                                dateFormatter(widget.result.release_date!),
+                                style: podcastArtist(),
+                              ),
                               const SizedBox(width: 12),
                               ClipOval(
                                   child: Container(
@@ -85,8 +79,10 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
                                 color: const Color(0xFFD9D9D9),
                               )),
                               const SizedBox(width: 12),
-                              Text(timeFormatter(widget.result.duration_ms!),
-                                  style: podcastArtist()), //TODO formatter here
+                              Text(
+                                timeFormatter(widget.result.duration_ms!),
+                                style: podcastArtist(),
+                              ), //TODO formatter here
                             ],
                           )
                         ],

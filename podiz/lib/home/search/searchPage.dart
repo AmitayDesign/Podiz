@@ -46,8 +46,11 @@ class _SearchPageState extends ConsumerState<SearchPage> {
 
     return Scaffold(
       appBar: SearchBar(controller: searchController),
-      body: player.maybeWhen(
-        orElse: () => SplashScreen.error(),
+      body: player.when(
+        error: (e, _) {
+          print('searchPage: ${e.toString()}');
+          return SplashScreen.error();
+        },
         loading: () => SplashScreen(),
         data: (p) => Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
