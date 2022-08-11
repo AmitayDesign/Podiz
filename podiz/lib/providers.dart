@@ -39,6 +39,10 @@ final connectivityProvider = StreamProvider<ConnectivityResult>(
 
 // AUTH
 
+final userLoadingProvider = FutureProvider<void>(
+  (ref) => ref.watch(authManagerProvider).firstUserLoad,
+);
+
 final userStreamProvider = StreamProvider<UserPodiz?>(
   (ref) => ref.watch(authManagerProvider).user,
 );
