@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
 
 class PodcastAvatar extends StatefulWidget {
-  String imageUrl;
-  double size;
-  PodcastAvatar({Key? key, required this.imageUrl, required this.size})
+  final String imageUrl;
+  final double size;
+  const PodcastAvatar({Key? key, required this.imageUrl, required this.size})
       : super(key: key);
 
   @override

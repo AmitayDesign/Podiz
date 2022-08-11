@@ -11,14 +11,15 @@ class CircleProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CircleAvatar(
-      radius: size,
-      backgroundImage: NetworkImage(user.image_url),
-      child: InkWell(
-        onTap: () => context.pushNamed(
-          AppRoute.profile.name,
-          params: {'userId': user.uid},
-        ),
+    return InkResponse(
+      onTap: () => context.pushNamed(
+        AppRoute.profile.name,
+        params: {'userId': user.uid},
+      ),
+      child: CircleAvatar(
+        radius: size,
+        foregroundImage: NetworkImage(user.image_url),
+        child: const InkWell(),
       ),
     );
   }

@@ -1,44 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:podiz/aspect/theme/theme.dart';
-import 'package:podiz/onboarding/components/linearGradientAppBar.dart';
+import 'package:podiz/aspect/widgets/appBarGradient.dart';
 
 class BackAppBar extends StatelessWidget with PreferredSizeWidget {
   BackAppBar({Key? key}) : super(key: key);
 
   @override
+  Size get preferredSize => const Size.fromHeight(64);
+
+  @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return PreferredSize(
-      preferredSize: preferredSize,
-      child: AppBar(
-        automaticallyImplyLeading: false,
-        flexibleSpace: Container(
-          height: 100,
-          decoration: BoxDecoration(gradient: appBarGradient()),
-          child: Padding(
-            padding: const EdgeInsets.only(left: 20.0, top: 30),
-            child: InkWell(
-              onTap: () => Navigator.pop(context),
-              child: Row(children: [
-                const Icon(
-                  Icons.arrow_back_ios_new,
-                  size: 15,
-                  color: Color(0xB2FFFFFF),
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  Locales.string(context, "back"),
-                  style: discussionAppBarInsights(),
-                )
-              ]),
-            ),
-          ),
-        ),
+    return AppBar(
+      toolbarHeight: preferredSize.height,
+      automaticallyImplyLeading: false,
+      title: const BackAppBarButton(),
+      flexibleSpace: Container(
+        decoration: BoxDecoration(gradient: appBarGradient()),
       ),
     );
   }
+}
+
+class BackAppBarButton extends StatelessWidget {
+  const BackAppBarButton({Key? key}) : super(key: key);
 
   @override
-  Size get preferredSize => const Size.fromHeight(60);
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: Navigator.of(context).pop,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.arrow_back_ios_new,
+            size: 12,
+            color: Color(0xB2FFFFFF),
+          ),
+          const SizedBox(width: 10),
+          Text(
+            Locales.string(context, "back"),
+            style: discussionAppBarInsights(),
+          )
+        ],
+      ),
+    );
+  }
 }

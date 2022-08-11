@@ -144,7 +144,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                 ),
               ),
               const SizedBox(width: 15),
-              PinkTimer(),
+              const PinkTimer(),
               const SizedBox(width: 15),
               IconButton(
                 onPressed: () => playerManager.play30Up(episode),
@@ -163,8 +163,11 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
   Widget closedTextInputView(BuildContext context, Podcast episode) {
     final playerManager = ref.watch(playerManagerProvider);
     final state = ref.watch(stateProvider);
-    return state.maybeWhen(
-        orElse: () => SplashScreen.error(),
+    return state.when(
+        error: (e, _) {
+          print('discussionSnackBar: ${e.toString()}');
+          return SplashScreen.error();
+        },
         loading: () => Container(
               height: 127,
               decoration: const BoxDecoration(
@@ -193,7 +196,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                       style: discussionAppBarInsights(),
                     ),
                     const Spacer(),
-                    PinkTimer(),
+                    const PinkTimer(),
                   ],
                 ),
                 const SizedBox(height: 16),

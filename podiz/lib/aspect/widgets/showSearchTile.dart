@@ -33,21 +33,22 @@ class ShowSearchTile extends StatelessWidget {
                 children: [
                   PodcastAvatar(imageUrl: show.image_url, size: 68),
                   const SizedBox(width: 8),
-                  LimitedBox(
-                    maxHeight: 68,
-                    maxWidth: kScreenWidth - (16 + 16 + 68 + 8 + 16 + 16),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            show.name,
-                            style: followersNumber(),
+                  Expanded(
+                    child: SizedBox(
+                      height: 68,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              show.name,
+                              style: followersNumber(),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                      ],
+                          const SizedBox(height: 8),
+                        ],
+                      ),
                     ),
                   ),
                 ],

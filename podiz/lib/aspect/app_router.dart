@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/home/homePage.dart';
 import 'package:podiz/home/search/screens/showPage.dart';
-import 'package:podiz/onboarding/connectBudz.dart';
 import 'package:podiz/onboarding/onbordingPage.dart';
 import 'package:podiz/player/screens/discussionPage.dart';
 import 'package:podiz/profile/profilePage.dart';
@@ -12,15 +11,14 @@ import 'package:podiz/profile/screens/settingsPage.dart';
 
 enum AppRoute {
   home,
-  onBoarding,
-  connectBudz,
+  onboarding,
   discussion,
   profile,
   settings,
   show,
 }
 
-//TODO when logged in (no premium?) -> stuck on black screen
+//TODO test login in no premium account
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authManager = ref.watch(authManagerProvider);
@@ -30,25 +28,18 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     redirect: (state) {
       final isLoggedIn = authManager.currentUser != null;
       if (isLoggedIn) {
-        if (state.location.contains('/on-boarding')) return '/';
+        if (state.location.contains('/onboarding')) return '/';
       } else {
-        if (!state.location.contains('/on-boarding')) return '/on-boarding';
+        if (!state.location.contains('/onboarding')) return '/onboarding';
       }
       return null;
     },
     refreshListenable: GoRouterRefreshStream(authManager.user),
     routes: [
       GoRoute(
-        path: '/on-boarding',
-        name: AppRoute.onBoarding.name,
-        builder: (_, state) => const OnBoardingPage(),
-        routes: [
-          GoRoute(
-            path: 'connect-budz',
-            name: AppRoute.connectBudz.name,
-            builder: (_, state) => const ConnectBudzPage(),
-          ),
-        ],
+        path: '/onboarding',
+        name: AppRoute.onboarding.name,
+        builder: (_, state) => const OnboardingPage(),
       ),
       GoRoute(
         path: '/',

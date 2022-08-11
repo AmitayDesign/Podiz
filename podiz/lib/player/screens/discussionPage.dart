@@ -26,8 +26,7 @@ class DiscussionPage extends ConsumerStatefulWidget {
 }
 
 class _DiscussionPageState extends ConsumerState<DiscussionPage> {
-  Duration position = Duration.zero;
-  StreamSubscription<Duration>? subscription;
+  late StreamSubscription<Duration> subscription;
   late String episodeUid;
 
   final TextEditingController controller = TextEditingController();
@@ -37,20 +36,17 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
 
   @override
   void initState() {
+    super.initState();
     var player = ref.read(playerProvider);
-    position = player.timer.position;
-    final playerManager = ref.read(playerManagerProvider);
-
-    subscription = player.timer.onAudioPositionChanged.listen((newPosition) {
-      position = newPosition;
+    subscription = player.timer.onAudioPositionChanged.listen((position) {
+      final playerManager = ref.read(playerManagerProvider);
       playerManager.showComments(position.inMilliseconds);
     });
-    super.initState();
   }
 
   @override
   void dispose() {
-    subscription!.cancel();
+    subscription.cancel();
     focusNode.dispose();
     controller.dispose();
     super.dispose();
@@ -66,83 +62,67 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
     focusNode.requestFocus();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final comments = ref.watch(commentsStreamProvider);
-    final podcast = ref.watch(podcastProvider);
-    return podcast.maybeWhen(
-      data: (p) {
-        print("podcast" + p.uid.toString());
-        return comments.maybeWhen(
-          data: (c) {
-            print("comments" );
-            return GestureDetector(
-              onTap: (() => setState(
-                    () {
-                      visible = false;
-                      focusNode.unfocus();
-                      isComment = false;
-                    },
-                  )),
-              child: Scaffold(
-                appBar: DiscussionAppBar(p),
-                body: Column(children: [
-                  Expanded(
-                    child: ListView.builder(
-                      reverse: true,
-                      itemCount: c.length,
-                      itemBuilder: (context, index) =>
-                          DiscussionCard(p, c[index], onTap: onTap),
-                    ),
-                  ),
-                  isComment
-                      ? replyView()
-                      : DiscussionSnackBar(p,
-                          visible: visible,
-                          focusNode: focusNode,
-                          controller: controller)
-                ]),
-              ),
-            );
-          },
-          loading: () => Scaffold(
-            body: Column(children: [
-              const Spacer(),
-              ShimmerLoading(
-                child: Container(
-                  width: kScreenWidth,
-                  height: 127,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF4E4E4E),
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10)),
-                  ),
-                ),
-              )
-            ]),
-          ),
-          orElse: () => SplashScreen.error(),
-        );
-      },
-      loading: () => Scaffold(
-        body: Column(children: [
-          const Spacer(),
-          ShimmerLoading(
-            child: Container(
-              width: kScreenWidth,
-              height: 127,
-              decoration: const BoxDecoration(
-                color: Color(0xFF4E4E4E),
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10)),
+  Widget get loadingWidget => Column(children: [
+        const Spacer(),
+        ShimmerLoading(
+          child: Container(
+            width: kScreenWidth,
+            height: 127,
+            decoration: const BoxDecoration(
+              color: Color(0xFF4E4E4E),
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(10),
               ),
             ),
-          )
-        ]),
-      ),
-      orElse: () => SplashScreen.error(),
+          ),
+        )
+      ]);
+
+  @override
+  Widget build(BuildContext context) {
+    final commentsValue = ref.watch(commentsStreamProvider);
+    final podcastValue = ref.watch(playerPodcastProvider);
+    return Scaffold(
+      appBar: DiscussionAppBar(podcastValue.valueOrNull),
+      body: podcastValue.when(
+          error: (e, _) {
+            print('discussionPage: ${e.toString()}');
+            return SplashScreen.error();
+          },
+          loading: () => loadingWidget,
+          data: (podcast) {
+            return commentsValue.when(
+                error: (e, _) {
+                  print('discussionPage: ${e.toString()}');
+                  return SplashScreen.error();
+                },
+                loading: () => loadingWidget,
+                data: (comments) {
+                  return Column(children: [
+                    Expanded(
+                      child: ListView.builder(
+                        reverse: true,
+                        itemCount: comments.length,
+                        itemBuilder: (context, index) {
+                          return DiscussionCard(
+                            podcast,
+                            comments[index],
+                            onTap: onTap,
+                          );
+                        },
+                      ),
+                    ),
+                    isComment
+                        ? replyView()
+                        : DiscussionSnackBar(
+                            podcast,
+                            visible: visible,
+                            focusNode: focusNode,
+                            controller: controller,
+                          )
+                  ]);
+                });
+          }),
     );
   }
 

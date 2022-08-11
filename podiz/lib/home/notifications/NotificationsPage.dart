@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/aspect/widgets/appBarGradient.dart';
 import 'package:podiz/authentication/authManager.dart';
 import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
@@ -15,7 +16,6 @@ import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/NotificationPodiz.dart';
 import 'package:podiz/objects/user/User.dart';
-import 'package:podiz/onboarding/components/linearGradientAppBar.dart';
 import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
@@ -56,9 +56,12 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
     // return Container();
     final theme = Theme.of(context);
     final notifications = ref.watch(notificationsStreamProvider);
-    return notifications.maybeWhen(
+    return notifications.when(
         loading: () => notificationsShimmerLoading(context),
-        orElse: () => SplashScreen.error(),
+        error: (e, _) {
+          print('notificationPage: ${e.toString()}');
+          return SplashScreen.error();
+        },
         data: (n) {
           Iterable<String> keys = n.keys;
 
@@ -328,8 +331,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                                                     )),
                                               ),
                                               const Spacer(),
-                                              CardButton(
-                                                const Icon(
+                                              const CardButton(
+                                                Icon(
                                                   Icons.share,
                                                   color: Color(0xFF9E9E9E),
                                                   size: 20,
@@ -495,7 +498,6 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
   }
 
   Widget notificationsShimmerLoading(BuildContext context) {
-    final theme = Theme.of(context);
     return Column(
       children: const [
         NotificationLoading(),

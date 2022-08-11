@@ -3,14 +3,14 @@ import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/Podcast.dart';
 
 class StackedImages extends StatelessWidget {
-  Podcast podcast;
-  double size;
+  final Podcast podcast;
+  final double size;
 
-  StackedImages(this.podcast, {Key? key, required this.size}) : super(key: key);
+  const StackedImages(this.podcast, {Key? key, required this.size})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     int dif = size ~/ 2;
     final shift = size - dif;
     List<String> images = decideList(podcast.commentsImg);
@@ -20,8 +20,8 @@ class StackedImages extends StatelessWidget {
           final image = Container(
             width: size,
             height: size,
-            child: buildimages(context, img, size),
             margin: EdgeInsets.only(left: shift * index),
+            child: buildimages(context, img, size),
           );
           return MapEntry(index, image);
         })
@@ -36,11 +36,10 @@ class StackedImages extends StatelessWidget {
   }
 
   Widget buildimages(BuildContext context, String path, double size) {
-    final theme = Theme.of(context);
     return ClipOval(
       child: Container(
         color: const Color(0xFF262626),
-        padding: EdgeInsets.all(1),
+        padding: const EdgeInsets.all(1),
         child: ClipOval(
             child: PodcastAvatar(
           imageUrl: path,

@@ -6,10 +6,14 @@ import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/Podcast.dart';
 
 class PodcastListTileQuickNote extends StatelessWidget {
-  Podcast podcast;
-  Widget quickNote;
-  PodcastListTileQuickNote(this.podcast, {Key? key, required this.quickNote})
-      : super(key: key);
+  final Podcast podcast;
+  final Widget quickNote;
+
+  const PodcastListTileQuickNote(
+    this.podcast, {
+    Key? key,
+    required this.quickNote,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

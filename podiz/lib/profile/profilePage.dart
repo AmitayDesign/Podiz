@@ -77,9 +77,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             },
             child: Scaffold(
               appBar: BackAppBar(),
-              floatingActionButton: currentUser.uid != user.uid
-                  ? FollowPeopleButton(user)
-                  : Container(),
               body: Stack(children: [
                 Column(mainAxisAlignment: MainAxisAlignment.start, children: [
                   Padding(
@@ -164,6 +161,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   child: visible ? replyView() : Container(),
                 )
               ]),
+              floatingActionButton:
+                  currentUser.uid == user.uid ? null : FollowPeopleButton(user),
             ),
           );
         });
@@ -192,8 +191,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   child: PodcastAvatar(imageUrl: show.image_url, size: 68));
             }
           }
-          return Padding(
-            padding: const EdgeInsets.only(right: 16),
+          return const Padding(
+            padding: EdgeInsets.only(right: 16),
             child: ShimmerContainer(width: 68, height: 68, borderRadius: 20),
           );
         });
@@ -229,24 +228,24 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       children: [
                         PodcastAvatar(imageUrl: episode.image_url, size: 32),
                         const SizedBox(width: 8),
-                        SizedBox(
-                          width: kScreenWidth - (16 + 32 + 8 + 16),
-                          height: 40,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  episode.name,
-                                  style: discussionCardProfile(),
-                                ),
-                              ),
-                              Align(
+                        Expanded(
+                          child: SizedBox(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Align(
                                   alignment: Alignment.centerLeft,
-                                  child: Text(episode.show_name,
-                                      style: discussionAppBarInsights())),
-                            ],
+                                  child: Text(
+                                    episode.name,
+                                    style: discussionCardProfile(),
+                                  ),
+                                ),
+                                Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(episode.show_name,
+                                        style: discussionAppBarInsights())),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -339,8 +338,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                           )),
                                     ),
                                     const Spacer(),
-                                    CardButton(
-                                      const Icon(
+                                    const CardButton(
+                                      Icon(
                                         Icons.share,
                                         color: Color(0xFF9E9E9E),
                                         size: 20,

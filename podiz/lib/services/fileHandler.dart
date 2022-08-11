@@ -13,7 +13,7 @@ class FileHandler {
 
   static Future<File> localFile(String fileName) async {
     final path = await localPath;
-    return File(path + '/' + fileName);
+    return File('$path/$fileName');
   }
 
   static Future<File> writeToFile(var obj, String fileName) async {
