@@ -30,6 +30,7 @@ class BackAppBarButton extends StatelessWidget {
     return InkWell(
       onTap: Navigator.of(context).pop,
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           const Icon(
             Icons.arrow_back_ios_new,
