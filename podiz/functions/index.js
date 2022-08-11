@@ -113,7 +113,6 @@ async function getUserInfo(code) {
 
     var result = await response.json();
 
-
     var docRef = await admin
       .firestore()
       .collection("users")
@@ -275,62 +274,64 @@ function addShowToDataBase(show) {
 async function getShowEpisodes(showUid, total_episodes, showName, userUid) {
   var spotifyAuth = await getSpotifyAuth(userUid);
   episodeList = [];
-
-  for (let i = 0; i < total_episodes; i += 50) {
-    var response = await fetch(
-      host +
-        "/shows/" +
-        showUid.split(":")[2] +
-        "/episodes?limit=50&offset=" +
-        i.toString(),
-      {
-        headers: {
-          Accept: "application/json",
-          Authorization: "Bearer " + spotifyAuth.access_token,
-          "Content-Type": "application/json",
-        },
-        method: "GET",
-      }
-    );
-
-    if (response["status"] != 200) {
-      return false;
+  let offset = 0;
+  if (total_episodes > 10) {
+    offset = total_episodes - 10;
+  }
+  var response = await fetch(
+    host +
+      "/shows/" +
+      showUid.split(":")[2] +
+      "/episodes?limit=10&offset=" +
+      offset.toString(),
+    {
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + spotifyAuth.access_token,
+        "Content-Type": "application/json",
+      },
+      method: "GET",
     }
-    let result = await response.json();
+  );
 
-    for (e of result["items"]) {
-      searchArray = [];
-      prev = "";
-      for (letter of e["name"]) {
-        prev += letter;
-        word = prev.toLowerCase();
-        searchArray.push(word);
-      }
+  if (response["status"] != 200) {
+    return false;
+  }
+  let result = await response.json();
 
-      episode = {
-        uid: e["uri"],
-        name: e["name"],
-        description: e["description"],
-        duration_ms: e["duration_ms"],
-        show_name: showName,
-        show_uri: showUid,
-        image_url: e["images"][0]["url"],
-        comments: 0,
-        commentsImg: [],
-        release_date: e["release_date"],
-        watching: 0,
-        searchArray: searchArray,
-      };
+  for (e of result["items"]) {
+    searchArray = [];
+    prev = "";
+    for (letter of e["name"]) {
+      prev += letter;
+      word = prev.toLowerCase();
+      searchArray.push(word);
+    }
 
+    episode = {
+      uid: e["uri"],
+      name: e["name"],
+      description: e["description"],
+      duration_ms: e["duration_ms"],
+      show_name: showName,
+      show_uri: showUid,
+      image_url: e["images"][0]["url"],
+      comments: 0,
+      commentsImg: [],
+      release_date: e["release_date"],
+      watching: 0,
+      searchArray: searchArray,
+    };
+    if (!(await checkEpisodeExists(episode["uid"]))) {
       addEpisodeToDataBase(episode);
-      admin
-        .firestore()
-        .collection("podcasters")
-        .doc(showUid)
-        .update({
-          podcasts: admin.firestore.FieldValue.arrayUnion(e["uri"]),
-        });
     }
+    admin
+      .firestore()
+      .collection("podcasters")
+      .doc(showUid)
+      .update({
+        podcasts: admin.firestore.FieldValue.arrayUnion(e["uri"]),
+      });
   }
 }
 
@@ -461,6 +462,7 @@ async function fecthUser(userUid) {
     }
 
     result = await response.json();
+    console.log(result);
     if (result["item"]["type"] != "episode") {
       return false;
     }
@@ -538,7 +540,7 @@ async function search(userUid, query) {
   try {
     var spotifyAuth = await getSpotifyAuth(userUid);
     var response = await fetch(
-      host + "/search?q=" + query + "&type=episode&limit=50&offset=0",
+      host + "/search?q=" + query + "&type=episode&limit=3&offset=0",
       {
         headers: {
           Accept: "application/json",

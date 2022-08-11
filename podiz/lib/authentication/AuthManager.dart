@@ -57,7 +57,7 @@ class AuthManager {
   Future<void> fetchUserInfo(String userId) async {
     setUpUserStream(userId);
     await podcastManager.getDevices(userId);
-    await podcastManager.fetchUserPlayer(userId);
+    // await podcastManager.fetchUserPlayer(userId);
   }
 
   void setUpUserStream(String userId) {
@@ -85,6 +85,7 @@ class AuthManager {
     List<Podcast> result = [];
     int number = user.favPodcasts.length;
     int count = 0;
+    if (number == 0) return [];
     if (number >= 6) {
       for (int i = number - 1; i >= 0; i--) {
         Podcaster show =
