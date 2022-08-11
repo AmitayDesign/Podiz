@@ -78,72 +78,76 @@ class _FeedPageState extends ConsumerState<FeedPage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: const HomeAppBar(),
-      body: CustomScrollView(
-        controller: _controller,
-        slivers: [
-          const SliverToBoxAdapter(
-            child: SizedBox(height: HomeAppBar.backgroundHeight),
-          ),
-          if (user.lastListened.isNotEmpty)
-            SliverToBoxAdapter(
-              child: lastListenedEpisode.when(
-                loading: () => const EpisodeLoading(),
-                error: (e, _) {
-                  print(e);
-                  return const SizedBox();
-                },
-                data: (ep) => PodcastListTileQuickNote(
-                  ep,
-                  quickNote: quickNote(ep, user),
-                ),
-              ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: CustomScrollView(
+          controller: _controller,
+          slivers: [
+            const SliverToBoxAdapter(
+              child: SizedBox(height: HomeAppBar.backgroundHeight),
             ),
-          if (user.favPodcasts.isNotEmpty)
-            SliverList(
-              delegate: SliverChildListDelegate([
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    Locales.string(context, "mycasts"),
-                    style: podcastInsights(),
-                    key: myCastsKey,
+            if (user.lastListened.isNotEmpty)
+              SliverToBoxAdapter(
+                child: lastListenedEpisode.when(
+                  loading: () => const EpisodeLoading(),
+                  error: (e, _) {
+                    print(e);
+                    return const SizedBox();
+                  },
+                  data: (ep) => PodcastListTileQuickNote(
+                    ep,
+                    quickNote: quickNote(ep, user),
                   ),
                 ),
-                const SizedBox(height: 10),
-                ...authManager.myCast.map((cast) => PodcastListTile(cast)),
-              ]),
-            ),
-          SliverToBoxAdapter(
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                Locales.string(context, "hotlive"),
-                style: podcastInsights(),
-                key: hotliveKey,
+              ),
+            if (user.favPodcasts.isNotEmpty)
+              SliverList(
+                delegate: SliverChildListDelegate([
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      Locales.string(context, "mycasts"),
+                      style: podcastInsights(),
+                      key: myCastsKey,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  ...authManager.myCast.map((cast) => PodcastListTile(cast)),
+                ]),
+              ),
+            SliverToBoxAdapter(
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  Locales.string(context, "hotlive"),
+                  style: podcastInsights(),
+                  key: hotliveKey,
+                ),
               ),
             ),
-          ),
-          const SliverToBoxAdapter(child: SizedBox(height: 10)),
-          FirestoreQueryBuilder<Podcast>(
-            query: queryFeed,
-            builder: (context, snapshot, _) {
-              return SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    if (snapshot.hasMore && index + 1 == snapshot.docs.length) {
-                      snapshot.fetchMore();
-                    }
+            const SliverToBoxAdapter(child: SizedBox(height: 10)),
+            FirestoreQueryBuilder<Podcast>(
+              query: queryFeed,
+              builder: (context, snapshot, _) {
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      if (snapshot.hasMore &&
+                          index + 1 == snapshot.docs.length) {
+                        snapshot.fetchMore();
+                      }
 
-                    Podcast episode = snapshot.docs[index].data();
-                    episode.uid = snapshot.docs[index].id;
-                    return PodcastListTile(episode);
-                  },
-                  childCount: snapshot.docs.length,
-                ),
-              );
-            },
-          ),
-        ],
+                      Podcast episode = snapshot.docs[index].data();
+                      episode.uid = snapshot.docs[index].id;
+                      return PodcastListTile(episode);
+                    },
+                    childCount: snapshot.docs.length,
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
