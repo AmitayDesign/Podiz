@@ -229,24 +229,24 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       children: [
                         PodcastAvatar(imageUrl: episode.image_url, size: 32),
                         const SizedBox(width: 8),
-                        SizedBox(
-                          width: kScreenWidth - (16 + 32 + 8 + 16),
-                          height: 40,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  episode.name,
-                                  style: discussionCardProfile(),
-                                ),
-                              ),
-                              Align(
+                        Expanded(
+                          child: SizedBox(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Align(
                                   alignment: Alignment.centerLeft,
-                                  child: Text(episode.show_name,
-                                      style: discussionAppBarInsights())),
-                            ],
+                                  child: Text(
+                                    episode.name,
+                                    style: discussionCardProfile(),
+                                  ),
+                                ),
+                                Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(episode.show_name,
+                                        style: discussionAppBarInsights())),
+                              ],
+                            ),
                           ),
                         ),
                       ],
