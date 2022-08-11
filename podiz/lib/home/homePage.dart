@@ -88,6 +88,7 @@ class _HomePageState extends ConsumerState<HomePage>
       builder: (context, isKeyBoardOpen) {
         return TapToUnfocus(
           child: Scaffold(
+            extendBody: true,
             body: Stack(
               alignment: Alignment.bottomCenter,
               children: [
@@ -106,10 +107,7 @@ class _HomePageState extends ConsumerState<HomePage>
               height: 93,
               child: ClipRect(
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(
-                    sigmaX: 5,
-                    sigmaY: 10,
-                  ),
+                  filter: ImageFilter.blur(sigmaX: 5, sigmaY: 10),
                   child: Opacity(
                     opacity: 0.9,
                     child: BottomNavigationBar(
