@@ -126,9 +126,10 @@ async function getUserInfo(code) {
     prev = "";
     searchArray = [];
 
-    for (letter in result.display_name) {
+    for (letter of result.display_name) {
       prev += letter;
-      searchArray.push(prev);
+      word = prev.toLowerCase();
+      searchArray.push(word);
     }
 
     admin.firestore().collection("users").doc(result.uri).set({
@@ -168,7 +169,7 @@ async function getUserFavoriteShow(userUid) {
 
   result = await response.json();
 
-  for (item in result["items"]) {
+  for (item of result["items"]) {
     s = item["show"];
     show = {
       uid: s["uri"],
@@ -183,19 +184,25 @@ async function getUserFavoriteShow(userUid) {
 
     if (!(await checkShowExists(show["uid"]))) {
       addShowToDataBase(show);
-      getShowEpisodes(show["uid"], show["total_episodes"]); //TODO do this!
+      getShowEpisodes(
+        show["uid"],
+        show["total_episodes"],
+        show["name"],
+        userUid
+      );
     }
     favPodcasts.push(show["uid"]);
   }
 
   let total = result["total"];
   if (total < 50) {
-    admin.firestore
+    admin
+      .firestore()
       .collection("users")
       .doc(userUid)
       .update({
-        favPodcasts: firebase.firestore.FieldValue.arrayUnion(favPodcasts),
-        followers: firebase.firestore.FieldValue.arrayUnion(favPodcasts),
+        favPodcasts: admin.firestore.FieldValue.arrayUnion(...favPodcasts),
+        followers: admin.firestore.FieldValue.arrayUnion(...favPodcasts),
       });
     return;
   }
@@ -211,7 +218,7 @@ async function getUserFavoriteShow(userUid) {
         method: "GET",
       }
     );
-    for (item in result["items"]) {
+    for (item of result["items"]) {
       s = item["show"];
       show = {
         uid: s["uri"],
@@ -226,18 +233,24 @@ async function getUserFavoriteShow(userUid) {
 
       if (!(await checkShowExists(show["uid"]))) {
         addShowToDataBase(show);
-        getShowEpisodes(show["uid"], show["total_episodes"]);
+        getShowEpisodes(
+          show["uid"],
+          show["total_episodes"],
+          show["name"],
+          userUid
+        );
       }
 
       favPodcasts.push(show["uid"]);
     }
   }
-  admin.firestore
+  admin
+    .firestore()
     .collection("users")
     .doc(userUid)
     .update({
-      favPodcasts: firebase.firestore.FieldValue.arrayUnion(favPodcasts),
-      followers: firebase.firestore.FieldValue.arrayUnion(favPodcasts),
+      favPodcasts: admin.firestore.FieldValue.arrayUnion(...favPodcasts),
+      followers: admin.firestore.FieldValue.arrayUnion(...favPodcasts),
     });
 }
 
@@ -260,7 +273,7 @@ function addShowToDataBase(show) {
   admin.firestore().collection("podcasters").doc(show["uid"]).set(show);
 }
 
-async function getShowEpisodes(showUid, total_episodes) {
+async function getShowEpisodes(showUid, total_episodes, showName, userUid) {
   var spotifyAuth = await getSpotifyAuth(userUid);
   episodeList = [];
 
@@ -286,12 +299,13 @@ async function getShowEpisodes(showUid, total_episodes) {
     }
     let result = await response.json();
 
-    for (e in result["items"]) {
+    for (e of result["items"]) {
       searchArray = [];
       prev = "";
-      for (letter in e["name"]) {
+      for (letter of e["name"]) {
         prev += letter;
-        searchArray.push(prev);
+        word = prev.toLowerCase();
+        searchArray.push(word);
       }
 
       episode = {
@@ -299,8 +313,8 @@ async function getShowEpisodes(showUid, total_episodes) {
         name: e["name"],
         description: e["description"],
         duration_ms: e["duration_ms"],
-        show_name: s["name"],
-        show_uri: s["uri"],
+        show_name: showName,
+        show_uri: showUid,
         image_url: e["images"][0]["url"],
         comments: 0,
         commentsImg: [],
@@ -308,16 +322,17 @@ async function getShowEpisodes(showUid, total_episodes) {
         watching: 0,
         searchArray: searchArray,
       };
+
       addEpisodeToDataBase(episode);
-      episodeList.push(e["uri"]);
+      admin
+        .firestore()
+        .collection("podcasters")
+        .doc(showUid)
+        .update({
+          podcasts: admin.firestore.FieldValue.arrayUnion(e["uri"]),
+        });
     }
   }
-  admin.firestore
-    .collection("podcasters")
-    .doc(showUid)
-    .update({
-      podcasts: firebase.firestore.FieldValue.arrayUnion(episodeList),
-    });
 }
 
 async function addEpisodeToDataBase(episode) {
@@ -455,9 +470,10 @@ async function fecthUser(userUid) {
 
     searchArrayEpisode = [];
     prev = "";
-    for (letter in e["name"]) {
+    for (letter of e["name"]) {
       prev += letter;
-      searchArrayEpisode.push(prev);
+      word = prev.toLowerCase();
+      searchArrayEpisode.push(word);
     }
 
     episode = {
@@ -477,9 +493,10 @@ async function fecthUser(userUid) {
 
     searchArrayShow = [];
     prev = "";
-    for (letter in e["name"]) {
+    for (letter of s["name"]) {
       prev += letter;
-      searchArrayShow.push(prev);
+      word = prev.toLowerCase();
+      searchArrayShow.push(word);
     }
     show = {
       uid: s["uri"],
@@ -497,7 +514,12 @@ async function fecthUser(userUid) {
     }
     if (!(await checkShowExists(episode["show_uri"]))) {
       addShowToDataBase(show);
-      getShowEpisodes(episode["show_uri"], show["total_episodes"]);
+      getShowEpisodes(
+        episode["show_uri"],
+        show["total_episodes"],
+        show["name"],
+        userUid
+      );
     }
 
     info = {
@@ -533,16 +555,18 @@ async function search(userUid, query) {
 
     let result = await response.json();
 
-    for (e in result["episodes"]["items"]) {
-      final_result = getEpisode(e["id"], userUid);
-      if (!(await checkEpisodeExists(final_result["episode"]["uri"]))) {
+    for (e of result["episodes"]["items"]) {
+      let final_result = await getEpisode(e["id"], userUid);
+      if (!(await checkEpisodeExists(final_result["episode"]["uid"]))) {
         addEpisodeToDataBase(final_result["episode"]);
       }
       if (!(await checkShowExists(final_result["episode"]["show_uri"]))) {
         addShowToDataBase(final_result["show"]);
         getShowEpisodes(
-          final_result["show"]["uri"],
-          final_result["show"]["total_episodes"]
+          final_result["show"]["uid"],
+          final_result["show"]["total_episodes"],
+          final_result["show"]["name"],
+          userUid
         );
       }
     }
@@ -573,20 +597,22 @@ async function getEpisode(episodeUid, userUid) {
 
     searchArrayEpisode = [];
     prev = "";
-    for (letter in e["name"]) {
+    for (letter of e["name"]) {
       prev += letter;
-      searchArrayEpisode.push(prev);
+      word = prev.toLowerCase();
+      searchArrayEpisode.push(word);
     }
 
     searchArrayShow = [];
     prev = "";
-    for (letter in e["show"]["name"]) {
+    for (letter of result["show"]["name"]) {
       prev += letter;
-      searchArrayShow.push(prev);
+      word = prev.toLowerCase();
+      searchArrayShow.push(word);
     }
 
     s = result["show"];
-    final_result = {
+    let final_result = {
       episode: {
         uid: result["uri"],
         name: result["name"],
