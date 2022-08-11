@@ -98,7 +98,6 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
                 },
                 loading: () => loadingWidget,
                 data: (comments) {
-                  return Container();
                   return Column(children: [
                     Expanded(
                       child: ListView.builder(
