@@ -3,18 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/widgets/shimmerLoading.dart';
-import 'package:podiz/authentication/auth_manager.dart';
-import 'package:podiz/home/components/profileAvatar.dart';
-import 'package:podiz/objects/Comment.dart';
-import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/player/components/discussionAppBar.dart';
 import 'package:podiz/player/components/discussionCard.dart';
 import 'package:podiz/player/components/discussionSnackBar.dart';
-import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
 
