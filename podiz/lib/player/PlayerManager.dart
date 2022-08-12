@@ -157,14 +157,14 @@ class PlayerManager {
     await pausePodcast();
   }
 
-  Future<void> increment(String episodeUid) => FirebaseFirestore.instance
+  Future<void> increment(String podcastId) => FirebaseFirestore.instance
       .collection("podcasts")
-      .doc(episodeUid)
+      .doc(podcastId)
       .update({"watching": FieldValue.increment(1)});
 
-  Future<void> decrement(String episodeUid) => FirebaseFirestore.instance
+  Future<void> decrement(String podcastId) => FirebaseFirestore.instance
       .collection("podcasts")
-      .doc(episodeUid)
+      .doc(podcastId)
       .update({"watching": FieldValue.increment(-1)});
 
   //! DISCUSSION

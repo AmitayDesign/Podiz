@@ -16,9 +16,9 @@ class PlayerWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(playerStreamProvider);
+    final playerValue = ref.watch(playerStreamProvider);
     final loadingAction = ref.watch(playerControllerProvider);
-    return state.maybeWhen(
+    return playerValue.maybeWhen(
       orElse: () => const SizedBox.shrink(),
       data: (player) {
         if (player == null) return const SizedBox.shrink();
