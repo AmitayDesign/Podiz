@@ -29,13 +29,14 @@
     "feed": "FEED",
     "quicknote": "QUICK NOTE",
     "back": "Back",
-    "search1": "Search your favorite podcast or friends",
+    "search1": "Shows, podcasts or friends",
     "search2": "Nothing found with",
     "lastlistened": "Last Listened",
     "mycasts": "My Casts",
     "hotlive": "Hot & Live",
-    "searchspotify": "SEARCH IN SPOTIFY",
+    "searchspotify": "Search in Spotify",
     "noinsigths": "Post the first Insight on this podcast",
     "nointernet_1": "Ooops!",
-    "nointernet_2": "It seems like we have trouble getting to\nwhere we wanted.\nIt might be helpful to check your internet\nconnection and take a little strech."
+    "nointernet_2": "It seems like we have trouble getting to\nwhere we wanted.\nIt might be helpful to check your internet\nconnection and take a little strech.",
+    "noresults": "No results for"
 }

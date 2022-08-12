@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/home/components/skeletonPodcastAvatar.dart';
 import 'package:skeletons/skeletons.dart';
 
 class SkeletonPodcastCard extends StatelessWidget {
@@ -52,13 +53,7 @@ class SkeletonPodcastCard extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SkeletonAvatar(
-                    style: SkeletonAvatarStyle(
-                      width: 64,
-                      height: 64,
-                      borderRadius: BorderRadius.circular(kBorderRadius),
-                    ),
-                  ),
+                  const SkeletonPodcastAvatar(size: 64),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Padding(

@@ -29,7 +29,9 @@ class InsightsRow extends StatelessWidget {
         Expanded(
           child: Text(
             hasComments
-                ? '${podcast.comments} insights'
+                ? podcast.comments == 1
+                    ? '1 insight'
+                    : '${podcast.comments} insights'
                 : Locales.string(context, "noinsigths"),
             style: context.textTheme.bodySmall,
             overflow: TextOverflow.ellipsis,

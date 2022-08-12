@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
-import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/widgets/appBarGradient.dart';
 
 class BackAppBar extends StatelessWidget with PreferredSizeWidget {
@@ -31,7 +30,6 @@ class BackAppBarButton extends StatelessWidget {
       onPressed: Navigator.of(context).pop,
       label: Text(
         Locales.string(context, "back"),
-        style: context.textTheme.bodyMedium,
       ),
       icon: const Icon(
         Icons.arrow_back_ios_new,

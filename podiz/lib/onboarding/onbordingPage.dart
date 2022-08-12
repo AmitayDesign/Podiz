@@ -97,7 +97,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                     vertical: 16,
                   ),
                   child: ElevatedButton(
-                    onPressed: () async => isStartView
+                    onPressed: () => isStartView
                         ? goToView(OnboardingView.connect)
                         : ref.read(spotifyControllerProvider.notifier).signIn(),
                     child: Text(
