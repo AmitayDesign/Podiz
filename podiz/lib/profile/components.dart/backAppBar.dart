@@ -30,6 +30,7 @@ class BackAppBarButton extends StatelessWidget {
       onPressed: Navigator.of(context).pop,
       label: Text(
         Locales.string(context, "back"),
+        style: const TextStyle(color: Colors.white70),
       ),
       icon: const Icon(
         Icons.arrow_back_ios_new,
