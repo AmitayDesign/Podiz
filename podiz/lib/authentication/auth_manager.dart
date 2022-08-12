@@ -13,6 +13,7 @@ import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/providers.dart';
 import 'package:rxdart/rxdart.dart';
 
+//TODO watch or read?
 final authManagerProvider = Provider<AuthManager>(
   (ref) {
     final manager = AuthManager(

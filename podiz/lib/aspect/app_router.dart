@@ -21,7 +21,9 @@ enum AppRoute {
 //TODO test login in no premium account
 
 final goRouterProvider = Provider<GoRouter>((ref) {
+  print('gorouter 1');
   final authManager = ref.watch(authManagerProvider);
+  print('gorouter 2');
   return GoRouter(
     initialLocation: '/',
     debugLogDiagnostics: false,
