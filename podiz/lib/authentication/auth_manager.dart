@@ -103,7 +103,7 @@ class AuthManager {
         if (i == number - 1) {
           i = 0;
         }
-        if (count == 5) {
+        if (count == 6) {
           break;
         }
       }
