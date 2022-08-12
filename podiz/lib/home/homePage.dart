@@ -19,7 +19,7 @@ class HomePage extends ConsumerStatefulWidget {
   final HomeDestination? destination;
   const HomePage({Key? key, this.destination}) : super(key: key);
 
-  static const bottomBarHeigh = 93.0;
+  static const bottomBarHeigh = 88.0;
 
   @override
   ConsumerState<HomePage> createState() => _HomePageState();
@@ -114,38 +114,24 @@ class _HomePageState extends ConsumerState<HomePage>
               height: HomePage.bottomBarHeigh,
               child: ClipRect(
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 5, sigmaY: 10),
-                  child: Opacity(
-                    opacity: 0.9,
-                    child: BottomNavigationBar(
-                      iconSize: 30,
-                      showSelectedLabels: true,
-                      showUnselectedLabels: true,
-                      selectedItemColor: const Color(0xFFD74EFF),
-                      unselectedItemColor: const Color(0xB2FFFFFF),
-                      onTap: goToDestination,
-                      currentIndex: destination.index,
-                      items: const [
-                        BottomNavigationBarItem(
-                          label: 'Home',
-                          icon: Icon(Icons.home),
-                          activeIcon: Icon(
-                            Icons.home,
-                            color: Color(0xFFD74EFF),
-                          ),
-                        ),
-                        BottomNavigationBarItem(
-                          label: 'Search',
-                          icon: Icon(Icons.search),
-                          activeIcon: Icon(Icons.search),
-                        ),
-                        BottomNavigationBarItem(
-                          label: 'Notifications',
-                          icon: Icon(Icons.notifications),
-                          activeIcon: Icon(Icons.notifications),
-                        ),
-                      ],
-                    ),
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: BottomNavigationBar(
+                    onTap: goToDestination,
+                    currentIndex: destination.index,
+                    items: const [
+                      BottomNavigationBarItem(
+                        label: 'Home',
+                        icon: Icon(Icons.home),
+                      ),
+                      BottomNavigationBarItem(
+                        label: 'Search',
+                        icon: Icon(Icons.search),
+                      ),
+                      BottomNavigationBarItem(
+                        label: 'Notifications',
+                        icon: Icon(Icons.notifications),
+                      ),
+                    ],
                   ),
                 ),
               ),
