@@ -10,6 +10,7 @@ import 'package:podiz/home/feed/components/commentSheet.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/player/PlayerManager.dart';
+import 'package:podiz/player/components/insightSheet.dart';
 import 'package:podiz/player/components/pinkTimer.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
@@ -119,7 +120,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                           ),
                           builder: (context) => Padding(
                             padding: MediaQuery.of(context).viewInsets,
-                            child: CommentSheet(
+                            child: InsightSheet(
                               podcast: widget.p,
                             ),
                           ),
