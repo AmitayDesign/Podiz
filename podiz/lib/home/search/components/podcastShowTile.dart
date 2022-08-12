@@ -33,7 +33,7 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
           ref
               .read(playerManagerProvider)
               .playEpisode(widget.result.searchResultToPodcast(), 0);
-          context.goNamed(
+          context.pushNamed(
             AppRoute.discussion.name,
             params: {'showId': widget.result.show_uri!},
           );
