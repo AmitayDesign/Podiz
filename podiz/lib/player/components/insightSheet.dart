@@ -7,15 +7,15 @@ import 'package:podiz/home/components/profileAvatar.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/providers.dart';
 
-class CommentSheet extends ConsumerStatefulWidget {
+class InsightSheet extends ConsumerStatefulWidget {
   final Podcast podcast;
-  const CommentSheet({Key? key, required this.podcast}) : super(key: key);
+  const InsightSheet({Key? key, required this.podcast}) : super(key: key);
 
   @override
-  ConsumerState<CommentSheet> createState() => _CommentSheetState();
+  ConsumerState<InsightSheet> createState() => _CommentSheetState();
 }
 
-class _CommentSheetState extends ConsumerState<CommentSheet> {
+class _CommentSheetState extends ConsumerState<InsightSheet> {
   final buttonSize = kMinInteractiveDimension * 5 / 6;
   final commentController = TextEditingController();
   String get comment => commentController.text;
@@ -30,10 +30,9 @@ class _CommentSheetState extends ConsumerState<CommentSheet> {
     ref.read(authManagerProvider).doComment(
           commentController.text,
           widget.podcast.uid!,
-          widget.podcast.duration_ms,
+          ref.read(playerStreamProvider).value!.position.inMilliseconds,
         );
-    // commentController.clear();
-    Navigator.pop(context);
+    commentController.clear();
   }
 
   @override

@@ -17,7 +17,7 @@ class HomePage extends ConsumerStatefulWidget {
   final HomeDestination? destination;
   const HomePage({Key? key, this.destination}) : super(key: key);
 
-  static const bottomBarHeigh = 88.0;
+  static const bottomBarHeigh = 64.0;
 
   @override
   ConsumerState<HomePage> createState() => _HomePageState();
