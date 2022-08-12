@@ -25,8 +25,22 @@ class NotificationManager {
           .orderBy("timestamp", descending: true)
           .snapshots()
           .map((snapshot) {
-        final notificationList =
-            snapshot.docs.map((doc) => NotificationPodiz.fromFirestore(doc));
-        return Map.fromIterable(notificationList, key: (n) => n.episodeUid);
+        Map<String, List<NotificationPodiz>> notificationMap = {};
+        for (int i = 0; i < snapshot.docs.length; i++) {
+          NotificationPodiz not =
+              NotificationPodiz.fromFirestore(snapshot.docs[i]);
+          if (notificationMap.containsKey(not.episodeUid)) {
+            notificationMap[not.episodeUid]!.add(not);
+          } else {
+            notificationMap.addAll({
+              not.episodeUid: [not]
+            });
+          }
+        }
+        // final notificationList = snapshot.docs.map((doc) =>
+        //     NotificationPodiz.fromFirestore(doc));
+        //  Map.fromIterable(notificationList, key: (n) => n.episodeUid);
+
+        return notificationMap;
       });
 }
