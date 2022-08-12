@@ -114,7 +114,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                   if (user.lastListened.isNotEmpty)
                     FeedTile(
                       Locales.string(context, "mycasts"),
-                      key: hotliveKey,
+                      textKey: hotliveKey,
                     ),
                   for (final podcast in authManager.myCast)
                     PodcastCard(
@@ -128,7 +128,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
             if (user.lastListened.isNotEmpty || user.favPodcasts.isNotEmpty)
               SliverFeedTile(
                 Locales.string(context, "hotlive"),
-                key: hotliveKey,
+                textKey: hotliveKey,
               ),
             FirestoreQueryBuilder<Podcast>(
               query: queryFeed,
