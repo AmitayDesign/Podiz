@@ -39,9 +39,13 @@ class Player {
   void setTimer() {
     switch (state) {
       case PlayerState.play:
+        // TODO change duration to 200 milliseconds
         timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-          final position = _startingPosition + Duration(seconds: timer.tick);
-          if (position == duration) return timer.cancel();
+          var position = _startingPosition + Duration(seconds: timer.tick);
+          if (position >= duration) {
+            position = duration;
+            timer.cancel();
+          }
           _positionController.sink.add(position);
         });
         break;

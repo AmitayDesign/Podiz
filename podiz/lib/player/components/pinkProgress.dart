@@ -13,6 +13,7 @@ class PinkProgress extends ConsumerWidget {
     final position =
         ref.watch(playerPositionStreamProvider).valueOrNull ?? Duration.zero;
     //TODO load positon and on loading user LinearProgressIndicator
+    //TODO animate percent
     return LinearPercentIndicator(
       padding: EdgeInsets.zero,
       width: kScreenWidth,
