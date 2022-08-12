@@ -18,19 +18,20 @@ class StackedImages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final images = decideImages(podcast.commentsImg);
+    final imageUrls = decideImages(podcast.commentsImg);
     return Stack(
-      children: images
+      children: imageUrls
           .mapIndexed(
             (i, imageUrl) => Container(
               margin: EdgeInsets.only(left: radius * i),
-              padding: images.length > 1 ? EdgeInsets.all(borderWidth) : null,
+              padding:
+                  imageUrls.length > 1 ? EdgeInsets.all(borderWidth) : null,
               decoration: BoxDecoration(
                 color: context.colorScheme.surface,
                 shape: BoxShape.circle,
               ),
               child: CircleAvatar(
-                radius: images.length > 1 ? radius - borderWidth : radius,
+                radius: imageUrls.length > 1 ? radius - borderWidth : radius,
                 backgroundImage: NetworkImage(imageUrl),
               ),
             ),
