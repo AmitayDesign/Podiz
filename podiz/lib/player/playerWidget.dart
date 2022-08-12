@@ -39,7 +39,7 @@ class PlayerWidget extends ConsumerWidget {
               return InkWell(
                 onTap: () => context.goNamed(
                   AppRoute.discussion.name,
-                  params: {'showId': p.show_uri},
+                  params: {'episodeId': p.uid!},
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,

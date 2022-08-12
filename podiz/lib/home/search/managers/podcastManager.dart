@@ -40,6 +40,8 @@ class PodcastManager {
 
   Future<Podcast> fetchPodcast(String episodeId) async {
     final doc = await firestore.collection("podcasts").doc(episodeId).get();
+    print(episodeId);
+    print(doc.data());
     return Podcast.fromFirestore(doc);
   }
 

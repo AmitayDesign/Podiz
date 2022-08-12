@@ -46,6 +46,11 @@ class AuthManager {
     }
   }
 
+
+  Future<void> fetchUserInfo(String userId) async {
+    _setUpUserStream(userId);
+    // await podcastManager.getDevices(userId);
+  }
   void dispose() {
     sub?.cancel();
     _userController.close();
