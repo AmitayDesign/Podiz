@@ -78,13 +78,21 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Expanded(
-                                  child: Text(
-                                    widget.result.show_name!,
-                                    style:
-                                        context.textTheme.bodyLarge!.copyWith(
-                                      color: Palette.grey600,
+                                  child: GestureDetector(
+                                    onTap: () => context.goNamed(
+                                      AppRoute.show.name,
+                                      params: {
+                                        'showId': widget.result.show_uri!
+                                      },
                                     ),
-                                    overflow: TextOverflow.ellipsis,
+                                    child: Text(
+                                      widget.result.show_name!,
+                                      style:
+                                          context.textTheme.bodyLarge!.copyWith(
+                                        color: Palette.grey600,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(width: 12),

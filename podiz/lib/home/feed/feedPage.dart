@@ -43,13 +43,15 @@ class _FeedPageState extends ConsumerState<FeedPage> {
     final myCastsPosition = myCastsKey.offset?.dy;
     final hotlivePosition = hotliveKey.offset?.dy;
 
+    final lastPodcast = ref.read(lastListenedPodcastStreamProvider).valueOrNull;
     final myCastsDidNotPass = user.favPodcasts.isEmpty ||
         (myCastsPosition != null && myCastsPosition > FeedAppBar.height);
     final hotliveDidNotPass =
         hotlivePosition != null && hotlivePosition > FeedAppBar.height;
 
     late final String title;
-    if (user.lastListened.isNotEmpty &&
+    if (lastPodcast != null &&
+        user.lastListened.isNotEmpty &&
         myCastsDidNotPass &&
         hotliveDidNotPass) {
       title = 'lastListened';
@@ -72,6 +74,13 @@ class _FeedPageState extends ConsumerState<FeedPage> {
     ref.read(playerManagerProvider).playEpisode(podcast, 0);
     context.goNamed(
       AppRoute.discussion.name,
+      params: {'showId': podcast.show_uri},
+    );
+  }
+
+  void openShow(Podcast podcast) {
+    context.goNamed(
+      AppRoute.show.name,
       params: {'showId': podcast.show_uri},
     );
   }
@@ -122,6 +131,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                     PodcastCard(
                       podcast,
                       onTap: () => openPodcast(podcast),
+                      onShowTap: () => openShow(podcast),
                     ),
                 ]),
               ),
@@ -147,6 +157,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                       return PodcastCard(
                         podcast,
                         onTap: () => openPodcast(podcast),
+                        onShowTap: () => openShow(podcast),
                       );
                     },
                     childCount: snapshot.docs.length,
