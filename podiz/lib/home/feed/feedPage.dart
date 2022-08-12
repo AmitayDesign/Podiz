@@ -42,16 +42,21 @@ class _FeedPageState extends ConsumerState<FeedPage> {
       );
 
   void handleAppBar() {
+    final user = ref.read(currentUserProvider);
     final myCastsPosition = myCastsKey.offset?.dy;
     final hotlivePosition = hotliveKey.offset?.dy;
 
     late final String title;
-    if (hotlivePosition == null || hotlivePosition < FeedAppBar.height) {
-      title = 'hotlive';
-    } else if (myCastsPosition == null || myCastsPosition < FeedAppBar.height) {
-      title = 'myCasts';
-    } else {
+    if (user.lastListened.isNotEmpty &&
+        myCastsPosition != null &&
+        myCastsPosition > FeedAppBar.height) {
       title = 'lastListened';
+    } else if (user.favPodcasts.isNotEmpty &&
+        hotlivePosition != null &&
+        hotlivePosition > FeedAppBar.height) {
+      title = 'muCasts';
+    } else {
+      title = 'hotlive';
     }
 
     ref.read(homeBarTitleProvider.notifier).state = title;
