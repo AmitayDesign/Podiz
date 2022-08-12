@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/theme/palette.dart';
+import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/player/components/pinkProgress.dart';
 import 'package:podiz/player/playerController.dart';
 import 'package:podiz/providers.dart';
@@ -46,9 +47,31 @@ class PlayerWidget extends ConsumerWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const Align(
-                        alignment: Alignment.centerLeft,
-                        child: PinkTimer(),
+                      PodcastAvatar(
+                        imageUrl: player.podcast.image_url,
+                        size: 52,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: PinkTimer(),
+                            ),
+                            const SizedBox(height: 8),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                player.podcast.name,
+                                style: context.textTheme.bodyMedium,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       Container(
                         width: 24,
