@@ -5,10 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/app_router.dart';
-import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/themeConfig.dart';
-import 'package:podiz/providers.dart';
-import 'package:podiz/splashScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 late SharedPreferences preferences;
@@ -73,7 +70,7 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final userLoadingValue = ref.watch(userLoadingProvider);
+    // final userLoadingValue = ref.watch(userLoadingProvider);
     final goRouter = ref.watch(goRouterProvider);
     return LocaleBuilder(
       builder: (locale) => MaterialApp.router(
@@ -87,17 +84,19 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
         restorationScopeId: 'app',
         theme: ThemeConfig.light,
         themeMode: ref.watch(themeModeProvider),
-        builder: (context, child) => userLoadingValue.when(
-          error: (e, _) {
-            print('main: ${e.toString()}');
-            return SplashScreen.error();
-          },
-          loading: () => SplashScreen(),
-          data: (_) {
-            setScreenSize(context);
-            return child!;
-          },
-        ),
+        builder: (context, child) {
+          // return userLoadingValue.when(
+          // error: (e, _) {
+          //   print('main: ${e.toString()}');
+          //   return SplashScreen.error();
+          // },
+          // loading: () => SplashScreen(),
+          // data: (_) {
+          //   setScreenSize(context);
+          return child!;
+          // },
+          // );
+        },
       ),
     );
   }

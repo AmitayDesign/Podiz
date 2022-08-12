@@ -38,6 +38,7 @@ class AuthManager {
     required this.firebaseAuth,
     required this.firestore,
   }) {
+    print('AUTH MANAGER INIT');
     final loggedInUser = preferences.getString('userId');
     if (loggedInUser != null) {
       signIn(loggedInUser);
@@ -46,12 +47,13 @@ class AuthManager {
     }
   }
 
-
   Future<void> fetchUserInfo(String userId) async {
+    print('AUTH MANAGER FETCH USER INFO');
     _setUpUserStream(userId);
-    // await podcastManager.getDevices(userId);
   }
+
   void dispose() {
+    print('DISPOSE');
     sub?.cancel();
     _userController.close();
   }
@@ -63,13 +65,14 @@ class AuthManager {
   List<Podcast> myCast = [];
 
   Future<void> signIn(String userId) async {
+    print('SIGNIN');
     _setUpUserStream(userId);
-    await podcastManager.getDevices(userId);
     // await podcastManager.fetchUserPlayer(userId);
   }
 
   StreamSubscription? sub;
   void _setUpUserStream(String userId) {
+    print('SETUP USERSTREAM');
     sub?.cancel();
     sub = firestore
         .collection("users")
@@ -83,6 +86,7 @@ class AuthManager {
   }
 
   Future<void> _saveUser(UserPodiz? user) async {
+    print('SAVE USER');
     if (user == null) {
       preferences.remove('userId');
     } else {
@@ -93,6 +97,7 @@ class AuthManager {
   }
 
   Future<List<Podcast>> getCastList(UserPodiz user) async {
+    print('GET CAST LIST');
     List<Podcast> result = [];
     int number = user.favPodcasts.length;
     int count = 0;

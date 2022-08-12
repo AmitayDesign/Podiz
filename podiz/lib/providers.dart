@@ -39,16 +39,16 @@ final connectivityProvider = StreamProvider<ConnectivityResult>(
 
 //* AUTH
 
-final userLoadingProvider = FutureProvider.autoDispose<void>(
+final userLoadingProvider = FutureProvider<void>(
   (ref) => ref.watch(currentUserStreamProvider.future),
 );
 
-final currentUserStreamProvider = StreamProvider.autoDispose<UserPodiz?>(
+final currentUserStreamProvider = StreamProvider<UserPodiz?>(
   (ref) => ref.watch(authManagerProvider).userChanges,
 );
 
 final currentUserProvider =
-    StateNotifierProvider.autoDispose<StreamNotifier<UserPodiz>, UserPodiz>(
+    StateNotifierProvider<StreamNotifier<UserPodiz>, UserPodiz>(
   (ref) {
     final manager = ref.watch(authManagerProvider);
     return StreamNotifier(
@@ -61,15 +61,20 @@ final currentUserProvider =
 
 //* USER
 
-final userProvider = FutureProvider.family<UserPodiz, String>(
+final userProvider = FutureProvider.family.autoDispose<UserPodiz, String>(
   (ref, id) => ref.watch(userManagerProvider).getUserFromUid(id),
 );
 
 //* NOTIFICATION
 
+//TODO why not list
 final notificationsStreamProvider =
-    StreamProvider<Map<String, List<NotificationPodiz>>>(
-  (ref) => ref.watch(notificationManagerProvider).notifications,
+    StreamProvider.autoDispose<Map<String, List<NotificationPodiz>>>(
+  (ref) {
+    final user = ref.watch(currentUserStreamProvider).valueOrNull;
+    if (user == null) return Stream.value({});
+    return ref.watch(notificationManagerProvider).watchNotifications(user.uid);
+  },
 );
 
 //* SHOW
@@ -84,7 +89,7 @@ final showFutureProvider = FutureProvider.family.autoDispose<Show, String>(
 
 //* PODCAST
 
-final lastListenedPodcastStreamProvider = StreamProvider.autoDispose<Podcast?>(
+final lastListenedPodcastStreamProvider = StreamProvider<Podcast?>(
   (ref) {
     final podcastManager = ref.watch(podcastManagerProvider);
     return ref.watch(currentUserStreamProvider.stream).asyncMap((user) {

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:podiz/aspect/typedefs.dart';
 import 'package:podiz/objects/Comment.dart';
 
 part 'NotificationPodiz.g.dart';
@@ -33,6 +34,9 @@ class NotificationPodiz {
     required this.lvl,
     required this.parents,
   });
+
+  factory NotificationPodiz.fromFirestore(Doc doc) =>
+      NotificationPodiz.fromJson(doc.data()!..['uid'] = doc.id);
 
   factory NotificationPodiz.fromJson(Map<String, dynamic> json) =>
       _$NotificationPodizFromJson(json);

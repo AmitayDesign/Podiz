@@ -2,8 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/onboarding/SpotifyManager.dart';
 
+//TODO autodispose?
 final spotifyControllerProvider =
-    StateNotifierProvider.autoDispose<SpotifyController, AsyncValue>(
+    StateNotifierProvider<SpotifyController, AsyncValue>(
   (ref) => SpotifyController(
     manager: ref.watch(spotifyManagerProvider),
     authManager: ref.watch(authManagerProvider),
