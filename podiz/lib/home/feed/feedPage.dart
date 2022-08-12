@@ -106,28 +106,30 @@ class _FeedPageState extends ConsumerState<FeedPage> {
             if (user.favPodcasts.isNotEmpty)
               SliverList(
                 delegate: SliverChildListDelegate([
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      Locales.string(context, "mycasts"),
-                      style: context.textTheme.bodyLarge,
-                      key: myCastsKey,
+                  if (user.lastListened.isNotEmpty)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        Locales.string(context, "mycasts"),
+                        style: context.textTheme.bodyLarge,
+                        key: myCastsKey,
+                      ),
                     ),
-                  ),
                   const SizedBox(height: 10),
                   ...authManager.myCast.map((cast) => PodcastListTile(cast)),
                 ]),
               ),
-            SliverToBoxAdapter(
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  Locales.string(context, "hotlive"),
-                  style: context.textTheme.bodyLarge,
-                  key: hotliveKey,
+            if (user.lastListened.isNotEmpty && user.favPodcasts.isNotEmpty)
+              SliverToBoxAdapter(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    Locales.string(context, "hotlive"),
+                    style: context.textTheme.bodyLarge,
+                    key: hotliveKey,
+                  ),
                 ),
               ),
-            ),
             const SliverToBoxAdapter(child: SizedBox(height: 10)),
             FirestoreQueryBuilder<Podcast>(
               query: queryFeed,
