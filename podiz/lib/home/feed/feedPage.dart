@@ -18,8 +18,7 @@ import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/providers.dart';
 
 class FeedPage extends ConsumerStatefulWidget {
-  final bool isPlaying;
-  const FeedPage(this.isPlaying, {Key? key}) : super(key: key);
+  const FeedPage({Key? key}) : super(key: key);
 
   @override
   ConsumerState<FeedPage> createState() => _FeedPageState();

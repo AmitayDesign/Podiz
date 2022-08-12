@@ -19,7 +19,8 @@ import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
 
 class DiscussionPage extends ConsumerStatefulWidget {
-  const DiscussionPage({Key? key}) : super(key: key);
+  final String showId;
+  const DiscussionPage(this.showId, {Key? key}) : super(key: key);
 
   @override
   ConsumerState<DiscussionPage> createState() => _DiscussionPageState();
@@ -81,7 +82,7 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
   @override
   Widget build(BuildContext context) {
     final commentsValue = ref.watch(commentsStreamProvider);
-    final podcastValue = ref.watch(playerPodcastProvider);
+    final podcastValue = ref.watch(podcastProvider(widget.showId));
     return Scaffold(
       appBar: DiscussionAppBar(podcastValue.valueOrNull),
       body: podcastValue.when(
