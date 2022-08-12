@@ -14,7 +14,7 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
   DiscussionAppBar(this.podcast, {Key? key}) : super(key: key);
 
   static const height = 64.0;
-  static const flexibleHeight = 156.0;
+  static const flexibleHeight = 164.0;
 
   @override
   Size get preferredSize =>
@@ -30,7 +30,7 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
       flexibleSpace: podcast == null
           ? null
           : Padding(
-              padding: const EdgeInsets.only(top: height),
+              padding: const EdgeInsets.only(top: height + 8),
               child: Column(
                 children: [
                   const SizedBox(height: 16),

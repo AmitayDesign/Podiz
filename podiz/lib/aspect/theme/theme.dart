@@ -78,12 +78,12 @@ BottomNavigationBarThemeData _bottomNavigationBarTheme(
   ColorScheme colorScheme,
 ) =>
     BottomNavigationBarThemeData(
-      selectedLabelStyle: textTheme(colorScheme).bodyMedium,
-      unselectedLabelStyle: textTheme(colorScheme).bodyMedium,
       elevation: 0,
       backgroundColor: colorScheme.background.withOpacity(0.9),
       selectedItemColor: Palette.pink,
       unselectedItemColor: Colors.white70,
+      selectedLabelStyle: textTheme(colorScheme).bodyMedium,
+      unselectedLabelStyle: textTheme(colorScheme).bodyMedium,
       showSelectedLabels: true,
       showUnselectedLabels: true,
     );
