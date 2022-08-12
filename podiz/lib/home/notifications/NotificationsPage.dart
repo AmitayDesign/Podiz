@@ -67,7 +67,6 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
           int numberValue;
 
           for (String key in keys) {
-            print(key);
             numberValue = n[key]!.length;
             tabs.add(TabBarLabel(key, numberValue));
             children.add(

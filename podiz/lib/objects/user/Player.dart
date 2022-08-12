@@ -88,11 +88,12 @@ class Player {
       _stateController.add(_state);
       return;
     }
-
+    print("here");
     playTimer(episode, pos);
     error = false;
     _state = PlayerState.play;
     _stateController.add(_state);
+    print(_state);
     return;
   }
 

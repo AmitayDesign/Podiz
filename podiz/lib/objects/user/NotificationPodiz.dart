@@ -16,6 +16,7 @@ class NotificationPodiz {
   int time;
   int lvl;
   List<String> parents;
+  String id;
 
   // NotificationPodiz.follower(
   //   this.uid, {
@@ -33,6 +34,7 @@ class NotificationPodiz {
     required this.time,
     required this.lvl,
     required this.parents,
+    required this.id,
   });
 
   factory NotificationPodiz.fromFirestore(Doc doc) =>
@@ -47,14 +49,16 @@ class NotificationPodiz {
       NotificationPodiz.fromJson(user.toJson());
 
   Comment notificationToComment() {
-    Comment c = Comment("",
-        episodeUid: episodeUid,
-        userUid: userUid,
-        timestamp: timestamp,
-        comment: comment,
-        time: time,
-        lvl: lvl,
-        parents: parents);
+    Comment c = Comment(
+      id,
+      episodeUid: episodeUid,
+      userUid: userUid,
+      timestamp: timestamp,
+      comment: comment,
+      time: time,
+      lvl: lvl,
+      parents: parents,
+    );
     c.replies = {};
     return c;
   }

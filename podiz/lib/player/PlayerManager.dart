@@ -85,7 +85,6 @@ class PlayerManager {
   void play30Back(Podcast podcast) {
     Duration pos = playerBloc.timer.position;
     if (pos.inMilliseconds < const Duration(seconds: 30).inMilliseconds) {
-      print("entrei");
       pos = Duration.zero;
     } else {
       pos = Duration(
