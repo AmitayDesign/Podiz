@@ -216,9 +216,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                                   PodcastAvatar(
                                       imageUrl: podcast.image_url, size: 32),
                                   const SizedBox(width: 8),
-                                  LimitedBox(
-                                    maxWidth: kScreenWidth - (16 + 8 + 32 + 16),
-                                    maxHeight: 40,
+                                  Expanded(
                                     child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
