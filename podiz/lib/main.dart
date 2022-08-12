@@ -76,30 +76,30 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final userLoadingValue = ref.watch(userLoadingProvider);
     final goRouter = ref.watch(goRouterProvider);
-    print('my app gorouter');
     return LocaleBuilder(
       builder: (locale) => MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          localizationsDelegates: Locales.delegates,
-          supportedLocales: Locales.supportedLocales,
-          locale: locale,
-          routerDelegate: goRouter.routerDelegate,
-          routeInformationParser: goRouter.routeInformationParser,
-          routeInformationProvider: goRouter.routeInformationProvider,
-          restorationScopeId: 'app',
-          theme: ThemeConfig.light,
-          themeMode: ref.watch(themeModeProvider),
-          builder: (context, child) => userLoadingValue.when(
-                error: (e, _) {
-                  print('main: ${e.toString()}');
-                  return SplashScreen.error();
-                },
-                loading: () => SplashScreen(),
-                data: (_) {
-                  setScreenSize(context);
-                  return child!;
-                },
-              )),
+        debugShowCheckedModeBanner: false,
+        localizationsDelegates: Locales.delegates,
+        supportedLocales: Locales.supportedLocales,
+        locale: locale,
+        routerDelegate: goRouter.routerDelegate,
+        routeInformationParser: goRouter.routeInformationParser,
+        routeInformationProvider: goRouter.routeInformationProvider,
+        restorationScopeId: 'app',
+        theme: ThemeConfig.light,
+        themeMode: ref.watch(themeModeProvider),
+        builder: (context, child) => userLoadingValue.when(
+          error: (e, _) {
+            print('main: ${e.toString()}');
+            return SplashScreen.error();
+          },
+          loading: () => SplashScreen(),
+          data: (_) {
+            setScreenSize(context);
+            return child!;
+          },
+        ),
+      ),
     );
   }
 }
