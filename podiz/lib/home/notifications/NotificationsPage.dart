@@ -6,7 +6,7 @@ import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/widgets/appBarGradient.dart';
 import 'package:podiz/aspect/widgets/buttonPlay.dart';
 import 'package:podiz/aspect/widgets/cardButton.dart';
-import 'package:podiz/authentication/authManager.dart';
+import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/home/components/profileAvatar.dart';
 import 'package:podiz/home/notifications/components/tabBarLabel.dart';
