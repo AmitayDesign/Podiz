@@ -9,38 +9,31 @@ import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/SearchResult.dart';
 import 'package:podiz/player/PlayerManager.dart';
+import 'package:podiz/providers.dart';
 
-class PodcastTile extends ConsumerStatefulWidget {
+class PodcastTile extends ConsumerWidget {
   final SearchResult result;
-  final bool isPlaying;
-
-  const PodcastTile(this.result, {required this.isPlaying, Key? key})
-      : super(key: key);
+  const PodcastTile(this.result, {Key? key}) : super(key: key);
 
   @override
-  ConsumerState<PodcastTile> createState() => _PodcastTileState();
-}
-
-class _PodcastTileState extends ConsumerState<PodcastTile> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final isPlaying =
+        ref.watch(playerStreamProvider).valueOrNull?.isPlaying ?? false;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: InkWell(
         onTap: () {
-          if (widget.result.show_name == null) {
+          if (result.show_name == null) {
             context.goNamed(
               AppRoute.show.name,
-              params: {'showId': widget.result.show_uri!},
+              params: {'showId': result.show_uri!},
             );
           } else {
-            ref
-                .read(playerManagerProvider)
-                .playPodcast(widget.result.toPodcast(), 0);
+            ref.read(playerManagerProvider).playPodcast(result.toPodcast(), 0);
             context.pushNamed(
               AppRoute.discussion.name,
-              params: {'episodeId': widget.result.uid},
+              params: {'episodeId': result.uid},
             );
           }
         },
@@ -54,7 +47,7 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
             child: Row(
               children: [
-                PodcastAvatar(imageUrl: widget.result.image_url, size: 68),
+                PodcastAvatar(imageUrl: result.image_url, size: 68),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Column(
@@ -63,9 +56,9 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          widget.result.name,
+                          result.name,
                           style: context.textTheme.titleLarge!.copyWith(
-                            color: widget.isPlaying
+                            color: isPlaying
                                 ? context.colorScheme.primary
                                 : Colors.grey.shade50,
                           ),
@@ -73,7 +66,7 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      widget.result.show_name != null
+                      result.show_name != null
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
@@ -81,12 +74,10 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
                                   child: GestureDetector(
                                     onTap: () => context.goNamed(
                                       AppRoute.show.name,
-                                      params: {
-                                        'showId': widget.result.show_uri!
-                                      },
+                                      params: {'showId': result.show_uri!},
                                     ),
                                     child: Text(
-                                      widget.result.show_name!,
+                                      result.show_name!,
                                       style:
                                           context.textTheme.bodyLarge!.copyWith(
                                         color: Palette.grey600,
@@ -105,7 +96,7 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
                                 ),
                                 const SizedBox(width: 12),
                                 Text(
-                                  timeFormatter(widget.result.duration_ms!),
+                                  timeFormatter(result.duration_ms!),
                                   style: context.textTheme.bodyLarge!.copyWith(
                                     color: Palette.grey600,
                                   ),

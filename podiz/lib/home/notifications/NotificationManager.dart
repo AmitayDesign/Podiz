@@ -14,18 +14,26 @@ class NotificationManager {
   NotificationManager(this._read);
 
   Stream<Map<String, List<NotificationPodiz>>> watchNotifications(
-    String userId,
-  ) {
-    return firestore
-        .collection("users")
-        .doc(userId)
-        .collection("notifications")
-        .orderBy("timestamp", descending: true)
-        .snapshots()
-        .map((snapshot) {
-      final notificationList =
-          snapshot.docs.map((doc) => NotificationPodiz.fromFirestore(doc));
-      return Map.fromIterable(notificationList, key: (n) => n.episodeUid);
-    });
-  }
+          String userId) =>
+      firestore
+          .collection("users")
+          .doc(userId)
+          .collection("notifications")
+          .orderBy("timestamp", descending: true)
+          .snapshots()
+          .map((snapshot) {
+        Map<String, List<NotificationPodiz>> notificationMap = {};
+        for (int i = 0; i < snapshot.docs.length; i++) {
+          NotificationPodiz not =
+              NotificationPodiz.fromFirestore(snapshot.docs[i]);
+          if (notificationMap.containsKey(not.episodeUid)) {
+            notificationMap[not.episodeUid]!.add(not);
+          } else {
+            notificationMap.addAll({
+              not.episodeUid: [not]
+            });
+          }
+        }
+        return notificationMap;
+      });
 }
