@@ -126,7 +126,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                   if (user.lastListened.isNotEmpty)
                     FeedTile(
                       Locales.string(context, "mycasts"),
-                      textKey: hotliveKey,
+                      textKey: myCastsKey,
                     ),
                   for (final podcast in authManager.myCast)
                     PodcastCard(
