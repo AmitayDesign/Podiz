@@ -16,7 +16,7 @@ class SearchInSpotify extends ConsumerWidget {
     return AsyncElevatedButton(
       onPressed: () => FirebaseFunctions.instance
           .httpsCallable("searchInSpotify")
-          .call({"query": query, "userUid": user.uid}),
+          .call({"query": query, "userUid": user.uid}),//TODO verify arguments
       child: Text(
         Locales.string(context, "searchSpotify"),
         style: theme.textTheme.button,

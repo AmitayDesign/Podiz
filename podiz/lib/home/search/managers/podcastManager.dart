@@ -32,7 +32,7 @@ class PodcastManager {
     podcastBloc = {};
   }
 
-  Future<void> getDevices(String userID) async {
+  Future<void> getDevices(String userID) async { //TODO verify result
     await FirebaseFunctions.instance
         .httpsCallable("devices")
         .call({"userUid": userID});
