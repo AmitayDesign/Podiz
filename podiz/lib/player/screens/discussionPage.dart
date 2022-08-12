@@ -86,12 +86,14 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
     return Scaffold(
       appBar: DiscussionAppBar(podcastValue.valueOrNull),
       body: podcastValue.when(
-          error: (e, _) {
-            print('discussionPage: ${e.toString()}');
+          error: (e, st) {
+            print('discussionPagezz: ${e.toString()}');
             return SplashScreen.error();
           },
           loading: () => loadingWidget,
           data: (podcast) {
+            print("PODCAST UID");
+            print(podcast.uid);
             return commentsValue.when(
                 error: (e, _) {
                   print('discussionPage: ${e.toString()}');

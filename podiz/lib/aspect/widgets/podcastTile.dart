@@ -40,7 +40,7 @@ class _PodcastTileState extends ConsumerState<PodcastTile> {
                 .playEpisode(widget.result.toPodcast(), 0);
             context.pushNamed(
               AppRoute.discussion.name,
-              params: {'showId': widget.result.show_uri!},
+              params: {'episodeId': widget.result.uid},
             );
           }
         },

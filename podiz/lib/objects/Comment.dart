@@ -29,7 +29,7 @@ class Comment with EquatableMixin {
   });
 
   factory Comment.fromFirestore(Doc doc) =>
-      Comment.fromJson(doc.data()!..['uid'] = doc.id);
+      Comment.fromJson(doc.data()!..['id'] = doc.id);
 
   factory Comment.fromJson(Map<String, dynamic> json) =>
       _$CommentFromJson(json);

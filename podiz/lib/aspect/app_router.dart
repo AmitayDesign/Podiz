@@ -74,11 +74,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             },
           ),
           GoRoute(
-            path: 'discussion/:showId',
+            path: 'discussion/:episodeId',
             name: AppRoute.discussion.name,
             builder: (_, state) {
-              final showId = state.params['showId']!;
-              return DiscussionPage(showId);
+              final episodeId = state.params['episodeId']!;
+              return DiscussionPage(episodeId);
             },
           ),
         ],
