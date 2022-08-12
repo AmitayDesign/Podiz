@@ -5,6 +5,9 @@ import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/home/components/profileAvatar.dart';
 import 'package:podiz/objects/Podcast.dart';
+import 'package:podiz/player/components/pinkTimer.dart';
+import 'package:podiz/player/playerController.dart';
+import 'package:podiz/player/playerWidget.dart';
 import 'package:podiz/providers.dart';
 
 class InsightSheet extends ConsumerStatefulWidget {
@@ -37,67 +40,126 @@ class _CommentSheetState extends ConsumerState<InsightSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
+    final playerValue = ref.watch(playerStreamProvider);
+    final loadingAction = ref.watch(playerControllerProvider);
+    return playerValue.maybeWhen(
+      orElse: () => const SizedBox.shrink(),
+      data: (player) {
+        if (player == null) return const SizedBox.shrink();
+        final action =
+            player.isPlaying ? PlayerAction.pause : PlayerAction.play;
+        final icon = player.isPlaying ? Icons.pause : Icons.play_arrow;
+        final onTap = player.isPlaying
+            ? () => ref.read(playerControllerProvider.notifier).pause()
+            : () => ref.read(playerControllerProvider.notifier).play();
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Consumer(
-                builder: (context, ref, _) {
-                  final user = ref.watch(currentUserProvider);
-                  return ProfileAvatar(user: user, radius: buttonSize / 2);
-                },
+              Row(
+                children: [
+                  Consumer(
+                    builder: (context, ref, _) {
+                      final user = ref.watch(currentUserProvider);
+                      return ProfileAvatar(user: user, radius: buttonSize / 2);
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      controller: commentController,
+                      keyboardType: TextInputType.multiline,
+                      textInputAction: TextInputAction.send,
+                      minLines: 1,
+                      maxLines: 5,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: context.colorScheme.surface,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.circular(
+                            kMinInteractiveDimension / 2,
+                          ),
+                        ),
+                        hintText: "Share your insight...",
+                      ),
+                      onSubmitted: (_) => sendComment(),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  SizedBox.square(
+                    dimension: buttonSize,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        shape: const CircleBorder(),
+                        padding: EdgeInsets.zero,
+                      ),
+                      onPressed: sendComment,
+                      child: const Icon(Icons.send, size: kSmallIconSize),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: TextField(
-                  autofocus: true,
-                  controller: commentController,
-                  keyboardType: TextInputType.multiline,
-                  textInputAction: TextInputAction.send,
-                  minLines: 1,
-                  maxLines: 5,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: context.colorScheme.surface,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(
-                        kMinInteractiveDimension / 2,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
+                child: Row(
+                  children: [
+                    Text(
+                      //TODO locales text
+                      "${widget.podcast.watching} listening with you",
+                      style: context.textTheme.bodySmall,
+                    ),
+                    const Spacer(),
+                    Container(
+                      width: 24,
+                      height: 24,
+                      margin: const EdgeInsets.all(8),
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: loadingAction == null
+                            ? () => ref
+                                .read(playerControllerProvider.notifier)
+                                .goBackward()
+                            : null,
+                        icon: loadingAction == PlayerAction.backward
+                            ? const LoadingAction()
+                            : const Icon(Icons.replay_30),
                       ),
                     ),
-                    hintText: "Share your insight...",
-                  ),
-                  onSubmitted: (_) => sendComment(),
-                ),
-              ),
-              const SizedBox(width: 8),
-              SizedBox.square(
-                dimension: buttonSize,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    shape: const CircleBorder(),
-                    padding: EdgeInsets.zero,
-                  ),
-                  onPressed: sendComment,
-                  child: const Icon(Icons.send, size: kSmallIconSize),
+                    // const SizedBox(width: 18),
+                    PinkTimer(
+                      onPressed: loadingAction == null ? onTap : null,
+                      icon: loadingAction == action
+                          ? const LoadingAction()
+                          : Icon(icon),
+                    ),
+                    // const SizedBox(width: 18),
+                    Container(
+                      width: 24,
+                      height: 24,
+                      margin: const EdgeInsets.all(8),
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: loadingAction == null
+                            ? () => ref
+                                .read(playerControllerProvider.notifier)
+                                .goForward()
+                            : null,
+                        icon: loadingAction == PlayerAction.forward
+                            ? const LoadingAction()
+                            : const Icon(Icons.forward_30),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
-            child: Text(
-              "${widget.podcast.watching} listening right now",
-              style: context.textTheme.bodySmall,
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

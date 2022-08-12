@@ -39,10 +39,6 @@ class AuthManager {
     }
   }
 
-  Future<void> fetchUserInfo(String userId) async {
-    _setUpUserStream(userId);
-  }
-
   void dispose() {
     sub?.cancel();
     _userController.close();

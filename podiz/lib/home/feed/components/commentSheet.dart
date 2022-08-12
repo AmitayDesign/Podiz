@@ -93,6 +93,7 @@ class _CommentSheetState extends ConsumerState<CommentSheet> {
           Padding(
             padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
             child: Text(
+              //TODO locales text
               "${widget.podcast.watching} listening right now",
               style: context.textTheme.bodySmall,
             ),
