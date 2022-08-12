@@ -26,9 +26,9 @@ class FeedPage extends ConsumerStatefulWidget {
 }
 
 class _FeedPageState extends ConsumerState<FeedPage> {
-  late final _controller = ScrollController()..addListener(handleAppBar);
+  late final scrollController = ScrollController()..addListener(handleAppBar);
 
-  final _controllerText = TextEditingController();
+  final textController = TextEditingController();
 
   final myCastsKey = GlobalKey();
   final hotliveKey = GlobalKey();
@@ -58,8 +58,8 @@ class _FeedPageState extends ConsumerState<FeedPage> {
 
   @override
   void dispose() {
-    _controller.dispose();
-    _controllerText.dispose();
+    scrollController.dispose();
+    textController.dispose();
     super.dispose();
   }
 
@@ -75,14 +75,14 @@ class _FeedPageState extends ConsumerState<FeedPage> {
   Widget build(BuildContext context) {
     final user = ref.watch(currentUserProvider);
     final authManager = ref.watch(authManagerProvider);
-    final lastListenedEpisode = ref.watch(lastListenedEpisodeFutureProvider);
+    final lastPodcastValue = ref.watch(lastListenedEpisodeFutureProvider);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: const HomeAppBar(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: CustomScrollView(
-          controller: _controller,
+          controller: scrollController,
           slivers: [
             // so it doesnt start behind the app bar
             const SliverToBoxAdapter(
@@ -90,15 +90,15 @@ class _FeedPageState extends ConsumerState<FeedPage> {
             ),
             if (user.lastListened.isNotEmpty)
               SliverToBoxAdapter(
-                child: lastListenedEpisode.when(
+                child: lastPodcastValue.when(
                   loading: () => const EpisodeLoading(),
                   error: (e, _) {
                     print(e);
                     return const SizedBox();
                   },
-                  data: (ep) => PodcastListTileQuickNote(
-                    ep,
-                    quickNote: quickNote(ep, user),
+                  data: (lastPodcast) => PodcastListTileQuickNote(
+                    lastPodcast,
+                    quickNote: quickNote(lastPodcast, user),
                   ),
                 ),
               ),
@@ -223,7 +223,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                     // key: _key,
                     maxLines: 5,
                     keyboardType: TextInputType.multiline,
-                    controller: _controllerText,
+                    controller: textController,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: const Color(0xFF262626),
@@ -244,10 +244,8 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                 InkWell(
                   onTap: () {
                     ref.read(authManagerProvider).doComment(
-                        _controllerText.text,
-                        episode.uid!,
-                        episode.duration_ms);
-                    _controllerText.clear();
+                        textController.text, episode.uid!, episode.duration_ms);
+                    textController.clear();
                   },
                   child: const Icon(
                     Icons.send,
