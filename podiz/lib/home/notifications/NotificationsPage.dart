@@ -51,7 +51,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
         PlayerState.play;
     final notifications = ref.watch(notificationsStreamProvider);
     return notifications.when(
-        loading: () => notificationsShimmerLoading(context),
+        loading: () => const NotificationLoading(),
         error: (e, _) {
           print('notificationPage: ${e.toString()}');
           return SplashScreen.error();
@@ -67,6 +67,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
           int numberValue;
 
           for (String key in keys) {
+            print(key);
             numberValue = n[key]!.length;
             tabs.add(TabBarLabel(key, numberValue));
             children.add(
@@ -93,8 +94,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                 itemBuilder: (context, index) => Padding(
                       padding: const EdgeInsets.only(top: 17.0),
                       child: (index != list.length)
-                          ? _buildItem(list[index]
-                              .notificationToComment()) //change as profile
+                          ? _buildItem(list[index].notificationToComment())
                           : SizedBox(height: isPlaying ? 205 : 101),
                     )),
           );
@@ -146,7 +146,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
 
   Widget _buildItem(Comment c) {
     final theme = Theme.of(context);
-
+    // return Container();
     return FutureBuilder(
         future: ref.read(userManagerProvider).getUserFromUid(c.userUid),
         initialData: "loading",
@@ -369,18 +369,5 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
           }
           return const NotificationLoading();
         });
-  }
-
-  Widget notificationsShimmerLoading(BuildContext context) {
-    return Column(
-      children: const [
-        NotificationLoading(),
-        SizedBox(height: 12),
-        NotificationLoading(),
-        SizedBox(height: 12),
-        NotificationLoading(),
-        SizedBox(height: 12),
-      ],
-    );
   }
 }
