@@ -29,7 +29,7 @@ class TabBarLabel extends ConsumerWidget {
       return _buildItem(podcast, number);
     }
     return FutureBuilder(
-        future: ref.read(podcastManagerProvider).getPodcastFromFirebase(text),
+        future: ref.read(podcastManagerProvider).fetchPodcast(text),
         initialData: "loading",
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {

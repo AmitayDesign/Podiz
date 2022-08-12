@@ -16,7 +16,7 @@ import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/player/PlayerManager.dart';
 
-import 'objects/Podcaster.dart';
+import 'objects/show.dart';
 import 'profile/userManager.dart';
 
 // INSTANCES
@@ -58,6 +58,8 @@ final currentUserProvider =
   },
 );
 
+// USER
+
 final userProvider = FutureProvider.family<UserPodiz, String>(
   (ref, id) => ref.watch(userManagerProvider).getUserFromUid(id),
 );
@@ -68,11 +70,36 @@ final notificationsStreamProvider =
     StreamProvider<Map<String, List<NotificationPodiz>>>(
         (ref) => ref.watch(notificationManagerProvider).notifications);
 
-// PLAYER
+//* SHOW
 
-final showFutureProvider = FutureProvider.family<Podcaster, String>(
-  (ref, showId) => ref.watch(showManagerProvider).getShowFromFirebase(showId),
+final showFutureProvider = FutureProvider.family.autoDispose<Show, String>(
+  (ref, showId) async {
+    final show = await ref.watch(showManagerProvider).fetchShow(showId);
+    ref.keepAlive();
+    return show;
+  },
 );
+
+//* PODCAST
+
+final lastListenedPodcastStreamProvider = StreamProvider.autoDispose<Podcast?>(
+  (ref) => ref.watch(userStreamProvider.stream).asyncMap((user) {
+    if (user == null) return null;
+    final podcastManager = ref.watch(podcastManagerProvider);
+    return podcastManager.fetchPodcast(user.lastListened);
+  }),
+);
+
+final podcastFutureProvider =
+    FutureProvider.family.autoDispose<Podcast, String>(
+  (ref, id) async {
+    final podcast = await ref.watch(podcastManagerProvider).fetchPodcast(id);
+    ref.keepAlive();
+    return podcast;
+  },
+);
+
+// PLAYER
 
 final playerStreamProvider = StreamProvider<Player>(
   (ref) => ref.watch(playerManagerProvider).player,
@@ -86,22 +113,10 @@ final stateProvider = StreamProvider<PlayerState>(
   (ref) => ref.watch(playerProvider).state,
 );
 
-final playerPodcastProvider = StreamProvider.autoDispose<Podcast>(
+final playerpodcastFutureProvider = StreamProvider.autoDispose<Podcast>(
   (ref) => ref.watch(playerProvider).podcast,
 );
 
 final commentsStreamProvider = StreamProvider.autoDispose<List<Comment>>(
   (ref) => ref.watch(playerManagerProvider).comments,
-);
-
-final feedListFutureProvider = FutureProvider<List<Podcast>>(
-    (ref) => ref.watch(podcastManagerProvider).fetchFeedList());
-
-final lastListenedEpisodeFutureProvider = FutureProvider<Podcast>(
-  (ref) =>
-      ref.watch(podcastManagerProvider).getLastListenedEpisodeFromFirebase(),
-);
-
-final podcastProvider = FutureProvider.family<Podcast, String>(
-  (ref, id) => ref.watch(podcastManagerProvider).getPodcastFromFirebase(id),
 );

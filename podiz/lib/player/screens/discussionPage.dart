@@ -82,7 +82,7 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
   @override
   Widget build(BuildContext context) {
     final commentsValue = ref.watch(commentsStreamProvider);
-    final podcastValue = ref.watch(podcastProvider(widget.showId));
+    final podcastValue = ref.watch(podcastFutureProvider(widget.showId));
     return Scaffold(
       appBar: DiscussionAppBar(podcastValue.valueOrNull),
       body: podcastValue.when(

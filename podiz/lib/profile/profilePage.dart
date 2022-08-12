@@ -14,7 +14,7 @@ import 'package:podiz/loading.dart/notificationLoading.dart';
 import 'package:podiz/loading.dart/shimmerContainer.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
-import 'package:podiz/objects/Podcaster.dart';
+import 'package:podiz/objects/show.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/profile/components.dart/backAppBar.dart';
 import 'package:podiz/profile/components.dart/followPeopleButton.dart';
@@ -188,7 +188,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
   Widget _buildFavouriteItem(String showUid) {
     return FutureBuilder(
-        future: ref.read(showManagerProvider).getShowFromFirebase(showUid),
+        future: ref.read(showManagerProvider).fetchShow(showUid),
         initialData: "loading",
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
@@ -203,7 +203,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
               // if we got our data
             } else if (snapshot.hasData) {
-              final show = snapshot.data as Podcaster;
+              final show = snapshot.data as Show;
               return Padding(
                   padding: const EdgeInsets.only(right: 16),
                   child: PodcastAvatar(imageUrl: show.image_url, size: 68));
@@ -219,9 +219,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   Widget _buildItem(UserPodiz user, Comment c) {
     final theme = Theme.of(context);
     return FutureBuilder(
-        future: ref
-            .read(podcastManagerProvider)
-            .getPodcastFromFirebase(c.episodeUid),
+        future: ref.read(podcastManagerProvider).fetchPodcast(c.episodeUid),
         initialData: "loading",
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {

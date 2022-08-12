@@ -9,8 +9,8 @@ import 'package:podiz/home/homePage.dart';
 import 'package:podiz/home/search/components/searchBar.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/objects/Podcast.dart';
-import 'package:podiz/objects/Podcaster.dart';
 import 'package:podiz/objects/SearchResult.dart';
+import 'package:podiz/objects/show.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
@@ -63,7 +63,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                     .withConverter(
                       fromFirestore: (doc, _) {
                         Podcast podcast = Podcast.fromFirestore(doc);
-                        return podcastManager.podcastToSearchResult(podcast);
+                        return SearchResult.fromPodcast(podcast);
                       },
                       toFirestore: (podcast, _) => {},
                     ),
@@ -88,12 +88,12 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                   );
                 },
               ),
-              FirestoreQueryBuilder<Podcaster>(
+              FirestoreQueryBuilder<Show>(
                 query: FirebaseFirestore.instance
                     .collection("podcasters")
                     .where("searchArray", arrayContains: query.toLowerCase())
                     .withConverter(
-                      fromFirestore: (show, _) => Podcaster.fromFirestore(show),
+                      fromFirestore: (show, _) => Show.fromFirestore(show),
                       toFirestore: (show, _) => {},
                     ),
                 builder: (context, snapshot, _) {

@@ -66,13 +66,23 @@ class Player {
       setUpPodcastStream(episode.uid!);
     }
 
-    HttpsCallableResult<bool> result = await FirebaseFunctions.instance
+    var result = await FirebaseFunctions
+        .instance
         .httpsCallable("play")
         .call({"episodeUid": episode.uid, "userUid": userUid, "position": pos});
     podcastPlaying = episode;
     _podcastController!.add(episode);
-
-    if (!result.data) {
+    print(result.data);
+    
+    if (result.data["result"] == "unauthorized") {
+      //TODO view
+      error = true;
+      _state = PlayerState.stop;
+      _stateController.add(_state);
+      return;
+    }
+    if (result.data["result"] == "devices") {
+      //TODO no device Page
       error = true;
       _state = PlayerState.stop;
       _stateController.add(_state);
@@ -96,10 +106,21 @@ class Player {
   }
 
   Future<void> pauseEpisode(String userUid) async {
-    // TODO verify arguments
-    await FirebaseFunctions.instance
+    HttpsCallableResult<Map<String, String>> result = await FirebaseFunctions
+        .instance
         .httpsCallable("pause")
         .call({"userUid": userUid});
+    print(result.data);
+    if (result.data["result"] == "unauthorized") {
+      //TODO view
+
+      return;
+    }
+    if (result.data["result"] == "devices") {
+      //TODO no device Page
+
+      return;
+    }
     _state = PlayerState.stop;
     _stateController.add(_state);
     timer.setIsPlaying(false);

@@ -1,5 +1,5 @@
 import 'package:podiz/objects/Podcast.dart';
-import 'package:podiz/objects/Podcaster.dart';
+import 'package:podiz/objects/show.dart';
 
 class SearchResult {
   String uid;
@@ -39,7 +39,7 @@ class SearchResult {
       this.followers,
       this.watching});
 
-  Podcast searchResultToPodcast() {
+  Podcast toPodcast() {
     return Podcast(uid,
         name: name,
         description: description!,
@@ -53,8 +53,8 @@ class SearchResult {
         watching: watching!);
   }
 
-  Podcaster searchResultToPodcaster() {
-    return Podcaster(uid,
+  Show toShow() {
+    return Show(uid,
         name: name,
         publisher: publisher!,
         description: description!,
@@ -62,5 +62,21 @@ class SearchResult {
         total_episodes: total_episodes!,
         podcasts: podcasts!,
         followers: followers!);
+  }
+
+  factory SearchResult.fromPodcast(Podcast episode) {
+    return SearchResult(
+      uid: episode.uid!,
+      name: episode.name,
+      description: episode.description,
+      duration_ms: episode.duration_ms,
+      show_name: episode.show_name,
+      show_uri: episode.show_uri,
+      image_url: episode.image_url,
+      comments: episode.comments,
+      commentsImg: episode.commentsImg,
+      release_date: episode.release_date,
+      watching: episode.watching,
+    );
   }
 }

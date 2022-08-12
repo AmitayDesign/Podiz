@@ -80,7 +80,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
   Widget build(BuildContext context) {
     final user = ref.watch(currentUserProvider);
     final authManager = ref.watch(authManagerProvider);
-    final lastPodcastValue = ref.watch(lastListenedEpisodeFutureProvider);
+    final lastPodcastValue = ref.watch(lastListenedPodcastStreamProvider);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: const FeedAppBar(),
@@ -95,17 +95,19 @@ class _FeedPageState extends ConsumerState<FeedPage> {
             ),
 
             //* Last Listened
-            if (user.lastListened.isNotEmpty)
-              SliverToBoxAdapter(
-                child: lastPodcastValue.when(
-                  loading: () => const SkeletonPodcastCard(),
-                  error: (e, _) => null,
-                  data: (lastPodcast) => PodcastCard(
+            SliverToBoxAdapter(
+              child: lastPodcastValue.when(
+                loading: () => const SkeletonPodcastCard(),
+                error: (e, _) => null,
+                data: (lastPodcast) {
+                  if (lastPodcast == null) return null;
+                  return PodcastCard(
                     lastPodcast,
                     bottom: QuickNoteButton(podcast: lastPodcast),
-                  ),
-                ),
+                  );
+                },
               ),
+            ),
 
             //* My Casts
             if (user.favPodcasts.isNotEmpty)
