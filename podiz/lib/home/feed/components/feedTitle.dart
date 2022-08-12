@@ -25,11 +25,7 @@ class SliverFeedTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 16, bottom: 8)
-            .add(const EdgeInsets.symmetric(horizontal: 8)),
-        child: Text(text, style: context.textTheme.bodyLarge, key: textKey),
-      ),
+      child: FeedTile(text, textKey: textKey),
     );
   }
 }

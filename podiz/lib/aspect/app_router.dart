@@ -12,10 +12,10 @@ import 'package:podiz/profile/screens/settingsPage.dart';
 enum AppRoute {
   home,
   onboarding,
-  discussion,
   profile,
   settings,
   show,
+  discussion,
 }
 
 //TODO test login in no premium account
@@ -72,16 +72,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               final showId = state.params['showId']!;
               return ShowPage(showId);
             },
-            routes: [
-              GoRoute(
-                path: 'discussion',
-                name: AppRoute.discussion.name,
-                builder: (_, state) {
-                  final showId = state.params['showId']!;
-                  return DiscussionPage(showId);
-                },
-              ),
-            ],
+          ),
+          GoRoute(
+            path: 'discussion/:showId',
+            name: AppRoute.discussion.name,
+            builder: (_, state) {
+              final showId = state.params['showId']!;
+              return DiscussionPage(showId);
+            },
           ),
         ],
       ),

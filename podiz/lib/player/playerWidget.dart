@@ -37,7 +37,7 @@ class PlayerWidget extends ConsumerWidget {
                   ? () => playerManager.pauseEpisode()
                   : () => playerManager.resumeEpisode(p);
               return InkWell(
-                onTap: () => context.pushNamed(
+                onTap: () => context.goNamed(
                   AppRoute.discussion.name,
                   params: {'showId': p.show_uri},
                 ),

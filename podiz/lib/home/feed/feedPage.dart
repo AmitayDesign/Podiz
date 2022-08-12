@@ -70,7 +70,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
 
   void openPodcast(Podcast podcast) {
     ref.read(playerManagerProvider).playEpisode(podcast, 0);
-    context.pushNamed(
+    context.goNamed(
       AppRoute.discussion.name,
       params: {'showId': podcast.show_uri},
     );
