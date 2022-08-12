@@ -3,18 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutterfire_ui/firestore.dart';
+import 'package:go_router/go_router.dart';
+import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/authentication/authManager.dart';
-import 'package:podiz/home/components/HomeAppBar.dart';
-import 'package:podiz/home/components/circleProfile.dart';
-import 'package:podiz/home/components/podcastListTile.dart';
+import 'package:podiz/home/components/profileAvatar.dart';
+import 'package:podiz/home/feed/components/feedAppBar.dart';
+import 'package:podiz/home/feed/components/podcastCard.dart';
 import 'package:podiz/home/feed/components/podcastListTileQuickNote.dart';
 import 'package:podiz/home/homePage.dart';
 import 'package:podiz/loading.dart/episodeLoading.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/User.dart';
+import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/providers.dart';
 
 class FeedPage extends ConsumerStatefulWidget {
@@ -27,28 +30,25 @@ class FeedPage extends ConsumerStatefulWidget {
 
 class _FeedPageState extends ConsumerState<FeedPage> {
   late final scrollController = ScrollController()..addListener(handleAppBar);
-
   final textController = TextEditingController();
-
   final myCastsKey = GlobalKey();
   final hotliveKey = GlobalKey();
+  final queryFeed = FirebaseFirestore.instance
+      .collection("podcasts")
+      .orderBy("release_date", descending: true)
+      .withConverter(
+        fromFirestore: (doc, _) => Podcast.fromFirestore(doc),
+        toFirestore: (podcast, _) => {},
+      );
 
-  double? positionFromKey(GlobalKey key) {
-    final position = key.offset?.dy;
-    if (position == null) return null;
-    return position + key.size!.height;
-  }
-
-  //TODO handle when the title doesnt exist
   void handleAppBar() {
     final myCastsPosition = myCastsKey.offset?.dy;
     final hotlivePosition = hotliveKey.offset?.dy;
 
-    var title = ref.read(homeBarTitleProvider);
-
-    if (hotlivePosition == null || hotlivePosition < HomeAppBar.height) {
+    late final String title;
+    if (hotlivePosition == null || hotlivePosition < FeedAppBar.height) {
       title = 'hotlive';
-    } else if (myCastsPosition == null || myCastsPosition < HomeAppBar.height) {
+    } else if (myCastsPosition == null || myCastsPosition < FeedAppBar.height) {
       title = 'myCasts';
     } else {
       title = 'lastListened';
@@ -64,13 +64,13 @@ class _FeedPageState extends ConsumerState<FeedPage> {
     super.dispose();
   }
 
-  var queryFeed = FirebaseFirestore.instance
-      .collection("podcasts")
-      .orderBy("release_date", descending: true)
-      .withConverter(
-        fromFirestore: (doc, _) => Podcast.fromFirestore(doc),
-        toFirestore: (podcast, _) => {},
-      );
+  void openPodcast(Podcast podcast) {
+    ref.read(playerManagerProvider).playEpisode(podcast, 0);
+    context.pushNamed(
+      AppRoute.discussion.name,
+      params: {'showId': podcast.show_uri},
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,15 +79,15 @@ class _FeedPageState extends ConsumerState<FeedPage> {
     final lastPodcastValue = ref.watch(lastListenedEpisodeFutureProvider);
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: const HomeAppBar(),
+      appBar: const FeedAppBar(),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
         child: CustomScrollView(
           controller: scrollController,
           slivers: [
             // so it doesnt start behind the app bar
             const SliverToBoxAdapter(
-              child: SizedBox(height: HomeAppBar.backgroundHeight),
+              child: SizedBox(height: FeedAppBar.backgroundHeight),
             ),
             if (user.lastListened.isNotEmpty)
               SliverToBoxAdapter(
@@ -116,10 +116,11 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                       ),
                     ),
                   const SizedBox(height: 10),
-                  ...authManager.myCast.map((cast) => PodcastListTile(cast)),
+                  ...authManager.myCast.map((cast) =>
+                      PodcastCard(cast, onTap: () => openPodcast(cast))),
                 ]),
               ),
-            if (user.lastListened.isNotEmpty && user.favPodcasts.isNotEmpty)
+            if (user.lastListened.isNotEmpty || user.favPodcasts.isNotEmpty)
               SliverToBoxAdapter(
                 child: Align(
                   alignment: Alignment.centerLeft,
@@ -144,7 +145,10 @@ class _FeedPageState extends ConsumerState<FeedPage> {
 
                       Podcast episode = snapshot.docs[index].data();
                       episode.uid = snapshot.docs[index].id;
-                      return PodcastListTile(episode);
+                      return PodcastCard(
+                        episode,
+                        onTap: () => openPodcast(episode),
+                      );
                     },
                     childCount: snapshot.docs.length,
                   ),
@@ -217,7 +221,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
           children: [
             Row(
               children: [
-                CircleProfile(user: user, size: 15.5),
+                ProfileAvatar(user: user, radius: 15.5),
                 const SizedBox(width: 8),
                 LimitedBox(
                   maxWidth: kScreenWidth - (14 + 31 + 8 + 31 + 8 + 14),

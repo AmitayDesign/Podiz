@@ -3,23 +3,22 @@ import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/objects/user/User.dart';
 
-class CircleProfile extends StatelessWidget {
+class ProfileAvatar extends StatelessWidget {
   final UserPodiz user;
-  final double size;
-  const CircleProfile({Key? key, required this.user, required this.size})
+  final double radius;
+  const ProfileAvatar({Key? key, required this.user, required this.radius})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return InkResponse(
-      onTap: () => context.pushNamed(
+    return IconButton(
+      onPressed: () => context.pushNamed(
         AppRoute.profile.name,
         params: {'userId': user.uid},
       ),
-      child: CircleAvatar(
-        radius: size,
-        foregroundImage: NetworkImage(user.image_url),
-        child: const InkWell(),
+      icon: CircleAvatar(
+        radius: radius,
+        backgroundImage: NetworkImage(user.image_url),
       ),
     );
   }

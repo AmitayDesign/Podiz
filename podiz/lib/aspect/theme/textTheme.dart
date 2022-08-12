@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:podiz/aspect/theme/palette.dart';
 
 /*
 36 - 700 - white        displaySmall
@@ -21,61 +20,51 @@ TextTheme textTheme(ColorScheme colorScheme) => GoogleFonts.montserratTextTheme(
           fontSize: 36,
           fontWeight: FontWeight.w700,
           color: Colors.white,
-          height: 1.2,
         ),
         headlineLarge: TextStyle(
           fontSize: 32,
           fontWeight: FontWeight.w700,
           color: Colors.white,
-          height: 1.2,
         ),
         headlineSmall: TextStyle(
           fontSize: 24,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w700,
           color: Colors.white,
-          height: 1.2,
         ),
         titleLarge: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w700,
           color: Colors.white,
-          height: 1.2,
         ),
         titleMedium: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w700,
           color: Colors.white,
-          height: 1.2,
         ),
         titleSmall: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w700,
           color: Colors.white,
-          height: 1.2,
         ),
         bodyLarge: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w400,
           color: Colors.white,
-          height: 1.2,
         ),
         bodyMedium: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w400,
           color: Colors.white70,
-          height: 1.2,
         ),
         bodySmall: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w400,
-          color: Palette.grey600,
-          height: 1.2,
+          color: Colors.white70,
         ),
         labelLarge: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w700,
           color: Colors.white,
-          height: 1.2,
         ),
       ),
     );

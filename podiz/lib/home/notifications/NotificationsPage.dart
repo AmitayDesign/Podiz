@@ -5,8 +5,8 @@ import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/widgets/appBarGradient.dart';
 import 'package:podiz/authentication/authManager.dart';
-import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
+import 'package:podiz/home/components/profileAvatar.dart';
 import 'package:podiz/home/feed/components/buttonPlay.dart';
 import 'package:podiz/home/feed/components/cardButton.dart';
 import 'package:podiz/home/notifications/components/tabBarLabel.dart';
@@ -259,7 +259,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                                   children: [
                                     Row(
                                       children: [
-                                        CircleProfile(user: user, size: 20),
+                                        ProfileAvatar(user: user, radius: 20),
                                         const SizedBox(
                                           width: 8,
                                         ),
@@ -420,7 +420,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        CircleProfile(user: user, size: 20),
+                        ProfileAvatar(user: user, radius: 20),
                         const SizedBox(width: 8),
                         Column(
                           children: [
@@ -451,7 +451,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        CircleProfile(user: user, size: 15.5),
+                        ProfileAvatar(user: user, radius: 15.5),
                         const SizedBox(width: 8),
                         LimitedBox(
                           maxWidth: kScreenWidth - (14 + 31 + 8 + 31 + 8 + 14),

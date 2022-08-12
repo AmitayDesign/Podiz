@@ -11,6 +11,7 @@ ThemeData theme(ColorScheme colorScheme) => ThemeData(
       errorColor: colorScheme.error,
       scaffoldBackgroundColor: colorScheme.background,
       canvasColor: colorScheme.background,
+      cardColor: colorScheme.surface,
       primaryTextTheme: textTheme(colorScheme),
       textTheme: textTheme(colorScheme),
       appBarTheme: _appBarTheme(colorScheme),

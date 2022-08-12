@@ -4,8 +4,8 @@ import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/authentication/authManager.dart';
-import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
+import 'package:podiz/home/components/profileAvatar.dart';
 import 'package:podiz/home/feed/components/buttonPlay.dart';
 import 'package:podiz/home/feed/components/cardButton.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
@@ -285,7 +285,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         children: [
                           Row(
                             children: [
-                              CircleProfile(user: user, size: 20),
+                              ProfileAvatar(user: user, radius: 20),
                               const SizedBox(
                                 width: 8,
                               ),
@@ -433,7 +433,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        CircleProfile(user: user, size: 20),
+                        ProfileAvatar(user: user, radius: 20),
                         const SizedBox(width: 8),
                         Column(
                           children: [
@@ -464,7 +464,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        CircleProfile(user: user, size: 15.5),
+                        ProfileAvatar(user: user, radius: 15.5),
                         const SizedBox(width: 8),
                         LimitedBox(
                           maxWidth: kScreenWidth - (14 + 31 + 8 + 31 + 8 + 14),

@@ -5,7 +5,7 @@ import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/authentication/authManager.dart';
-import 'package:podiz/home/components/circleProfile.dart';
+import 'package:podiz/home/components/profileAvatar.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/player/PlayerManager.dart';
@@ -80,10 +80,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
         children: [
           Row(
             children: [
-              CircleProfile(
-                user: user,
-                size: 15.5,
-              ),
+              ProfileAvatar(user: user, radius: 15.5),
               const SizedBox(width: 8),
               LimitedBox(
                 maxWidth: kScreenWidth - (14 + 31 + 8 + 31 + 8 + 14),

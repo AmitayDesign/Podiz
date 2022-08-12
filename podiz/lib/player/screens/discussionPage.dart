@@ -7,7 +7,7 @@ import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/widgets/shimmerLoading.dart';
 import 'package:podiz/authentication/authManager.dart';
-import 'package:podiz/home/components/circleProfile.dart';
+import 'package:podiz/home/components/profileAvatar.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/player/PlayerManager.dart';
@@ -171,7 +171,7 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        CircleProfile(user: user, size: 20),
+                        ProfileAvatar(user: user, radius: 20),
                         const SizedBox(width: 8),
                         Column(
                           children: [
@@ -202,7 +202,7 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        CircleProfile(user: user, size: 15.5),
+                        ProfileAvatar(user: user, radius: 15.5),
                         const SizedBox(width: 8),
                         LimitedBox(
                           maxWidth: kScreenWidth - (14 + 31 + 8 + 31 + 8 + 14),

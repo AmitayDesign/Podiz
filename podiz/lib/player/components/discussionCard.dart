@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/theme/palette.dart';
-import 'package:podiz/home/components/circleProfile.dart';
+import 'package:podiz/home/components/profileAvatar.dart';
 import 'package:podiz/home/feed/components/buttonPlay.dart';
 import 'package:podiz/home/feed/components/cardButton.dart';
 import 'package:podiz/objects/Comment.dart';
@@ -80,7 +80,7 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                       children: [
                         Row(
                           children: [
-                            CircleProfile(user: user, size: 20),
+                            ProfileAvatar(user: user, radius: 20),
                             const SizedBox(
                               width: 8,
                             ),
