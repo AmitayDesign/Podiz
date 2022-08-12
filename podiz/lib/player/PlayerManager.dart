@@ -182,7 +182,7 @@ class PlayerManager {
   int index = 0;
 
   bool firstTime = true;
-
+  bool showAll = false;
   setUpDiscussionPageStream(String podcastUid) async {
     if (!firstTime) {
       await commentsStreamSubscription!.cancel();
@@ -193,6 +193,7 @@ class PlayerManager {
     index = 0;
     firstTime = false;
     bool flag = false;
+    showAll = false;
     _commentsStream = BehaviorSubject<List<Comment>>();
     commentsStreamSubscription = firestore
         .collection("podcasts")
@@ -236,7 +237,16 @@ class PlayerManager {
     }
   }
 
+  void activateSpoilerAlert() {
+    showAll = true;
+    //TODO needs to refactor maybe
+  }
+
   showComments(int time) {
+    if (showAll) {
+      _commentsStream?.add(commentsOrdered.reversed.toList());
+      return;
+    }
     int i;
     for (i = index; i < commentsOrdered.length; i++) {
       if (commentsOrdered[i].time > time) {
