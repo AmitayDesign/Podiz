@@ -106,11 +106,11 @@ class Player {
   }
 
   Future<void> pauseEpisode(String userUid) async {
-    HttpsCallableResult<Map<String, String>> result = await FirebaseFunctions
+    var result = await FirebaseFunctions
         .instance
         .httpsCallable("pause")
         .call({"userUid": userUid});
-    print(result.data);
+        print(result.data);
     if (result.data["result"] == "unauthorized") {
       //TODO view
 
