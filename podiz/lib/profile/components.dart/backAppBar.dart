@@ -27,23 +27,16 @@ class BackAppBarButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: Navigator.of(context).pop,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(
-            Icons.arrow_back_ios_new,
-            size: 12,
-            color: Color(0xB2FFFFFF),
-          ),
-          const SizedBox(width: 10),
-          Text(
-            Locales.string(context, "back"),
-            style: context.textTheme.bodyMedium,
-            overflow: TextOverflow.ellipsis,
-          )
-        ],
+    return TextButton.icon(
+      onPressed: Navigator.of(context).pop,
+      label: Text(
+        Locales.string(context, "back"),
+        style: context.textTheme.bodyMedium,
+      ),
+      icon: const Icon(
+        Icons.arrow_back_ios_new,
+        size: 12,
+        color: Color(0xB2FFFFFF),
       ),
     );
   }

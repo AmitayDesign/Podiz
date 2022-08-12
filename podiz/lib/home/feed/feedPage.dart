@@ -39,6 +39,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
     return position + key.size!.height;
   }
 
+  //TODO handle when the title doesnt exist
   void handleAppBar() {
     final myCastsPosition = myCastsKey.offset?.dy;
     final hotlivePosition = hotliveKey.offset?.dy;
