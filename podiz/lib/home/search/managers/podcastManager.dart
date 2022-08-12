@@ -19,7 +19,6 @@ class PodcastManager {
   AuthManager get authManager => _read(authManagerProvider);
   ShowManager get showManager => _read(showManagerProvider);
 
-  get userStream => _read(userStreamProvider);
   FirebaseFirestore get firestore => _read(firestoreProvider);
 
   Map<String, Podcast> podcastBloc = {};
@@ -39,23 +38,9 @@ class PodcastManager {
     print("devices");
   }
 
-  Future<void> fetchUserPlayer(String userID) async {
-    HttpsCallableResult result = await FirebaseFunctions.instance
-        .httpsCallable("fetchUserPlayer")
-        .call({"userUid": userID});
-    print(result.data);
-    //false se nao tiver nada ou se nao for um podcast!
-    //{"uid: String
-    // isPlaying: bool
-    // position : int
-    //"}
-    //procurar o podcast e dps por a aparecer no player com o state e a position!
-  }
-
   Future<Podcast> getPodcastFromFirebase(String episodeId) async {
     final doc = await firestore.collection("podcasts").doc(episodeId).get();
-    final episode = Podcast.fromFirestore(doc);
-    return episode;
+    return Podcast.fromFirestore(doc);
   }
 
   SearchResult? getSearchResultById(String podcastId) {
@@ -93,10 +78,8 @@ class PodcastManager {
   }
 
   Future<Podcast> getLastListenedEpisodeFromFirebase() async {
-    String uid = authManager.currentUser!.lastListened;
-    DocumentSnapshot<Map<String, dynamic>> doc =
-        await firestore.collection("podcasts").doc(uid).get();
-    return Podcast.fromFirestore(doc);
+    String podcastId = authManager.currentUser!.lastListened;
+    return getPodcastFromFirebase(podcastId);
   }
 
   fetchFeedList() {}

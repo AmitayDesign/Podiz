@@ -5,8 +5,8 @@ import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/widgets/appBarGradient.dart';
 import 'package:podiz/authentication/authManager.dart';
-import 'package:podiz/home/components/circleProfile.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
+import 'package:podiz/home/components/profileAvatar.dart';
 import 'package:podiz/home/feed/components/buttonPlay.dart';
 import 'package:podiz/home/feed/components/cardButton.dart';
 import 'package:podiz/home/notifications/components/tabBarLabel.dart';
@@ -15,14 +15,14 @@ import 'package:podiz/loading.dart/notificationLoading.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/NotificationPodiz.dart';
+import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
 
 class NotificationsPage extends ConsumerStatefulWidget {
-  final bool isPlaying;
-  const NotificationsPage(this.isPlaying, {Key? key}) : super(key: key);
+  const NotificationsPage({Key? key}) : super(key: key);
 
   @override
   ConsumerState<NotificationsPage> createState() => _NotificationsPageState();
@@ -55,6 +55,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
   Widget build(BuildContext context) {
     // return Container();
     final theme = Theme.of(context);
+    final isPlaying = ref.watch(playerStreamProvider).valueOrNull?.getState ==
+        PlayerState.play;
     final notifications = ref.watch(notificationsStreamProvider);
     return notifications.when(
         loading: () => notificationsShimmerLoading(context),
@@ -84,7 +86,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                         padding: const EdgeInsets.only(top: 17.0),
                         child: (index != numberValue)
                             ? _buildItem(n[key]![index].notificationToComment())
-                            : SizedBox(height: widget.isPlaying ? 205 : 101),
+                            : SizedBox(height: isPlaying ? 205 : 101),
                       )),
             );
           }
@@ -101,7 +103,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                       padding: const EdgeInsets.only(top: 17.0),
                       child: (index != list.length)
                           ? _buildItem(list[index].notificationToComment())
-                          : SizedBox(height: widget.isPlaying ? 205 : 101),
+                          : SizedBox(height: isPlaying ? 205 : 101),
                     )),
           );
           return GestureDetector(
@@ -259,7 +261,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                                   children: [
                                     Row(
                                       children: [
-                                        CircleProfile(user: user, size: 20),
+                                        ProfileAvatar(user: user, radius: 20),
                                         const SizedBox(
                                           width: 8,
                                         ),
@@ -420,7 +422,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        CircleProfile(user: user, size: 20),
+                        ProfileAvatar(user: user, radius: 20),
                         const SizedBox(width: 8),
                         Column(
                           children: [
@@ -451,7 +453,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        CircleProfile(user: user, size: 15.5),
+                        ProfileAvatar(user: user, radius: 15.5),
                         const SizedBox(width: 8),
                         LimitedBox(
                           maxWidth: kScreenWidth - (14 + 31 + 8 + 31 + 8 + 14),

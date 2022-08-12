@@ -19,7 +19,6 @@ late SharedPreferences preferences;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   await Locales.init(['en']);
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -37,10 +36,6 @@ void main() async {
   await Firebase.initializeApp().catchError((onError) {
     print("call no internet dialog");
   });
-
-  // container.read(authManagerProvider).firstUserLoad.then(
-  //       (_) => FlutterNativeSplash.remove(),
-  //     );
 
   // PushNotificationService.init(container.read);
   runApp(UncontrolledProviderScope(container: container, child: const MyApp()));

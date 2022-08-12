@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:podiz/aspect/constants.dart';
 
 class PodcastAvatar extends StatefulWidget {
   final String imageUrl;
@@ -23,11 +24,13 @@ class _PodcastAvatarState extends State<PodcastAvatar> {
         height: widget.size,
         width: widget.size,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+          borderRadius: BorderRadius.circular(kBorderRadius),
+          image: DecorationImage(
+            image: imageProvider,
+            fit: BoxFit.cover,
+          ),
         ),
       ),
-      fit: BoxFit.cover,
     );
   }
 }

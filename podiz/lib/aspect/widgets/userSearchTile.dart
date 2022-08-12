@@ -4,7 +4,7 @@ import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/theme/palette.dart';
-import 'package:podiz/home/components/circleProfile.dart';
+import 'package:podiz/home/components/profileAvatar.dart';
 import 'package:podiz/objects/user/User.dart';
 
 class UserSearchTile extends StatelessWidget {
@@ -29,7 +29,7 @@ class UserSearchTile extends StatelessWidget {
         child: Row(
           children: [
             const SizedBox(width: 16),
-            CircleProfile(user: user, size: 20),
+            ProfileAvatar(user: user, radius: 20),
             const SizedBox(width: 11),
             LimitedBox(
               maxWidth: kScreenWidth - (16 + 16 + 20 + 11 + 40 + 16 + 16),

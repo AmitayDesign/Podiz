@@ -4,15 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/widgets/appBarGradient.dart';
-import 'package:podiz/home/components/circleProfile.dart';
+import 'package:podiz/home/components/profileAvatar.dart';
 import 'package:podiz/providers.dart';
 
 final homeBarTitleProvider = StateProvider<String>((ref) => 'lastListened');
 
-class HomeAppBar extends ConsumerWidget with PreferredSizeWidget {
-  const HomeAppBar({Key? key}) : super(key: key);
+class FeedAppBar extends ConsumerWidget with PreferredSizeWidget {
+  const FeedAppBar({Key? key}) : super(key: key);
 
   static const height = 64.0;
   static const backgroundHeight = height * 1.25;
@@ -30,13 +29,12 @@ class HomeAppBar extends ConsumerWidget with PreferredSizeWidget {
       toolbarHeight: height,
       title: Text(
         Locales.string(context, title),
-        style: context.textTheme.bodyLarge!.copyWith(color: Palette.grey600),
-        overflow: TextOverflow.ellipsis,
+        style: context.textTheme.bodyLarge,
       ),
       actions: [
-        CircleProfile(user: user, size: 20),
+        ProfileAvatarButton(user: user, radius: 16),
         IconButton(
-          icon: const Icon(Icons.settings, color: Colors.grey),
+          icon: const Icon(Icons.settings),
           onPressed: () => context.goNamed(AppRoute.settings.name),
         ),
       ],

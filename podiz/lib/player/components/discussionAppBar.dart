@@ -36,7 +36,7 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
                   const SizedBox(height: 16),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: InsightsRow.quickNote(podcast!),
+                    child: InsightsRow(podcast: podcast!),
                   ),
                   const SizedBox(height: 8),
                   Padding(

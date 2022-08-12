@@ -28,27 +28,27 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: InkWell(
-        onTap: () {
-          ref
-              .read(playerManagerProvider)
-              .playEpisode(widget.result.searchResultToPodcast(), 0);
-          context.pushNamed(
-            AppRoute.discussion.name,
-            params: {'showId': widget.result.show_uri!},
-          );
-        },
-        child: Container(
-          height: 188,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(kBorderRadius),
-            color: theme.colorScheme.surface,
-          ),
+      child: Card(
+        clipBehavior: Clip.hardEdge,
+        color: theme.colorScheme.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(kBorderRadius),
+        ),
+        child: InkWell(
+          onTap: () {
+            ref
+                .read(playerManagerProvider)
+                .playEpisode(widget.result.searchResultToPodcast(), 0);
+            context.goNamed(
+              AppRoute.discussion.name,
+              params: {'showId': widget.result.show_uri!},
+            );
+          },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
             child: Column(
               children: [
-                InsightsRow(widget.result.searchResultToPodcast()),
+                InsightsRow(podcast: widget.result.searchResultToPodcast()),
                 const SizedBox(height: 16),
                 Row(
                   children: [

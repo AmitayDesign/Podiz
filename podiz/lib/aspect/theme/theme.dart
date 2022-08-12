@@ -11,6 +11,7 @@ ThemeData theme(ColorScheme colorScheme) => ThemeData(
       errorColor: colorScheme.error,
       scaffoldBackgroundColor: colorScheme.background,
       canvasColor: colorScheme.background,
+      cardColor: colorScheme.surface,
       primaryTextTheme: textTheme(colorScheme),
       textTheme: textTheme(colorScheme),
       appBarTheme: _appBarTheme(colorScheme),
@@ -51,7 +52,7 @@ InputDecorationTheme _inputDecorationTheme(ColorScheme colorScheme) =>
       contentPadding: const EdgeInsets.symmetric(
         horizontal: 16,
       ),
-      hintStyle: textTheme(colorScheme).bodySmall,
+      hintStyle: textTheme(colorScheme).bodyMedium,
     );
 
 ElevatedButtonThemeData _elevatedButtonTheme(ColorScheme colorScheme) =>

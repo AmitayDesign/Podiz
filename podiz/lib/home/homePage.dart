@@ -9,9 +9,7 @@ import 'package:podiz/aspect/widgets/tap_to_unfocus.dart';
 import 'package:podiz/home/feed/feedPage.dart';
 import 'package:podiz/home/notifications/NotificationsPage.dart';
 import 'package:podiz/home/search/searchPage.dart';
-import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/player/playerWidget.dart';
-import 'package:podiz/providers.dart';
 
 enum HomeDestination { feed, search, notifications }
 
@@ -30,8 +28,6 @@ class _HomePageState extends ConsumerState<HomePage>
     with AutomaticKeepAliveClientMixin {
   late var destination = widget.destination ?? HomeDestination.feed;
   late final pageController = PageController(initialPage: destination.index);
-
-  bool isPlaying = false;
 
   @override
   bool get wantKeepAlive => true;
@@ -80,12 +76,6 @@ class _HomePageState extends ConsumerState<HomePage>
     // call 'super.build' when using 'AutomaticKeepAliveClientMixin'
     super.build(context);
 
-    ref.listen<AsyncValue<PlayerState>>(stateProvider, (_, stateValue) {
-      final state = stateValue.valueOrNull;
-      // Future.microtask(() {});
-      setState(() => isPlaying = state != null && state != PlayerState.close);
-    });
-
     return KeyboardVisibilityBuilder(
       builder: (context, isKeyBoardOpen) {
         return TapToUnfocus(
@@ -96,14 +86,14 @@ class _HomePageState extends ConsumerState<HomePage>
               children: [
                 PageView(
                   controller: pageController,
-                  children: [
-                    FeedPage(isPlaying),
-                    const SearchPage(),
-                    NotificationsPage(isPlaying),
+                  children: const [
+                    FeedPage(),
+                    SearchPage(),
+                    NotificationsPage(),
                   ],
                 ),
                 //TODO playerwidget
-                if (!isKeyBoardOpen && isPlaying)
+                if (!isKeyBoardOpen)
                   const Padding(
                     padding: EdgeInsets.only(bottom: HomePage.bottomBarHeigh),
                     child: PlayerWidget(),
