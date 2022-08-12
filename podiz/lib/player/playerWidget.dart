@@ -3,11 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/player/components/pinkProgress.dart';
 import 'package:podiz/player/components/pinkTimer.dart';
+import 'package:podiz/player/playerController.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
 
@@ -17,11 +19,10 @@ class PlayerWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(stateProvider);
+    final loadingAction = ref.watch(playerControllerProvider);
     return state.when(
       data: (s) {
         if (s == PlayerState.close) return Container();
-
-        final icon = s == PlayerState.play ? Icons.stop : Icons.play_arrow;
 
         final podcast = ref.watch(playerpodcastFutureProvider);
         return podcast.when(
@@ -29,27 +30,34 @@ class PlayerWidget extends ConsumerWidget {
               print('playerWidget: ${e.toString()}');
               return SplashScreen.error();
             },
-            loading: () => const CircularProgressIndicator(),
+            loading: () => const LoadingAction(),
             data: (p) {
               final playerManager = ref.watch(playerManagerProvider);
               p = playerManager.playerBloc.podcastPlaying!;
+              final action = s == PlayerState.play
+                  ? PlayerAction.pause
+                  : PlayerAction.play;
+              final icon =
+                  s == PlayerState.play ? Icons.pause : Icons.play_arrow;
               final onTap = s == PlayerState.play
-                  ? () => playerManager.pauseEpisode()
-                  : () => playerManager.resumeEpisode(p);
-              return InkWell(
-                onTap: () => context.goNamed(
-                  AppRoute.discussion.name,
-                  params: {'episodeId': p.uid!},
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    PinkProgress(p.duration_ms),
-                    Container(
-                      height: 100,
-                      color: const Color(0xFF3E0979),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                  ? () => ref.read(playerControllerProvider.notifier).pause(p)
+                  : () => ref.read(playerControllerProvider.notifier).play(p);
+              return Material(
+                color: Palette.darkPurple,
+                child: InkWell(
+                  onTap: () => context.goNamed(
+                    AppRoute.discussion.name,
+                    params: {'episodeId': p.uid!},
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      PinkProgress(p.duration_ms),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
@@ -82,10 +90,14 @@ class PlayerWidget extends ConsumerWidget {
                               margin: const EdgeInsets.all(8),
                               child: IconButton(
                                 padding: EdgeInsets.zero,
-                                onPressed: () => playerManager.play30Back(p),
-                                icon: const Icon(
-                                  Icons.rotate_90_degrees_ccw_outlined,
-                                ),
+                                onPressed: loadingAction == null
+                                    ? () => ref
+                                        .read(playerControllerProvider.notifier)
+                                        .goBackward(p)
+                                    : null,
+                                icon: loadingAction == PlayerAction.backward
+                                    ? const LoadingAction()
+                                    : const Icon(Icons.replay_30),
                               ),
                             ),
                             // const SizedBox(width: 18),
@@ -95,8 +107,10 @@ class PlayerWidget extends ConsumerWidget {
                               margin: const EdgeInsets.all(8),
                               child: IconButton(
                                 padding: EdgeInsets.zero,
-                                icon: Icon(icon),
-                                onPressed: onTap,
+                                onPressed: loadingAction == null ? onTap : null,
+                                icon: loadingAction == action
+                                    ? const LoadingAction()
+                                    : Icon(icon),
                               ),
                             ),
                             // const SizedBox(width: 18),
@@ -106,17 +120,21 @@ class PlayerWidget extends ConsumerWidget {
                               margin: const EdgeInsets.all(8),
                               child: IconButton(
                                 padding: EdgeInsets.zero,
-                                onPressed: () => playerManager.play30Up(p),
-                                icon: const Icon(
-                                  Icons.rotate_90_degrees_cw_outlined,
-                                ),
+                                onPressed: loadingAction == null
+                                    ? () => ref
+                                        .read(playerControllerProvider.notifier)
+                                        .goForward(p)
+                                    : null,
+                                icon: loadingAction == PlayerAction.forward
+                                    ? const LoadingAction()
+                                    : const Icon(Icons.forward_30),
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             });
@@ -126,6 +144,21 @@ class PlayerWidget extends ConsumerWidget {
         return SplashScreen.error();
       },
       loading: () => SplashScreen(),
+    );
+  }
+}
+
+class LoadingAction extends StatelessWidget {
+  const LoadingAction({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.square(
+      dimension: 16,
+      child: CircularProgressIndicator(
+        strokeWidth: 3,
+        color: context.theme.disabledColor,
+      ),
     );
   }
 }
