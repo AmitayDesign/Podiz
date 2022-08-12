@@ -2,7 +2,6 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/widgets/loadingButton.dart';
 import 'package:podiz/providers.dart';
 
@@ -34,12 +33,12 @@ class _SpotifySearchState extends ConsumerState<SpotifySearch> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            '${Locales.string(context, "noresults")} "${widget.query}"',
-            style: context.textTheme.bodySmall,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
+          // Text(
+          //   '${Locales.string(context, "noresults")} "${widget.query}"',
+          //   style: context.textTheme.bodySmall,
+          //   textAlign: TextAlign.center,
+          // ),
+          // const SizedBox(height: 8),
           LoadingTextButton(
             loading: isLoading,
             onPressed: searchInSpotify,

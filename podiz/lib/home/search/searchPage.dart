@@ -14,6 +14,8 @@ import 'package:podiz/objects/show.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/profile/userManager.dart';
 
+import 'components/spotifySearch.dart';
+
 class SearchPage extends ConsumerStatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
 
@@ -65,8 +67,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                     builder: (context, podcast) => PodcastTile(podcast), //!
                   ),
 
-                  // if (query.isNotEmpty && !hasResults)
-                  //   SliverToBoxAdapter(child: SpotifySearch(query)),
+                  if (query.isNotEmpty)
+                    SliverToBoxAdapter(child: SpotifySearch(query)),
 
                   // so it doesnt end behind the bottom bar
                   const SliverToBoxAdapter(
