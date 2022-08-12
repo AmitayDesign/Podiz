@@ -25,7 +25,7 @@ class InsightsRow extends StatelessWidget {
                   return ProfileAvatar(user: user, radius: 16);
                 },
               ),
-        // const SizedBox(width: 8),
+        const SizedBox(width: 8),
         Expanded(
           child: Text(
             hasComments

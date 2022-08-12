@@ -52,7 +52,7 @@ InputDecorationTheme _inputDecorationTheme(ColorScheme colorScheme) =>
       contentPadding: const EdgeInsets.symmetric(
         horizontal: 16,
       ),
-      hintStyle: textTheme(colorScheme).bodySmall,
+      hintStyle: textTheme(colorScheme).bodyMedium,
     );
 
 ElevatedButtonThemeData _elevatedButtonTheme(ColorScheme colorScheme) =>

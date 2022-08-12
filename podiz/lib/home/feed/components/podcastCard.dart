@@ -10,7 +10,14 @@ import 'package:podiz/objects/Podcast.dart';
 class PodcastCard extends StatelessWidget {
   final Podcast podcast;
   final VoidCallback? onTap;
-  const PodcastCard(this.podcast, {Key? key, this.onTap}) : super(key: key);
+  final Widget? bottom;
+
+  const PodcastCard(
+    this.podcast, {
+    Key? key,
+    this.onTap,
+    this.bottom,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +35,14 @@ class PodcastCard extends StatelessWidget {
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16)
-              .add(const EdgeInsets.only(bottom: 12)),
+              .add(const EdgeInsets.only(top: 8, bottom: 12)),
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.only(bottom: 2),
+                padding: const EdgeInsets.only(left: 2),
                 child: InsightsRow(podcast: podcast),
               ),
+              const SizedBox(height: 8),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -42,7 +50,7 @@ class PodcastCard extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 4),
+                      padding: const EdgeInsets.symmetric(vertical: 2),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -50,6 +58,7 @@ class PodcastCard extends StatelessWidget {
                             podcast.name,
                             style: titleStyle,
                             overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
                           ),
                           Row(
                             children: [
@@ -72,6 +81,10 @@ class PodcastCard extends StatelessWidget {
                   ),
                 ],
               ),
+              if (bottom != null) ...[
+                const SizedBox(height: 12),
+                bottom!,
+              ],
             ],
           ),
         ),

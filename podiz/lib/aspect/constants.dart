@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 const kBorderRadius = 10.0;
-const kSmallIconSize = 18.0;
+const kSmallIconSize = 20.0;
 late double kScreenHeight;
 late double kScreenWidth;
 

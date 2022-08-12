@@ -11,6 +11,31 @@ class ProfileAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => context.pushNamed(
+        AppRoute.profile.name,
+        params: {'userId': user.uid},
+      ),
+      child: CircleAvatar(
+        radius: radius,
+        backgroundImage: NetworkImage(user.image_url),
+      ),
+    );
+  }
+}
+
+class ProfileAvatarButton extends StatelessWidget {
+  final UserPodiz user;
+  final double radius;
+
+  const ProfileAvatarButton({
+    Key? key,
+    required this.user,
+    required this.radius,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return IconButton(
       onPressed: () => context.pushNamed(
         AppRoute.profile.name,
