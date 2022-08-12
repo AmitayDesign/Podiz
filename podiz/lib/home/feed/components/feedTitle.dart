@@ -3,14 +3,15 @@ import 'package:podiz/aspect/extensions.dart';
 
 class FeedTile extends StatelessWidget {
   final String text;
-  const FeedTile(this.text, {Key? key}) : super(key: key);
+  final Key? textKey;
+  const FeedTile(this.text, {Key? key, this.textKey}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 16, bottom: 8)
           .add(const EdgeInsets.symmetric(horizontal: 8)),
-      child: Text(text, style: context.textTheme.bodyLarge),
+      child: Text(text, style: context.textTheme.bodyLarge, key: textKey),
     );
   }
 }
@@ -18,7 +19,8 @@ class FeedTile extends StatelessWidget {
 /// Sliver version of [FeedTitle]
 class SliverFeedTile extends StatelessWidget {
   final String text;
-  const SliverFeedTile(this.text, {Key? key}) : super(key: key);
+  final Key? textKey;
+  const SliverFeedTile(this.text, {Key? key, this.textKey}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class SliverFeedTile extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(top: 16, bottom: 8)
             .add(const EdgeInsets.symmetric(horizontal: 8)),
-        child: Text(text, style: context.textTheme.bodyLarge),
+        child: Text(text, style: context.textTheme.bodyLarge, key: textKey),
       ),
     );
   }

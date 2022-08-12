@@ -22,7 +22,7 @@ class PodcastCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final titleStyle = context.textTheme.titleMedium;
-    final subitleStyle = context.textTheme.bodyMedium;
+    final subtitleStyle = context.textTheme.bodyMedium;
 
     return Card(
       margin: const EdgeInsets.all(8),
@@ -65,13 +65,13 @@ class PodcastCard extends StatelessWidget {
                               Flexible(
                                 child: Text(
                                   podcast.show_name,
-                                  style: subitleStyle,
+                                  style: subtitleStyle,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                               Text(
                                 ' $dot ${timeFormatter(podcast.duration_ms)}',
-                                style: subitleStyle,
+                                style: subtitleStyle,
                               ),
                             ],
                           )
