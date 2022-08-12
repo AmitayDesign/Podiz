@@ -6,7 +6,7 @@ import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/widgets/shimmerLoading.dart';
-import 'package:podiz/authentication/authManager.dart';
+import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/home/components/profileAvatar.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/user/User.dart';
@@ -86,12 +86,14 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
     return Scaffold(
       appBar: DiscussionAppBar(podcastValue.valueOrNull),
       body: podcastValue.when(
-          error: (e, _) {
-            print('discussionPage: ${e.toString()}');
+          error: (e, st) {
+            print('discussionPagezz: ${e.toString()}');
             return SplashScreen.error();
           },
           loading: () => loadingWidget,
           data: (podcast) {
+            print("PODCAST UID");
+            print(podcast.uid);
             return commentsValue.when(
                 error: (e, _) {
                   print('discussionPage: ${e.toString()}');

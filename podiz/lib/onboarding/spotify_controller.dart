@@ -1,13 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/authentication/authManager.dart';
+import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/onboarding/SpotifyManager.dart';
 
+//TODO autodispose?
 final spotifyControllerProvider =
-    StateNotifierProvider<SpotifyController, AsyncValue>((ref) {
-  final manager = ref.watch(spotifyManagerProvider);
-  final authManager = ref.watch(authManagerProvider);
-  return SpotifyController(manager: manager, authManager: authManager);
-});
+    StateNotifierProvider<SpotifyController, AsyncValue>(
+  (ref) => SpotifyController(
+    manager: ref.watch(spotifyManagerProvider),
+    authManager: ref.watch(authManagerProvider),
+  ),
+);
 
 class SpotifyController extends StateNotifier<AsyncValue> {
   final SpotifyManager manager;
@@ -25,7 +27,7 @@ class SpotifyController extends StateNotifier<AsyncValue> {
       print(code);
       final token = await manager.fetchAuthorizationToken(code);
       print(token);
-      await authManager.fetchUserInfo(token);
+      await authManager.signIn(token);
     });
   }
 }

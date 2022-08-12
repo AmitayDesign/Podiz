@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/objects/show.dart';
 import 'package:podiz/providers.dart';
 
-final showManagerProvider = Provider.autoDispose<ShowManager>(
+final showManagerProvider = Provider<ShowManager>(
   (ref) => ShowManager(
     firestore: ref.watch(firestoreProvider),
   ),

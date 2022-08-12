@@ -6,7 +6,7 @@ import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/widgets/gradientAppBar.dart';
 import 'package:podiz/aspect/widgets/sliverFirestoreQueryBuilder.dart';
-import 'package:podiz/authentication/authManager.dart';
+import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/home/homePage.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/objects/Podcast.dart';
@@ -70,7 +70,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
     ref.read(playerManagerProvider).playEpisode(podcast, 0);
     context.goNamed(
       AppRoute.discussion.name,
-      params: {'showId': podcast.show_uri},
+      params: {'episodeId': podcast.uid!},
     );
   }
 

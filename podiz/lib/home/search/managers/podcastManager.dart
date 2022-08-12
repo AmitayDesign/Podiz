@@ -3,31 +3,20 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/authentication/authManager.dart';
-import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/SearchResult.dart';
 import 'package:podiz/providers.dart';
 
-final podcastManagerProvider = Provider.autoDispose<PodcastManager>(
-  (ref) {
-    final manager = PodcastManager(
-      authManager: ref.watch(authManagerProvider),
-      showManager: ref.watch(showManagerProvider),
-      firestore: ref.watch(firestoreProvider),
-    );
-    return manager;
-  },
+final podcastManagerProvider = Provider<PodcastManager>(
+  (ref) => PodcastManager(
+    firestore: ref.watch(firestoreProvider),
+  ),
 );
 
 class PodcastManager {
-  final AuthManager authManager;
-  final ShowManager showManager;
   final FirebaseFirestore firestore;
 
   PodcastManager({
-    required this.authManager,
-    required this.showManager,
     required this.firestore,
   });
 
@@ -41,6 +30,8 @@ class PodcastManager {
 
   Future<Podcast> fetchPodcast(String episodeId) async {
     final doc = await firestore.collection("podcasts").doc(episodeId).get();
+    print(episodeId);
+    print(doc.data());
     return Podcast.fromFirestore(doc);
   }
 

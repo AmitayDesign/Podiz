@@ -7,9 +7,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/theme/themeConfig.dart';
-import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'providers.dart';
 
 late SharedPreferences preferences;
 

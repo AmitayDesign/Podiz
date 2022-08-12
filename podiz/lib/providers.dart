@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/widgets/stream_notifier.dart';
-import 'package:podiz/authentication/authManager.dart';
+import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/home/notifications/NotificationManager.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/home/search/managers/showManager.dart';
@@ -37,14 +37,14 @@ final connectivityProvider = StreamProvider<ConnectivityResult>(
   (ref) => Connectivity().onConnectivityChanged,
 );
 
-// AUTH
+//* AUTH
 
 final userLoadingProvider = FutureProvider<void>(
-  (ref) => ref.watch(authManagerProvider).firstUserLoad,
+  (ref) => ref.watch(currentUserStreamProvider.future),
 );
 
-final userStreamProvider = StreamProvider<UserPodiz?>(
-  (ref) => ref.watch(authManagerProvider).user,
+final currentUserStreamProvider = StreamProvider<UserPodiz?>(
+  (ref) => ref.watch(authManagerProvider).userChanges,
 );
 
 final currentUserProvider =
@@ -53,22 +53,29 @@ final currentUserProvider =
     final manager = ref.watch(authManagerProvider);
     return StreamNotifier(
       initial: manager.currentUser!,
-      stream: manager.user.where((user) => user != null).cast<UserPodiz>(),
+      stream:
+          manager.userChanges.where((user) => user != null).cast<UserPodiz>(),
     );
   },
 );
 
-// USER
+//* USER
 
-final userProvider = FutureProvider.family<UserPodiz, String>(
+final userProvider = FutureProvider.family.autoDispose<UserPodiz, String>(
   (ref, id) => ref.watch(userManagerProvider).getUserFromUid(id),
 );
 
-// NOTIFICATION
+//* NOTIFICATION
 
+//TODO why not list
 final notificationsStreamProvider =
-    StreamProvider<Map<String, List<NotificationPodiz>>>(
-        (ref) => ref.watch(notificationManagerProvider).notifications);
+    StreamProvider.autoDispose<Map<String, List<NotificationPodiz>>>(
+  (ref) {
+    final user = ref.watch(currentUserStreamProvider).valueOrNull;
+    if (user == null) return Stream.value({});
+    return ref.watch(notificationManagerProvider).watchNotifications(user.uid);
+  },
+);
 
 //* SHOW
 
@@ -82,12 +89,14 @@ final showFutureProvider = FutureProvider.family.autoDispose<Show, String>(
 
 //* PODCAST
 
-final lastListenedPodcastStreamProvider = StreamProvider.autoDispose<Podcast?>(
-  (ref) => ref.watch(userStreamProvider.stream).asyncMap((user) {
-    if (user == null) return null;
+final lastListenedPodcastStreamProvider = StreamProvider<Podcast?>(
+  (ref) {
     final podcastManager = ref.watch(podcastManagerProvider);
-    return podcastManager.fetchPodcast(user.lastListened);
-  }),
+    return ref.watch(currentUserStreamProvider.stream).asyncMap((user) {
+      if (user == null) return null;
+      return podcastManager.fetchPodcast(user.lastListened);
+    });
+  },
 );
 
 final podcastFutureProvider =

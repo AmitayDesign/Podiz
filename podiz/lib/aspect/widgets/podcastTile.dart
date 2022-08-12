@@ -34,7 +34,7 @@ class PodcastTile extends ConsumerWidget {
             ref.read(playerManagerProvider).playEpisode(result.toPodcast(), 0);
             context.pushNamed(
               AppRoute.discussion.name,
-              params: {'showId': result.show_uri!},
+              params: {'episodeId': result.uid},
             );
           }
         },

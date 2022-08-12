@@ -6,9 +6,10 @@ import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/widgets/appBarGradient.dart';
 import 'package:podiz/aspect/widgets/buttonPlay.dart';
 import 'package:podiz/aspect/widgets/cardButton.dart';
-import 'package:podiz/authentication/authManager.dart';
+import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/home/components/profileAvatar.dart';
+import 'package:podiz/home/components/replyView.dart';
 import 'package:podiz/home/notifications/components/tabBarLabel.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/loading.dart/notificationLoading.dart';
@@ -30,17 +31,9 @@ class NotificationsPage extends ConsumerStatefulWidget {
 
 class _NotificationsPageState extends ConsumerState<NotificationsPage>
     with SingleTickerProviderStateMixin {
-  late TextEditingController _controllerText;
-  late FocusNode _focusNode;
-
-  bool visible = false;
-  Comment? commentToReply;
-
   @override
   void initState() {
     super.initState();
-    _focusNode = FocusNode();
-    _controllerText = TextEditingController();
   }
 
   @override
@@ -53,7 +46,6 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
 
   @override
   Widget build(BuildContext context) {
-    // return Container();
     final theme = Theme.of(context);
     final isPlaying = ref.watch(playerStreamProvider).valueOrNull?.getState ==
         PlayerState.play;
@@ -75,7 +67,6 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
           int numberValue;
 
           for (String key in keys) {
-            print(key);
             numberValue = n[key]!.length;
             tabs.add(TabBarLabel(key, numberValue));
             children.add(
@@ -102,68 +93,53 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                 itemBuilder: (context, index) => Padding(
                       padding: const EdgeInsets.only(top: 17.0),
                       child: (index != list.length)
-                          ? _buildItem(list[index].notificationToComment())
+                          ? _buildItem(list[index]
+                              .notificationToComment()) //change as profile
                           : SizedBox(height: isPlaying ? 205 : 101),
                     )),
           );
-          return GestureDetector(
-            onTap: () {
-              _focusNode.unfocus();
-              setState(() {
-                visible = false;
-              });
-            },
-            child: Stack(children: [
-              Align(
-                  alignment: Alignment.centerLeft,
-                  child: DefaultTabController(
-                    length: number + 1,
-                    child: NestedScrollView(
-                      headerSliverBuilder: (context, value) {
-                        return [
-                          SliverAppBar(
-                            automaticallyImplyLeading: false,
-                            flexibleSpace: Container(
-                              height: 96,
-                              decoration: BoxDecoration(
-                                gradient: appBarGradient(),
-                              ),
-                            ),
-                            bottom: TabBar(
-                                isScrollable: true,
-                                labelStyle:
-                                    context.textTheme.titleMedium!.copyWith(
-                                  color: Palette.white90,
-                                ),
-                                unselectedLabelStyle:
-                                    context.textTheme.bodyLarge!.copyWith(
-                                  color: Colors.white70,
-                                ),
-                                indicatorSize: TabBarIndicatorSize.tab,
-                                overlayColor: MaterialStateProperty.all(
-                                    const Color(0xFF262626)),
-                                indicator: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  color: theme.primaryColor,
-                                ),
-                                padding: const EdgeInsets.only(left: 16),
-                                tabs: tabs),
-                          )
-                        ];
-                      },
-                      body: Padding(
-                        padding: const EdgeInsets.only(top: 20),
-                        child: TabBarView(children: children),
+          return Align(
+            alignment: Alignment.centerLeft,
+            child: DefaultTabController(
+              length: number + 1,
+              child: NestedScrollView(
+                headerSliverBuilder: (context, value) {
+                  return [
+                    SliverAppBar(
+                      automaticallyImplyLeading: false,
+                      flexibleSpace: Container(
+                        height: 96,
+                        decoration: BoxDecoration(
+                          gradient: appBarGradient(),
+                        ),
                       ),
-                    ),
-                  )),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: visible ? replyView() : Container(),
-              )
-            ]),
+                      bottom: TabBar(
+                          isScrollable: true,
+                          labelStyle: context.textTheme.titleMedium!.copyWith(
+                            color: Palette.white90,
+                          ),
+                          unselectedLabelStyle:
+                              context.textTheme.bodyLarge!.copyWith(
+                            color: Colors.white70,
+                          ),
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          overlayColor: MaterialStateProperty.all(
+                              const Color(0xFF262626)),
+                          indicator: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50),
+                            color: theme.primaryColor,
+                          ),
+                          padding: const EdgeInsets.only(left: 16),
+                          tabs: tabs),
+                    )
+                  ];
+                },
+                body: Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: TabBarView(children: children),
+                ),
+              ),
+            ),
           );
         });
   }
@@ -317,13 +293,31 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                                                 MainAxisAlignment.start,
                                             children: [
                                               InkWell(
-                                                onTap: () {
-                                                  setState(() {
-                                                    visible = true;
-                                                    commentToReply = c;
-                                                  });
-                                                  _focusNode.requestFocus();
-                                                },
+                                                onTap: () =>
+                                                    showModalBottomSheet(
+                                                        context: context,
+                                                        isScrollControlled:
+                                                            true,
+                                                        backgroundColor:
+                                                            Palette.grey900,
+                                                        shape:
+                                                            const RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .vertical(
+                                                            top: Radius.circular(
+                                                                kBorderRadius),
+                                                          ),
+                                                        ),
+                                                        builder: (context) =>
+                                                            Padding(
+                                                              padding: MediaQuery
+                                                                      .of(context)
+                                                                  .viewInsets,
+                                                              child: ReplyView(
+                                                                  comment: c,
+                                                                  user: user),
+                                                            )),
                                                 child: Container(
                                                     width: kScreenWidth -
                                                         (16 + 20 + 16 + 16),
@@ -375,158 +369,6 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
           }
           return const NotificationLoading();
         });
-  }
-
-  Widget replyView() {
-    return FutureBuilder(
-      future:
-          ref.read(userManagerProvider).getUserFromUid(commentToReply!.userUid),
-      initialData: "loading",
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          // If we got an error
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                '${snapshot.error} occurred',
-                style: const TextStyle(fontSize: 18),
-              ),
-            );
-
-            // if we got our data
-          } else if (snapshot.hasData) {
-            final user = snapshot.data as UserPodiz;
-            return Container(
-              width: kScreenWidth,
-              decoration: const BoxDecoration(
-                color: Color(0xFF4E4E4E),
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10)),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 24),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Replying to...",
-                        style: context.textTheme.bodyMedium!.copyWith(
-                          color: Palette.grey600,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        ProfileAvatar(user: user, radius: 20),
-                        const SizedBox(width: 8),
-                        Column(
-                          children: [
-                            Text(
-                              user.name,
-                              style: context.textTheme.titleMedium,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            Text(
-                              "${user.followers.length} Followers",
-                              style: context.textTheme.bodyMedium!.copyWith(
-                                color: Palette.grey600,
-                              ),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        commentToReply!.comment,
-                        style: context.textTheme.bodyLarge,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        ProfileAvatar(user: user, radius: 15.5),
-                        const SizedBox(width: 8),
-                        LimitedBox(
-                          maxWidth: kScreenWidth - (14 + 31 + 8 + 31 + 8 + 14),
-                          maxHeight: 31,
-                          child: TextField(
-                            // key: _key,
-                            maxLines: 5,
-                            keyboardType: TextInputType.multiline,
-                            focusNode: _focusNode,
-                            controller: _controllerText,
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: const Color(0xFF262626),
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              contentPadding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              hintStyle: context.textTheme.bodySmall!.copyWith(
-                                color: Palette.white90,
-                              ),
-                              hintText: "Comment on ${user.name} insight...",
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        InkWell(
-                          onTap: () {
-                            ref
-                                .read(authManagerProvider)
-                                .doReply(commentToReply!, _controllerText.text);
-                            setState(() {
-                              visible = false;
-                              commentToReply = null;
-                              _controllerText.clear();
-                            });
-                          },
-                          child: Container(
-                            height: 31,
-                            width: 31,
-                            decoration: BoxDecoration(
-                              color: Palette.purple,
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            child: const Icon(
-                              Icons.send,
-                              size: 11,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
-                  ],
-                ),
-              ),
-            );
-          }
-        }
-        return Container(
-          width: kScreenWidth,
-          height: 50,
-          decoration: const BoxDecoration(
-            color: Color(0xFF4E4E4E),
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-          ),
-          child: const CircularProgressIndicator(),
-        );
-      },
-    );
   }
 
   Widget notificationsShimmerLoading(BuildContext context) {

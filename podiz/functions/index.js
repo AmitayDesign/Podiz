@@ -397,6 +397,9 @@ exports.play = functions.https.onCall(async (data, context) => {
   let userUid = data.userUid;
   let position = data.position;
   let result = await playEpisode(episodeUid, userUid, position);
+  if (result["result"] == "devices") {
+    return result;
+  }
   if (result["result"] == "unauthorized") {
     result = await getAccessTokenWithRefreshToken(userUid);
     if (result["result"] == "unauthorized") {
@@ -416,7 +419,9 @@ exports.pause = functions.https.onCall(async (data, context) => {
   */
   let userUid = data.userUid;
   let result = await pauseEpisode(userUid);
-
+  if (result["result"] == "devices") {
+    return result;
+  }
   if (result["result"] == "unauthorized") {
     result = await getAccessTokenWithRefreshToken(userUid);
     if (result["result"] == "unauthorized") {
@@ -683,6 +688,10 @@ async function getEpisode(episodeUid, userUid) {
 async function playEpisode(episodeUid, userUid, position) {
   try {
     var spotifyAuth = await getSpotifyAuth(userUid);
+    let devices = await getDevices(userUid);
+    if (devices["result"] != "ok") {
+      return devices;
+    }
     var response = await fetch(
       host + "/me/player/play/?device_id=" + spotifyAuth.selectedDevice,
       {
@@ -713,7 +722,10 @@ async function playEpisode(episodeUid, userUid, position) {
 async function pauseEpisode(userUid) {
   try {
     var spotifyAuth = await getSpotifyAuth(userUid);
-
+    let devices = await getDevices(userUid);
+    if (devices["result"] != "ok") {
+      return devices;
+    }
     var response = await fetch(host + "/me/player/pause", {
       headers: {
         Accept: "application/json",

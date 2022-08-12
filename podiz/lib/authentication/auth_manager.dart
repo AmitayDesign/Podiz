@@ -2,10 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/failures/failure.dart';
 import 'package:podiz/aspect/typedefs.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/home/search/managers/showManager.dart';
@@ -16,52 +13,70 @@ import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/providers.dart';
 import 'package:rxdart/rxdart.dart';
 
+//TODO watch or read?
 final authManagerProvider = Provider<AuthManager>(
-  (ref) => AuthManager(ref.read),
+  (ref) {
+    final manager = AuthManager(
+      podcastManager: ref.watch(podcastManagerProvider),
+      showManager: ref.watch(showManagerProvider),
+      firebaseAuth: ref.watch(authProvider),
+      firestore: ref.watch(firestoreProvider),
+    );
+    ref.onDispose(manager.dispose);
+    return manager;
+  },
 );
 
 class AuthManager {
-  final Reader _read;
+  final PodcastManager podcastManager;
+  final ShowManager showManager;
+  final FirebaseAuth firebaseAuth;
+  final FirebaseFirestore firestore;
 
-  PodcastManager get podcastManager => _read(podcastManagerProvider);
-  ShowManager get showManager => _read(showManagerProvider);
-  FirebaseAuth get firebaseAuth => _read(authProvider);
-  FirebaseFirestore get firestore => _read(firestoreProvider);
-
-  List<Podcast> myCast = [];
-
-  final _userCompleter = Completer();
-  Future<void> get firstUserLoad => _userCompleter.future;
-
-  UserPodiz? currentUser;
-  final _userStream = BehaviorSubject<UserPodiz?>();
-  Stream<UserPodiz?> get user => _userStream.stream;
-
-  AuthManager(this._read) {
-    _init();
-  }
-
-  /// this can only be called once
-  Future<void> _init() async {
+  AuthManager({
+    required this.podcastManager,
+    required this.showManager,
+    required this.firebaseAuth,
+    required this.firestore,
+  }) {
     final loggedInUser = preferences.getString('userId');
     if (loggedInUser != null) {
-      await fetchUserInfo(loggedInUser);
+      signIn(loggedInUser);
     } else {
-      await _saveUser(null);
+      _saveUser(null);
     }
   }
 
   Future<void> fetchUserInfo(String userId) async {
-    setUpUserStream(userId);
-    await podcastManager.getDevices(userId);
+    _setUpUserStream(userId);
+  }
+
+  void dispose() {
+    sub?.cancel();
+    _userController.close();
+  }
+
+  final _userController = BehaviorSubject<UserPodiz?>();
+  Stream<UserPodiz?> get userChanges => _userController.stream;
+  UserPodiz? get currentUser => _userController.value;
+
+  List<Podcast> myCast = [];
+
+  Future<void> signIn(String userId) async {
+    _setUpUserStream(userId);
     // await podcastManager.fetchUserPlayer(userId);
   }
 
-  void setUpUserStream(String userId) {
-    firestore.collection("users").doc(userId).snapshots().listen((doc) async {
+  StreamSubscription? sub;
+  void _setUpUserStream(String userId) {
+    sub?.cancel();
+    sub = firestore
+        .collection("users")
+        .doc(userId)
+        .snapshots()
+        .listen((doc) async {
       final data = doc.data();
-      if (data == null) return;
-      final user = UserPodiz.fromFirestore(doc);
+      final user = data == null ? null : UserPodiz.fromFirestore(doc);
       await _saveUser(user);
     });
   }
@@ -73,9 +88,7 @@ class AuthManager {
       preferences.setString('userId', user.uid);
       myCast = await getCastList(user);
     }
-    currentUser = user;
-    _userStream.add(user);
-    if (!_userCompleter.isCompleted) _userCompleter.complete();
+    _userController.add(user);
   }
 
   Future<List<Podcast>> getCastList(UserPodiz user) async {
@@ -107,35 +120,45 @@ class AuthManager {
       }
     }
     return result;
+    //* refact
+    // final podcasts = [];
+    // final number = user.favPodcasts.length.clamp(0, 6);
+    // final lastFavPodcasts = user.favPodcasts.reversed.take(number);
+    // for (final podcastId in lastFavPodcasts) {
+    //   final show = await showManager.fetchShow(podcastId);
+    //   final podcast = await podcastManager.getRandomEpisode(show.podcasts);
+    //   if (podcast != null) result.add(podcast);
+    // }
+    // return podcasts;
   }
 
   ///public
 
-  //TODO confirm if this is well done
-  Future<void> updateUser(
-    BuildContext context, {
-    required UserPodiz user,
-  }) async {
-    try {
-      await firebaseAuth.currentUser!.updateDisplayName(user.name);
-      await firestore
-          .collection('users')
-          .doc(firebaseAuth.currentUser!.uid)
-          .update(user.toJson());
-    } catch (_) {
-      throw Failure.unexpected(context);
-    }
-  }
+  // //TODO confirm if this is well done
+  // Future<void> updateUser(
+  //   BuildContext context, {
+  //   required UserPodiz user,
+  // }) async {
+  //   try {
+  //     await firebaseAuth.currentUser!.updateDisplayName(user.name);
+  //     await firestore
+  //         .collection('users')
+  //         .doc(firebaseAuth.currentUser!.uid)
+  //         .update(user.toJson());
+  //   } catch (_) {
+  //     throw Failure.unexpected(context);
+  //   }
+  // }
 
-  Future<void> signOut(BuildContext context) async {
-    await _saveUser(null);
-  }
+  // Future<void> signOut(BuildContext context) async {
+  //   await _saveUser(null);
+  // }
 
-  Future<void> requestUserData(Map<String, String> request, context) async {
-    //TODO review (had a loading before)
-    await firestore.collection("clientInfo").doc(currentUser!.uid).set(request);
-    Navigator.pop(context);
-  } //GDPR conserns
+  // Future<void> requestUserData(Map<String, String> request, context) async {
+  //   //TODO review (had a loading before)
+  //   await firestore.collection("clientInfo").doc(currentUser!.uid).set(request);
+  //   Navigator.pop(context);
+  // } //GDPR conserns
 
   Future<void> updateLastListened(String episodeUid) async {
     await firestore
@@ -144,7 +167,7 @@ class AuthManager {
         .update({"lastListened": episodeUid});
   }
 
-  doComment(String comment, String episodeUid, int time) async {
+  Future<void> doComment(String comment, String episodeUid, int time) async {
     DocRef doc = firestore
         .collection("podcasts")
         .doc(episodeUid)
@@ -184,7 +207,7 @@ class AuthManager {
     incrementPodcastCounter(episodeUid);
   }
 
-  doReply(Comment comment, String reply) async {
+  Future<void> doReply(Comment comment, String reply) async {
     DocRef doc = firestore
         .collection("podcasts")
         .doc(comment.episodeUid)
@@ -225,9 +248,9 @@ class AuthManager {
       ]),
     });
     incrementPodcastCounter(comment.episodeUid);
-    if (currentUser!.uid == comment.userUid) {
-      return;
-    }
+    // if (currentUser!.uid == comment.userUid) {
+    //   return;
+    // }
     firestore
         .collection("users")
         .doc(comment.userUid)
@@ -245,54 +268,61 @@ class AuthManager {
     });
   }
 
-  incrementPodcastCounter(String episodeUid) {
-    firestore.collection("podcasts").doc(episodeUid).update({
-      "commentsImg": FieldValue.arrayUnion([currentUser!.image_url]),
-      "comments": FieldValue.increment(1)
-    });
-  }
+  Future<void> incrementPodcastCounter(String episodeUid) =>
+      firestore.collection("podcasts").doc(episodeUid).update({
+        "commentsImg": FieldValue.arrayUnion([currentUser!.image_url]),
+        "comments": FieldValue.increment(1)
+      });
 
-  followPeople(String uid) {
-    String userUid = currentUser!.uid;
-    firestore.collection("users").doc(uid).update({
+  Future<void> followPeople(String uid) async {
+    final userUid = currentUser!.uid;
+    final batch = firestore.batch();
+    batch.update(firestore.collection("users").doc(uid), {
       "followers": FieldValue.arrayUnion([userUid])
     });
-    firestore.collection("users").doc(userUid).update({
+    batch.update(firestore.collection("users").doc(userUid), {
       "following": FieldValue.arrayUnion([uid])
     });
+    await batch.commit();
   }
 
-  unfollowPeople(String uid) {
-    String userUid = currentUser!.uid;
-    firestore.collection("users").doc(uid).update({
+  Future<void> unfollowPeople(String uid) async {
+    final userUid = currentUser!.uid;
+    final batch = firestore.batch();
+    batch.update(firestore.collection("users").doc(uid), {
       "followers": FieldValue.arrayRemove([userUid])
     });
 
-    firestore.collection("users").doc(userUid).update({
+    batch.update(firestore.collection("users").doc(userUid), {
       "following": FieldValue.arrayRemove([uid])
     });
+    await batch.commit();
   }
 
-  followShow(String uid) {
-    String userUid = currentUser!.uid;
-    firestore.collection("podcasters").doc(uid).update({
+  Future<void> followShow(String uid) async {
+    final userUid = currentUser!.uid;
+    final batch = firestore.batch();
+    batch.update(firestore.collection("podcasters").doc(uid), {
       "followers": FieldValue.arrayUnion([userUid])
     });
-    firestore.collection("users").doc(userUid).update({
+    batch.update(firestore.collection("users").doc(userUid), {
       "favPodcasts": FieldValue.arrayUnion([uid]),
       "following": FieldValue.arrayUnion([uid])
     });
+    await batch.commit();
   }
 
-  unfollowShow(String uid) {
-    String userUid = currentUser!.uid;
-    firestore.collection("podcasters").doc(uid).update({
+  Future<void> unfollowShow(String uid) async {
+    final userUid = currentUser!.uid;
+    final batch = firestore.batch();
+    batch.update(firestore.collection("podcasters").doc(uid), {
       "followers": FieldValue.arrayRemove([userUid])
     });
-    firestore.collection("users").doc(userUid).update({
+    batch.update(firestore.collection("users").doc(userUid), {
       "favPodcasts": FieldValue.arrayRemove([uid]),
       "following": FieldValue.arrayRemove([uid])
     });
+    await batch.commit();
   }
 
   bool isFollowing(String showUid) {
