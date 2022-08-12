@@ -56,6 +56,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     );
   }
 
+  void openShowFavourite(Show show) {
+    context.goNamed(
+      AppRoute.show.name,
+      params: {'showId': show.uid!},
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final currentUser = ref.watch(currentUserProvider);
@@ -189,9 +196,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               // if we got our data
             } else if (snapshot.hasData) {
               final show = snapshot.data as Show;
-              return Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: PodcastAvatar(imageUrl: show.image_url, size: 68));
+              return InkWell(
+                onTap: () => openShowFavourite(show),
+                child: Padding(
+                    padding: const EdgeInsets.only(right: 16),
+                    child: PodcastAvatar(imageUrl: show.image_url, size: 68)),
+              );
             }
           }
           return const Padding(
