@@ -99,15 +99,16 @@ class AuthManager {
         }
       }
     } else {
-      while (count != 6) {
-        for (int i = 0; i < number; i++) {
-          final show = await showManager.fetchShow(user.favPodcasts[i]);
-          final podcast = await podcastManager.getRandomEpisode(show.podcasts);
-          if (podcast != null) result.add(podcast);
-          count++;
-          if (i == number - 1) {
-            i = 0;
-          }
+      for (int i = 0; i < number; i++) {
+        final show = await showManager.fetchShow(user.favPodcasts[i]);
+        final podcast = await podcastManager.getRandomEpisode(show.podcasts);
+        if (podcast != null) result.add(podcast);
+        count++;
+        if (i == number - 1) {
+          i = 0;
+        }
+        if (count == 5) {
+          break;
         }
       }
     }
