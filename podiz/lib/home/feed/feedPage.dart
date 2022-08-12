@@ -78,6 +78,13 @@ class _FeedPageState extends ConsumerState<FeedPage> {
     );
   }
 
+  void openShow(Podcast podcast) {
+    context.goNamed(
+      AppRoute.show.name,
+      params: {'showId': podcast.show_uri},
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(currentUserProvider);
@@ -124,6 +131,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                     PodcastCard(
                       podcast,
                       onTap: () => openPodcast(podcast),
+                      onShowTap: () => openShow(podcast),
                     ),
                 ]),
               ),
@@ -149,6 +157,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                       return PodcastCard(
                         podcast,
                         onTap: () => openPodcast(podcast),
+                        onShowTap: () => openShow(podcast),
                       );
                     },
                     childCount: snapshot.docs.length,

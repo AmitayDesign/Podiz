@@ -10,12 +10,14 @@ import 'package:podiz/objects/Podcast.dart';
 class PodcastCard extends StatelessWidget {
   final Podcast podcast;
   final VoidCallback? onTap;
+  final VoidCallback? onShowTap;
   final Widget? bottom;
 
   const PodcastCard(
     this.podcast, {
     Key? key,
     this.onTap,
+    this.onShowTap,
     this.bottom,
   }) : super(key: key);
 
@@ -63,10 +65,13 @@ class PodcastCard extends StatelessWidget {
                           Row(
                             children: [
                               Flexible(
-                                child: Text(
-                                  podcast.show_name,
-                                  style: subtitleStyle,
-                                  overflow: TextOverflow.ellipsis,
+                                child: GestureDetector(
+                                  onTap: onShowTap,
+                                  child: Text(
+                                    podcast.show_name,
+                                    style: subtitleStyle,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               ),
                               Text(
