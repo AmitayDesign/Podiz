@@ -20,7 +20,7 @@ enum AppRoute {
 
 //TODO test login in no premium account
 
-final goRouterProvider = Provider.autoDispose<GoRouter>((ref) {
+final goRouterProvider = Provider<GoRouter>((ref) {
   final authManager = ref.watch(authManagerProvider);
   return GoRouter(
     initialLocation: '/',

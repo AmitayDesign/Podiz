@@ -65,11 +65,12 @@ final userProvider = FutureProvider.family<UserPodiz, String>(
   (ref, id) => ref.watch(userManagerProvider).getUserFromUid(id),
 );
 
-// NOTIFICATION
+//* NOTIFICATION
 
 final notificationsStreamProvider =
     StreamProvider<Map<String, List<NotificationPodiz>>>(
-        (ref) => ref.watch(notificationManagerProvider).notifications);
+  (ref) => ref.watch(notificationManagerProvider).notifications,
+);
 
 //* SHOW
 

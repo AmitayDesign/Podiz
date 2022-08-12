@@ -7,23 +7,24 @@ import 'package:podiz/providers.dart';
 import 'package:rxdart/rxdart.dart';
 
 final notificationManagerProvider = Provider<NotificationManager>(
-  (ref) => NotificationManager(ref.read),
+  (ref) {
+    final manager = NotificationManager(
+      firestore: ref.watch(firestoreProvider),
+      authManager: ref.watch(authManagerProvider),
+    );
+    ref.onDispose(manager.dispose);
+    return manager;
+  },
 );
 
 class NotificationManager {
-  final Reader _read;
+  final FirebaseFirestore firestore;
+  final AuthManager authManager;
 
-  FirebaseFirestore get firestore => _read(firestoreProvider);
-  AuthManager get authManager => _read(authManagerProvider);
-
-  Map<String, List<NotificationPodiz>> notificationBloc = {};
-
-  final _notificationStream =
-      BehaviorSubject<Map<String, List<NotificationPodiz>>>();
-  Stream<Map<String, List<NotificationPodiz>>> get notifications =>
-      _notificationStream.stream;
-
-  NotificationManager(this._read) {
+  NotificationManager({
+    required this.firestore,
+    required this.authManager,
+  }) {
     String userUid = authManager.currentUser!.uid;
     firestore
         .collection("users")
@@ -41,9 +42,18 @@ class NotificationManager {
     });
   }
 
+  void dispose() {}
+
+  Map<String, List<NotificationPodiz>> notificationBloc = {};
+
+  final _notificationStream =
+      BehaviorSubject<Map<String, List<NotificationPodiz>>>();
+  Stream<Map<String, List<NotificationPodiz>>> get notifications =>
+      _notificationStream.stream;
+
   // General Functions
 
-  addNotificationToBloc(Doc doc) {
+  Future<void> addNotificationToBloc(Doc doc) async {
     NotificationPodiz notification = NotificationPodiz.fromJson(doc.data()!);
     notification.uid = doc.id;
     if (notificationBloc.containsKey(notification.episodeUid)) {
@@ -53,9 +63,5 @@ class NotificationManager {
         notification.episodeUid: [notification]
       });
     }
-  }
-
-  resetManager() async {
-    notificationBloc = {};
   }
 }

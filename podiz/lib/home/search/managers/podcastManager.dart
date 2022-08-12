@@ -8,7 +8,7 @@ import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/providers.dart';
 
-final podcastManagerProvider = Provider.autoDispose<PodcastManager>(
+final podcastManagerProvider = Provider<PodcastManager>(
   (ref) {
     final manager = PodcastManager(
       authManager: ref.watch(authManagerProvider),

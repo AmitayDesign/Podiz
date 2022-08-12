@@ -13,7 +13,7 @@ import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/providers.dart';
 import 'package:rxdart/rxdart.dart';
 
-final authManagerProvider = Provider.autoDispose<AuthManager>(
+final authManagerProvider = Provider<AuthManager>(
   (ref) {
     final manager = AuthManager(
       podcastManager: ref.watch(podcastManagerProvider),
@@ -47,6 +47,7 @@ class AuthManager {
   }
 
   void dispose() {
+    sub?.cancel();
     _userController.close();
   }
 
@@ -62,12 +63,19 @@ class AuthManager {
     // await podcastManager.fetchUserPlayer(userId);
   }
 
-  void _setUpUserStream(String userId) =>
-      firestore.collection("users").doc(userId).snapshots().listen((doc) async {
-        final data = doc.data();
-        final user = data == null ? null : UserPodiz.fromFirestore(doc);
-        await _saveUser(user);
-      });
+  StreamSubscription? sub;
+  void _setUpUserStream(String userId) {
+    sub?.cancel();
+    sub = firestore
+        .collection("users")
+        .doc(userId)
+        .snapshots()
+        .listen((doc) async {
+      final data = doc.data();
+      final user = data == null ? null : UserPodiz.fromFirestore(doc);
+      await _saveUser(user);
+    });
+  }
 
   Future<void> _saveUser(UserPodiz? user) async {
     if (user == null) {
