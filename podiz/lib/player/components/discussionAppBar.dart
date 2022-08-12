@@ -16,7 +16,7 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
   DiscussionAppBar(this.podcast, {Key? key}) : super(key: key);
 
   static const height = 64.0;
-  static const flexibleHeight = 164.0;
+  static const flexibleHeight = 172.0;
 
   @override
   Size get preferredSize =>
@@ -67,10 +67,10 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    GestureDetector(
-                                      onTap: () => openShow(podcast!, context),
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () =>
+                                            openShow(podcast!, context),
                                         child: Text(
                                           podcast!.show_name,
                                           style: context.textTheme.bodyMedium!
