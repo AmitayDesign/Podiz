@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/theme/palette.dart';
@@ -45,6 +47,20 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   void didUpdateWidget(covariant ProfilePage oldWidget) {
     super.didUpdateWidget(oldWidget);
     setState(() {});
+  }
+
+  void openShow(Podcast podcast) {
+    context.goNamed(
+      AppRoute.show.name,
+      params: {'showId': podcast.show_uri},
+    );
+  }
+
+  void openShowFavourite(Show show) {
+    context.goNamed(
+      AppRoute.show.name,
+      params: {'showId': show.uid!},
+    );
   }
 
   @override
@@ -180,9 +196,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               // if we got our data
             } else if (snapshot.hasData) {
               final show = snapshot.data as Show;
-              return Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: PodcastAvatar(imageUrl: show.image_url, size: 68));
+              return InkWell(
+                onTap: () => openShowFavourite(show),
+                child: Padding(
+                    padding: const EdgeInsets.only(right: 16),
+                    child: PodcastAvatar(imageUrl: show.image_url, size: 68)),
+              );
             }
           }
           return const Padding(
@@ -233,12 +252,18 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    episode.show_name,
-                                    style: context.textTheme.bodyMedium,
-                                    overflow: TextOverflow.ellipsis,
+                                GestureDetector(
+                                  onTap: () => openShow(episode),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      episode.show_name,
+                                      style: context.textTheme.bodyMedium!
+                                          .copyWith(
+                                        color: Colors.white70,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                 ),
                               ],

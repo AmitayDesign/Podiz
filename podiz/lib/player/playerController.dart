@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/objects/Podcast.dart';
 
 import 'PlayerManager.dart';
 
@@ -15,44 +14,40 @@ class PlayerControler extends StateNotifier<PlayerAction?> {
   final PlayerManager playerManager;
   PlayerControler({required this.playerManager}) : super(null);
 
-  Future<void> play(Podcast podcast) async {
+  Future<void> play() async {
     state = PlayerAction.play;
     try {
-      // playerManager.resumeEpisode(podcast);
-      await Future.delayed(const Duration(seconds: 1));
+      playerManager.resumePodcast();
     } catch (e) {
       print(e);
     }
     state = null;
   }
 
-  Future<void> pause(Podcast podcast) async {
+  Future<void> pause() async {
     state = PlayerAction.pause;
     try {
-      // playerManager.pauseEpisode();
-      await Future.delayed(const Duration(seconds: 1));
+      await playerManager.pausePodcast();
     } catch (e) {
       print(e);
     }
     state = null;
   }
 
-  Future<void> goForward(Podcast podcast) async {
+  Future<void> goForward() async {
     state = PlayerAction.forward;
     try {
-      playerManager.play30Up(podcast);
-      await Future.delayed(const Duration(seconds: 1));
+      await playerManager.play30Up();
     } catch (e) {
       print(e);
     }
     state = null;
   }
 
-  Future<void> goBackward(Podcast podcast) async {
+  Future<void> goBackward() async {
     state = PlayerAction.backward;
     try {
-      playerManager.play30Back(podcast);
-      await Future.delayed(const Duration(seconds: 1));
+      await playerManager.play30Back();
     } catch (e) {
       print(e);
     }

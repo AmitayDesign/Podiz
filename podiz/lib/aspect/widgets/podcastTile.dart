@@ -8,7 +8,6 @@ import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/SearchResult.dart';
-import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/providers.dart';
 
@@ -19,8 +18,8 @@ class PodcastTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final isPlaying = ref.watch(playerStreamProvider).valueOrNull?.getState ==
-        PlayerState.play;
+    final isPlaying =
+        ref.watch(playerStreamProvider).valueOrNull?.isPlaying ?? false;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: InkWell(
@@ -31,7 +30,7 @@ class PodcastTile extends ConsumerWidget {
               params: {'showId': result.show_uri!},
             );
           } else {
-            ref.read(playerManagerProvider).playEpisode(result.toPodcast(), 0);
+            ref.read(playerManagerProvider).playPodcast(result.toPodcast(), 0);
             context.pushNamed(
               AppRoute.discussion.name,
               params: {'episodeId': result.uid},

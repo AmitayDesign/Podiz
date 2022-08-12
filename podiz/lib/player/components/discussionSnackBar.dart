@@ -6,7 +6,6 @@ import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/player/components/insightSheet.dart';
-import 'package:podiz/providers.dart';
 
 class DiscussionSnackBar extends ConsumerStatefulWidget {
   final Podcast p;
@@ -35,7 +34,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
 
   void openSheet() {
     setState(() => isVisible = false);
-    ref.read(playerManagerProvider).pauseEpisode();
+    ref.read(playerManagerProvider).pausePodcast();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -62,10 +61,10 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
 
   @override
   Widget build(BuildContext context) {
-    final player = ref.watch(playerProvider);
+    final playerManager = ref.watch(playerManagerProvider);
     if (firstTime) {
       episodeUid = widget.p.uid!;
-      player.increment(episodeUid);
+      playerManager.increment(episodeUid);
       firstTime = false;
     }
     return Visibility(

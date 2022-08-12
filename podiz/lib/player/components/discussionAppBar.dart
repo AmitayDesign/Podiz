@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/theme/palette.dart';
@@ -14,11 +16,18 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
   DiscussionAppBar(this.podcast, {Key? key}) : super(key: key);
 
   static const height = 64.0;
-  static const flexibleHeight = 164.0;
+  static const flexibleHeight = 172.0;
 
   @override
   Size get preferredSize =>
       Size.fromHeight(podcast == null ? height : flexibleHeight);
+
+  void openShow(Podcast podcast, BuildContext context) {
+    context.goNamed(
+      AppRoute.show.name,
+      params: {'showId': podcast.show_uri},
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -58,11 +67,18 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Flexible(
-                                      child: Text(
-                                        podcast!.show_name,
-                                        style: context.textTheme.bodyMedium,
-                                        overflow: TextOverflow.ellipsis,
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () =>
+                                            openShow(podcast!, context),
+                                        child: Text(
+                                          podcast!.show_name,
+                                          style: context.textTheme.bodyMedium!
+                                              .copyWith(
+                                            color: Colors.white70,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(width: 12),

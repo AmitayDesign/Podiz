@@ -32,7 +32,8 @@ class _CommentSheetState extends ConsumerState<CommentSheet> {
           widget.podcast.uid!,
           widget.podcast.duration_ms,
         );
-    commentController.clear();
+    // commentController.clear();
+    Navigator.pop(context);
   }
 
   @override

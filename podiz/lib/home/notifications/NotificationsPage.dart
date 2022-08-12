@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/theme/palette.dart';
@@ -16,7 +18,6 @@ import 'package:podiz/loading.dart/notificationLoading.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/NotificationPodiz.dart';
-import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/providers.dart';
@@ -42,13 +43,20 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
     _controller.dispose();
   }
 
+  void openShow(Podcast podcast) {
+    context.goNamed(
+      AppRoute.show.name,
+      params: {'showId': podcast.show_uri},
+    );
+  }
+
   final _controller = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isPlaying = ref.watch(playerStreamProvider).valueOrNull?.getState ==
-        PlayerState.play;
+    final isPlaying =
+        ref.watch(playerStreamProvider).valueOrNull?.isPlaying ?? false;
     final notifications = ref.watch(notificationsStreamProvider);
     return notifications.when(
         loading: () => const NotificationLoading(),
@@ -208,15 +216,19 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                                           ),
                                         ),
                                         const SizedBox(height: 2),
-                                        Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            podcast.show_name,
-                                            style: context.textTheme.bodyMedium!
-                                                .copyWith(
-                                              color: Colors.white70,
+                                        GestureDetector(
+                                          onTap: () => openShow(podcast),
+                                          child: Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              podcast.show_name,
+                                              style: context
+                                                  .textTheme.bodyMedium!
+                                                  .copyWith(
+                                                color: Colors.white70,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
                                             ),
-                                            overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
                                       ],
