@@ -23,7 +23,7 @@ class PlayerWidget extends ConsumerWidget {
 
         final icon = s == PlayerState.play ? Icons.stop : Icons.play_arrow;
 
-        final podcast = ref.watch(playerPodcastProvider);
+        final podcast = ref.watch(playerpodcastFutureProvider);
         return podcast.when(
             error: (e, _) {
               print('playerWidget: ${e.toString()}');

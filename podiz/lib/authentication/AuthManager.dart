@@ -12,7 +12,6 @@ import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/main.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
-import 'package:podiz/objects/Podcaster.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/providers.dart';
 import 'package:rxdart/rxdart.dart';
@@ -85,10 +84,9 @@ class AuthManager {
     if (number == 0) return [];
     if (number >= 6) {
       for (int i = number - 1; i >= 0; i--) {
-        Podcaster show =
-            await showManager.getShowFromFirebase(user.favPodcasts[i]);
-        String podcastUid = showManager.getRandomEpisode(show.podcasts);
-        result.add(await podcastManager.getPodcastFromFirebase(podcastUid));
+        final show = await showManager.fetchShow(user.favPodcasts[i]);
+        final podcast = await podcastManager.getRandomEpisode(show.podcasts);
+        if (podcast != null) result.add(podcast);
         count++;
         if (count == 6) {
           break;
@@ -97,10 +95,9 @@ class AuthManager {
     } else {
       while (count != 6) {
         for (int i = 0; i < number; i++) {
-          Podcaster show =
-              await showManager.getShowFromFirebase(user.favPodcasts[i]);
-          String podcastUid = showManager.getRandomEpisode(show.podcasts);
-          result.add(await podcastManager.getPodcastFromFirebase(podcastUid));
+          final show = await showManager.fetchShow(user.favPodcasts[i]);
+          final podcast = await podcastManager.getRandomEpisode(show.podcasts);
+          if (podcast != null) result.add(podcast);
           count++;
           if (i == number - 1) {
             i = 0;
@@ -109,12 +106,6 @@ class AuthManager {
       }
     }
     return result;
-  }
-
-  void _emptyManagers() {
-    podcastManager.resetManager();
-    showManager.resetManager();
-    // appManager.selectedRestaurantEvent.add(null);
   }
 
   ///public
@@ -135,9 +126,8 @@ class AuthManager {
     }
   }
 
-  void signOut(BuildContext context) async {
-    _emptyManagers();
-    _saveUser(null);
+  Future<void> signOut(BuildContext context) async {
+    await _saveUser(null);
   }
 
   Future<void> requestUserData(Map<String, String> request, context) async {

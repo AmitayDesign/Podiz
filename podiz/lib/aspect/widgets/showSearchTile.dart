@@ -4,10 +4,10 @@ import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
-import 'package:podiz/objects/Podcaster.dart';
+import 'package:podiz/objects/show.dart';
 
 class ShowSearchTile extends StatelessWidget {
-  final Podcaster show;
+  final Show show;
   const ShowSearchTile(this.show, {Key? key}) : super(key: key);
 
   @override

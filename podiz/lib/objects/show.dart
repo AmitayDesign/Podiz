@@ -2,10 +2,10 @@ import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:podiz/aspect/typedefs.dart';
 
-part 'Podcaster.g.dart';
+part 'show.g.dart';
 
 @JsonSerializable()
-class Podcaster with EquatableMixin {
+class Show with EquatableMixin {
   String? uid;
   String name;
   String publisher;
@@ -15,7 +15,7 @@ class Podcaster with EquatableMixin {
   List<String> podcasts;
   List<String> followers;
 
-  Podcaster(
+  Show(
     this.uid, {
     required this.name,
     required this.publisher,
@@ -26,16 +26,14 @@ class Podcaster with EquatableMixin {
     required this.followers,
   });
 
-  factory Podcaster.fromFirestore(Doc doc) =>
-      Podcaster.fromJson(doc.data()!..['uid'] = doc.id);
+  factory Show.fromFirestore(Doc doc) =>
+      Show.fromJson(doc.data()!..['uid'] = doc.id);
 
-  factory Podcaster.fromJson(Map<String, dynamic> json) =>
-      _$PodcasterFromJson(json);
+  factory Show.fromJson(Map<String, dynamic> json) => _$ShowFromJson(json);
 
-  Map<String, dynamic> toJson() => _$PodcasterToJson(this);
+  Map<String, dynamic> toJson() => _$ShowToJson(this);
 
-  factory Podcaster.copyFrom(Podcaster user) =>
-      Podcaster.fromJson(user.toJson());
+  factory Show.copyFrom(Show user) => Show.fromJson(user.toJson());
 
   @override
   String toString() => " user + $uid : \n{(name : $name;\n";

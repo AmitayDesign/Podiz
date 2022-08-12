@@ -4,8 +4,8 @@ import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/home/components/followShowButton.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/home/search/components/podcastShowTile.dart';
-import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/loading.dart/episodeLoading.dart';
+import 'package:podiz/objects/SearchResult.dart';
 import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/player/playerWidget.dart';
 import 'package:podiz/profile/components.dart/backAppBar.dart';
@@ -19,7 +19,6 @@ class ShowPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final showValue = ref.watch(showFutureProvider(showId));
-    final podcastManager = ref.watch(podcastManagerProvider);
     //TODO put a stream in where for the show
     final player = ref.watch(playerStreamProvider);
     return showValue.when(
@@ -60,7 +59,7 @@ class ShowPage extends ConsumerWidget {
                           builder: (context, ref, _) {
                             final podcastId = show.podcasts[i];
                             final podcastValue =
-                                ref.watch(podcastProvider(podcastId));
+                                ref.watch(podcastFutureProvider(podcastId));
                             return podcastValue.when(
                                 loading: () => const EpisodeLoading(),
                                 error: (e, _) => Center(
@@ -70,8 +69,8 @@ class ShowPage extends ConsumerWidget {
                                       ),
                                     ),
                                 data: (podcast) {
-                                  final searchResult = podcastManager
-                                      .podcastToSearchResult(podcast);
+                                  final searchResult =
+                                      SearchResult.fromPodcast(podcast);
                                   return PodcastShowTile(
                                     searchResult,
                                     isPlaying: p.podcastPlaying == null

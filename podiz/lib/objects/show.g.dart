@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'Podcaster.dart';
+part of 'show.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-Podcaster _$PodcasterFromJson(Map<String, dynamic> json) => Podcaster(
+Show _$ShowFromJson(Map<String, dynamic> json) => Show(
       json['uid'] as String?,
       name: json['name'] as String,
       publisher: json['publisher'] as String,
@@ -19,7 +19,7 @@ Podcaster _$PodcasterFromJson(Map<String, dynamic> json) => Podcaster(
           (json['followers'] as List<dynamic>).map((e) => e as String).toList(),
     );
 
-Map<String, dynamic> _$PodcasterToJson(Podcaster instance) => <String, dynamic>{
+Map<String, dynamic> _$ShowToJson(Show instance) => <String, dynamic>{
       'uid': instance.uid,
       'name': instance.name,
       'publisher': instance.publisher,

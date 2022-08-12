@@ -38,7 +38,7 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
           onTap: () {
             ref
                 .read(playerManagerProvider)
-                .playEpisode(widget.result.searchResultToPodcast(), 0);
+                .playEpisode(widget.result.toPodcast(), 0);
             context.goNamed(
               AppRoute.discussion.name,
               params: {'showId': widget.result.show_uri!},
@@ -48,7 +48,7 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
             child: Column(
               children: [
-                InsightsRow(podcast: widget.result.searchResultToPodcast()),
+                InsightsRow(podcast: widget.result.toPodcast()),
                 const SizedBox(height: 16),
                 Row(
                   children: [

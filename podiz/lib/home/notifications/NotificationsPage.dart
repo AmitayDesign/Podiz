@@ -191,7 +191,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
               return FutureBuilder(
                   future: ref
                       .read(podcastManagerProvider)
-                      .getPodcastFromFirebase(c.episodeUid),
+                      .fetchPodcast(c.episodeUid),
                   initialData: "loading",
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
