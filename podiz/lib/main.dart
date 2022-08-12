@@ -72,7 +72,6 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     // final userLoadingValue = ref.watch(userLoadingProvider);
     final goRouter = ref.watch(goRouterProvider);
-    print('my app gorouter');
     return LocaleBuilder(
       builder: (locale) => MaterialApp.router(
         debugShowCheckedModeBanner: false,
@@ -86,7 +85,6 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
         theme: ThemeConfig.light,
         themeMode: ref.watch(themeModeProvider),
         builder: (context, child) {
-          print('my app builder');
           // return userLoadingValue.when(
           // error: (e, _) {
           //   print('main: ${e.toString()}');
