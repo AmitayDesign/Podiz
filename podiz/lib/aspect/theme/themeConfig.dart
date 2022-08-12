@@ -1,10 +1,10 @@
-import 'package:podiz/aspect/theme/palette.dart';
-import 'package:podiz/aspect/theme/theme.dart';
-import 'package:podiz/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/aspect/theme/palette.dart';
+import 'package:podiz/aspect/theme/theme.dart';
+import 'package:podiz/main.dart';
 
 extension BrightnessX on Brightness {
   bool get isLight => this == Brightness.light;
@@ -32,10 +32,10 @@ final brightnessProvider = StateNotifierProvider<ThemeConfig, Brightness>(
     //   case ThemeMode.dark:
     //     brightness = Brightness.dark;
     //     break;
-      // case ThemeMode.system:
-      // default:
-      //   brightness = SchedulerBinding.instance!.window.platformBrightness;
-      //   break;
+    // case ThemeMode.system:
+    // default:
+    //   brightness = SchedulerBinding.instance!.window.platformBrightness;
+    //   break;
     // }
     return ThemeConfig(mode, brightness);
   },
@@ -78,7 +78,7 @@ class ThemeConfig extends StateNotifier<Brightness> {
     Color? systemNavigationBarColor,
   }) {
     final color = Palette.colorScheme.background;
-        
+
     return SystemUiOverlayStyle(
       statusBarColor: transparentStatusBar ? Colors.transparent : color,
       statusBarBrightness: brightness.other,

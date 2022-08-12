@@ -10,7 +10,7 @@ class QuickNoteButton extends StatelessWidget {
   final Podcast podcast;
   const QuickNoteButton({Key? key, required this.podcast}) : super(key: key);
 
-  final height = 32.0;
+  static const height = 32.0;
 
   @override
   Widget build(BuildContext context) {
