@@ -7,6 +7,7 @@ import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/widgets/buttonPlay.dart';
 import 'package:podiz/aspect/widgets/cardButton.dart';
 import 'package:podiz/home/components/profileAvatar.dart';
+import 'package:podiz/home/components/replyView.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/User.dart';
@@ -16,9 +17,8 @@ import 'package:podiz/profile/userManager.dart';
 class DiscussionCard extends ConsumerStatefulWidget {
   final Comment comment;
   final Podcast p;
-  final void Function(Comment) onTap;
-  const DiscussionCard(this.p, this.comment, {Key? key, required this.onTap})
-      : super(key: key);
+
+  const DiscussionCard(this.p, this.comment, {Key? key}) : super(key: key);
 
   @override
   ConsumerState<DiscussionCard> createState() => _DiscussionCardState();
@@ -137,7 +137,22 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                               width: kScreenWidth - (14 + 16 + 31 + 14),
                               height: 31,
                               child: InkWell(
-                                onTap: () => widget.onTap(widget.comment),
+                                onTap: () => showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Palette.grey900,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(kBorderRadius),
+                                      ),
+                                    ),
+                                    builder: (context) => Padding(
+                                          padding:
+                                              MediaQuery.of(context).viewInsets,
+                                          child: ReplyView(
+                                              comment: widget.comment,
+                                              user: user),
+                                        )),
                                 child: Text(
                                     "Comment on ${user.name.split(" ")[0]}'s insight..."),
                               ),
@@ -185,7 +200,6 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                             RepliesArea(
                                 widget.comment.id,
                                 widget.comment.replies!,
-                                onTap: widget.onTap,
                               ),
                         // builder: (_, collapsed, expanded) {
                         //   return Expandable(

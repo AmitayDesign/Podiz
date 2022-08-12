@@ -6,6 +6,7 @@ import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/home/components/profileAvatar.dart';
+import 'package:podiz/home/feed/components/commentSheet.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/player/PlayerManager.dart';
@@ -15,15 +16,9 @@ import 'package:podiz/splashScreen.dart';
 
 class DiscussionSnackBar extends ConsumerStatefulWidget {
   final Podcast p;
-  final bool visible;
-  final FocusNode focusNode;
-  final TextEditingController controller;
   const DiscussionSnackBar(
     this.p, {
     Key? key,
-    required this.visible,
-    required this.focusNode,
-    required this.controller,
   }) : super(key: key);
 
   @override
@@ -31,10 +26,8 @@ class DiscussionSnackBar extends ConsumerStatefulWidget {
 }
 
 class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
-  bool firstTime = true;
-  late bool visible = widget.visible;
   late String episodeUid;
-
+  bool firstTime = true;
   // final Key _key = const Key("textField");
 
   @override
@@ -66,99 +59,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(10), topRight: Radius.circular(10)),
         ),
-        child: widget.visible
-            ? openedTextInputView(context, widget.p)
-            : closedTextInputView(context, widget.p));
-  }
-
-  Widget openedTextInputView(BuildContext context, Podcast episode) {
-    final user = ref.watch(currentUserProvider);
-    final playerManager = ref.watch(playerManagerProvider);
-    return Padding(
-      padding: const EdgeInsets.only(left: 14.0, right: 14, top: 20, bottom: 8),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              ProfileAvatar(user: user, radius: 15.5),
-              const SizedBox(width: 8),
-              LimitedBox(
-                maxWidth: kScreenWidth - (14 + 31 + 8 + 31 + 8 + 14),
-                maxHeight: 31,
-                child: TextField(
-                  // key: _key,
-                  maxLines: 5,
-                  keyboardType: TextInputType.multiline,
-                  focusNode: widget.focusNode,
-                  controller: widget.controller,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: const Color(0xFF262626),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                    hintStyle: context.textTheme.bodyMedium!.copyWith(
-                      color: Palette.white90,
-                    ),
-                    hintText: "Share your insight...",
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              InkWell(
-                onTap: () {
-                  ref.read(playerManagerProvider).resumeEpisode(episode);
-                  ref.read(authManagerProvider).doComment(
-                      widget.controller.text,
-                      ref.read(playerProvider).podcastPlaying!.uid!,
-                      ref.read(playerProvider).timer.position.inMilliseconds);
-                  setState(() => visible = false);
-                  widget.focusNode.unfocus();
-                  widget.controller.clear();
-                },
-                child: const Icon(
-                  Icons.send,
-                  size: 31,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              // StackedImages(23), //TODO change this
-              const SizedBox(width: 8),
-              Text(
-                "${episode.watching} listening with you", //TODO change this!!!
-                style: context.textTheme.bodyMedium,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const Spacer(),
-
-              IconButton(
-                onPressed: () => playerManager.play30Back(episode),
-                icon: const Icon(
-                  Icons.rotate_90_degrees_ccw_outlined,
-                  size: 25,
-                ),
-              ),
-              const SizedBox(width: 15),
-              const PinkTimer(),
-              const SizedBox(width: 15),
-              IconButton(
-                onPressed: () => playerManager.play30Up(episode),
-                icon: const Icon(
-                  Icons.rotate_90_degrees_cw_outlined,
-                  size: 25,
-                ),
-              )
-            ],
-          ),
-        ],
-      ),
-    );
+        child: closedTextInputView(context, widget.p));
   }
 
   Widget closedTextInputView(BuildContext context, Podcast episode) {
@@ -207,8 +108,22 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                     InkWell(
                       onTap: () {
                         ref.read(playerManagerProvider).pauseEpisode();
-                        setState(() => visible = true);
-                        widget.focusNode.requestFocus();
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Palette.grey900,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(kBorderRadius),
+                            ),
+                          ),
+                          builder: (context) => Padding(
+                            padding: MediaQuery.of(context).viewInsets,
+                            child: CommentSheet(
+                              podcast: widget.p,
+                            ),
+                          ),
+                        );
                       },
                       child: LimitedBox(
                         maxWidth: kScreenWidth - (16 + 90 + 16),

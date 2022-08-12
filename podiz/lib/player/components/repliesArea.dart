@@ -5,17 +5,16 @@ import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/widgets/cardButton.dart';
 import 'package:podiz/aspect/widgets/shimmerLoading.dart';
+import 'package:podiz/home/components/replyView.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/player/components/profileRow.dart';
 import 'package:podiz/profile/userManager.dart';
 
 class RepliesArea extends ConsumerWidget {
-  final void Function(Comment) onTap;
   final String commentUid;
   final Map<String, Comment> replies;
-  const RepliesArea(this.commentUid, this.replies,
-      {Key? key, required this.onTap})
+  const RepliesArea(this.commentUid, this.replies, {Key? key})
       : super(key: key);
 
   @override
@@ -30,7 +29,8 @@ class RepliesArea extends ConsumerWidget {
     return Column(children: treeWidget);
   }
 
-  Widget commentButton(Comment c, int lvl, UserPodiz user) {
+  Widget commentButton(
+      Comment c, int lvl, UserPodiz user, BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -42,7 +42,19 @@ class RepliesArea extends ConsumerWidget {
           width: kScreenWidth - (14 + lvl * (23 + 8) + 16 + 31 + 14),
           height: 31,
           child: InkWell(
-            onTap: () => onTap(c),
+            onTap: () => showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Palette.grey900,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(kBorderRadius),
+                  ),
+                ),
+                builder: (context) => Padding(
+                      padding: MediaQuery.of(context).viewInsets,
+                      child: ReplyView(comment: c, user: user),
+                    )),
             child: Text("Comment on ${user.name.split(" ")[0]}'s insight..."),
           ),
         ),
@@ -111,7 +123,7 @@ class RepliesArea extends ConsumerWidget {
                                 Container(),
                               ] else ...[
                                 const SizedBox(height: 8),
-                                commentButton(c, lvl, user),
+                                commentButton(c, lvl, user, context),
                                 const SizedBox(height: 16),
                                 for (var key in c.replies!.keys)
                                   elementOfTree(
