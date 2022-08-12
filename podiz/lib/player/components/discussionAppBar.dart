@@ -25,7 +25,7 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
     return AppBar(
       toolbarHeight: height,
       automaticallyImplyLeading: false,
-      backgroundColor: Palette.purpleAppBar,
+      backgroundColor: Palette.darkPurple,
       title: const BackAppBarButton(),
       flexibleSpace: podcast == null
           ? null

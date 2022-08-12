@@ -494,13 +494,13 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                             height: 31,
                             width: 31,
                             decoration: BoxDecoration(
-                              color: Palette.darkPurple,
+                              color: Palette.purple,
                               borderRadius: BorderRadius.circular(30),
                             ),
                             child: const Icon(
                               Icons.send,
                               size: 11,
-                              color: Palette.pureWhite,
+                              color: Colors.white,
                             ),
                           ),
                         ),
