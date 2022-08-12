@@ -7,15 +7,16 @@ import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/authentication/authManager.dart';
-import 'package:podiz/home/feed/components/feedAppBar.dart';
-import 'package:podiz/home/feed/components/feedTitle.dart';
-import 'package:podiz/home/feed/components/podcastCard.dart';
-import 'package:podiz/home/feed/components/quickNoteButton.dart';
 import 'package:podiz/home/homePage.dart';
-import 'package:podiz/loading.dart/episodeLoading.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/providers.dart';
+
+import 'components/feedAppBar.dart';
+import 'components/feedTitle.dart';
+import 'components/podcastCard.dart';
+import 'components/quickNoteButton.dart';
+import 'components/skeletonPodcastCard.dart';
 
 class FeedPage extends ConsumerStatefulWidget {
   const FeedPage({Key? key}) : super(key: key);
@@ -96,8 +97,8 @@ class _FeedPageState extends ConsumerState<FeedPage> {
             //* Last Listened
             SliverToBoxAdapter(
               child: lastPodcastValue.when(
-                loading: () => const EpisodeLoading(),
-                error: (e, _) => const SizedBox.shrink(),
+                loading: () => const SkeletonPodcastCard(),
+                error: (e, _) => null,
                 data: (lastPodcast) {
                   if (lastPodcast == null) return null;
                   return PodcastCard(
@@ -115,7 +116,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                   if (user.lastListened.isNotEmpty)
                     FeedTile(
                       Locales.string(context, "mycasts"),
-                      key: hotliveKey,
+                      textKey: hotliveKey,
                     ),
                   for (final podcast in authManager.myCast)
                     PodcastCard(
@@ -129,7 +130,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
             if (user.lastListened.isNotEmpty || user.favPodcasts.isNotEmpty)
               SliverFeedTile(
                 Locales.string(context, "hotlive"),
-                key: hotliveKey,
+                textKey: hotliveKey,
               ),
             FirestoreQueryBuilder<Podcast>(
               query: queryFeed,

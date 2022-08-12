@@ -54,6 +54,7 @@ class AuthManager {
   Future<void> fetchUserInfo(String userId) async {
     setUpUserStream(userId);
     await podcastManager.getDevices(userId);
+    // await podcastManager.fetchUserPlayer(userId);
   }
 
   void setUpUserStream(String userId) {

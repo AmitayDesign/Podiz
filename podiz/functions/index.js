@@ -43,15 +43,7 @@ exports.getAccessTokenWithCode = functions.https.onCall(
 
       var result = await response.json();
 
-      let userUid = await getUserInfo(result.access_token);
-
-      await admin.firestore().collection("spotifyAuth").doc(userUid).set({
-        access_token: result.access_token,
-        token_type: result.token_type,
-        expires_in: result.expires_in,
-        refresh_token: result.refresh_token,
-        scope: result.scope,
-      });
+      let userUid = await getUserInfo(result);
 
       return userUid;
     } catch (err) {
@@ -77,17 +69,18 @@ async function getAccessTokenWithRefreshToken(userUid) {
       }),
       method: "POST",
     });
-    if (response["status"] != 200) {
-      return false;
+    if (response["status"] == 200) {
+      var result = await response.json();
+      await admin
+        .firestore()
+        .collection("spotifyAuth")
+        .doc(userUid)
+        .update({ access_token: result.access_token });
+      return { result: "ok" };
+    } else if (response["status"] == 401) {
+      return { result: "unauthorized" };
     }
-    var result = await response.json();
-    await admin
-      .firestore()
-      .collection("spotifyAuth")
-      .doc(userUid)
-      .update({ access_token: result.access_token });
-
-    return true;
+    return { result: "devices" };
   } catch (err) {
     console.log(err);
     return false;
@@ -100,43 +93,51 @@ async function getSpotifyAuth(userUid) {
   return spotifyAuth;
 }
 
-async function getUserInfo(code) {
+async function getUserInfo(result) {
   try {
     var response = await fetch(host + "/me", {
       headers: {
         Accept: "application/json",
-        Authorization: "Bearer " + code,
+        Authorization: "Bearer " + result.access_token,
         "Content-Type": "application/json",
       },
       method: "GET",
     });
 
-    var result = await response.json();
+    var userResult = await response.json();
 
     var docRef = await admin
       .firestore()
       .collection("users")
-      .doc(result.uri)
+      .doc(userResult.uri)
       .get();
 
     var exists = docRef.exists;
 
+    await admin.firestore().collection("spotifyAuth").doc(userResult.uri).set({
+      access_token: result.access_token,
+      token_type: result.token_type,
+      expires_in: result.expires_in,
+      refresh_token: result.refresh_token,
+      scope: result.scope,
+    });
+
     if (exists) {
-      return result.uri;
+      return userResult.uri;
     }
     prev = "";
     searchArray = [];
 
-    for (letter of result.display_name) {
+    for (letter of userResult.display_name) {
       prev += letter;
       word = prev.toLowerCase();
       searchArray.push(word);
     }
 
-    admin.firestore().collection("users").doc(result.uri).set({
-      name: result.display_name,
-      email: result.email,
-      image_url: result.images[0].url,
+    admin.firestore().collection("users").doc(userResult.uri).set({
+      name: userResult.display_name,
+      email: userResult.email,
+      image_url: userResult.images[0].url,
       followers: [],
       following: [],
       lastListened: "",
@@ -145,20 +146,18 @@ async function getUserInfo(code) {
       searchArray: searchArray,
     });
 
-    // getUserFavoriteShow(userUid);
-    return result.uri;
+    getUserFavoriteShow(userResult.uri, result.access_token);
+    return userResult.uri;
   } catch (err) {
     console.log(err);
   }
 }
 
-async function getUserFavoriteShow(userUid) {
-  var spotifyAuth = await getSpotifyAuth(userUid);
-
+async function getUserFavoriteShow(userUid, code) {
   var response = await fetch(host + "/me/shows?offset=0&limit=50", {
     headers: {
       Accept: "application/json",
-      Authorization: "Bearer " + spotifyAuth.access_token,
+      Authorization: "Bearer " + code,
       "Content-Type": "application/json",
     },
     method: "GET",
@@ -172,6 +171,15 @@ async function getUserFavoriteShow(userUid) {
 
   for (item of result["items"]) {
     s = item["show"];
+
+    searchArrayShow = [];
+    prev = "";
+    for (letter of s["name"]) {
+      prev += letter;
+      word = prev.toLowerCase();
+      searchArrayShow.push(word);
+    }
+
     show = {
       uid: s["uri"],
       name: s["name"],
@@ -181,6 +189,7 @@ async function getUserFavoriteShow(userUid) {
       total_episodes: s["total_episodes"],
       podcasts: [],
       followers: [],
+      searchArray: searchArrayShow,
     };
 
     if (!(await checkShowExists(show["uid"]))) {
@@ -212,7 +221,7 @@ async function getUserFavoriteShow(userUid) {
       {
         headers: {
           Accept: "application/json",
-          Authorization: "Bearer " + spotifyAuth.access_token,
+          Authorization: "Bearer " + code,
           "Content-Type": "application/json",
         },
         method: "GET",
@@ -220,6 +229,15 @@ async function getUserFavoriteShow(userUid) {
     );
     for (item of result["items"]) {
       s = item["show"];
+
+      searchArrayShow = [];
+      prev = "";
+      for (letter of s["name"]) {
+        prev += letter;
+        word = prev.toLowerCase();
+        searchArrayShow.push(word);
+      }
+
       show = {
         uid: s["uri"],
         name: s["name"],
@@ -229,6 +247,7 @@ async function getUserFavoriteShow(userUid) {
         total_episodes: s["total_episodes"],
         podcasts: [],
         followers: [],
+        searchArray: searchArrayShow,
       };
 
       if (!(await checkShowExists(show["uid"]))) {
@@ -275,63 +294,78 @@ async function getShowEpisodes(showUid, total_episodes, showName, userUid) {
   var spotifyAuth = await getSpotifyAuth(userUid);
   episodeList = [];
   let offset = 0;
-  if (total_episodes > 10) {
-    offset = total_episodes - 10;
-  }
-  var response = await fetch(
-    host +
-      "/shows/" +
-      showUid.split(":")[2] +
-      "/episodes?limit=10&offset=" +
-      offset.toString(),
-    {
-      headers: {
-        Accept: "application/json",
-        Authorization: "Bearer " + spotifyAuth.access_token,
-        "Content-Type": "application/json",
-      },
-      method: "GET",
+  while (offset < total_episodes) {
+    var response = await fetch(
+      host +
+        "/shows/" +
+        showUid.split(":")[2] +
+        "/episodes?limit=50&offset=" +
+        offset.toString(),
+      {
+        headers: {
+          Accept: "application/json",
+          Authorization: "Bearer " + spotifyAuth.access_token,
+          "Content-Type": "application/json",
+        },
+        method: "GET",
+      }
+    );
+
+    if (response["status"] != 200) {
+      return false;
     }
+    let result = await response.json();
+
+    for (e of result["items"]) {
+      searchArray = [];
+      prev = "";
+      for (letter of e["name"]) {
+        prev += letter;
+        word = prev.toLowerCase();
+        searchArray.push(word);
+      }
+
+      episode = {
+        uid: e["uri"],
+        name: e["name"],
+        description: e["description"],
+        duration_ms: e["duration_ms"],
+        show_name: showName,
+        show_uri: showUid,
+        image_url: e["images"][0]["url"],
+        comments: 0,
+        commentsImg: [],
+        release_date: e["release_date"],
+        watching: 0,
+        searchArray: searchArray,
+      };
+      episodeList.push(episode);
+    }
+    offset += 50;
+  }
+  let sortedList = episodeList.sort((a, b) =>
+    a.release_date < b.release_date
+      ? 1
+      : b.release_date < a.release_date
+      ? -1
+      : 0
   );
-
-  if (response["status"] != 200) {
-    return false;
-  }
-  let result = await response.json();
-
-  for (e of result["items"]) {
-    searchArray = [];
-    prev = "";
-    for (letter of e["name"]) {
-      prev += letter;
-      word = prev.toLowerCase();
-      searchArray.push(word);
+  let count = 0;
+  for (aux of sortedList) {
+    if (count > 10) {
+      break;
     }
-
-    episode = {
-      uid: e["uri"],
-      name: e["name"],
-      description: e["description"],
-      duration_ms: e["duration_ms"],
-      show_name: showName,
-      show_uri: showUid,
-      image_url: e["images"][0]["url"],
-      comments: 0,
-      commentsImg: [],
-      release_date: e["release_date"],
-      watching: 0,
-      searchArray: searchArray,
-    };
-    if (!(await checkEpisodeExists(episode["uid"]))) {
-      addEpisodeToDataBase(episode);
+    if (!(await checkEpisodeExists(aux["uid"]))) {
+      addEpisodeToDataBase(aux);
     }
     admin
       .firestore()
       .collection("podcasters")
       .doc(showUid)
       .update({
-        podcasts: admin.firestore.FieldValue.arrayUnion(e["uri"]),
+        podcasts: admin.firestore.FieldValue.arrayUnion(aux["uid"]),
       });
+    count += 1;
   }
 }
 
@@ -363,10 +397,10 @@ exports.play = functions.https.onCall(async (data, context) => {
   let userUid = data.userUid;
   let position = data.position;
   let result = await playEpisode(episodeUid, userUid, position);
-  if (!result) {
+  if (result["result"] == "unauthorized") {
     result = await getAccessTokenWithRefreshToken(userUid);
-    if (!result) {
-      return false;
+    if (result["result"] == "unauthorized") {
+      return result;
     }
     result = await playEpisode(episodeUid, userUid, position);
   }
@@ -383,10 +417,10 @@ exports.pause = functions.https.onCall(async (data, context) => {
   let userUid = data.userUid;
   let result = await pauseEpisode(userUid);
 
-  if (!result) {
+  if (result["result"] == "unauthorized") {
     result = await getAccessTokenWithRefreshToken(userUid);
-    if (!result) {
-      return false;
+    if (result["result"] == "unauthorized") {
+      return result;
     }
     result = await pauseEpisode(userUid);
   }
@@ -401,10 +435,10 @@ exports.devices = functions.https.onCall(async (data, context) => {
   */
   let userUid = data.userUid;
   result = await getDevices(userUid);
-  if (!result) {
+  if (result["result"] == "unauthorized") {
     result = await getAccessTokenWithRefreshToken(userUid);
-    if (!result) {
-      return false;
+    if (result["result"] == "unauthorized") {
+      return result;
     }
     result = await getDevices(userUid);
   }
@@ -422,9 +456,9 @@ exports.searchInSpotify = functions.https.onCall(async (data, context) => {
   let query = data.query;
 
   result = await search(userUid, query);
-  if (!result) {
+  if (result["result"] == "unauthorized") {
     result = await getAccessTokenWithRefreshToken(userUid);
-    if (!result) {
+    if (result["result"] == "unauthorized") {
       return false;
     }
     result = await search(userUid, query);
@@ -550,29 +584,29 @@ async function search(userUid, query) {
         method: "GET",
       }
     );
-    if (response["status"] != 200) {
-      return false;
-    }
+    if (response["status"] == 200) {
+      let result = await response.json();
 
-    let result = await response.json();
-
-    for (e of result["episodes"]["items"]) {
-      let final_result = await getEpisode(e["id"], userUid);
-      if (!(await checkEpisodeExists(final_result["episode"]["uid"]))) {
-        addEpisodeToDataBase(final_result["episode"]);
+      for (e of result["episodes"]["items"]) {
+        let final_result = await getEpisode(e["id"], userUid);
+        if (!(await checkEpisodeExists(final_result["episode"]["uid"]))) {
+          addEpisodeToDataBase(final_result["episode"]);
+        }
+        if (!(await checkShowExists(final_result["episode"]["show_uri"]))) {
+          addShowToDataBase(final_result["show"]);
+          getShowEpisodes(
+            final_result["show"]["uid"],
+            final_result["show"]["total_episodes"],
+            final_result["show"]["name"],
+            userUid
+          );
+        }
       }
-      if (!(await checkShowExists(final_result["episode"]["show_uri"]))) {
-        addShowToDataBase(final_result["show"]);
-        getShowEpisodes(
-          final_result["show"]["uid"],
-          final_result["show"]["total_episodes"],
-          final_result["show"]["name"],
-          userUid
-        );
-      }
+      return { result: "ok" };
+    } else if (response["status"] == 401) {
+      return { result: "unauthorized" };
     }
-
-    return true;
+    return { result: "devices" };
   } catch (err) {
     console.log(err);
     return false;
@@ -664,13 +698,15 @@ async function playEpisode(episodeUid, userUid, position) {
         method: "PUT",
       }
     );
-    if (response["status"] != 204) {
-      return false;
+    if (response["status"] == 204) {
+      return { result: "ok" };
+    } else if (response["status"] == 401) {
+      return { result: "unauthorized" };
     }
-    return true;
+    return { result: "devices" };
   } catch (err) {
     console.log(err);
-    return false;
+    return { result: "devices" };
   }
 }
 
@@ -686,13 +722,15 @@ async function pauseEpisode(userUid) {
       },
       method: "PUT",
     });
-    if (response["status"] != 204) {
-      return false;
+    if (response["status"] == 204) {
+      return { result: "ok" };
+    } else if (response["status"] == 401) {
+      return { result: "unauthorized" };
     }
-    return true;
+    return { result: "devices" };
   } catch (err) {
     console.log(err);
-    return false;
+    return { result: "devices" };
   }
 }
 
@@ -712,24 +750,31 @@ async function getDevices(userUid) {
     };
 
     var response = await fetch(host + "/me/player/devices", requestOptions);
-    if (response["status"] != 200) {
-      return false;
-    }
+    if (response["status"] == 200) {
+      var result = await response.json();
 
-    var result = await response.json();
-
-    let devicesList = [];
-    for (dev of result["devices"]) {
-      devicesList.push({ id: dev["id"], name: dev["name"], type: dev["type"] });
+      let devicesList = [];
+      for (dev of result["devices"]) {
+        devicesList.push({
+          id: dev["id"],
+          name: dev["name"],
+          type: dev["type"],
+        });
+      }
+      if (result["devices"] == []) {
+        return { result: "devices" };
+      }
+      admin.firestore().collection("spotifyAuth").doc(userUid).update({
+        selectedDevice: result.devices[0].id,
+        devices: devicesList,
+      });
+      return { result: "ok" };
+    } else if (response["status"] == 401) {
+      return { result: "unauthorized" };
     }
-    admin.firestore().collection("spotifyAuth").doc(userUid).update({
-      selectedDevice: result.devices[0].id,
-      devices: devicesList,
-    });
-    return true;
   } catch (err) {
     console.log(err);
-    return false;
+    return { result: "devices" };
   }
 }
 

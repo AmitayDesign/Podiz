@@ -41,6 +41,7 @@ class _CommentSheetState extends ConsumerState<CommentSheet> {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
             children: [
@@ -91,15 +92,12 @@ class _CommentSheetState extends ConsumerState<CommentSheet> {
               ),
             ],
           ),
-          Row(
-            //!
-            children: const [
-              // Text(
-              //   "${widget.podcast.watching} listening right now",
-              //   style: context.textTheme.bodyMedium,
-              //   overflow: TextOverflow.ellipsis,
-              // ),
-            ],
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
+            child: Text(
+              "${widget.podcast.watching} listening right now",
+              style: context.textTheme.bodySmall,
+            ),
           ),
         ],
       ),
