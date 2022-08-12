@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/theme/palette.dart';
@@ -39,6 +41,13 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
   void dispose() {
     super.dispose();
     _controller.dispose();
+  }
+
+  void openShow(Podcast podcast) {
+    context.goNamed(
+      AppRoute.show.name,
+      params: {'showId': podcast.show_uri},
+    );
   }
 
   final _controller = ScrollController();
@@ -207,15 +216,19 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                                           ),
                                         ),
                                         const SizedBox(height: 2),
-                                        Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            podcast.show_name,
-                                            style: context.textTheme.bodyMedium!
-                                                .copyWith(
-                                              color: Colors.white70,
+                                        GestureDetector(
+                                          onTap: () => openShow(podcast),
+                                          child: Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              podcast.show_name,
+                                              style: context
+                                                  .textTheme.bodyMedium!
+                                                  .copyWith(
+                                                color: Colors.white70,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
                                             ),
-                                            overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
                                       ],
