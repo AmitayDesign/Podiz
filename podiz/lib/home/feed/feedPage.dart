@@ -41,17 +41,23 @@ class _FeedPageState extends ConsumerState<FeedPage> {
 
   //TODO handle when the title doesnt exist
   void handleAppBar() {
+    var user = ref.read(currentUserProvider);
+
     final myCastsPosition = myCastsKey.offset?.dy;
     final hotlivePosition = hotliveKey.offset?.dy;
 
     var title = ref.read(homeBarTitleProvider);
 
-    if (hotlivePosition == null || hotlivePosition < HomeAppBar.height) {
-      title = 'hotlive';
-    } else if (myCastsPosition == null || myCastsPosition < HomeAppBar.height) {
-      title = 'myCasts';
-    } else {
+    if (user.lastListened.isNotEmpty &&
+        myCastsPosition != null &&
+        myCastsPosition > HomeAppBar.height) {
       title = 'lastListened';
+    } else if (user.favPodcasts.isNotEmpty &&
+        hotlivePosition != null &&
+        hotlivePosition > HomeAppBar.height) {
+      title = 'muCasts';
+    } else {
+      title = 'hotlive';
     }
 
     ref.read(homeBarTitleProvider.notifier).state = title;
