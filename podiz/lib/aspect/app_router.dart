@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:podiz/authentication/authManager.dart';
+import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/home/homePage.dart';
 import 'package:podiz/home/search/screens/showPage.dart';
 import 'package:podiz/onboarding/onbordingPage.dart';
@@ -20,7 +20,7 @@ enum AppRoute {
 
 //TODO test login in no premium account
 
-final goRouterProvider = Provider<GoRouter>((ref) {
+final goRouterProvider = Provider.autoDispose<GoRouter>((ref) {
   final authManager = ref.watch(authManagerProvider);
   return GoRouter(
     initialLocation: '/',
@@ -34,7 +34,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       }
       return null;
     },
-    refreshListenable: GoRouterRefreshStream(authManager.user),
+    refreshListenable: GoRouterRefreshStream(authManager.userChanges),
     routes: [
       GoRoute(
         path: '/onboarding',

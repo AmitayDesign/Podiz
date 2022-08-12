@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/typedefs.dart';
-import 'package:podiz/authentication/authManager.dart';
+import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/Player.dart';

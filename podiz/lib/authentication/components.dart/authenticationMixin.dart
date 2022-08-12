@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/failures/errorBar.dart';
 import 'package:podiz/aspect/failures/failure.dart';
-import 'package:podiz/authentication/authManager.dart';
+import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/providers.dart';
 
 mixin Authentication<T extends ConsumerStatefulWidget> on ConsumerState<T> {

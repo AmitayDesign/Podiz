@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/authentication/authManager.dart';
+import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/providers.dart';
@@ -30,7 +30,8 @@ class PodcastManager {
     required this.firestore,
   });
 
-  Future<void> getDevices(String userID) async { //TODO verify result
+  Future<void> getDevices(String userID) async {
+    //TODO verify result
     await FirebaseFunctions.instance
         .httpsCallable("devices")
         .call({"userUid": userID});

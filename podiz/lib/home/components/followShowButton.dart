@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/theme/palette.dart';
-import 'package:podiz/authentication/authManager.dart';
+import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 
 class FollowShowButton extends ConsumerWidget {

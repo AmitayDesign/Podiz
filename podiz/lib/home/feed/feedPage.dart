@@ -6,7 +6,7 @@ import 'package:flutterfire_ui/firestore.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/authentication/authManager.dart';
+import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/home/homePage.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/player/PlayerManager.dart';
