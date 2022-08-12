@@ -18,7 +18,7 @@ class InsightsRow extends StatelessWidget {
     return Row(
       children: [
         hasComments
-            ? StackedImages(podcast, size: 16)
+            ? StackedImages(podcast, radius: 16)
             : Consumer(
                 builder: (context, ref, _) {
                   final user = ref.watch(currentUserProvider);
