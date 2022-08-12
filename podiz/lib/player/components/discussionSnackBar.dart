@@ -4,13 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/theme/palette.dart';
-import 'package:podiz/authentication/auth_manager.dart';
-import 'package:podiz/home/components/profileAvatar.dart';
-import 'package:podiz/home/feed/components/commentSheet.dart';
 import 'package:podiz/objects/Podcast.dart';
-import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/player/PlayerManager.dart';
-import 'package:podiz/player/components/insightSheet.dart';
 import 'package:podiz/player/components/pinkTimer.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
@@ -47,10 +42,10 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
 
   @override
   Widget build(BuildContext context) {
-    final player = ref.watch(playerProvider);
+    final playerManager = ref.watch(playerManagerProvider);
     if (firstTime) {
       episodeUid = widget.p.uid!;
-      player.increment(episodeUid);
+      playerManager.increment(episodeUid);
       firstTime = false;
     }
     return Container(
@@ -65,8 +60,8 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
 
   Widget closedTextInputView(BuildContext context, Podcast episode) {
     final playerManager = ref.watch(playerManagerProvider);
-    final state = ref.watch(stateProvider);
-    return state.when(
+    final playerValue = ref.watch(playerStreamProvider);
+    return playerValue.when(
         error: (e, _) {
           print('discussionSnackBar: ${e.toString()}');
           return SplashScreen.error();
@@ -81,11 +76,12 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
               ),
               child: const CircularProgressIndicator(),
             ),
-        data: (s) {
-          final icon = s == PlayerState.play ? Icons.stop : Icons.play_arrow;
-          final onTap = s == PlayerState.play
-              ? () => playerManager.pauseEpisode()
-              : () => playerManager.resumeEpisode(episode);
+        data: (player) {
+          final isPlaying = player?.isPlaying ?? false;
+          final icon = isPlaying ? Icons.stop : Icons.play_arrow;
+          final onTap = isPlaying
+              ? () => playerManager.pausePodcast()
+              : () => playerManager.resumePodcast();
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
             child: Column(
@@ -108,7 +104,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                   children: [
                     InkWell(
                       onTap: () {
-                        ref.read(playerManagerProvider).pauseEpisode();
+                        ref.read(playerManagerProvider).pausePodcast();
                         showModalBottomSheet(
                           context: context,
                           isScrollControlled: true,
@@ -120,9 +116,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                           ),
                           builder: (context) => Padding(
                             padding: MediaQuery.of(context).viewInsets,
-                            child: InsightSheet(
-                              podcast: widget.p,
-                            ),
+                            // child: InsightSheet(podcast: widget.p),
                           ),
                         );
                       },
@@ -151,7 +145,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                       height: 20,
                       child: IconButton(
                         padding: EdgeInsets.zero,
-                        onPressed: () => playerManager.play30Back(episode),
+                        onPressed: () => playerManager.play30Back(),
                         icon: const Icon(
                           Icons.rotate_90_degrees_ccw_outlined,
                         ),
@@ -173,7 +167,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
                       height: 20,
                       child: IconButton(
                         padding: EdgeInsets.zero,
-                        onPressed: () => playerManager.play30Up(episode),
+                        onPressed: () => playerManager.play30Up(),
                         icon: const Icon(
                           Icons.rotate_90_degrees_cw_outlined,
                         ),

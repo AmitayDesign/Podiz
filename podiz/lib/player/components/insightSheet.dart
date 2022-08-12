@@ -5,7 +5,6 @@ import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/home/components/profileAvatar.dart';
 import 'package:podiz/objects/Podcast.dart';
-import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/providers.dart';
 
 class InsightSheet extends ConsumerStatefulWidget {
@@ -31,12 +30,7 @@ class _CommentSheetState extends ConsumerState<InsightSheet> {
     ref.read(authManagerProvider).doComment(
           commentController.text,
           widget.podcast.uid!,
-          ref
-              .read(playerManagerProvider)
-              .playerBloc
-              .timer
-              .position
-              .inMilliseconds,
+          ref.read(playerStreamProvider).value!.position.inMilliseconds,
         );
     commentController.clear();
   }

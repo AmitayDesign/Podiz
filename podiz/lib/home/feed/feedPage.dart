@@ -67,7 +67,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
   }
 
   void openPodcast(Podcast podcast) {
-    ref.read(playerManagerProvider).playEpisode(podcast, 0);
+    ref.read(playerManagerProvider).playPodcast(podcast);
     context.goNamed(
       AppRoute.discussion.name,
       params: {'episodeId': podcast.uid!},
@@ -111,6 +111,8 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                   if (lastPodcast == null) return null;
                   return PodcastCard(
                     lastPodcast,
+                    onTap: () => openPodcast(lastPodcast),
+                    onShowTap: () => openShow(lastPodcast),
                     bottom: QuickNoteButton(podcast: lastPodcast),
                   );
                 },

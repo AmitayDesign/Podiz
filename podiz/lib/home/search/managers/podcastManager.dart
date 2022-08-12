@@ -8,17 +8,14 @@ import 'package:podiz/objects/SearchResult.dart';
 import 'package:podiz/providers.dart';
 
 final podcastManagerProvider = Provider<PodcastManager>(
-  (ref) => PodcastManager(
-    firestore: ref.watch(firestoreProvider),
-  ),
+  (ref) => PodcastManager(ref.read),
 );
 
 class PodcastManager {
-  final FirebaseFirestore firestore;
+  final Reader _read;
+  FirebaseFirestore get firestore => _read(firestoreProvider);
 
-  PodcastManager({
-    required this.firestore,
-  });
+  PodcastManager(this._read);
 
   Future<void> getDevices(String userID) async {
     //TODO verify result

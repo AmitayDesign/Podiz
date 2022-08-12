@@ -18,7 +18,6 @@ import 'package:podiz/loading.dart/notificationLoading.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/NotificationPodiz.dart';
-import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/providers.dart';
@@ -56,8 +55,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isPlaying = ref.watch(playerStreamProvider).valueOrNull?.getState ==
-        PlayerState.play;
+    final isPlaying =
+        ref.watch(playerStreamProvider).valueOrNull?.isPlaying ?? false;
     final notifications = ref.watch(notificationsStreamProvider);
     return notifications.when(
         loading: () => const NotificationLoading(),
