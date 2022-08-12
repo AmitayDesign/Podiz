@@ -19,6 +19,14 @@ class ShowManager {
     return show;
   }
 
+  Query<Show> showsFirestoreQuery(String filter) => FirebaseFirestore.instance
+      .collection("podcasters")
+      .where("searchArray", arrayContains: filter.toLowerCase())
+      .withConverter(
+        fromFirestore: (show, _) => Show.fromFirestore(show),
+        toFirestore: (show, _) => {},
+      );
+
   // List<String> getFavoritePodcasts() {
   //   return favShow;
   // }

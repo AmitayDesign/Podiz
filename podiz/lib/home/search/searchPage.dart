@@ -1,21 +1,18 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutterfire_ui/firestore.dart';
+import 'package:podiz/aspect/widgets/gradientAppBar.dart';
 import 'package:podiz/aspect/widgets/podcastTile.dart';
 import 'package:podiz/aspect/widgets/showSearchTile.dart';
+import 'package:podiz/aspect/widgets/sliverFirestoreQueryBuilder.dart';
 import 'package:podiz/aspect/widgets/userSearchTile.dart';
 import 'package:podiz/home/homePage.dart';
 import 'package:podiz/home/search/components/searchBar.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
-import 'package:podiz/objects/Podcast.dart';
+import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/objects/SearchResult.dart';
 import 'package:podiz/objects/show.dart';
 import 'package:podiz/objects/user/User.dart';
-import 'package:podiz/providers.dart';
-import 'package:podiz/splashScreen.dart';
-
-import 'components/searchInSpotify.dart';
+import 'package:podiz/profile/userManager.dart';
 
 class SearchPage extends ConsumerStatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -25,10 +22,8 @@ class SearchPage extends ConsumerStatefulWidget {
 }
 
 class _SearchPageState extends ConsumerState<SearchPage> {
-  late final searchController = TextEditingController(text: "")
-    ..addListener(() => setState(() {}));
-
-  final searchBarKey = GlobalKey();
+  late final searchController = TextEditingController();
+  String get query => searchController.text;
 
   @override
   void dispose() {
@@ -36,120 +31,51 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     super.dispose();
   }
 
-  String get query => searchController.text;
-
   @override
   Widget build(BuildContext context) {
-    final player = ref.watch(playerStreamProvider);
+    final userManager = ref.watch(userManagerProvider);
     final podcastManager = ref.watch(podcastManagerProvider);
-    bool isEmpty = true;
-
+    final showManager = ref.watch(showManagerProvider);
     return Scaffold(
-      appBar: SearchBar(controller: searchController),
-      body: player.when(
-        error: (e, _) {
-          print('searchPage: ${e.toString()}');
-          return SplashScreen.error();
-        },
-        loading: () => SplashScreen(),
-        data: (p) => Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: CustomScrollView(
-            slivers: [
-              FirestoreQueryBuilder<SearchResult>(
-                query: FirebaseFirestore.instance
-                    .collection("podcasts")
-                    .where("searchArray", arrayContains: query.toLowerCase())
-                    .withConverter(
-                      fromFirestore: (doc, _) {
-                        Podcast podcast = Podcast.fromFirestore(doc);
-                        return SearchResult.fromPodcast(podcast);
-                      },
-                      toFirestore: (podcast, _) => {},
-                    ),
-                builder: (context, snapshot, _) {
-                  return SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        if (snapshot.hasMore &&
-                            index + 1 == snapshot.docs.length) {
-                          snapshot.fetchMore();
-                        }
-                        isEmpty = false;
+        extendBodyBehindAppBar: true,
+        appBar: SearchBar(controller: searchController),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: ValueListenableBuilder(
+            valueListenable: searchController,
+            builder: (context, value, _) {
+              return CustomScrollView(
+                slivers: [
+                  // so it doesnt start behind the app bar
+                  const SliverToBoxAdapter(
+                    child: SizedBox(height: GradientAppBar.backgroundHeight),
+                  ),
 
-                        final episode = snapshot.docs[index].data();
-                        return PodcastTile(
-                          episode,
-                          isPlaying: p.podcastPlaying?.uid == episode.uid,
-                        );
-                      },
-                      childCount: snapshot.docs.length,
-                    ),
-                  );
-                },
-              ),
-              FirestoreQueryBuilder<Show>(
-                query: FirebaseFirestore.instance
-                    .collection("podcasters")
-                    .where("searchArray", arrayContains: query.toLowerCase())
-                    .withConverter(
-                      fromFirestore: (show, _) => Show.fromFirestore(show),
-                      toFirestore: (show, _) => {},
-                    ),
-                builder: (context, snapshot, _) {
-                  return SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        if (snapshot.hasMore &&
-                            index + 1 == snapshot.docs.length) {
-                          snapshot.fetchMore();
-                        }
-                        isEmpty = false;
+                  SliverFirestoreQueryBuilder<UserPodiz>(
+                    query: userManager.usersFirestoreQuery(query),
+                    builder: (context, user) => UserSearchTile(user), //!
+                  ),
+                  SliverFirestoreQueryBuilder<Show>(
+                    query: showManager.showsFirestoreQuery(query),
+                    builder: (context, show) => ShowSearchTile(show), //!
+                  ),
+                  //!
+                  SliverFirestoreQueryBuilder<SearchResult>(
+                    query: podcastManager.podcastsFirestoreQuery(query),
+                    builder: (context, podcast) => PodcastTile(podcast), //!
+                  ),
 
-                        final show = snapshot.docs[index].data();
-                        return ShowSearchTile(show);
-                      },
-                      childCount: snapshot.docs.length,
-                    ),
-                  );
-                },
-              ),
-              FirestoreQueryBuilder<UserPodiz>(
-                query: FirebaseFirestore.instance
-                    .collection("users")
-                    .where("searchArray", arrayContains: query.toLowerCase())
-                    .withConverter(
-                      fromFirestore: (user, _) => UserPodiz.fromFirestore(user),
-                      toFirestore: (podcast, _) => {},
-                    ),
-                builder: (context, snapshot, _) {
-                  return SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        if (snapshot.hasMore &&
-                            index + 1 == snapshot.docs.length) {
-                          snapshot.fetchMore();
-                        }
-                        isEmpty = false;
+                  // if (query.isNotEmpty && !hasResults)
+                  //   SliverToBoxAdapter(child: SpotifySearch(query)),
 
-                        final user = snapshot.docs[index].data();
-                        return UserSearchTile(user);
-                      },
-                      childCount: snapshot.docs.length,
-                    ),
-                  );
-                },
-              ),
-              if (isEmpty && query.isNotEmpty)
-                SliverToBoxAdapter(child: SearchInSpotify(query)),
-              // so it doesnt end behind the bottom bar
-              const SliverToBoxAdapter(
-                child: SizedBox(height: HomePage.bottomBarHeigh),
-              ),
-            ],
+                  // so it doesnt end behind the bottom bar
+                  const SliverToBoxAdapter(
+                    child: SizedBox(height: HomePage.bottomBarHeigh),
+                  ),
+                ],
+              );
+            },
           ),
-        ),
-      ),
-    );
+        ));
   }
 }

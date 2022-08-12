@@ -7,7 +7,7 @@ class Onboarding extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Container(
+    return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 360),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -26,7 +26,7 @@ class Onboarding extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Expanded(
-            child: Container(
+            child: Padding(
               padding: const EdgeInsets.all(16),
               child: Image.asset(
                 'assets/images/onBoardingMen.png',

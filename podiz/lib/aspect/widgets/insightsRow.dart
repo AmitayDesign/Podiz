@@ -18,7 +18,7 @@ class InsightsRow extends StatelessWidget {
     return Row(
       children: [
         hasComments
-            ? StackedImages(podcast, size: 16)
+            ? StackedImages(podcast, radius: 16)
             : Consumer(
                 builder: (context, ref, _) {
                   final user = ref.watch(currentUserProvider);
@@ -29,7 +29,9 @@ class InsightsRow extends StatelessWidget {
         Expanded(
           child: Text(
             hasComments
-                ? '${podcast.comments} insights'
+                ? podcast.comments == 1
+                    ? '1 insight'
+                    : '${podcast.comments} insights'
                 : Locales.string(context, "noinsigths"),
             style: context.textTheme.bodySmall,
             overflow: TextOverflow.ellipsis,

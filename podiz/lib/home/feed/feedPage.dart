@@ -1,13 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutterfire_ui/firestore.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/aspect/widgets/gradientAppBar.dart';
+import 'package:podiz/aspect/widgets/sliverFirestoreQueryBuilder.dart';
 import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/home/homePage.dart';
+import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/providers.dart';
@@ -30,27 +31,22 @@ class _FeedPageState extends ConsumerState<FeedPage> {
 
   final myCastsKey = GlobalKey();
   final hotliveKey = GlobalKey();
-  final queryFeed = FirebaseFirestore.instance
-      .collection("podcasts")
-      .orderBy("release_date", descending: true)
-      .withConverter(
-        fromFirestore: (doc, _) => Podcast.fromFirestore(doc),
-        toFirestore: (podcast, _) => {},
-      );
 
   void handleAppBar() {
     final user = ref.read(currentUserProvider);
     final myCastsPosition = myCastsKey.offset?.dy;
     final hotlivePosition = hotliveKey.offset?.dy;
+    final lastPodcastValue = ref.read(lastListenedPodcastStreamProvider);
 
-    final lastPodcast = ref.read(lastListenedPodcastStreamProvider).valueOrNull;
+    final lastPodcastExists =
+        lastPodcastValue.isLoading || lastPodcastValue.valueOrNull != null;
     final myCastsDidNotPass = user.favPodcasts.isEmpty ||
-        (myCastsPosition != null && myCastsPosition > FeedAppBar.height);
+        (myCastsPosition != null && myCastsPosition > GradientAppBar.height);
     final hotliveDidNotPass =
-        hotlivePosition != null && hotlivePosition > FeedAppBar.height;
+        hotlivePosition != null && hotlivePosition > GradientAppBar.height;
 
     late final String title;
-    if (lastPodcast != null &&
+    if (lastPodcastExists &&
         user.lastListened.isNotEmpty &&
         myCastsDidNotPass &&
         hotliveDidNotPass) {
@@ -90,6 +86,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
     final user = ref.watch(currentUserProvider);
     final authManager = ref.watch(authManagerProvider);
     final lastPodcastValue = ref.watch(lastListenedPodcastStreamProvider);
+    final podcastManager = ref.watch(podcastManagerProvider);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: const FeedAppBar(),
@@ -100,13 +97,15 @@ class _FeedPageState extends ConsumerState<FeedPage> {
           slivers: [
             // so it doesnt start behind the app bar
             const SliverToBoxAdapter(
-              child: SizedBox(height: FeedAppBar.backgroundHeight),
+              child: SizedBox(height: GradientAppBar.backgroundHeight),
             ),
 
             //* Last Listened
             SliverToBoxAdapter(
               child: lastPodcastValue.when(
-                loading: () => const SkeletonPodcastCard(),
+                loading: () => const SkeletonPodcastCard(
+                  bottomHeight: QuickNoteButton.height,
+                ),
                 error: (e, _) => null,
                 data: (lastPodcast) {
                   if (lastPodcast == null) return null;
@@ -142,29 +141,15 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                 Locales.string(context, "hotlive"),
                 textKey: hotliveKey,
               ),
-            FirestoreQueryBuilder<Podcast>(
-              query: queryFeed,
-              builder: (context, snapshot, _) {
-                return SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      if (snapshot.hasMore &&
-                          index + 1 == snapshot.docs.length) {
-                        snapshot.fetchMore();
-                      }
-                      final podcast = snapshot.docs[index].data();
-                      podcast.uid = snapshot.docs[index].id;
-                      return PodcastCard(
-                        podcast,
-                        onTap: () => openPodcast(podcast),
-                        onShowTap: () => openShow(podcast),
-                      );
-                    },
-                    childCount: snapshot.docs.length,
-                  ),
-                );
-              },
+            SliverFirestoreQueryBuilder<Podcast>(
+              query: podcastManager.hotliveFirestoreQuery(),
+              builder: (context, podcast) => PodcastCard(
+                podcast,
+                onTap: () => openPodcast(podcast),
+                onShowTap: () => openShow(podcast),
+              ),
             ),
+
             // so it doesnt end behind the bottom bar
             const SliverToBoxAdapter(
               child: SizedBox(height: HomePage.bottomBarHeigh),

@@ -4,24 +4,31 @@ import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/theme/textTheme.dart';
 import 'package:podiz/aspect/theme/themeConfig.dart';
 
-ThemeData theme(ColorScheme colorScheme) => ThemeData(
-      colorScheme: colorScheme,
-      primaryColor: colorScheme.primary,
-      backgroundColor: colorScheme.background,
-      errorColor: colorScheme.error,
-      scaffoldBackgroundColor: colorScheme.background,
-      canvasColor: colorScheme.background,
-      cardColor: colorScheme.surface,
-      primaryTextTheme: textTheme(colorScheme),
-      textTheme: textTheme(colorScheme),
-      appBarTheme: _appBarTheme(colorScheme),
-      bottomNavigationBarTheme: _bottomNavigationBarTheme(colorScheme),
-      inputDecorationTheme: _inputDecorationTheme(colorScheme),
-      elevatedButtonTheme: _elevatedButtonTheme(colorScheme),
-      iconTheme: _iconTheme(colorScheme),
-      dialogTheme: _dialogTheme(),
-      checkboxTheme: _checkboxTheme(colorScheme),
-    );
+ThemeData theme(ColorScheme colorScheme) {
+  return ThemeData(
+    colorScheme: colorScheme,
+    primaryColor: colorScheme.primary,
+    backgroundColor: colorScheme.background,
+    errorColor: colorScheme.error,
+    scaffoldBackgroundColor: colorScheme.background,
+    canvasColor: colorScheme.background,
+    cardColor: colorScheme.surface,
+    primaryTextTheme: textTheme(colorScheme),
+    appBarTheme: _appBarTheme(colorScheme),
+    bottomNavigationBarTheme: _bottomNavigationBarTheme(colorScheme),
+    inputDecorationTheme: _inputDecorationTheme(colorScheme),
+    elevatedButtonTheme: _elevatedButtonTheme(colorScheme),
+    textButtonTheme: _textButtonTheme(colorScheme),
+    iconTheme: _iconTheme(colorScheme),
+    dialogTheme: _dialogTheme(),
+    checkboxTheme: _checkboxTheme(colorScheme),
+    textTheme: textTheme(colorScheme).copyWith(
+      subtitle1: textTheme(colorScheme).bodyMedium!.copyWith(
+            color: Colors.white,
+          ),
+    ),
+  );
+}
 
 CheckboxThemeData _checkboxTheme(ColorScheme colorScheme) => CheckboxThemeData(
       fillColor: MaterialStateProperty.resolveWith(
@@ -45,6 +52,7 @@ InputDecorationTheme _inputDecorationTheme(ColorScheme colorScheme) =>
     InputDecorationTheme(
       filled: true,
       fillColor: Palette.grey900,
+      iconColor: Colors.white70,
       border: OutlineInputBorder(
         borderSide: BorderSide.none,
         borderRadius: BorderRadius.circular(30),
@@ -65,6 +73,13 @@ ElevatedButtonThemeData _elevatedButtonTheme(ColorScheme colorScheme) =>
         padding: const EdgeInsets.symmetric(horizontal: 24),
         minimumSize: const Size.fromHeight(56),
         textStyle: textTheme(colorScheme).titleLarge,
+      ),
+    );
+
+TextButtonThemeData _textButtonTheme(ColorScheme colorScheme) =>
+    TextButtonThemeData(
+      style: TextButton.styleFrom(
+        textStyle: textTheme(colorScheme).bodyMedium,
       ),
     );
 

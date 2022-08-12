@@ -25,4 +25,13 @@ class UserManager {
     users.addAll({user.uid: user});
     return user;
   }
+
+  Query<UserPodiz> usersFirestoreQuery(String filter) =>
+      FirebaseFirestore.instance
+          .collection("users")
+          .where("searchArray", arrayContains: filter.toLowerCase())
+          .withConverter(
+            fromFirestore: (user, _) => UserPodiz.fromFirestore(user),
+            toFirestore: (podcast, _) => {},
+          );
 }
