@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/typedefs.dart';
 import 'package:podiz/authentication/auth_manager.dart';
+import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/Player.dart';
@@ -18,16 +20,154 @@ class PlayerManager {
   final Reader _read;
 
   AuthManager get authManager => _read(authManagerProvider);
+  PodcastManager get podcastManager => _read(podcastManagerProvider);
   FirebaseFirestore get firestore => _read(firestoreProvider);
-  get playerStream => _read(playerStreamProvider);
+  FirebaseFunctions get functions => _read(functionsProvider);
 
-  final _playerStream = BehaviorSubject<Player>();
-  Stream<Player> get player => _playerStream.stream;
+  final _playerController = BehaviorSubject<Player?>();
+  Stream<Player?> get playerStream => _playerController.stream;
+  Player? get currentPlayer => _playerController.value;
 
-  Sink<Map<String, dynamic>> get playerSink => _playerSinkController;
-  final _playerSinkController = StreamController<Map<String, dynamic>>();
+  PlayerManager(this._read) {
+    _init();
+  }
 
-  Player playerBloc = Player();
+  Future<void> _init() async {
+    // make a spotify request to fetch the currently playing podcast
+    final user = authManager.currentUser!;
+    final result = await FirebaseFunctions.instance
+        .httpsCallable("fetchUserPlayer")
+        .call({"userUid": user.uid});
+    final data = result.data;
+
+    if (data is bool && !data) return _playerController.add(null);
+
+    final isPlaying = data['isPlaying'] as bool;
+    if (!isPlaying) return _playerController.add(null);
+
+    final podcastId = data['uid'] as String;
+    final position = data['position'] as int;
+
+    // fetch podcast
+    final podcast = await podcastManager.fetchPodcast(podcastId);
+    final player = Player(
+      state: PlayerState.play,
+      podcast: podcast,
+      startingPosition: Duration(milliseconds: position),
+    );
+    _playerController.add(player);
+  }
+
+  /// position in milliseconds
+  Future<void> playPodcast(Podcast podcast, [int? position]) async {
+    // make a spotify request to play the podcast
+    if (position == null && currentPlayer?.podcast == podcast) return;
+    position ??= 0;
+
+    _playPodcastRequest(podcast, position);
+
+    // update player
+    currentPlayer?.dispose();
+    final player = Player(
+      state: PlayerState.play,
+      podcast: podcast,
+      startingPosition: Duration(milliseconds: position),
+    );
+    _playerController.add(player);
+
+    authManager.updateLastListened(podcast.uid!);
+    setUpDiscussionPageStream(podcast.uid!); //TODO discussion
+  }
+
+  Future<void> resumePodcast() => _playPodcastRequest(
+      currentPlayer!.podcast, currentPlayer!.position.inMilliseconds);
+
+  Future<void> pausePodcast() async {
+    await _pausePodcastRequest();
+    // update player
+    final player = currentPlayer!.pause();
+    _playerController.add(player);
+  }
+
+  Future<void> stopPodcast() async {
+    // make a spotify request to pause the podcast
+    if (_playerController.hasValue) await _pausePodcastRequest();
+    // update player
+    currentPlayer?.dispose();
+    _playerController.add(null);
+  }
+
+  Future<void> _playPodcastRequest(Podcast podcast, int position) async {
+    // make a spotify request to play the podcast
+    final user = authManager.currentUser!;
+    final result = await functions.httpsCallable("play").call(
+        {"episodeUid": podcast.uid, "userUid": user.uid, "position": position});
+
+    // check if the request was successfull
+    if (result.data['result'] == 'unauthorized') {
+      _playerController.add(null);
+      throw Exception('Unauthorized');
+    }
+    if (result.data['result'] == 'devices') {
+      _playerController.add(null);
+      throw Exception('No devices connected');
+    }
+  }
+
+  Future<void> _pausePodcastRequest() async {
+    // make a spotify request to pause the podcast
+    final user = authManager.currentUser!;
+    final result = await FirebaseFunctions.instance
+        .httpsCallable("pause")
+        .call({"userUid": user.uid});
+    // check if the request was successfull
+    if (result.data['result'] == 'unauthorized') {
+      _playerController.add(null);
+      throw Exception('Unauthorized');
+    }
+    if (result.data['result'] == 'devices') {
+      _playerController.add(null);
+      throw Exception('No devices connected');
+    }
+  }
+
+  Future<void> play30Back() async {
+    var position = _playerController.value!.position;
+    const decrement = Duration(seconds: 30);
+    if (position < decrement) {
+      position = Duration.zero;
+    } else {
+      position -= decrement;
+    }
+
+    final podcast = _playerController.value!.podcast;
+    await playPodcast(podcast, position.inMilliseconds);
+  }
+
+  Future<void> play30Up() async {
+    var position = _playerController.value!.position;
+    var duration = _playerController.value!.duration;
+    const increment = Duration(seconds: 30);
+    if (position + increment > duration) {
+      position = duration;
+    } else {
+      position += increment;
+    }
+
+    await pausePodcast();
+  }
+
+  Future<void> increment(String episodeUid) => FirebaseFirestore.instance
+      .collection("podcasts")
+      .doc(episodeUid)
+      .update({"watching": FieldValue.increment(1)});
+
+  Future<void> decrement(String episodeUid) => FirebaseFirestore.instance
+      .collection("podcasts")
+      .doc(episodeUid)
+      .update({"watching": FieldValue.increment(-1)});
+
+  //! DISCUSSION
 
   BehaviorSubject<List<Comment>>? _commentsStream;
 
@@ -42,76 +182,6 @@ class PlayerManager {
   int index = 0;
 
   bool firstTime = true;
-
-  PlayerManager(this._read) {
-    _playerStream.add(playerBloc);
-    String userUid = authManager.currentUser!.uid;
-
-    _playerSinkController.stream.listen((event) async {
-      String key = event.keys.first;
-      if (key == "pause") {
-        await playerBloc.pauseEpisode(userUid);
-      } else if (key == "play") {
-        await playerBloc.playEpisode(
-            event[key]["episode"], userUid, event[key]["position"]);
-      } else if (key == "close") {
-        playerBloc.closePlayer();
-      }
-      _playerStream.add(playerBloc);
-    });
-  }
-
-  void playEpisode(Podcast podcast, int position) {
-    playerSink.add({
-      "play": {"episode": podcast, "position": position}
-    });
-    authManager.updateLastListened(podcast.uid!);
-    setUpDiscussionPageStream(podcast.uid!);
-  }
-
-  void pauseEpisode() {
-    playerSink.add({"pause": true});
-  }
-
-  void resumeEpisode(Podcast podcast) {
-    playerSink.add({
-      "play": {
-        "episode": podcast,
-        "position": playerBloc.timer.position.inMilliseconds
-      }
-    });
-  }
-
-  void play30Back(Podcast podcast) {
-    Duration pos = playerBloc.timer.position;
-    if (pos.inMilliseconds < const Duration(seconds: 30).inMilliseconds) {
-      print("entrei");
-      pos = Duration.zero;
-    } else {
-      pos = Duration(
-          milliseconds:
-              pos.inMilliseconds - const Duration(seconds: 30).inMilliseconds);
-    }
-    playerSink.add({
-      "play": {"episode": podcast, "position": pos.inMilliseconds}
-    });
-  }
-
-  void play30Up(Podcast podcast) {
-    Duration pos = playerBloc.timer.position;
-    Duration dur = playerBloc.timer.duration;
-    if ((pos.inMilliseconds + const Duration(seconds: 30).inMilliseconds) >
-        dur.inMilliseconds) {
-      pos = dur;
-    } else {
-      pos = Duration(
-          milliseconds:
-              pos.inMilliseconds + const Duration(seconds: 30).inMilliseconds);
-    }
-    playerSink.add({
-      "play": {"episode": podcast, "position": pos.inMilliseconds}
-    });
-  }
 
   setUpDiscussionPageStream(String podcastUid) async {
     if (!firstTime) {

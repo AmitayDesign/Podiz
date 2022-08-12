@@ -4,14 +4,13 @@ import 'package:podiz/objects/show.dart';
 import 'package:podiz/providers.dart';
 
 final showManagerProvider = Provider<ShowManager>(
-  (ref) => ShowManager(
-    firestore: ref.watch(firestoreProvider),
-  ),
+  (ref) => ShowManager(ref.read),
 );
 
 class ShowManager {
-  final FirebaseFirestore firestore;
-  ShowManager({required this.firestore});
+  final Reader _read;
+  FirebaseFirestore get firestore => _read(firestoreProvider);
+  ShowManager(this._read);
 
   Future<Show> fetchShow(String showId) async {
     final doc = await firestore.collection("podcasters").doc(showId).get();

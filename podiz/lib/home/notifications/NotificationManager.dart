@@ -4,29 +4,28 @@ import 'package:podiz/objects/user/NotificationPodiz.dart';
 import 'package:podiz/providers.dart';
 
 final notificationManagerProvider = Provider<NotificationManager>(
-  (ref) => NotificationManager(
-    firestore: ref.watch(firestoreProvider),
-  ),
+  (ref) => NotificationManager(ref.read),
 );
 
 class NotificationManager {
-  final FirebaseFirestore firestore;
+  final Reader _read;
+  FirebaseFirestore get firestore => _read(firestoreProvider);
 
-  NotificationManager({
-    required this.firestore,
-  });
+  NotificationManager(this._read);
 
   Stream<Map<String, List<NotificationPodiz>>> watchNotifications(
-          String userId) =>
-      firestore
-          .collection("users")
-          .doc(userId)
-          .collection("notifications")
-          .orderBy("timestamp", descending: true)
-          .snapshots()
-          .map((snapshot) {
-        final notificationList =
-            snapshot.docs.map((doc) => NotificationPodiz.fromFirestore(doc));
-        return Map.fromIterable(notificationList, key: (n) => n.episodeUid);
-      });
+    String userId,
+  ) {
+    return firestore
+        .collection("users")
+        .doc(userId)
+        .collection("notifications")
+        .orderBy("timestamp", descending: true)
+        .snapshots()
+        .map((snapshot) {
+      final notificationList =
+          snapshot.docs.map((doc) => NotificationPodiz.fromFirestore(doc));
+      return Map.fromIterable(notificationList, key: (n) => n.episodeUid);
+    });
+  }
 }

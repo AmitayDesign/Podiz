@@ -16,29 +16,21 @@ import 'package:rxdart/rxdart.dart';
 //TODO watch or read?
 final authManagerProvider = Provider<AuthManager>(
   (ref) {
-    final manager = AuthManager(
-      podcastManager: ref.watch(podcastManagerProvider),
-      showManager: ref.watch(showManagerProvider),
-      firebaseAuth: ref.watch(authProvider),
-      firestore: ref.watch(firestoreProvider),
-    );
+    final manager = AuthManager(ref.read);
     ref.onDispose(manager.dispose);
     return manager;
   },
 );
 
 class AuthManager {
-  final PodcastManager podcastManager;
-  final ShowManager showManager;
-  final FirebaseAuth firebaseAuth;
-  final FirebaseFirestore firestore;
+  final Reader _read;
 
-  AuthManager({
-    required this.podcastManager,
-    required this.showManager,
-    required this.firebaseAuth,
-    required this.firestore,
-  }) {
+  ShowManager get showManager => _read(showManagerProvider);
+  PodcastManager get podcastManager => _read(podcastManagerProvider);
+  FirebaseFirestore get firestore => _read(firestoreProvider);
+  FirebaseAuth get functions => _read(authProvider);
+
+  AuthManager(this._read) {
     final loggedInUser = preferences.getString('userId');
     if (loggedInUser != null) {
       signIn(loggedInUser);

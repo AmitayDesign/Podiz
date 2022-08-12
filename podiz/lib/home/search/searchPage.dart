@@ -7,13 +7,11 @@ import 'package:podiz/aspect/widgets/showSearchTile.dart';
 import 'package:podiz/aspect/widgets/userSearchTile.dart';
 import 'package:podiz/home/homePage.dart';
 import 'package:podiz/home/search/components/searchBar.dart';
-import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/SearchResult.dart';
 import 'package:podiz/objects/show.dart';
 import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/providers.dart';
-import 'package:podiz/splashScreen.dart';
 
 import 'components/searchInSpotify.dart';
 
@@ -40,114 +38,108 @@ class _SearchPageState extends ConsumerState<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    final player = ref.watch(playerStreamProvider);
-    final podcastManager = ref.watch(podcastManagerProvider);
+    final player = ref.watch(playerStreamProvider).valueOrNull;
+    final isPlaying = player?.isPlaying ?? false;
     bool isEmpty = true;
 
     return Scaffold(
       appBar: SearchBar(controller: searchController),
-      body: player.when(
-        error: (e, _) {
-          print('searchPage: ${e.toString()}');
-          return SplashScreen.error();
-        },
-        loading: () => SplashScreen(),
-        data: (p) => Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: CustomScrollView(
-            slivers: [
-              FirestoreQueryBuilder<SearchResult>(
-                query: FirebaseFirestore.instance
-                    .collection("podcasts")
-                    .where("searchArray", arrayContains: query.toLowerCase())
-                    .withConverter(
-                      fromFirestore: (doc, _) {
-                        Podcast podcast = Podcast.fromFirestore(doc);
-                        return SearchResult.fromPodcast(podcast);
-                      },
-                      toFirestore: (podcast, _) => {},
-                    ),
-                builder: (context, snapshot, _) {
-                  return SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        if (snapshot.hasMore &&
-                            index + 1 == snapshot.docs.length) {
-                          snapshot.fetchMore();
-                        }
-                        isEmpty = false;
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: CustomScrollView(
+          slivers: [
+            FirestoreQueryBuilder<SearchResult>(
+              query: FirebaseFirestore.instance
+                  .collection("podcasts")
+                  .where("searchArray", arrayContains: query.toLowerCase())
+                  .withConverter(
+                    fromFirestore: (doc, _) {
+                      Podcast podcast = Podcast.fromFirestore(doc);
+                      return SearchResult.fromPodcast(podcast);
+                    },
+                    toFirestore: (podcast, _) => {},
+                  ),
+              builder: (context, snapshot, _) {
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      if (snapshot.hasMore &&
+                          index + 1 == snapshot.docs.length) {
+                        snapshot.fetchMore();
+                      }
+                      isEmpty = false;
 
-                        final episode = snapshot.docs[index].data();
-                        return PodcastTile(
-                          episode,
-                          isPlaying: p.podcastPlaying?.uid == episode.uid,
-                        );
-                      },
-                      childCount: snapshot.docs.length,
-                    ),
-                  );
-                },
-              ),
-              FirestoreQueryBuilder<Show>(
-                query: FirebaseFirestore.instance
-                    .collection("podcasters")
-                    .where("searchArray", arrayContains: query.toLowerCase())
-                    .withConverter(
-                      fromFirestore: (show, _) => Show.fromFirestore(show),
-                      toFirestore: (show, _) => {},
-                    ),
-                builder: (context, snapshot, _) {
-                  return SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        if (snapshot.hasMore &&
-                            index + 1 == snapshot.docs.length) {
-                          snapshot.fetchMore();
-                        }
-                        isEmpty = false;
+                      final episode = snapshot.docs[index].data();
+                      return PodcastTile(
+                        episode,
+                        isPlaying:
+                            player?.podcast.uid == episode.uid && isPlaying,
+                      );
+                    },
+                    childCount: snapshot.docs.length,
+                  ),
+                );
+              },
+            ),
+            FirestoreQueryBuilder<Show>(
+              query: FirebaseFirestore.instance
+                  .collection("podcasters")
+                  .where("searchArray", arrayContains: query.toLowerCase())
+                  .withConverter(
+                    fromFirestore: (show, _) => Show.fromFirestore(show),
+                    toFirestore: (show, _) => {},
+                  ),
+              builder: (context, snapshot, _) {
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      if (snapshot.hasMore &&
+                          index + 1 == snapshot.docs.length) {
+                        snapshot.fetchMore();
+                      }
+                      isEmpty = false;
 
-                        final show = snapshot.docs[index].data();
-                        return ShowSearchTile(show);
-                      },
-                      childCount: snapshot.docs.length,
-                    ),
-                  );
-                },
-              ),
-              FirestoreQueryBuilder<UserPodiz>(
-                query: FirebaseFirestore.instance
-                    .collection("users")
-                    .where("searchArray", arrayContains: query.toLowerCase())
-                    .withConverter(
-                      fromFirestore: (user, _) => UserPodiz.fromFirestore(user),
-                      toFirestore: (podcast, _) => {},
-                    ),
-                builder: (context, snapshot, _) {
-                  return SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        if (snapshot.hasMore &&
-                            index + 1 == snapshot.docs.length) {
-                          snapshot.fetchMore();
-                        }
-                        isEmpty = false;
+                      final show = snapshot.docs[index].data();
+                      return ShowSearchTile(show);
+                    },
+                    childCount: snapshot.docs.length,
+                  ),
+                );
+              },
+            ),
+            FirestoreQueryBuilder<UserPodiz>(
+              query: FirebaseFirestore.instance
+                  .collection("users")
+                  .where("searchArray", arrayContains: query.toLowerCase())
+                  .withConverter(
+                    fromFirestore: (user, _) => UserPodiz.fromFirestore(user),
+                    toFirestore: (podcast, _) => {},
+                  ),
+              builder: (context, snapshot, _) {
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      if (snapshot.hasMore &&
+                          index + 1 == snapshot.docs.length) {
+                        snapshot.fetchMore();
+                      }
+                      isEmpty = false;
 
-                        final user = snapshot.docs[index].data();
-                        return UserSearchTile(user);
-                      },
-                      childCount: snapshot.docs.length,
-                    ),
-                  );
-                },
-              ),
-              if (isEmpty && query.isNotEmpty)
-                SliverToBoxAdapter(child: SearchInSpotify(query)),
-              // so it doesnt end behind the bottom bar
-              const SliverToBoxAdapter(
-                child: SizedBox(height: HomePage.bottomBarHeigh),
-              ),
-            ],
-          ),
+                      final user = snapshot.docs[index].data();
+                      return UserSearchTile(user);
+                    },
+                    childCount: snapshot.docs.length,
+                  ),
+                );
+              },
+            ),
+            if (isEmpty && query.isNotEmpty)
+              SliverToBoxAdapter(child: SearchInSpotify(query)),
+            // so it doesnt end behind the bottom bar
+            const SliverToBoxAdapter(
+              child: SizedBox(height: HomePage.bottomBarHeigh),
+            ),
+          ],
         ),
       ),
     );

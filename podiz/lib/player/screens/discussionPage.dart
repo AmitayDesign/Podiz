@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
@@ -27,7 +25,6 @@ class DiscussionPage extends ConsumerStatefulWidget {
 }
 
 class _DiscussionPageState extends ConsumerState<DiscussionPage> {
-  late StreamSubscription<Duration> subscription;
   late String episodeUid;
 
   final TextEditingController controller = TextEditingController();
@@ -36,18 +33,7 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
   FocusNode focusNode = FocusNode();
 
   @override
-  void initState() {
-    super.initState();
-    var player = ref.read(playerProvider);
-    subscription = player.timer.onAudioPositionChanged.listen((position) {
-      final playerManager = ref.read(playerManagerProvider);
-      playerManager.showComments(position.inMilliseconds);
-    });
-  }
-
-  @override
   void dispose() {
-    subscription.cancel();
     focusNode.dispose();
     controller.dispose();
     super.dispose();
@@ -83,6 +69,16 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
   Widget build(BuildContext context) {
     final commentsValue = ref.watch(commentsStreamProvider);
     final podcastValue = ref.watch(podcastFutureProvider(widget.showId));
+    ref.listen<AsyncValue<Duration?>>(
+      playerPositionStreamProvider,
+      (_, positionValue) {
+        positionValue.whenOrNull(data: (position) {
+          if (position == null) return;
+          final playerManager = ref.read(playerManagerProvider);
+          playerManager.showComments(position.inMilliseconds);
+        });
+      },
+    );
     return Scaffold(
       appBar: DiscussionAppBar(podcastValue.valueOrNull),
       body: podcastValue.when(

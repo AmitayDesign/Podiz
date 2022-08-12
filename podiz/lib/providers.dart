@@ -108,23 +108,21 @@ final podcastFutureProvider =
   },
 );
 
-// PLAYER
+//* PLAYER
 
-final playerStreamProvider = StreamProvider<Player>(
-  (ref) => ref.watch(playerManagerProvider).player,
+final playerStreamProvider = StreamProvider<Player?>(
+  (ref) => ref.watch(playerManagerProvider).playerStream,
 );
 
-final playerProvider = Provider<Player>(
-  (ref) => ref.watch(playerStreamProvider).value!,
+final playerPositionStreamProvider = StreamProvider<Duration?>(
+  (ref) {
+    final player = ref.watch(playerStreamProvider).valueOrNull;
+    if (player == null) return Stream.value(null);
+    return player.positionChanges;
+  },
 );
 
-final stateProvider = StreamProvider<PlayerState>(
-  (ref) => ref.watch(playerProvider).state,
-);
-
-final playerpodcastFutureProvider = StreamProvider.autoDispose<Podcast>(
-  (ref) => ref.watch(playerProvider).podcast,
-);
+// COMMENTS
 
 final commentsStreamProvider = StreamProvider.autoDispose<List<Comment>>(
   (ref) => ref.watch(playerManagerProvider).comments,
