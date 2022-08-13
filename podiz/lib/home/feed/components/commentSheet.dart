@@ -61,6 +61,9 @@ class _CommentSheetState extends ConsumerState<CommentSheet> {
                   textInputAction: TextInputAction.send,
                   minLines: 1,
                   maxLines: 5,
+                  style: context.textTheme.bodyMedium!.copyWith(
+                    color: Colors.white,
+                  ),
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: context.colorScheme.surface,

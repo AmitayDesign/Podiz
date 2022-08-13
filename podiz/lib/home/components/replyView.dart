@@ -7,7 +7,6 @@ import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/home/components/profileAvatar.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/user/User.dart';
-import 'package:podiz/profile/userManager.dart';
 
 class ReplyView extends ConsumerWidget {
   final Comment comment;
@@ -83,6 +82,9 @@ class ReplyView extends ConsumerWidget {
                     maxLines: 5,
                     keyboardType: TextInputType.multiline,
                     controller: controller,
+                    style: context.textTheme.bodyMedium!.copyWith(
+                      color: Colors.white,
+                    ),
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: const Color(0xFF262626),

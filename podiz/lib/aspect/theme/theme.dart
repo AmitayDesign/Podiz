@@ -22,11 +22,7 @@ ThemeData theme(ColorScheme colorScheme) {
     iconTheme: _iconTheme(colorScheme),
     dialogTheme: _dialogTheme(),
     checkboxTheme: _checkboxTheme(colorScheme),
-    textTheme: textTheme(colorScheme).copyWith(
-      subtitle1: textTheme(colorScheme).bodyMedium!.copyWith(
-            color: Colors.white,
-          ),
-    ),
+    textTheme: textTheme(colorScheme),
   );
 }
 
