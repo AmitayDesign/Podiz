@@ -120,22 +120,22 @@ class _FeedPageState extends ConsumerState<FeedPage> {
             ),
 
             //* My Casts
-            if (user.favPodcastIds.isNotEmpty)
-              SliverList(
-                delegate: SliverChildListDelegate([
-                  if (user.lastPodcastId.isNotEmpty)
-                    FeedTile(
-                      Locales.string(context, "mycasts"),
-                      textKey: myCastsKey,
-                    ),
-                  for (final podcast in [] /*authManager.myCast*/)
-                    PodcastCard(
-                      podcast,
-                      onTap: () => openPodcast(podcast),
-                      onShowTap: () => openShow(podcast),
-                    ),
-                ]),
-              ),
+            // if (user.favPodcastIds.isNotEmpty)
+            //   SliverList(
+            //     delegate: SliverChildListDelegate([
+            //       if (user.lastPodcastId.isNotEmpty)
+            //         FeedTile(
+            //           Locales.string(context, "mycasts"),
+            //           textKey: myCastsKey,
+            //         ),
+            //       for (final podcast in authManager.myCast)
+            //         PodcastCard(
+            //           podcast,
+            //           onTap: () => openPodcast(podcast),
+            //           onShowTap: () => openShow(podcast),
+            //         ),
+            //     ]),
+            //   ),
 
             //* Hot & Live
             if (user.lastPodcastId.isNotEmpty || user.favPodcastIds.isNotEmpty)
