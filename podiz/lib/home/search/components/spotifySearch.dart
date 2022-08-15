@@ -2,8 +2,8 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/widgets/loadingButton.dart';
 import 'package:podiz/providers.dart';
+import 'package:podiz/src/common_widgets/loadingButton.dart';
 
 class SpotifySearch extends ConsumerStatefulWidget {
   final String query;
@@ -21,7 +21,7 @@ class _SpotifySearchState extends ConsumerState<SpotifySearch> {
     final user = ref.read(currentUserProvider);
     await FirebaseFunctions.instance.httpsCallable("searchInSpotify").call({
       "query": widget.query,
-      "userUid": user.uid,
+      "userUid": user.id,
     }); //TODO verify arguments
     if (mounted) setState(() => isLoading = false);
   }

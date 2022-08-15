@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/home/components/followShowButton.dart';
-import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/home/search/components/podcastShowTile.dart';
 import 'package:podiz/loading.dart/episodeLoading.dart';
 import 'package:podiz/objects/SearchResult.dart';
 import 'package:podiz/player/playerWidget.dart';
 import 'package:podiz/profile/components.dart/backAppBar.dart';
 import 'package:podiz/providers.dart';
-import 'package:podiz/splashScreen.dart';
+import 'package:podiz/src/common_widgets/splash_screen.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
+import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
 
 class ShowPage extends ConsumerWidget {
   final String showId;
@@ -18,13 +19,13 @@ class ShowPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final showValue = ref.watch(showFutureProvider(showId));
-    final player = ref.watch(playerStreamProvider).valueOrNull;
+    final player = ref.watch(playerStateChangesProvider).valueOrNull;
     final isPlaying = player?.isPlaying ?? false;
     return showValue.when(
       error: (e, _) {
-        return SplashScreen.error();
+        return const SplashScreen.error();
       },
-      loading: () => SplashScreen(),
+      loading: () => const SplashScreen(),
       data: (show) => Scaffold(
         appBar: BackAppBar(),
         body: Column(
@@ -66,7 +67,7 @@ class ShowPage extends ConsumerWidget {
                                 return PodcastShowTile(
                                   searchResult,
                                   isPlaying: isPlaying &&
-                                      player?.podcast.uid == podcast.uid,
+                                      player?.episode.id == podcast.uid,
                                 );
                               });
                         },

@@ -2,10 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/player/components/insightSheet.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
+import 'package:podiz/src/theme/palette.dart';
 
 class DiscussionSnackBar extends ConsumerStatefulWidget {
   final Podcast p;
@@ -34,7 +35,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
 
   void openSheet() {
     setState(() => isVisible = false);
-    ref.read(playerManagerProvider).pausePodcast();
+    ref.read(playerRepositoryProvider).pause();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,

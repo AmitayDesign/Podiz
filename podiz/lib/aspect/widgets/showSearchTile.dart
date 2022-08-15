@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/show.dart';
+import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
+import 'package:podiz/src/routing/app_router.dart';
 
 class ShowSearchTile extends StatelessWidget {
   final Show show;
@@ -43,7 +43,7 @@ class ShowSearchTile extends StatelessWidget {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               show.name,
-                              style: context.textTheme.labelLarge,
+                              style: context.textTheme.titleLarge,
                             ),
                           ),
                           const SizedBox(height: 8),

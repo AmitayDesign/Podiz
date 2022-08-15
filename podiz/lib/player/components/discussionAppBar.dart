@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/formatters.dart';
-import 'package:podiz/aspect/theme/palette.dart';
-import 'package:podiz/aspect/widgets/insightsRow.dart';
-import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/player/components/pinkProgress.dart';
 import 'package:podiz/profile/components.dart/backAppBar.dart';
+import 'package:podiz/src/features/episodes/presentation/card/insights_info.dart';
+import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
+import 'package:podiz/src/routing/app_router.dart';
+import 'package:podiz/src/theme/palette.dart';
 
 class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
   final Podcast? podcast;
@@ -45,7 +45,7 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
                   const SizedBox(height: 16),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: InsightsRow(podcast: podcast!),
+                    child: InsightsInfo(podcast: podcast!),
                   ),
                   const SizedBox(height: 8),
                   Padding(
@@ -67,7 +67,7 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Expanded(
+                                    Flexible(
                                       child: GestureDetector(
                                         onTap: () =>
                                             openShow(podcast!, context),

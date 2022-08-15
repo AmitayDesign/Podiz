@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/providers.dart';
+import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 
 final userManagerProvider = Provider<UserManager>(
   (ref) => UserManager(ref.read),
@@ -22,7 +22,7 @@ class UserManager {
     }
     final doc = await firestore.collection("users").doc(userUid).get();
     final user = UserPodiz.fromFirestore(doc);
-    users.addAll({user.uid: user});
+    users.addAll({user.id: user});
     return user;
   }
 

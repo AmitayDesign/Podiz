@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/aspect/theme/palette.dart';
-import 'package:podiz/home/components/profileAvatar.dart';
-import 'package:podiz/objects/user/User.dart';
+import 'package:podiz/src/common_widgets/user_avatar.dart';
+import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/routing/app_router.dart';
+import 'package:podiz/src/theme/palette.dart';
 
 class UserSearchTile extends StatelessWidget {
   final UserPodiz user;
@@ -17,7 +17,7 @@ class UserSearchTile extends StatelessWidget {
     return InkWell(
       onTap: () => context.goNamed(
         AppRoute.profile.name,
-        params: {'userId': user.uid},
+        params: {'userId': user.id},
       ),
       child: Container(
         height: 68,
@@ -29,7 +29,7 @@ class UserSearchTile extends StatelessWidget {
         child: Row(
           children: [
             const SizedBox(width: 16),
-            ProfileAvatar(user: user, radius: 20),
+            UserAvatar(user: user, radius: 20),
             const SizedBox(width: 11),
             LimitedBox(
               maxWidth: kScreenWidth - (16 + 16 + 20 + 11 + 40 + 16 + 16),

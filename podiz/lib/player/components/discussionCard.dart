@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/widgets/buttonPlay.dart';
 import 'package:podiz/aspect/widgets/cardButton.dart';
-import 'package:podiz/home/components/profileAvatar.dart';
 import 'package:podiz/home/components/replyView.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
-import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/player/components/repliesArea.dart';
 import 'package:podiz/profile/userManager.dart';
+import 'package:podiz/src/common_widgets/user_avatar.dart';
+import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/theme/palette.dart';
 
 class DiscussionCard extends ConsumerStatefulWidget {
   final Comment comment;
@@ -47,7 +47,7 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
     final theme = Theme.of(context);
     UserManager userManager = ref.watch(userManagerProvider);
     // final numberOfReplies =
-    //     ref.read(playerManagerProvider).getNumberOfReplies(widget.comment.id);
+    //     ref.read(playerRepositoryProvider).getNumberOfReplies(widget.comment.id);
     return FutureBuilder(
       future: userManager.getUserFromUid(widget.comment.userUid),
       initialData: "loading",
@@ -80,7 +80,7 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                       children: [
                         Row(
                           children: [
-                            ProfileAvatar(user: user, radius: 20),
+                            UserAvatar(user: user, radius: 20),
                             const SizedBox(
                               width: 8,
                             ),

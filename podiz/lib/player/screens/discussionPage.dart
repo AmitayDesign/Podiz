@@ -7,20 +7,26 @@ import 'package:podiz/player/components/discussionAppBar.dart';
 import 'package:podiz/player/components/discussionCard.dart';
 import 'package:podiz/player/components/discussionSnackBar.dart';
 import 'package:podiz/providers.dart';
-import 'package:podiz/splashScreen.dart';
+import 'package:podiz/src/common_widgets/splash_screen.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
+import 'package:podiz/src/features/player/domain/player.dart';
 
 class DiscussionPage extends ConsumerStatefulWidget {
-  final String showId;
-  const DiscussionPage(this.showId, {Key? key}) : super(key: key);
+  final String episodeId;
+  const DiscussionPage(this.episodeId, {Key? key}) : super(key: key);
 
   @override
   ConsumerState<DiscussionPage> createState() => _DiscussionPageState();
 }
 
 class _DiscussionPageState extends ConsumerState<DiscussionPage> {
-  late String episodeUid;
-
   final TextEditingController controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    ref.read(playerManagerProvider).setUpDiscussionPageStream(widget.episodeId);
+  }
 
   @override
   void dispose() {
@@ -47,50 +53,52 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
   @override
   Widget build(BuildContext context) {
     final commentsValue = ref.watch(commentsStreamProvider);
-    final podcastValue = ref.watch(podcastFutureProvider(widget.showId));
-    ref.listen<AsyncValue<Duration?>>(
-      playerPositionStreamProvider,
+    final podcastValue = ref.watch(podcastFutureProvider(widget.episodeId));
+    ref.listen<AsyncValue<Player?>>(
+      playerStateChangesProvider,
       (_, positionValue) {
-        positionValue.whenOrNull(data: (position) {
-          if (position == null) return;
+        positionValue.whenOrNull(data: (player) {
+          if (player == null) return;
           final playerManager = ref.read(playerManagerProvider);
-          playerManager.showComments(position.inMilliseconds);
+          playerManager.showComments(player.playbackPosition);
         });
       },
     );
-    return Scaffold(
-      appBar: DiscussionAppBar(podcastValue.valueOrNull),
-      body: podcastValue.when(
-          error: (e, st) {
-            print('discussionPage: ${e.toString()}');
-            return SplashScreen.error();
-          },
-          loading: () => loadingWidget,
-          data: (podcast) {
-            return commentsValue.when(
+    return podcastValue.when(
+        error: (e, st) {
+          print('discussionPage podcast: ${e.toString()}');
+          return const SplashScreen.error();
+        },
+        loading: () => loadingWidget,
+        data: (podcast) {
+          return Scaffold(
+            appBar: DiscussionAppBar(podcast),
+            body: commentsValue.when(
                 error: (e, _) {
-                  print('discussionPage: ${e.toString()}');
-                  return SplashScreen.error();
+                  print('discussionPage comments: ${e.toString()}');
+                  return const SplashScreen.error();
                 },
                 loading: () => loadingWidget,
                 data: (comments) {
-                  return Column(children: [
-                    Expanded(
-                      child: ListView.builder(
-                        reverse: true,
-                        itemCount: comments.length,
-                        itemBuilder: (context, index) {
-                          return DiscussionCard(
-                            podcast,
-                            comments[index],
-                          );
-                        },
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          reverse: true,
+                          itemCount: comments.length,
+                          itemBuilder: (context, index) {
+                            return DiscussionCard(
+                              podcast,
+                              comments[index],
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                    DiscussionSnackBar(podcast)
-                  ]);
-                });
-          }),
-    );
+                      DiscussionSnackBar(podcast),
+                    ],
+                  );
+                }),
+          );
+        });
   }
 }
