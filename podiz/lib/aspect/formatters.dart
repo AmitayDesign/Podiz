@@ -14,19 +14,8 @@ String timeFormatter(int time) {
 }
 
 String timePlayerFormatter(int time) {
-  int seconds = ((time / 1000) % 60).floor();
-  int minutes = ((time / (1000 * 60)) % 60).floor();
-  int hours = ((time / (1000 * 60 * 60)) % 24).floor();
-
-  if (hours == 0) {
-    String min = "$minutes", sec = "$seconds";
-    if (minutes < 10) {
-      min = "0$minutes";
-    }
-    if (seconds < 10) {
-      sec = "0$seconds";
-    }
-    return "$min:$sec";
-  }
-  return "0$hours:$minutes:$seconds";
+  final timeString = Duration(milliseconds: time).toString();
+  final timeDisplay = timeString.split('.').first;
+  if (timeDisplay.startsWith('0:')) return timeDisplay.substring(2);
+  return timeDisplay;
 }
