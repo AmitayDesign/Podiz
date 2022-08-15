@@ -43,7 +43,7 @@ class ShowSearchTile extends StatelessWidget {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               show.name,
-                              style: context.textTheme.labelLarge,
+                              style: context.textTheme.titleLarge,
                             ),
                           ),
                           const SizedBox(height: 8),
