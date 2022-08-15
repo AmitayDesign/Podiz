@@ -31,12 +31,8 @@ class MyApp extends ConsumerWidget {
         themeMode: ThemeMode.dark,
         builder: (context, child) => firstUserValue.when(
           error: (e, _) => SplashScreen.error(), //!
-          loading: () {
-            print('loadng');
-            return SplashScreen();
-          }, //!
+          loading: () => SplashScreen(), //!
           data: (_) {
-            print('data');
             setScreenSize(context); //!
             return child!;
           },
