@@ -5,7 +5,6 @@ import 'package:podiz/aspect/widgets/podcastTile.dart';
 import 'package:podiz/aspect/widgets/showSearchTile.dart';
 import 'package:podiz/aspect/widgets/sliverFirestoreQueryBuilder.dart';
 import 'package:podiz/aspect/widgets/userSearchTile.dart';
-import 'package:podiz/home/homePage.dart';
 import 'package:podiz/home/search/components/searchBar.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/home/search/managers/showManager.dart';
@@ -13,6 +12,7 @@ import 'package:podiz/objects/SearchResult.dart';
 import 'package:podiz/objects/show.dart';
 import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/features/podcasts/presentation/home_screen.dart';
 
 import 'components/spotifySearch.dart';
 
@@ -72,7 +72,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
 
                   // so it doesnt end behind the bottom bar
                   const SliverToBoxAdapter(
-                    child: SizedBox(height: HomePage.bottomBarHeigh),
+                    child: SizedBox(height: HomeScreen.bottomBarHeigh),
                   ),
                 ],
               );

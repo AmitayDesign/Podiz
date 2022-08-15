@@ -5,13 +5,12 @@ import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/widgets/gradientAppBar.dart';
 import 'package:podiz/home/components/profileAvatar.dart';
-import 'package:podiz/providers.dart';
+import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/podcasts/presentation/feed/feed_controller.dart';
 import 'package:podiz/src/routing/app_router.dart';
 
-final homeBarTitleProvider = StateProvider<String>((ref) => 'lastListened');
-
-class FeedAppBar extends ConsumerWidget with PreferredSizeWidget {
-  const FeedAppBar({Key? key}) : super(key: key);
+class FeedBar extends ConsumerWidget with PreferredSizeWidget {
+  const FeedBar({Key? key}) : super(key: key);
 
   @override
   Size get preferredSize =>
@@ -20,7 +19,7 @@ class FeedAppBar extends ConsumerWidget with PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserProvider);
-    final title = ref.watch(homeBarTitleProvider);
+    final title = ref.watch(feedControllerProvider);
     return GradientAppBar(
       title: Text(
         Locales.string(context, title),
