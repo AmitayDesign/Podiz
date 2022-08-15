@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
 import 'package:spotify_sdk/spotify_sdk.dart';
 
 final spotifyApiProvider = Provider<SpotifyApi>((ref) => SpotifyApi());
@@ -11,6 +12,8 @@ class SpotifyApi {
     'user-read-private',
     'user-read-email',
   ].join(' ');
+
+  http.Client client = http.Client();
 
   Future<String> getAccessToken() => SpotifySdk.getAccessToken(
         clientId: clientId,
