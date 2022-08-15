@@ -5,11 +5,11 @@ import 'package:podiz/splashScreen.dart';
 
 import 'components/onboardingAppBar.dart';
 import 'connectBudz.dart';
-import 'onbording.dart';
-import 'spotify_controller.dart';
+import 'onboarding.dart';
+import 'onboarding_controller.dart';
 
 /// The sub-routes that are presented as part of the on boarding page.
-enum OnboardingView { start, connect }
+enum OnboardingView { intro, connect }
 
 /// This is the root widget of the on boarding page, which is composed of 2 views
 ///
@@ -23,9 +23,9 @@ class OnboardingPage extends ConsumerStatefulWidget {
 
 class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   final controller = PageController();
-  var view = OnboardingView.start;
+  var view = OnboardingView.intro;
 
-  bool get isStartView => view == OnboardingView.start;
+  bool get isStartView => view == OnboardingView.intro;
 
   @override
   void dispose() {
@@ -45,7 +45,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<AsyncValue>(spotifyControllerProvider, (_, state) {
+    ref.listen<AsyncValue>(onboardingControllerProvider, (_, state) {
       if (!state.isRefreshing && state.hasError) {
         showDialog(
           context: context,
@@ -56,7 +56,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
         );
       }
     });
-    final state = ref.watch(spotifyControllerProvider);
+    final state = ref.watch(onboardingControllerProvider);
     if (state.isLoading) return SplashScreen();
 
     // Return a Scaffold with a PageView containing the views.
@@ -65,7 +65,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     return WillPopScope(
       onWillPop: () async {
         if (isStartView) return true;
-        goToView(OnboardingView.start);
+        goToView(OnboardingView.intro);
         return false;
       },
       child: DecoratedBox(
@@ -99,7 +99,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                   child: ElevatedButton(
                     onPressed: () => isStartView
                         ? goToView(OnboardingView.connect)
-                        : ref.read(spotifyControllerProvider.notifier).signIn(),
+                        : ref
+                            .read(onboardingControllerProvider.notifier)
+                            .signIn(),
                     child: Text(
                       isStartView
                           ? Locales.string(context, "intro2")

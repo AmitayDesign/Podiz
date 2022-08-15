@@ -40,18 +40,18 @@ class _FeedPageState extends ConsumerState<FeedPage> {
 
     final lastPodcastExists =
         lastPodcastValue.isLoading || lastPodcastValue.valueOrNull != null;
-    final myCastsDidNotPass = user.favPodcasts.isEmpty ||
+    final myCastsDidNotPass = user.favPodcastIds.isEmpty ||
         (myCastsPosition != null && myCastsPosition > GradientAppBar.height);
     final hotliveDidNotPass =
         hotlivePosition != null && hotlivePosition > GradientAppBar.height;
 
     late final String title;
     if (lastPodcastExists &&
-        user.lastListened.isNotEmpty &&
+        user.lastPodcastId.isNotEmpty &&
         myCastsDidNotPass &&
         hotliveDidNotPass) {
       title = 'lastListened';
-    } else if (user.favPodcasts.isNotEmpty && hotliveDidNotPass) {
+    } else if (user.favPodcastIds.isNotEmpty && hotliveDidNotPass) {
       title = 'myCasts';
     } else {
       title = 'hotlive';
@@ -120,10 +120,10 @@ class _FeedPageState extends ConsumerState<FeedPage> {
             ),
 
             //* My Casts
-            if (user.favPodcasts.isNotEmpty)
+            if (user.favPodcastIds.isNotEmpty)
               SliverList(
                 delegate: SliverChildListDelegate([
-                  if (user.lastListened.isNotEmpty)
+                  if (user.lastPodcastId.isNotEmpty)
                     FeedTile(
                       Locales.string(context, "mycasts"),
                       textKey: myCastsKey,
@@ -138,7 +138,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
               ),
 
             //* Hot & Live
-            if (user.lastListened.isNotEmpty || user.favPodcasts.isNotEmpty)
+            if (user.lastPodcastId.isNotEmpty || user.favPodcastIds.isNotEmpty)
               SliverFeedTile(
                 Locales.string(context, "hotlive"),
                 textKey: hotliveKey,

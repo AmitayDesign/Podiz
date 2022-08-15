@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/widgets/buttonPlay.dart';
 import 'package:podiz/aspect/widgets/cardButton.dart';
 import 'package:podiz/home/components/profileAvatar.dart';
 import 'package:podiz/home/components/replyView.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
-import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/player/components/repliesArea.dart';
 import 'package:podiz/profile/userManager.dart';
+import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/theme/palette.dart';
 
 class DiscussionCard extends ConsumerStatefulWidget {
   final Comment comment;

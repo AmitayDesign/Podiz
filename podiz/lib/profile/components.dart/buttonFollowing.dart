@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/aspect/theme/palette.dart';
+import 'package:podiz/src/theme/palette.dart';
 
 class ButtonFollowing extends StatefulWidget {
   const ButtonFollowing({Key? key}) : super(key: key);

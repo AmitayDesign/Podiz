@@ -14,7 +14,8 @@ import 'package:google_fonts/google_fonts.dart';
 12 - 400 - grey600      bodySmall
 */
 
-TextTheme textTheme(ColorScheme colorScheme) => GoogleFonts.montserratTextTheme(
+TextTheme appTextTheme(ColorScheme colorScheme) =>
+    GoogleFonts.montserratTextTheme(
       const TextTheme(
         displaySmall: TextStyle(
           fontSize: 36,

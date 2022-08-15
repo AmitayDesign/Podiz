@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/home/homePage.dart';
 import 'package:podiz/home/search/screens/showPage.dart';
-import 'package:podiz/onboarding/onbordingPage.dart';
+import 'package:podiz/onboarding/onboardingPage.dart';
 import 'package:podiz/player/screens/discussionPage.dart';
 import 'package:podiz/profile/profilePage.dart';
 import 'package:podiz/profile/screens/settingsPage.dart';

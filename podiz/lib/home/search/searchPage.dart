@@ -11,8 +11,8 @@ import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/objects/SearchResult.dart';
 import 'package:podiz/objects/show.dart';
-import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/profile/userManager.dart';
+import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 
 import 'components/spotifySearch.dart';
 

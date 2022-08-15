@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/home/feed/components/commentSheet.dart';
 import 'package:podiz/objects/Podcast.dart';
+import 'package:podiz/src/theme/palette.dart';
 
 class QuickNoteButton extends StatelessWidget {
   final Podcast podcast;

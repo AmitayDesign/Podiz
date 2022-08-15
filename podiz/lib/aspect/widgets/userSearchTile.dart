@@ -3,9 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/home/components/profileAvatar.dart';
-import 'package:podiz/objects/user/User.dart';
+import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/theme/palette.dart';
 
 class UserSearchTile extends StatelessWidget {
   final UserPodiz user;
@@ -17,7 +17,7 @@ class UserSearchTile extends StatelessWidget {
     return InkWell(
       onTap: () => context.goNamed(
         AppRoute.profile.name,
-        params: {'userId': user.uid},
+        params: {'userId': user.id},
       ),
       child: Container(
         height: 68,

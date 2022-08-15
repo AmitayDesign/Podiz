@@ -12,12 +12,12 @@ NotificationPodiz _$NotificationPodizFromJson(Map<String, dynamic> json) =>
       timestamp: json['timestamp'] as String,
       userUid: json['userUid'] as String,
       episodeUid: json['episodeUid'] as String,
-      id: json['id'] as String,
       comment: json['comment'] as String,
       time: json['time'] as int,
       lvl: json['lvl'] as int,
       parents:
           (json['parents'] as List<dynamic>).map((e) => e as String).toList(),
+      id: json['id'] as String,
     );
 
 Map<String, dynamic> _$NotificationPodizToJson(NotificationPodiz instance) =>
@@ -30,5 +30,5 @@ Map<String, dynamic> _$NotificationPodizToJson(NotificationPodiz instance) =>
       'time': instance.time,
       'lvl': instance.lvl,
       'parents': instance.parents,
-      'id': instance.id
+      'id': instance.id,
     };

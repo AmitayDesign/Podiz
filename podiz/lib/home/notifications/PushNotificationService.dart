@@ -4,7 +4,7 @@
 // import 'package:flutter/widgets.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:podiz/aspect/theme/palette.dart';
+// import 'package:podiz/src/theme/palette.dart';
 // import 'package:podiz/authentication/auth_manager.dart';
 // import 'package:podiz/providers.dart';
 

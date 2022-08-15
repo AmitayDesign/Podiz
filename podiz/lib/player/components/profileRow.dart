@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/home/components/profileAvatar.dart';
-import 'package:podiz/objects/user/User.dart';
+import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 
 class ProfileRow extends StatelessWidget {
   final UserPodiz user;

@@ -29,7 +29,7 @@ class PlayerManager {
   Player? get currentPlayer => _playerController.value;
 
   PlayerManager(this._read) {
-    _init();
+    // _init();
   }
 
   Future<void> _init() async {
@@ -37,7 +37,7 @@ class PlayerManager {
     final user = authManager.currentUser!;
     final result = await FirebaseFunctions.instance
         .httpsCallable("fetchUserPlayer")
-        .call({"userUid": user.uid});
+        .call({"userUid": user.id});
     final data = result.data;
 
     if (data is bool && !data) return _playerController.add(null);
@@ -64,7 +64,7 @@ class PlayerManager {
     if (position == null && currentPlayer?.podcast == podcast) return;
     position ??= 0;
 
-    _playPodcastRequest(podcast, position);
+    // _playPodcastRequest(podcast, position);
 
     // update player
     currentPlayer?.dispose();
@@ -79,11 +79,11 @@ class PlayerManager {
     setUpDiscussionPageStream(podcast.uid!); //TODO discussion
   }
 
-  Future<void> resumePodcast() => _playPodcastRequest(
+  Future<void> resumePodcast() => playPodcast(
       currentPlayer!.podcast, currentPlayer!.position.inMilliseconds);
 
   Future<void> pausePodcast() async {
-    await _pausePodcastRequest();
+    // await _pausePodcastRequest();
     // update player
     final player = currentPlayer!.pause();
     _playerController.add(player);
@@ -91,7 +91,7 @@ class PlayerManager {
 
   Future<void> stopPodcast() async {
     // make a spotify request to pause the podcast
-    if (_playerController.hasValue) await _pausePodcastRequest();
+    // if (_playerController.hasValue) await _pausePodcastRequest();
     // update player
     currentPlayer?.dispose();
     _playerController.add(null);
@@ -101,7 +101,7 @@ class PlayerManager {
     // make a spotify request to play the podcast
     final user = authManager.currentUser!;
     final result = await functions.httpsCallable("play").call(
-        {"episodeUid": podcast.uid, "userUid": user.uid, "position": position});
+        {"episodeUid": podcast.uid, "userUid": user.id, "position": position});
 
     // check if the request was successfull
     if (result.data['result'] == 'unauthorized') {
@@ -119,7 +119,7 @@ class PlayerManager {
     final user = authManager.currentUser!;
     final result = await FirebaseFunctions.instance
         .httpsCallable("pause")
-        .call({"userUid": user.uid});
+        .call({"userUid": user.id});
     // check if the request was successfull
     if (result.data['result'] == 'unauthorized') {
       _playerController.add(null);

@@ -4,11 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/aspect/theme/palette.dart';
 import 'package:podiz/aspect/widgets/appBarGradient.dart';
 import 'package:podiz/aspect/widgets/buttonPlay.dart';
 import 'package:podiz/aspect/widgets/cardButton.dart';
-import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/home/components/profileAvatar.dart';
 import 'package:podiz/home/components/replyView.dart';
@@ -18,10 +16,11 @@ import 'package:podiz/loading.dart/notificationLoading.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/NotificationPodiz.dart';
-import 'package:podiz/objects/user/User.dart';
 import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
+import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/theme/palette.dart';
 
 class NotificationsPage extends ConsumerStatefulWidget {
   const NotificationsPage({Key? key}) : super(key: key);
