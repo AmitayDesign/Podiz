@@ -15,7 +15,7 @@ class SpotifyAuthRepository implements AuthRepository {
   final StreamingSharedPreferences preferences;
 
   final userKey = 'userId';
-  final authState = InMemoryStore<UserPodiz?>();
+  final authState = InMemoryStore<UserPodiz?>(null);
 
   final clientId = '9a8daaf39e784f1c90770da4a252087f';
   final redirectUrl = 'podiz:/';
@@ -25,43 +25,39 @@ class SpotifyAuthRepository implements AuthRepository {
     required this.firestore,
     required this.preferences,
   }) {
+    listenToConnectionStatusChanges();
     listenToAuthStateChanges();
   }
 
-  late StreamSubscription sub;
+  late StreamSubscription authSub;
   void listenToAuthStateChanges() {
     final userIdStream = preferences.getString(userKey, defaultValue: '');
     final userStream = userIdStream.asyncExpand((userId) {
-      if (userId.isEmpty) return null;
+      if (userId.isEmpty) return Stream.value(null);
       final userDocStream =
           firestore.collection("users").doc(userId).snapshots();
-      return userDocStream.map((doc) {
-        if (!doc.exists) return null;
-        return UserPodiz.fromFirestore(doc);
-      });
+      return userDocStream.map(
+        (doc) => doc.exists ? UserPodiz.fromFirestore(doc) : null,
+      );
     });
-    sub = userStream.listen((user) => authState.value = user);
+    authSub = userStream.listen((user) => authState.value = user);
+  }
+
+  late StreamSubscription connectionSub;
+  void listenToConnectionStatusChanges() {
+    connectionSub = SpotifySdk.subscribeConnectionStatus().listen((status) {
+      if (!status.connected) signOut();
+    });
   }
 
   void dispose() {
-    sub.cancel();
+    connectionSub.cancel();
+    authSub.cancel();
     authState.close();
   }
 
   @override
-  Stream<UserPodiz?> authStateChanges() {
-    print('authStateChanges');
-    final connectionStatusStream = SpotifySdk.subscribeConnectionStatus();
-    return connectionStatusStream.asyncExpand((connectionStatus) async* {
-      if (connectionStatus.connected) {
-        print('connected');
-        yield* authState.stream;
-      } else {
-        print('not connected');
-        yield null;
-      }
-    });
-  }
+  Stream<UserPodiz?> authStateChanges() => authState.stream;
 
   @override
   UserPodiz? get currentUser => authState.value;
