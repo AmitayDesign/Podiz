@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/src/features/auth/data/spotify_api.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/utils/instances.dart';
 import 'package:podiz/src/utils/stream_notifier.dart';
@@ -8,6 +9,7 @@ import 'spotify_auth_repository.dart';
 final authRepositoryProvider = Provider<AuthRepository>(
   (ref) {
     final repository = SpotifyAuthRepository(
+      spotifyApi: ref.watch(spotifyApiProvider),
       functions: ref.watch(functionsProvider),
       firestore: ref.watch(firestoreProvider),
       preferences: ref.watch(preferencesProvider),
@@ -27,8 +29,11 @@ abstract class AuthRepository {
 //* Providers
 
 /// awaits for the first authentication state
-final firstUserFutureProvider = FutureProvider<UserPodiz?>(
-  (ref) => ref.watch(authStateChangesProvider.future),
+final firstUserFutureProvider = FutureProvider<void>(
+  (ref) async {
+    final user = await ref.watch(authStateChangesProvider.future);
+    if (user != null) await ref.watch(authRepositoryProvider).signIn();
+  },
 );
 
 final authStateChangesProvider = StreamProvider<UserPodiz?>(

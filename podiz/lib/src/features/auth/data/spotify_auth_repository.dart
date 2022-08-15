@@ -5,12 +5,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:http/http.dart' as http;
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/auth/data/spotify_api.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/utils/in_memory_store.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 class SpotifyAuthRepository implements AuthRepository {
+  final SpotifyApi spotifyApi;
   final FirebaseFunctions functions;
   final FirebaseFirestore firestore;
   final StreamingSharedPreferences preferences;
@@ -18,10 +20,8 @@ class SpotifyAuthRepository implements AuthRepository {
   final userKey = 'userId';
   final authState = InMemoryStore<UserPodiz?>();
 
-  final clientId = '9a8daaf39e784f1c90770da4a252087f';
-  final redirectUrl = 'podiz:/';
-
   SpotifyAuthRepository({
+    required this.spotifyApi,
     required this.functions,
     required this.firestore,
     required this.preferences,
@@ -32,20 +32,24 @@ class SpotifyAuthRepository implements AuthRepository {
 
   late StreamSubscription sub;
   void listenToAuthStateChanges() {
-    sub = preferences.getString(userKey, defaultValue: '').asyncExpand((uid) {
-      if (uid.isEmpty) return Stream.value(null);
-      return firestore
-          .collection('users')
-          .doc(uid)
-          .snapshots()
-          .map((doc) => doc.exists ? UserPodiz.fromFirestore(doc) : null);
+    sub = preferences
+        .getString(userKey, defaultValue: '')
+        .asyncExpand((uid) async* {
+      print('userId: $uid');
+      if (uid.isEmpty) {
+        yield null;
+      } else {
+        final doc = await firestore.collection('users').doc(uid).get();
+        yield doc.exists ? UserPodiz.fromFirestore(doc) : null;
+      }
     }).listen((user) => authState.value = user);
   }
 
   late StreamSubscription connectionSub;
   void listenToConnectionChanges() {
-    connectionSub = SpotifySdk.subscribeConnectionStatus().listen((status) {
-      if (!status.connected) preferences.remove(userKey);
+    connectionSub =
+        SpotifySdk.subscribeConnectionStatus().listen((status) async {
+      if (!status.connected) await preferences.remove(userKey);
     });
   }
 
@@ -74,23 +78,13 @@ class SpotifyAuthRepository implements AuthRepository {
 
   @override
   Future<void> signIn() async {
-    final scope = [
-      'user-follow-read',
-      'user-read-private',
-      'user-read-email',
-    ].join(' ');
-
     late final bool success;
     late final String userId;
     try {
-      final accessToken = await SpotifySdk.getAccessToken(
-        clientId: clientId,
-        redirectUrl: redirectUrl,
-        scope: scope,
-      );
+      final accessToken = await spotifyApi.getAccessToken();
       success = await SpotifySdk.connectToSpotifyRemote(
-        clientId: clientId,
-        redirectUrl: redirectUrl,
+        clientId: spotifyApi.clientId,
+        redirectUrl: spotifyApi.redirectUrl,
         accessToken: accessToken,
       );
       userId = await setUserData(accessToken);

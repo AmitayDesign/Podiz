@@ -103,7 +103,7 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  PinkProgress(podcast!.duration_ms),
+                  PinkProgress(podcast!.duration_ms ~/ 1000),
                 ],
               ),
             ),

@@ -10,6 +10,7 @@ import 'package:podiz/player/playerWidget.dart';
 import 'package:podiz/profile/components.dart/backAppBar.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
 
 class ShowPage extends ConsumerWidget {
   final String showId;
@@ -18,7 +19,7 @@ class ShowPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final showValue = ref.watch(showFutureProvider(showId));
-    final player = ref.watch(playerStreamProvider).valueOrNull;
+    final player = ref.watch(playerStateChangesProvider).valueOrNull;
     final isPlaying = player?.isPlaying ?? false;
     return showValue.when(
       error: (e, _) {
@@ -66,7 +67,7 @@ class ShowPage extends ConsumerWidget {
                                 return PodcastShowTile(
                                   searchResult,
                                   isPlaying: isPlaying &&
-                                      player?.podcast.uid == podcast.uid,
+                                      player?.episode.id == podcast.uid,
                                 );
                               });
                         },

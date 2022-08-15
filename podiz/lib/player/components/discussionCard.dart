@@ -47,7 +47,7 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
     final theme = Theme.of(context);
     UserManager userManager = ref.watch(userManagerProvider);
     // final numberOfReplies =
-    //     ref.read(playerManagerProvider).getNumberOfReplies(widget.comment.id);
+    //     ref.read(playerRepositoryProvider).getNumberOfReplies(widget.comment.id);
     return FutureBuilder(
       future: userManager.getUserFromUid(widget.comment.userUid),
       initialData: "loading",

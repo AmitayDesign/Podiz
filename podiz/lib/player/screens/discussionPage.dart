@@ -8,6 +8,8 @@ import 'package:podiz/player/components/discussionCard.dart';
 import 'package:podiz/player/components/discussionSnackBar.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
+import 'package:podiz/src/features/player/domain/player.dart';
 
 class DiscussionPage extends ConsumerStatefulWidget {
   final String showId;
@@ -48,13 +50,13 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
   Widget build(BuildContext context) {
     final commentsValue = ref.watch(commentsStreamProvider);
     final podcastValue = ref.watch(podcastFutureProvider(widget.showId));
-    ref.listen<AsyncValue<Duration?>>(
-      playerPositionStreamProvider,
+    ref.listen<AsyncValue<Player?>>(
+      playerStateChangesProvider,
       (_, positionValue) {
-        positionValue.whenOrNull(data: (position) {
-          if (position == null) return;
+        positionValue.whenOrNull(data: (player) {
+          if (player == null) return;
           final playerManager = ref.read(playerManagerProvider);
-          playerManager.showComments(position.inMilliseconds);
+          playerManager.showComments(player.playbackPosition);
         });
       },
     );

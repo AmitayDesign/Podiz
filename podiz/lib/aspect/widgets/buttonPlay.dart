@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/objects/Podcast.dart';
-import 'package:podiz/player/PlayerManager.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 class ButtonPlay extends ConsumerWidget {
@@ -14,10 +14,10 @@ class ButtonPlay extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final playerManager = ref.watch(playerManagerProvider);
+    final playerManager = ref.watch(playerRepositoryProvider);
     return InkWell(
       onTap: () {
-        playerManager.playPodcast(podcast, time);
+        playerManager.play(podcast.uid!);
       },
       child: Container(
         width: 76,

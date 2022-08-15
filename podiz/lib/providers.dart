@@ -8,7 +8,6 @@ import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/NotificationPodiz.dart';
-import 'package:podiz/objects/user/Player.dart';
 import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/utils/stream_notifier.dart';
@@ -93,20 +92,6 @@ final podcastFutureProvider =
     final podcast = await ref.watch(podcastManagerProvider).fetchPodcast(id);
     ref.keepAlive();
     return podcast;
-  },
-);
-
-//* PLAYER
-
-final playerStreamProvider = StreamProvider<Player?>(
-  (ref) => ref.watch(playerManagerProvider).playerStream,
-);
-
-final playerPositionStreamProvider = StreamProvider<Duration?>(
-  (ref) {
-    final player = ref.watch(playerStreamProvider).valueOrNull;
-    if (player == null) return Stream.value(null);
-    return player.positionChanges;
   },
 );
 

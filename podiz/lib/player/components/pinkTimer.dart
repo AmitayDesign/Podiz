@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/formatters.dart';
-import 'package:podiz/providers.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 class PinkTimer extends ConsumerWidget {
@@ -13,7 +13,8 @@ class PinkTimer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final position =
-        ref.watch(playerPositionStreamProvider).valueOrNull ?? Duration.zero;
+        ref.watch(playerStateChangesProvider).valueOrNull?.playbackPosition ??
+            0;
     return Container(
       height: 24,
       decoration: BoxDecoration(
@@ -33,7 +34,7 @@ class PinkTimer extends ConsumerWidget {
             width: 48,
             child: Center(
               child: Text(
-                timePlayerFormatter(position.inMilliseconds),
+                timePlayerFormatter(position),
                 style: context.textTheme.titleMedium,
               ),
             ),

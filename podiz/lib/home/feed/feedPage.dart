@@ -9,8 +9,8 @@ import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/home/homePage.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/objects/Podcast.dart';
-import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/providers.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/routing/app_router.dart';
 
 import 'components/feedAppBar.dart';
@@ -67,11 +67,11 @@ class _FeedPageState extends ConsumerState<FeedPage> {
   }
 
   void openPodcast(Podcast podcast) {
-    ref.read(playerManagerProvider).playPodcast(podcast);
-    context.goNamed(
-      AppRoute.discussion.name,
-      params: {'episodeId': podcast.uid!},
-    );
+    ref.read(playerRepositoryProvider).play(podcast.uid!);
+    // context.goNamed(
+    //   AppRoute.discussion.name,
+    //   params: {'episodeId': podcast.uid!},
+    // );
   }
 
   void openShow(Podcast podcast) {

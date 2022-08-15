@@ -9,6 +9,7 @@ import 'package:podiz/player/components/pinkTimer.dart';
 import 'package:podiz/player/playerController.dart';
 import 'package:podiz/player/playerWidget.dart';
 import 'package:podiz/providers.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
 
 class InsightSheet extends ConsumerStatefulWidget {
   final Podcast podcast;
@@ -33,14 +34,14 @@ class _CommentSheetState extends ConsumerState<InsightSheet> {
     ref.read(authManagerProvider).doComment(
           commentController.text,
           widget.podcast.uid!,
-          ref.read(playerStreamProvider).value!.position.inMilliseconds,
+          ref.read(playerStateChangesProvider).value!.playbackPosition,
         );
     commentController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
-    final playerValue = ref.watch(playerStreamProvider);
+    final playerValue = ref.watch(playerStateChangesProvider);
     final loadingAction = ref.watch(playerControllerProvider);
     return playerValue.maybeWhen(
       orElse: () => const SizedBox.shrink(),

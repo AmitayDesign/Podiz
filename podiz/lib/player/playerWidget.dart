@@ -5,7 +5,7 @@ import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/player/components/pinkProgress.dart';
 import 'package:podiz/player/playerController.dart';
-import 'package:podiz/providers.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/palette.dart';
 
@@ -16,11 +16,18 @@ class PlayerWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final playerValue = ref.watch(playerStreamProvider);
+    final playerValue = ref.watch(playerStateChangesProvider);
+    // print(playerValue.valueOrNull?.playbackPosition);
     final loadingAction = ref.watch(playerControllerProvider);
-    return playerValue.maybeWhen(
-      orElse: () => const SizedBox.shrink(),
+    return playerValue.when(
+      error: (e, _) {
+        print(e);
+        return const SizedBox.shrink();
+      },
+      loading: () => const SizedBox.shrink(),
       data: (player) {
+        print('XXX ${player?.episode.name}');
+        print('XXX ${player?.isPlaying}');
         if (player == null) return const SizedBox.shrink();
         final action =
             player.isPlaying ? PlayerAction.pause : PlayerAction.play;
@@ -33,12 +40,12 @@ class PlayerWidget extends ConsumerWidget {
           child: InkWell(
             onTap: () => context.goNamed(
               AppRoute.discussion.name,
-              params: {'episodeId': player.podcast.uid!},
+              params: {'episodeId': player.episode.id},
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                PinkProgress(player.duration.inMilliseconds),
+                PinkProgress(player.episode.duration),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -48,7 +55,7 @@ class PlayerWidget extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       PodcastAvatar(
-                        imageUrl: player.podcast.image_url,
+                        imageUrl: player.episode.imageUrl,
                         size: 52,
                       ),
                       const SizedBox(width: 8),
@@ -64,7 +71,7 @@ class PlayerWidget extends ConsumerWidget {
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                player.podcast.name,
+                                player.episode.name,
                                 style: context.textTheme.bodyMedium,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,

@@ -7,7 +7,7 @@ import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/widgets/insightsRow.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/SearchResult.dart';
-import 'package:podiz/player/PlayerManager.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/palette.dart';
 
@@ -37,8 +37,8 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
         child: InkWell(
           onTap: () {
             ref
-                .read(playerManagerProvider)
-                .playPodcast(widget.result.toPodcast(), 0);
+                .read(playerRepositoryProvider)
+                .play(widget.result.toPodcast().uid!);
             context.goNamed(
               AppRoute.discussion.name,
               params: {'showId': widget.result.show_uri!},

@@ -19,6 +19,7 @@ import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/palette.dart';
 
@@ -55,7 +56,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isPlaying =
-        ref.watch(playerStreamProvider).valueOrNull?.isPlaying ?? false;
+        ref.watch(playerStateChangesProvider).valueOrNull?.isPlaying ?? false;
     final notifications = ref.watch(notificationsStreamProvider);
     return notifications.when(
         loading: () => const NotificationLoading(),
