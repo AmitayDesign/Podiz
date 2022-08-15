@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/splashScreen.dart';
+import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/src/common_widgets/loadingButton.dart';
 
 import 'connect_page.dart';
 import 'intro_page.dart';
@@ -57,7 +58,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       }
     });
     final state = ref.watch(onboardingControllerProvider);
-    if (state.isLoading) return SplashScreen();
 
     // Return a Scaffold with a PageView containing the views.
     // This allows for a nice scroll animation when switching between pages.
@@ -69,8 +69,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         return false;
       },
       child: DecoratedBox(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
+        decoration: BoxDecoration(
+          color: context.colorScheme.background,
+          image: const DecorationImage(
             image: AssetImage('assets/images/backgroundImage.png'),
             fit: BoxFit.cover,
           ),
@@ -96,7 +97,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     horizontal: 4,
                     vertical: 16,
                   ),
-                  child: ElevatedButton(
+                  child: LoadingElevatedButton(
+                    loading: state.isLoading,
                     onPressed: () => isStartView
                         ? goToView(OnboardingPage.connect)
                         : ref

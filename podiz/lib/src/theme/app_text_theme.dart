@@ -27,6 +27,11 @@ TextTheme appTextTheme(ColorScheme colorScheme) =>
           fontWeight: FontWeight.w700,
           color: Colors.white,
         ),
+        headlineMedium: TextStyle(
+          fontSize: 28,
+          fontWeight: FontWeight.w700,
+          color: Colors.white,
+        ),
         headlineSmall: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.w700,

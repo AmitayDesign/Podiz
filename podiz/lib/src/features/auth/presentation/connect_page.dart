@@ -23,17 +23,13 @@ class ConnectPage extends ConsumerWidget {
           children: [
             Text(
               Locales.string(context, "intro3_1"),
-              style: context.textTheme.labelLarge!.copyWith(
-                color: Colors.grey.shade100,
-              ),
+              style: context.textTheme.headlineSmall,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
             Text(
               Locales.string(context, "intro3_2"),
-              style: context.textTheme.titleSmall!.copyWith(
-                color: Colors.grey.shade100,
-              ),
+              style: context.textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
@@ -72,7 +68,7 @@ class ConnectSign extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Text(sign, style: context.textTheme.headlineLarge),
+      child: Text(sign, style: context.textTheme.headlineMedium),
     );
   }
 }
