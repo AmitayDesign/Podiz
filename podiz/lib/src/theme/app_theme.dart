@@ -59,7 +59,7 @@ final themeProvider = Provider<ThemeData>((ref) {
         onPrimary: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 24),
         minimumSize: const Size.fromHeight(56),
-        textStyle: textTheme.titleLarge,
+        textStyle: textTheme.titleMedium,
       ),
     ),
     iconTheme: IconThemeData(

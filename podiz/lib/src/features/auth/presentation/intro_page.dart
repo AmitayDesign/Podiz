@@ -18,10 +18,10 @@ class IntroPage extends StatelessWidget {
             style: theme.textTheme.headlineSmall,
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           Text(
             Locales.string(context, 'intro1_2'),
-            style: theme.textTheme.displaySmall,
+            style: theme.textTheme.headlineLarge,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),

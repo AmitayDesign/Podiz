@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/widgets/gradientAppBar.dart';
 import 'package:podiz/aspect/widgets/sliverFirestoreQueryBuilder.dart';
-import 'package:podiz/authentication/auth_manager.dart';
-import 'package:podiz/home/homePage.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/objects/Podcast.dart';
-import 'package:podiz/providers.dart';
+import 'package:podiz/providers.dart' hide currentUserProvider;
+import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/episodes/presentation/card/episode_card.dart';
+import 'package:podiz/src/features/episodes/presentation/card/quick_note_button.dart';
+import 'package:podiz/src/features/episodes/presentation/card/skeleton_episode_card.dart';
+import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/routing/app_router.dart';
 
-import 'components/feedAppBar.dart';
-import 'components/feedTitle.dart';
-import 'components/podcastCard.dart';
-import 'components/quickNoteButton.dart';
-import 'components/skeletonPodcastCard.dart';
+import 'feed_bar.dart';
+import 'feed_controller.dart';
+import 'feed_title.dart';
 
 class FeedPage extends ConsumerStatefulWidget {
   const FeedPage({Key? key}) : super(key: key);
@@ -27,38 +27,8 @@ class FeedPage extends ConsumerStatefulWidget {
 }
 
 class _FeedPageState extends ConsumerState<FeedPage> {
-  late final scrollController = ScrollController()..addListener(handleAppBar);
-
-  final myCastsKey = GlobalKey();
-  final hotliveKey = GlobalKey();
-
-  void handleAppBar() {
-    final user = ref.read(currentUserProvider);
-    final myCastsPosition = myCastsKey.offset?.dy;
-    final hotlivePosition = hotliveKey.offset?.dy;
-    final lastPodcastValue = ref.read(lastListenedPodcastStreamProvider);
-
-    final lastPodcastExists =
-        lastPodcastValue.isLoading || lastPodcastValue.valueOrNull != null;
-    final myCastsDidNotPass = user.favPodcastIds.isEmpty ||
-        (myCastsPosition != null && myCastsPosition > GradientAppBar.height);
-    final hotliveDidNotPass =
-        hotlivePosition != null && hotlivePosition > GradientAppBar.height;
-
-    late final String title;
-    if (lastPodcastExists &&
-        user.lastPodcastId.isNotEmpty &&
-        myCastsDidNotPass &&
-        hotliveDidNotPass) {
-      title = 'lastListened';
-    } else if (user.favPodcastIds.isNotEmpty && hotliveDidNotPass) {
-      title = 'myCasts';
-    } else {
-      title = 'hotlive';
-    }
-
-    ref.read(homeBarTitleProvider.notifier).state = title;
-  }
+  late final scrollController = ScrollController()
+    ..addListener(ref.read(feedControllerProvider.notifier).handleTitles);
 
   @override
   void dispose() {
@@ -66,15 +36,15 @@ class _FeedPageState extends ConsumerState<FeedPage> {
     super.dispose();
   }
 
-  void openPodcast(Podcast podcast) {
+  void openEpisode(Podcast podcast) {
     ref.read(playerRepositoryProvider).play(podcast.uid!);
-    // context.goNamed(
-    //   AppRoute.discussion.name,
-    //   params: {'episodeId': podcast.uid!},
-    // );
+    context.goNamed(
+      AppRoute.discussion.name,
+      params: {'episodeId': podcast.uid!},
+    );
   }
 
-  void openShow(Podcast podcast) {
+  void openPodcast(Podcast podcast) {
     context.goNamed(
       AppRoute.show.name,
       params: {'showId': podcast.show_uri},
@@ -84,12 +54,12 @@ class _FeedPageState extends ConsumerState<FeedPage> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(currentUserProvider);
-    final authManager = ref.watch(authManagerProvider);
-    final lastPodcastValue = ref.watch(lastListenedPodcastStreamProvider);
-    final podcastManager = ref.watch(podcastManagerProvider);
+    final lastPodcastValue = ref.watch(lastListenedPodcastStreamProvider); //!
+    final podcastManager = ref.watch(podcastManagerProvider); //!
+    final controller = ref.read(feedControllerProvider.notifier);
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: const FeedAppBar(),
+      appBar: const FeedBar(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
         child: CustomScrollView(
@@ -103,16 +73,16 @@ class _FeedPageState extends ConsumerState<FeedPage> {
             //* Last Listened
             SliverToBoxAdapter(
               child: lastPodcastValue.when(
-                loading: () => const SkeletonPodcastCard(
+                loading: () => const SkeletonEpisodeCard(
                   bottomHeight: QuickNoteButton.height,
                 ),
                 error: (e, _) => null,
                 data: (lastPodcast) {
                   if (lastPodcast == null) return null;
-                  return PodcastCard(
+                  return EpisodeCard(
                     lastPodcast,
-                    onTap: () => openPodcast(lastPodcast),
-                    onShowTap: () => openShow(lastPodcast),
+                    onTap: () => openEpisode(lastPodcast),
+                    onPodcastTap: () => openPodcast(lastPodcast),
                     bottom: QuickNoteButton(podcast: lastPodcast),
                   );
                 },
@@ -125,14 +95,14 @@ class _FeedPageState extends ConsumerState<FeedPage> {
             //     delegate: SliverChildListDelegate([
             //       if (user.lastPodcastId.isNotEmpty)
             //         FeedTile(
-            //           Locales.string(context, "mycasts"),
-            //           textKey: myCastsKey,
+            //           Locales.string(context, controller.myCastsLocaleKey),
+            //           textKey: controller.myCastsKey,
             //         ),
             //       for (final podcast in authManager.myCast)
-            //         PodcastCard(
+            //         EpisodeCard(
             //           podcast,
-            //           onTap: () => openPodcast(podcast),
-            //           onShowTap: () => openShow(podcast),
+            //           onTap: () => openEpisode(podcast),
+            //           onPodcastTap: () => openPodcast(podcast),
             //         ),
             //     ]),
             //   ),
@@ -140,21 +110,21 @@ class _FeedPageState extends ConsumerState<FeedPage> {
             //* Hot & Live
             if (user.lastPodcastId.isNotEmpty || user.favPodcastIds.isNotEmpty)
               SliverFeedTile(
-                Locales.string(context, "hotlive"),
-                textKey: hotliveKey,
+                Locales.string(context, controller.hotLiveLocaleKey),
+                textKey: controller.hotLiveKey,
               ),
             SliverFirestoreQueryBuilder<Podcast>(
               query: podcastManager.hotliveFirestoreQuery(),
-              builder: (context, podcast) => PodcastCard(
+              builder: (context, podcast) => EpisodeCard(
                 podcast,
-                onTap: () => openPodcast(podcast),
-                onShowTap: () => openShow(podcast),
+                onTap: () => openEpisode(podcast),
+                onPodcastTap: () => openPodcast(podcast),
               ),
             ),
 
             // so it doesnt end behind the bottom bar
             const SliverToBoxAdapter(
-              child: SizedBox(height: HomePage.bottomBarHeigh),
+              child: SizedBox(height: HomeScreen.bottomBarHeigh),
             ),
           ],
         ),

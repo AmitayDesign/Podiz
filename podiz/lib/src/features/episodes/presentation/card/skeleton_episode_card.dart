@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/home/components/skeletonPodcastAvatar.dart';
+import 'package:podiz/src/features/podcast/presentation/avatar/skeleton_podcast_avatar.dart';
 import 'package:skeletons/skeletons.dart';
 
-class SkeletonPodcastCard extends StatelessWidget {
+class SkeletonEpisodeCard extends StatelessWidget {
   final double? bottomHeight;
-  const SkeletonPodcastCard({Key? key, this.bottomHeight}) : super(key: key);
+  const SkeletonEpisodeCard({Key? key, this.bottomHeight}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class SkeletonPodcastCard extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SkeletonPodcastAvatar(size: 64),
+                  const SkeletonPodcastAvatar(),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Padding(

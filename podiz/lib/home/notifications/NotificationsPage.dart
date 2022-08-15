@@ -6,8 +6,6 @@ import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/widgets/appBarGradient.dart';
 import 'package:podiz/aspect/widgets/buttonPlay.dart';
 import 'package:podiz/aspect/widgets/cardButton.dart';
-import 'package:podiz/home/components/podcastAvatar.dart';
-import 'package:podiz/home/components/profileAvatar.dart';
 import 'package:podiz/home/components/replyView.dart';
 import 'package:podiz/home/notifications/components/tabBarLabel.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
@@ -17,9 +15,11 @@ import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/NotificationPodiz.dart';
 import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/providers.dart';
-import 'package:podiz/splashScreen.dart';
+import 'package:podiz/src/common_widgets/splash_screen.dart';
+import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
+import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/palette.dart';
 
@@ -62,7 +62,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
         loading: () => const NotificationLoading(),
         error: (e, _) {
           print('notificationPage: ${e.toString()}');
-          return SplashScreen.error();
+          return const SplashScreen.error();
         },
         data: (n) {
           Iterable<String> keys = n.keys;
@@ -248,7 +248,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                                   children: [
                                     Row(
                                       children: [
-                                        ProfileAvatar(user: user, radius: 20),
+                                        UserAvatar(user: user, radius: 20),
                                         const SizedBox(
                                           width: 8,
                                         ),

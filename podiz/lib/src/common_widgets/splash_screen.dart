@@ -8,9 +8,13 @@ enum SplashType { loading, error }
 class SplashScreen extends StatelessWidget {
   final SplashType type;
 
-  const SplashScreen._({Key? key, required this.type}) : super(key: key);
-  factory SplashScreen() => const SplashScreen._(type: SplashType.loading);
-  factory SplashScreen.error() => const SplashScreen._(type: SplashType.error);
+  const SplashScreen({Key? key})
+      : type = SplashType.loading,
+        super(key: key);
+
+  const SplashScreen.error({Key? key})
+      : type = SplashType.error,
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +22,9 @@ class SplashScreen extends StatelessWidget {
     return Material(
       child: Container(
         alignment: Alignment.center,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
+        decoration: BoxDecoration(
+          color: context.colorScheme.background,
+          image: const DecorationImage(
             image: AssetImage("assets/images/backgroundImage.png"),
             fit: BoxFit.cover,
           ),
@@ -36,22 +41,23 @@ class SplashScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Text("Podiz", style: context.textTheme.headlineLarge),
             const SizedBox(height: 8),
-            type == SplashType.loading
-                ? SizedBox(
-                    height: 24,
-                    child: LoadingIndicator(
-                      colors: [theme.primaryColor],
-                      indicatorType: Indicator.ballBeat,
-                    ),
-                  )
-                : Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: LocaleText(
-                      'error1',
-                      style: context.textTheme.bodyLarge,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
+            if (type == SplashType.loading)
+              SizedBox(
+                height: 24,
+                child: LoadingIndicator(
+                  colors: [theme.primaryColor],
+                  indicatorType: Indicator.ballBeat,
+                ),
+              )
+            else if (type == SplashType.error)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: LocaleText(
+                  'error1',
+                  style: context.textTheme.bodyLarge,
+                  textAlign: TextAlign.center,
+                ),
+              ),
           ],
         ),
       ),

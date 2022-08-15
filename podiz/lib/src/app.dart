@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/splashScreen.dart';
+import 'package:podiz/src/common_widgets/splash_screen.dart';
 import 'package:podiz/src/routing/app_router.dart';
 
 import 'features/auth/data/auth_repository.dart';
@@ -30,8 +30,8 @@ class MyApp extends ConsumerWidget {
         darkTheme: theme,
         themeMode: ThemeMode.dark,
         builder: (context, child) => firstUserValue.when(
-          error: (e, _) => SplashScreen.error(), //!
-          loading: () => SplashScreen(), //!
+          error: (e, _) => const SplashScreen.error(),
+          loading: () => const SplashScreen(),
           data: (_) {
             setScreenSize(context); //!
             return child!;

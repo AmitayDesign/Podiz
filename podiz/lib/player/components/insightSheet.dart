@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/authentication/auth_manager.dart';
-import 'package:podiz/home/components/profileAvatar.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/player/components/pinkTimer.dart';
 import 'package:podiz/player/playerController.dart';
 import 'package:podiz/player/playerWidget.dart';
 import 'package:podiz/providers.dart';
+import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 
 class InsightSheet extends ConsumerStatefulWidget {
@@ -64,7 +64,7 @@ class _CommentSheetState extends ConsumerState<InsightSheet> {
                   Consumer(
                     builder: (context, ref, _) {
                       final user = ref.watch(currentUserProvider);
-                      return ProfileAvatar(user: user, radius: buttonSize / 2);
+                      return UserAvatar(user: user, radius: buttonSize / 2);
                     },
                   ),
                   const SizedBox(width: 8),

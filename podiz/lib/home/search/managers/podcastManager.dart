@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/objects/Podcast.dart';
-import 'package:podiz/objects/SearchResult.dart';
 import 'package:podiz/providers.dart';
 
 final podcastManagerProvider = Provider<PodcastManager>(
@@ -26,7 +25,7 @@ class PodcastManager {
 
   Future<Podcast> fetchPodcast(String episodeId) async {
     final doc = await firestore.collection("podcasts").doc(episodeId).get();
-   
+
     return Podcast.fromFirestore(doc);
   }
 
@@ -46,15 +45,12 @@ class PodcastManager {
         toFirestore: (podcast, _) => {},
       );
 
-  Query<SearchResult> podcastsFirestoreQuery(String filter) =>
+  Query<Podcast> podcastsFirestoreQuery(String filter) =>
       FirebaseFirestore.instance
           .collection("podcasts")
           .where("searchArray", arrayContains: filter.toLowerCase())
           .withConverter(
-            fromFirestore: (doc, _) {
-              Podcast podcast = Podcast.fromFirestore(doc);
-              return SearchResult.fromPodcast(podcast);
-            },
+            fromFirestore: (doc, _) => Podcast.fromFirestore(doc),
             toFirestore: (podcast, _) => {},
           );
 }

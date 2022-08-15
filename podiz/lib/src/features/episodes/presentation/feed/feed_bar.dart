@@ -4,14 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/widgets/gradientAppBar.dart';
-import 'package:podiz/home/components/profileAvatar.dart';
-import 'package:podiz/providers.dart';
+import 'package:podiz/src/common_widgets/user_avatar.dart';
+import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/routing/app_router.dart';
 
-final homeBarTitleProvider = StateProvider<String>((ref) => 'lastListened');
+import 'feed_controller.dart';
 
-class FeedAppBar extends ConsumerWidget with PreferredSizeWidget {
-  const FeedAppBar({Key? key}) : super(key: key);
+class FeedBar extends ConsumerWidget with PreferredSizeWidget {
+  const FeedBar({Key? key}) : super(key: key);
 
   @override
   Size get preferredSize =>
@@ -20,14 +20,14 @@ class FeedAppBar extends ConsumerWidget with PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserProvider);
-    final title = ref.watch(homeBarTitleProvider);
+    final title = ref.watch(feedControllerProvider);
     return GradientAppBar(
       title: Text(
         Locales.string(context, title),
         style: context.textTheme.bodyLarge,
       ),
       actions: [
-        ProfileAvatarButton(user: user, radius: 16),
+        UserAvatarButton(user: user),
         IconButton(
           icon: const Icon(Icons.settings),
           onPressed: () => context.goNamed(AppRoute.settings.name),

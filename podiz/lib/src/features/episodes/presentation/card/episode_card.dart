@@ -3,21 +3,22 @@ import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/widgets/dot.dart';
-import 'package:podiz/aspect/widgets/insightsRow.dart';
-import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/Podcast.dart';
+import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
 
-class PodcastCard extends StatelessWidget {
+import 'insights_info.dart';
+
+class EpisodeCard extends StatelessWidget {
   final Podcast podcast;
   final VoidCallback? onTap;
-  final VoidCallback? onShowTap;
+  final VoidCallback? onPodcastTap;
   final Widget? bottom;
 
-  const PodcastCard(
+  const EpisodeCard(
     this.podcast, {
     Key? key,
     this.onTap,
-    this.onShowTap,
+    this.onPodcastTap,
     this.bottom,
   }) : super(key: key);
 
@@ -42,13 +43,13 @@ class PodcastCard extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 2),
-                child: InsightsRow(podcast: podcast),
+                child: InsightsInfo(podcast: podcast),
               ),
               const SizedBox(height: 16),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  PodcastAvatar(imageUrl: podcast.image_url, size: 64),
+                  PodcastAvatar(imageUrl: podcast.image_url),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Padding(
@@ -66,7 +67,7 @@ class PodcastCard extends StatelessWidget {
                             children: [
                               Flexible(
                                 child: GestureDetector(
-                                  onTap: onShowTap,
+                                  onTap: onPodcastTap,
                                   child: Text(
                                     podcast.show_name,
                                     style: subtitleStyle,

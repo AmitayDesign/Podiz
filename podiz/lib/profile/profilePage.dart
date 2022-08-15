@@ -5,8 +5,6 @@ import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/widgets/buttonPlay.dart';
 import 'package:podiz/aspect/widgets/cardButton.dart';
-import 'package:podiz/home/components/podcastAvatar.dart';
-import 'package:podiz/home/components/profileAvatar.dart';
 import 'package:podiz/home/components/replyView.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/home/search/managers/showManager.dart';
@@ -18,7 +16,9 @@ import 'package:podiz/objects/show.dart';
 import 'package:podiz/profile/components.dart/backAppBar.dart';
 import 'package:podiz/profile/components.dart/followPeopleButton.dart';
 import 'package:podiz/providers.dart';
+import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/palette.dart';
 
@@ -282,7 +282,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         children: [
                           Row(
                             children: [
-                              ProfileAvatar(user: user, radius: 20),
+                              UserAvatar(user: user, radius: 20),
                               const SizedBox(
                                 width: 8,
                               ),

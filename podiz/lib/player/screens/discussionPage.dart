@@ -7,7 +7,7 @@ import 'package:podiz/player/components/discussionAppBar.dart';
 import 'package:podiz/player/components/discussionCard.dart';
 import 'package:podiz/player/components/discussionSnackBar.dart';
 import 'package:podiz/providers.dart';
-import 'package:podiz/splashScreen.dart';
+import 'package:podiz/src/common_widgets/splash_screen.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/domain/player.dart';
 
@@ -65,14 +65,14 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
       body: podcastValue.when(
           error: (e, st) {
             print('discussionPage: ${e.toString()}');
-            return SplashScreen.error();
+            return const SplashScreen.error();
           },
           loading: () => loadingWidget,
           data: (podcast) {
             return commentsValue.when(
                 error: (e, _) {
                   print('discussionPage: ${e.toString()}');
-                  return SplashScreen.error();
+                  return const SplashScreen.error();
                 },
                 loading: () => loadingWidget,
                 data: (comments) {
