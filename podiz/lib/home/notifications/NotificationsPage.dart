@@ -15,7 +15,7 @@ import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/NotificationPodiz.dart';
 import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/providers.dart';
-import 'package:podiz/splashScreen.dart';
+import 'package:podiz/src/common_widgets/splash_screen.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
@@ -61,7 +61,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
         loading: () => const NotificationLoading(),
         error: (e, _) {
           print('notificationPage: ${e.toString()}');
-          return SplashScreen.error();
+          return const SplashScreen.error();
         },
         data: (n) {
           Iterable<String> keys = n.keys;
