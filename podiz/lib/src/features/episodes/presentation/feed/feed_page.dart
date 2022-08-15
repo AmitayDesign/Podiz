@@ -36,11 +36,16 @@ class _FeedPageState extends ConsumerState<FeedPage> {
     super.dispose();
   }
 
-  void openEpisode(Podcast podcast) {
-    ref.read(playerRepositoryProvider).play(podcast.uid!);
+  void openEpisode(Podcast episode) {
+    final playerRepository = ref.read(playerRepositoryProvider);
+    playerRepository.currentPlayerState().then((player) {
+      if (player?.episode.id != episode.uid!) {
+        ref.read(playerRepositoryProvider).play(episode.uid!);
+      }
+    });
     context.goNamed(
       AppRoute.discussion.name,
-      params: {'episodeId': podcast.uid!},
+      params: {'episodeId': episode.uid!},
     );
   }
 

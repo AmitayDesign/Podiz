@@ -10,9 +10,7 @@ class PinkProgress extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final position =
-        ref.watch(playerStateChangesProvider).valueOrNull?.playbackPosition ??
-            0;
+    final position = ref.watch(playerTimeProvider).valueOrNull ?? 0;
     //TODO load positon and on loading user LinearProgressIndicator
     //TODO animate percent
     return LinearPercentIndicator(

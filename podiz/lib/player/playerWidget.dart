@@ -17,7 +17,6 @@ class PlayerWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final playerValue = ref.watch(playerStateChangesProvider);
-    // print(playerValue.valueOrNull?.playbackPosition);
     final loadingAction = ref.watch(playerControllerProvider);
     return playerValue.when(
       error: (e, _) {
@@ -48,8 +47,8 @@ class PlayerWidget extends ConsumerWidget {
                 PinkProgress(player.episode.duration),
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
+                    horizontal: 24,
+                    vertical: 16,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,

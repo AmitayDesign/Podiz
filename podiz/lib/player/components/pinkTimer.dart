@@ -12,9 +12,7 @@ class PinkTimer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final position =
-        ref.watch(playerStateChangesProvider).valueOrNull?.playbackPosition ??
-            0;
+    final position = ref.watch(playerTimeProvider).valueOrNull ?? 0;
     return Container(
       height: 24,
       decoration: BoxDecoration(
@@ -30,8 +28,8 @@ class PinkTimer extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: icon!,
             ),
-          SizedBox(
-            width: 48,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
             child: Center(
               child: Text(
                 timePlayerFormatter(position),

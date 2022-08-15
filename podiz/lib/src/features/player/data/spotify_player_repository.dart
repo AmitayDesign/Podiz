@@ -1,5 +1,6 @@
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/player/domain/player.dart';
+import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
 import 'player_repository.dart';
@@ -11,16 +12,25 @@ class SpotifyPlayerRepository implements PlayerRepository {
 
   @override
   Stream<Player?> playerStateChanges() =>
-      SpotifySdk.subscribePlayerState().asyncMap((state) async {
-        final track = state.track; //TODO fix null track
-        if (track == null || !track.isEpisode || !track.isPodcast) return null;
-        final episode = await episodeRepository.fetchEpisode(track.uri);
-        return Player(
-          episode: episode,
-          isPlaying: !state.isPaused,
-          playbackPosition: state.playbackPosition,
-        );
-      });
+      SpotifySdk.subscribePlayerState().asyncMap(_convertStateToPlayer);
+
+  @override
+  Future<Player?> currentPlayerState() async {
+    final state = await SpotifySdk.getPlayerState();
+    if (state == null) return null;
+    return _convertStateToPlayer(state);
+  }
+
+  Future<Player?> _convertStateToPlayer(PlayerState state) async {
+    final track = state.track; //TODO fix null track
+    if (track == null || !track.isEpisode || !track.isPodcast) return null;
+    final episode = await episodeRepository.fetchEpisode(track.uri);
+    return Player(
+      episode: episode,
+      isPlaying: !state.isPaused,
+      playbackPosition: state.playbackPosition,
+    );
+  }
 
   @override
   Future<void> play(String podcastId) => SpotifySdk.play(spotifyUri: podcastId);
