@@ -4,18 +4,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 
-class ConnectBudz extends ConsumerWidget {
-  const ConnectBudz({Key? key}) : super(key: key);
+class ConnectPage extends ConsumerWidget {
+  const ConnectPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     return Center(
       child: Container(
         constraints: const BoxConstraints(maxWidth: 360),
         padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
         decoration: BoxDecoration(
-          color: const Color(0xFF090909),
+          color: context.colorScheme.background,
           borderRadius: BorderRadius.circular(kBorderRadius),
         ),
         child: Column(
@@ -24,7 +23,7 @@ class ConnectBudz extends ConsumerWidget {
           children: [
             Text(
               Locales.string(context, "intro3_1"),
-              style: theme.textTheme.labelLarge!.copyWith(
+              style: context.textTheme.labelLarge!.copyWith(
                 color: Colors.grey.shade100,
               ),
               textAlign: TextAlign.center,
@@ -32,7 +31,7 @@ class ConnectBudz extends ConsumerWidget {
             const SizedBox(height: 16),
             Text(
               Locales.string(context, "intro3_2"),
-              style: theme.textTheme.titleSmall!.copyWith(
+              style: context.textTheme.titleSmall!.copyWith(
                 color: Colors.grey.shade100,
               ),
               textAlign: TextAlign.center,

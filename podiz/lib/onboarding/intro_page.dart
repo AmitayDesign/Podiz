@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 
-class Onboarding extends StatelessWidget {
-  const Onboarding({Key? key}) : super(key: key);
+class IntroPage extends StatelessWidget {
+  const IntroPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class Onboarding extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Image.asset(
-                'assets/images/onBoardingMen.png',
+                'assets/images/IntroPageMen.png',
                 fit: BoxFit.contain,
               ),
             ),

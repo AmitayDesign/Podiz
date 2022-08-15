@@ -3,29 +3,29 @@ import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/splashScreen.dart';
 
-import 'components/onboardingAppBar.dart';
-import 'connectBudz.dart';
-import 'onboarding.dart';
+import 'connect_page.dart';
+import 'intro_page.dart';
+import 'onboarding_bar.dart';
 import 'onboarding_controller.dart';
 
 /// The sub-routes that are presented as part of the on boarding page.
-enum OnboardingView { intro, connect }
+enum OnboardingPage { intro, connect }
 
 /// This is the root widget of the on boarding page, which is composed of 2 views
 ///
 /// UI updates are handled by a [PageController].
-class OnboardingPage extends ConsumerStatefulWidget {
-  const OnboardingPage({Key? key}) : super(key: key);
+class OnboardingScreen extends ConsumerStatefulWidget {
+  const OnboardingScreen({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<OnboardingPage> createState() => _OnboardingPageState();
+  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingPageState extends ConsumerState<OnboardingPage> {
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final controller = PageController();
-  var view = OnboardingView.intro;
+  var view = OnboardingPage.intro;
 
-  bool get isStartView => view == OnboardingView.intro;
+  bool get isStartView => view == OnboardingPage.intro;
 
   @override
   void dispose() {
@@ -33,7 +33,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     super.dispose();
   }
 
-  void goToView(OnboardingView newView) {
+  void goToView(OnboardingPage newView) {
     setState(() => view = newView);
     // perform a nice scroll animation to reveal the next view
     controller.animateToPage(
@@ -65,7 +65,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     return WillPopScope(
       onWillPop: () async {
         if (isStartView) return true;
-        goToView(OnboardingView.intro);
+        goToView(OnboardingPage.intro);
         return false;
       },
       child: DecoratedBox(
@@ -76,7 +76,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
           ),
         ),
         child: Scaffold(
-          appBar: const OnboardingAppBar(),
+          appBar: const OnboardingBar(),
           backgroundColor: Colors.transparent,
           body: Padding(
             padding: const EdgeInsets.all(16),
@@ -88,7 +88,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                     // disable swiping between pages
                     physics: const NeverScrollableScrollPhysics(),
                     controller: controller,
-                    children: const [Onboarding(), ConnectBudz()],
+                    children: const [IntroPage(), ConnectPage()],
                   ),
                 ),
                 Padding(
@@ -98,7 +98,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                   ),
                   child: ElevatedButton(
                     onPressed: () => isStartView
-                        ? goToView(OnboardingView.connect)
+                        ? goToView(OnboardingPage.connect)
                         : ref
                             .read(onboardingControllerProvider.notifier)
                             .signIn(),

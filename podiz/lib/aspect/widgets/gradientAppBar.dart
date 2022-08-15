@@ -5,7 +5,9 @@ import 'package:podiz/aspect/widgets/appBarGradient.dart';
 class GradientAppBar extends StatelessWidget with PreferredSizeWidget {
   final Widget? title;
   final List<Widget>? actions;
-  const GradientAppBar({Key? key, this.title, this.actions}) : super(key: key);
+  final bool? centerTitle;
+  const GradientAppBar({Key? key, this.title, this.actions, this.centerTitle})
+      : super(key: key);
 
   static const height = 64.0;
   static const backgroundHeight = height * 1.25;
@@ -18,6 +20,7 @@ class GradientAppBar extends StatelessWidget with PreferredSizeWidget {
     return AppBar(
       backgroundColor: Colors.transparent,
       toolbarHeight: height,
+      centerTitle: centerTitle,
       title: title,
       actions: actions,
       flexibleSpace: Container(
