@@ -36,7 +36,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
     super.dispose();
   }
 
-  void openPodcast(Podcast podcast) {
+  void openEpisode(Podcast podcast) {
     ref.read(playerManagerProvider).playPodcast(podcast); //!
     context.goNamed(
       AppRoute.discussion.name,
@@ -44,7 +44,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
     );
   }
 
-  void openShow(Podcast podcast) {
+  void openPodcast(Podcast podcast) {
     context.goNamed(
       AppRoute.show.name,
       params: {'showId': podcast.show_uri},
@@ -81,8 +81,8 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                   if (lastPodcast == null) return null;
                   return EpisodeCard(
                     lastPodcast,
-                    onTap: () => openPodcast(lastPodcast),
-                    onShowTap: () => openShow(lastPodcast),
+                    onTap: () => openEpisode(lastPodcast),
+                    onPodcastTap: () => openPodcast(lastPodcast),
                     bottom: QuickNoteButton(podcast: lastPodcast),
                   );
                 },
@@ -101,8 +101,8 @@ class _FeedPageState extends ConsumerState<FeedPage> {
             //       for (final podcast in authManager.myCast)
             //         EpisodeCard(
             //           podcast,
-            //           onTap: () => openPodcast(podcast),
-            //           onShowTap: () => openShow(podcast),
+            //           onTap: () => openEpisode(podcast),
+            //           onPodcastTap: () => openPodcast(podcast),
             //         ),
             //     ]),
             //   ),
@@ -117,8 +117,8 @@ class _FeedPageState extends ConsumerState<FeedPage> {
               query: podcastManager.hotliveFirestoreQuery(),
               builder: (context, podcast) => EpisodeCard(
                 podcast,
-                onTap: () => openPodcast(podcast),
-                onShowTap: () => openShow(podcast),
+                onTap: () => openEpisode(podcast),
+                onPodcastTap: () => openPodcast(podcast),
               ),
             ),
 

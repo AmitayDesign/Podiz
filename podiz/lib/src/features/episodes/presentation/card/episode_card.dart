@@ -11,14 +11,14 @@ import 'insights_info.dart';
 class EpisodeCard extends StatelessWidget {
   final Podcast podcast;
   final VoidCallback? onTap;
-  final VoidCallback? onShowTap;
+  final VoidCallback? onPodcastTap;
   final Widget? bottom;
 
   const EpisodeCard(
     this.podcast, {
     Key? key,
     this.onTap,
-    this.onShowTap,
+    this.onPodcastTap,
     this.bottom,
   }) : super(key: key);
 
@@ -67,7 +67,7 @@ class EpisodeCard extends StatelessWidget {
                             children: [
                               Flexible(
                                 child: GestureDetector(
-                                  onTap: onShowTap,
+                                  onTap: onPodcastTap,
                                   child: Text(
                                     podcast.show_name,
                                     style: subtitleStyle,
