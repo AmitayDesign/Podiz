@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/home/components/profileAvatar.dart';
+import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 
 class ProfileRow extends StatelessWidget {
@@ -11,7 +11,7 @@ class ProfileRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        ProfileAvatar(user: user, radius: 12.5),
+        UserAvatar(user: user, radius: 12.5),
         const SizedBox(width: 8),
         Text(user.name, style: context.textTheme.titleSmall),
         const SizedBox(width: 8),

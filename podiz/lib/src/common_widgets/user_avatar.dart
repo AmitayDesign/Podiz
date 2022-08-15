@@ -3,10 +3,10 @@ import 'package:go_router/go_router.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/routing/app_router.dart';
 
-class ProfileAvatar extends StatelessWidget {
+class UserAvatar extends StatelessWidget {
   final UserPodiz user;
   final double radius;
-  const ProfileAvatar({Key? key, required this.user, required this.radius})
+  const UserAvatar({Key? key, required this.user, this.radius = 16})
       : super(key: key);
 
   @override
@@ -24,15 +24,12 @@ class ProfileAvatar extends StatelessWidget {
   }
 }
 
-class ProfileAvatarButton extends StatelessWidget {
+class UserAvatarButton extends StatelessWidget {
   final UserPodiz user;
   final double radius;
 
-  const ProfileAvatarButton({
-    Key? key,
-    required this.user,
-    required this.radius,
-  }) : super(key: key);
+  const UserAvatarButton({Key? key, required this.user, this.radius = 16})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

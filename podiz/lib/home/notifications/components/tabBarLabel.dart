@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/loading.dart/tabBarLabelLoading.dart';
 import 'package:podiz/objects/Podcast.dart';
+import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
 
 class TabBarLabel extends ConsumerWidget {
   final String text;

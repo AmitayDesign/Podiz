@@ -1,13 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/home/components/skeletonPodcastAvatar.dart';
+import 'package:podiz/src/features/podcast/presentation/avatar/skeleton_podcast_avatar.dart';
 
 class PodcastAvatar extends StatelessWidget {
   final String imageUrl;
   final double size;
-  const PodcastAvatar({Key? key, required this.imageUrl, required this.size})
-      : super(key: key);
+
+  const PodcastAvatar({
+    Key? key,
+    required this.imageUrl,
+    this.size = 64,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +31,14 @@ class PodcastAvatar extends StatelessWidget {
 }
 
 class RoundedSquareImage extends StatelessWidget {
-  final double size;
   final ImageProvider image;
-  const RoundedSquareImage({Key? key, required this.size, required this.image})
-      : super(key: key);
+  final double size;
+
+  const RoundedSquareImage({
+    Key? key,
+    required this.image,
+    required this.size,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

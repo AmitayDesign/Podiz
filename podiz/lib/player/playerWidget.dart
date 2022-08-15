@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/player/components/pinkProgress.dart';
 import 'package:podiz/player/playerController.dart';
 import 'package:podiz/providers.dart';
+import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/palette.dart';
 
