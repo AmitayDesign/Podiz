@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/widgets/gradientAppBar.dart';
 import 'package:podiz/aspect/widgets/sliverFirestoreQueryBuilder.dart';
@@ -12,6 +11,7 @@ import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/providers.dart';
+import 'package:podiz/src/routing/app_router.dart';
 
 import 'components/feedAppBar.dart';
 import 'components/feedTitle.dart';

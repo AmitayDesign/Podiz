@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/splashScreen.dart';
+import 'package:podiz/src/routing/app_router.dart';
 
 import 'features/auth/data/auth_repository.dart';
 import 'theme/app_theme.dart';

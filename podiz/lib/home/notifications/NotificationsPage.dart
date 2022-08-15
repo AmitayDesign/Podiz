@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/widgets/appBarGradient.dart';
@@ -20,6 +19,7 @@ import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/splashScreen.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 class NotificationsPage extends ConsumerStatefulWidget {
