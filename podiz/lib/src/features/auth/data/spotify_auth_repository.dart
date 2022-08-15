@@ -78,7 +78,7 @@ class SpotifyAuthRepository implements AuthRepository {
       'user-follow-read',
       'user-read-private',
       'user-read-email',
-    ].join(' ');
+    ].join(',');
 
     late final bool success;
     late final String userId;
