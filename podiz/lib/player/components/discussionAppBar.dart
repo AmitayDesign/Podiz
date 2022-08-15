@@ -67,7 +67,7 @@ class DiscussionAppBar extends ConsumerWidget with PreferredSizeWidget {
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Expanded(
+                                    Flexible(
                                       child: GestureDetector(
                                         onTap: () =>
                                             openShow(podcast!, context),

@@ -16,7 +16,7 @@ class PlayerControler extends StateNotifier<PlayerAction?> {
   Future<void> play() async {
     state = PlayerAction.play;
     try {
-      playerRepository.resume();
+      await playerRepository.resume();
     } catch (e) {
       print(e);
     }

@@ -19,14 +19,9 @@ class PlayerWidget extends ConsumerWidget {
     final playerValue = ref.watch(playerStateChangesProvider);
     final loadingAction = ref.watch(playerControllerProvider);
     return playerValue.when(
-      error: (e, _) {
-        print(e);
-        return const SizedBox.shrink();
-      },
+      error: (e, _) => const SizedBox.shrink(),
       loading: () => const SizedBox.shrink(),
       data: (player) {
-        print('XXX ${player?.episode.name}');
-        print('XXX ${player?.isPlaying}');
         if (player == null) return const SizedBox.shrink();
         final action =
             player.isPlaying ? PlayerAction.pause : PlayerAction.play;

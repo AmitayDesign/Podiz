@@ -102,6 +102,7 @@ class PlayerManager {
           .replies!
           .addAll({doc.id: comment});
     }
+    print(10);
   }
 
   void activateSpoilerAlert() {

@@ -26,6 +26,7 @@ final playerStateChangesProvider = StreamProvider<Player?>(
   (ref) => ref.watch(playerRepositoryProvider).playerStateChanges(),
 );
 
+//TODO when pausing, pause timer
 final playerTimeProvider = StreamProvider.autoDispose<int>(
   (ref) async* {
     final player = ref.watch(playerStateChangesProvider).valueOrNull;

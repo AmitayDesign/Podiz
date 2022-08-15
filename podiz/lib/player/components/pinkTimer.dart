@@ -16,28 +16,31 @@ class PinkTimer extends ConsumerWidget {
     return Container(
       height: 24,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(16),
         color: Palette.pink,
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (icon != null)
+      child: InkWell(
+        onTap: onPressed,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null)
+              Padding(
+                padding: const EdgeInsets.only(left: 4),
+                child: icon!,
+              ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: icon!,
-            ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Center(
-              child: Text(
-                timePlayerFormatter(position),
-                style: context.textTheme.titleMedium,
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Center(
+                child: Text(
+                  timePlayerFormatter(position),
+                  style: context.textTheme.titleMedium,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

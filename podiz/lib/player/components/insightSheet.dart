@@ -10,6 +10,7 @@ import 'package:podiz/player/playerWidget.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
+import 'package:podiz/src/localization/string_hardcoded.dart';
 
 class InsightSheet extends ConsumerStatefulWidget {
   final Podcast podcast;
@@ -112,8 +113,7 @@ class _CommentSheetState extends ConsumerState<InsightSheet> {
                 child: Row(
                   children: [
                     Text(
-                      //TODO locales text
-                      "${widget.podcast.watching} listening with you",
+                      "${widget.podcast.watching} listening with you".hardcoded,
                       style: context.textTheme.bodySmall,
                     ),
                     const Spacer(),
