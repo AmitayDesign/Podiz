@@ -13,7 +13,7 @@ final playerRepositoryProvider = Provider<PlayerRepository>(
 abstract class PlayerRepository {
   Stream<Player?> playerStateChanges();
   Future<Player?> currentPlayerState();
-  Future<void> play(String podcastId);
+  Future<void> play(String podcastId, [int? time]);
   Future<void> resume();
   Future<void> pause();
   Future<void> fastForward([int seconds = 30]);

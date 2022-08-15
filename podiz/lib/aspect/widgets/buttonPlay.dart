@@ -17,7 +17,7 @@ class ButtonPlay extends ConsumerWidget {
     final playerManager = ref.watch(playerRepositoryProvider);
     return InkWell(
       onTap: () {
-        playerManager.play(podcast.uid!);
+        playerManager.play(podcast.uid!, time);
       },
       child: Container(
         width: 76,
