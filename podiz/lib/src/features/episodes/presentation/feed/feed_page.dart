@@ -4,21 +4,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/widgets/gradientAppBar.dart';
 import 'package:podiz/aspect/widgets/sliverFirestoreQueryBuilder.dart';
-import 'package:podiz/home/feed/components/skeletonPodcastCard.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/providers.dart' hide currentUserProvider;
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
-import 'package:podiz/src/features/podcasts/presentation/feed/feed_bar.dart';
-import 'package:podiz/src/features/podcasts/presentation/feed/feed_controller.dart';
-import 'package:podiz/src/features/podcasts/presentation/home_screen.dart';
+import 'package:podiz/src/features/episodes/presentation/card/episode_card.dart';
+import 'package:podiz/src/features/episodes/presentation/card/quick_note_button.dart';
+import 'package:podiz/src/features/episodes/presentation/card/skeleton_episode_card.dart';
+import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
 import 'package:podiz/src/routing/app_router.dart';
 
-import '../../../../../home/feed/components/feedTitle.dart';
-import '../../../../../home/feed/components/podcastCard.dart';
-import '../../../../../home/feed/components/quickNoteButton.dart';
-import '../../../../../home/feed/components/skeletonPodcastCard.dart';
+import 'feed_bar.dart';
+import 'feed_controller.dart';
+import 'feed_title.dart';
 
 class FeedPage extends ConsumerStatefulWidget {
   const FeedPage({Key? key}) : super(key: key);
@@ -74,13 +73,13 @@ class _FeedPageState extends ConsumerState<FeedPage> {
             //* Last Listened
             SliverToBoxAdapter(
               child: lastPodcastValue.when(
-                loading: () => const SkeletonPodcastCard(
+                loading: () => const SkeletonEpisodeCard(
                   bottomHeight: QuickNoteButton.height,
                 ),
                 error: (e, _) => null,
                 data: (lastPodcast) {
                   if (lastPodcast == null) return null;
-                  return PodcastCard(
+                  return EpisodeCard(
                     lastPodcast,
                     onTap: () => openPodcast(lastPodcast),
                     onShowTap: () => openShow(lastPodcast),
@@ -100,7 +99,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
             //           textKey: controller.myCastsKey,
             //         ),
             //       for (final podcast in authManager.myCast)
-            //         PodcastCard(
+            //         EpisodeCard(
             //           podcast,
             //           onTap: () => openPodcast(podcast),
             //           onShowTap: () => openShow(podcast),
@@ -116,7 +115,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
               ),
             SliverFirestoreQueryBuilder<Podcast>(
               query: podcastManager.hotliveFirestoreQuery(),
-              builder: (context, podcast) => PodcastCard(
+              builder: (context, podcast) => EpisodeCard(
                 podcast,
                 onTap: () => openPodcast(podcast),
                 onShowTap: () => openShow(podcast),

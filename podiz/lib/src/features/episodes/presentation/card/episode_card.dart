@@ -7,13 +7,13 @@ import 'package:podiz/aspect/widgets/insightsRow.dart';
 import 'package:podiz/home/components/podcastAvatar.dart';
 import 'package:podiz/objects/Podcast.dart';
 
-class PodcastCard extends StatelessWidget {
+class EpisodeCard extends StatelessWidget {
   final Podcast podcast;
   final VoidCallback? onTap;
   final VoidCallback? onShowTap;
   final Widget? bottom;
 
-  const PodcastCard(
+  const EpisodeCard(
     this.podcast, {
     Key? key,
     this.onTap,

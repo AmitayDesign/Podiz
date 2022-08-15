@@ -7,7 +7,7 @@ import 'package:podiz/player/screens/discussionPage.dart';
 import 'package:podiz/profile/profilePage.dart';
 import 'package:podiz/profile/screens/settingsPage.dart';
 import 'package:podiz/src/features/auth/presentation/onboarding_screen.dart';
-import 'package:podiz/src/features/podcasts/presentation/home_screen.dart';
+import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
 
 enum AppRoute {
   home,

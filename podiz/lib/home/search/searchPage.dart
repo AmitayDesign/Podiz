@@ -12,7 +12,7 @@ import 'package:podiz/objects/SearchResult.dart';
 import 'package:podiz/objects/show.dart';
 import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
-import 'package:podiz/src/features/podcasts/presentation/home_screen.dart';
+import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
 
 import 'components/spotifySearch.dart';
 
