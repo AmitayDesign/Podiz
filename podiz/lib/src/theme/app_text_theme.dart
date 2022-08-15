@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 36 - 700 - white        displaySmall
 32 - 700 - white        headlineLarge
 24 - 600 - white        headlineSmall
-20 - 700 - white        labelLarge
 18 - 700 - white        titleLarge
 16 - 700 - white        titleMedium
 16 - 400 - white        bodyLarge
@@ -66,11 +65,6 @@ TextTheme appTextTheme(ColorScheme colorScheme) =>
           fontSize: 12,
           fontWeight: FontWeight.w400,
           color: Colors.white70,
-        ),
-        labelLarge: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w700,
-          color: Colors.white,
         ),
       ),
     );
