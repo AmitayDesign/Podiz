@@ -57,6 +57,7 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
                     Expanded(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             widget.result.name,
