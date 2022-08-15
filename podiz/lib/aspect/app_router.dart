@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/home/homePage.dart';
 import 'package:podiz/home/search/screens/showPage.dart';
-import 'package:podiz/onboarding/onboardingPage.dart';
+import 'package:podiz/onboarding/onboarding_screen.dart';
 import 'package:podiz/player/screens/discussionPage.dart';
 import 'package:podiz/profile/profilePage.dart';
 import 'package:podiz/profile/screens/settingsPage.dart';
@@ -39,7 +39,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/onboarding',
         name: AppRoute.onboarding.name,
-        builder: (_, state) => const OnboardingPage(),
+        builder: (_, state) => const OnboardingScreen(),
       ),
       GoRoute(
         path: '/',
