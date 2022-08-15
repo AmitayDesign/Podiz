@@ -4,9 +4,9 @@ import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/home/components/skeletonPodcastAvatar.dart';
 import 'package:skeletons/skeletons.dart';
 
-class SkeletonPodcastCard extends StatelessWidget {
+class SkeletonEpisodeCard extends StatelessWidget {
   final double? bottomHeight;
-  const SkeletonPodcastCard({Key? key, this.bottomHeight}) : super(key: key);
+  const SkeletonEpisodeCard({Key? key, this.bottomHeight}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

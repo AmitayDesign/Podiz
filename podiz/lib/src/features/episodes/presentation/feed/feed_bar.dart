@@ -6,8 +6,9 @@ import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/widgets/gradientAppBar.dart';
 import 'package:podiz/home/components/profileAvatar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
-import 'package:podiz/src/features/podcasts/presentation/feed/feed_controller.dart';
 import 'package:podiz/src/routing/app_router.dart';
+
+import 'feed_controller.dart';
 
 class FeedBar extends ConsumerWidget with PreferredSizeWidget {
   const FeedBar({Key? key}) : super(key: key);
