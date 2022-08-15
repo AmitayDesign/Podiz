@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:http/http.dart' as http;
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/data/spotify_api.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
@@ -97,7 +96,7 @@ class SpotifyAuthRepository implements AuthRepository {
 
   Future<String> setUserData(String accessToken) async {
     final uri = Uri.parse('https://api.spotify.com/v1/me');
-    var response = await http.get(uri, headers: {
+    var response = await spotifyApi.client.get(uri, headers: {
       'Accept': 'application/json',
       'Authorization': 'Bearer $accessToken',
       'Content-Type': 'application/json',
