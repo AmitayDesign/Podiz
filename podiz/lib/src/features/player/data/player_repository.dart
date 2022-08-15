@@ -36,11 +36,11 @@ final playerTimeProvider = StreamProvider.autoDispose<int>(
       yield player.playbackPosition;
     } else {
       final position = player.playbackPosition;
-      final timeUntilPreciseSecond = position % 1000;
+      final timeUntilPreciseSecond = 1000 - position % 1000;
       await Future.delayed(Duration(milliseconds: timeUntilPreciseSecond));
       yield* Stream.periodic(
         const Duration(seconds: 1),
-        (tick) => player.playbackPosition + (tick + 2) * 1000,
+        (tick) => (position + timeUntilPreciseSecond) + (tick + 1) * 1000,
       );
     }
   },
