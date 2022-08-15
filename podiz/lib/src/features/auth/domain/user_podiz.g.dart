@@ -10,18 +10,24 @@ UserPodiz _$UserPodizFromJson(Map<String, dynamic> json) => UserPodiz(
       id: json['id'] as String,
       name: json['name'] as String,
       email: json['email'] as String,
-      followers:
-          (json['followers'] as List<dynamic>).map((e) => e as String).toList(),
-      following:
-          (json['following'] as List<dynamic>).map((e) => e as String).toList(),
+      followers: (json['followers'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      following: (json['following'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
       imageUrl: json['image_url'] as String,
       lastPodcastId: json['lastListened'] as String,
-      favPodcastIds: (json['favPodcasts'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
-      comments: (json['comments'] as List<dynamic>)
-          .map((e) => Comment.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      favPodcastIds: (json['favPodcasts'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      comments: (json['comments'] as List<dynamic>?)
+              ?.map((e) => Comment.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
     );
 
 Map<String, dynamic> _$UserPodizToJson(UserPodiz instance) => <String, dynamic>{

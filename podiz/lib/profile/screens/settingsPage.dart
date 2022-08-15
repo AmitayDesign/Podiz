@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/profile/components.dart/backAppBar.dart';
+import 'package:podiz/src/features/auth/data/auth_repository.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -13,7 +13,7 @@ class SettingsPage extends ConsumerWidget {
       appBar: BackAppBar(),
       body: Center(
         child: TextButton(
-          onPressed: () => ref.read(authManagerProvider).signOut(),
+          onPressed: () => ref.read(authRepositoryProvider).signOut(),
           child: const Text('Sign Out'),
         ),
       ),

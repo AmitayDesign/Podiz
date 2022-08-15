@@ -11,14 +11,25 @@ class UserPodiz with EquatableMixin {
   final String id;
   final String name;
   final String email;
+
+  @JsonKey(defaultValue: [])
   final List<String> followers;
+
+  @JsonKey(defaultValue: [])
   final List<String> following;
+
+  // TODO can imageUrl be null?
   @JsonKey(name: 'image_url')
   final String imageUrl;
+
+  // TODO make lastPodcastId nullable
   @JsonKey(name: 'lastListened')
   final String lastPodcastId;
-  @JsonKey(name: 'favPodcasts')
+
+  @JsonKey(name: 'favPodcasts', defaultValue: [])
   final List<String> favPodcastIds;
+
+  @JsonKey(defaultValue: [])
   final List<Comment> comments;
 
   UserPodiz({

@@ -128,7 +128,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                       Locales.string(context, "mycasts"),
                       textKey: myCastsKey,
                     ),
-                  for (final podcast in authManager.myCast)
+                  for (final podcast in [] /*authManager.myCast*/)
                     PodcastCard(
                       podcast,
                       onTap: () => openPodcast(podcast),

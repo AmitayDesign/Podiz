@@ -1,8 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:flutter_web_auth/flutter_web_auth.dart';
+import 'package:http/http.dart' as http;
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/utils/in_memory_store.dart';
@@ -15,7 +16,7 @@ class SpotifyAuthRepository implements AuthRepository {
   final StreamingSharedPreferences preferences;
 
   final userKey = 'userId';
-  final authState = InMemoryStore<UserPodiz?>(null);
+  final authState = InMemoryStore<UserPodiz?>();
 
   final clientId = '9a8daaf39e784f1c90770da4a252087f';
   final redirectUrl = 'podiz:/';
@@ -25,34 +26,32 @@ class SpotifyAuthRepository implements AuthRepository {
     required this.firestore,
     required this.preferences,
   }) {
-    listenToConnectionStatusChanges();
     listenToAuthStateChanges();
+    listenToConnectionChanges();
   }
 
-  late StreamSubscription authSub;
+  late StreamSubscription sub;
   void listenToAuthStateChanges() {
-    final userIdStream = preferences.getString(userKey, defaultValue: '');
-    final userStream = userIdStream.asyncExpand((userId) {
-      if (userId.isEmpty) return Stream.value(null);
-      final userDocStream =
-          firestore.collection("users").doc(userId).snapshots();
-      return userDocStream.map(
-        (doc) => doc.exists ? UserPodiz.fromFirestore(doc) : null,
-      );
-    });
-    authSub = userStream.listen((user) => authState.value = user);
+    sub = preferences.getString(userKey, defaultValue: '').asyncExpand((uid) {
+      if (uid.isEmpty) return Stream.value(null);
+      return firestore
+          .collection('users')
+          .doc(uid)
+          .snapshots()
+          .map((doc) => doc.exists ? UserPodiz.fromFirestore(doc) : null);
+    }).listen((user) => authState.value = user);
   }
 
   late StreamSubscription connectionSub;
-  void listenToConnectionStatusChanges() {
+  void listenToConnectionChanges() {
     connectionSub = SpotifySdk.subscribeConnectionStatus().listen((status) {
-      if (!status.connected) signOut();
+      if (!status.connected) preferences.remove(userKey);
     });
   }
 
   void dispose() {
     connectionSub.cancel();
-    authSub.cancel();
+    sub.cancel();
     authState.close();
   }
 
@@ -67,7 +66,6 @@ class SpotifyAuthRepository implements AuthRepository {
     late bool success;
     try {
       success = await SpotifySdk.disconnect();
-      if (success) success = await preferences.remove(userKey);
     } catch (e) {
       throw Exception('Sign out error: $e');
     }
@@ -76,71 +74,112 @@ class SpotifyAuthRepository implements AuthRepository {
 
   @override
   Future<void> signIn() async {
-    //TODO use SpotifySdk to get the access token
-    // final accessToken = await SpotifySdk.getAccessToken(
-    //   clientId: clientId,
-    //   redirectUrl: redirectUrl,
-    //   scope: scope,
-    // );
+    final scope = [
+      'user-follow-read',
+      'user-read-private',
+      'user-read-email',
+    ].join(' ');
+
     late final bool success;
+    late final String userId;
     try {
-      final code = await fetchCode();
-      final userId = await fetchUserId(code);
-      final accessToken = await fetchAccessToken(userId);
-      await connectToSpotifySdk(accessToken);
-      success = await preferences.setString(userKey, userId);
+      final accessToken = await SpotifySdk.getAccessToken(
+        clientId: clientId,
+        redirectUrl: redirectUrl,
+        scope: scope,
+      );
+      success = await SpotifySdk.connectToSpotifyRemote(
+        clientId: clientId,
+        redirectUrl: redirectUrl,
+        accessToken: accessToken,
+      );
+      userId = await setUserData(accessToken);
     } catch (e) {
       throw Exception('Sign in error: $e');
     }
-    if (!success) throw Exception('Sign in failed');
-  }
-
-  Future<String> fetchCode() async {
-    const authorizationUrl = 'https://accounts.spotify.com/authorize';
-    const responseType = 'code';
-    const scope =
-        'user-follow-read user-read-private user-read-email user-modify-playback-state user-read-playback-state user-read-currently-playing user-library-read user-read-playback-position';
-    const state = '34fFs29kd09';
-
-    final url =
-        '$authorizationUrl?client_id=$clientId&response_type=$responseType&redirect_uri=$redirectUrl&scope=$scope&state=$state';
-
-    final response = await FlutterWebAuth.authenticate(
-      url: url,
-      callbackUrlScheme: 'podiz',
-    );
-
-    final error = Uri.parse(response).queryParameters['error'];
-    if (error != null) throw Exception(error);
-    final code = Uri.parse(response).queryParameters['code']!;
-    return code;
-  }
-
-  Future<String> fetchUserId(String code) async {
-    HttpsCallableResult result = await functions
-        .httpsCallable('getAccessTokenWithCode')
-        .call({'code': code});
-
-    final userId = result.data;
-    if (userId != '0') return userId;
-    throw Exception(
-      'Something went wrong, check your internet connection or try again later!',
-    );
-  }
-
-  Future<String> fetchAccessToken(String userId) async {
-    final tokenDocRef = firestore.collection('spotifyAuth').doc(userId);
-    final tokenDoc = await tokenDocRef.get();
-    final accessToken = tokenDoc.get('access_token');
-    return accessToken;
-  }
-
-  Future<void> connectToSpotifySdk(String accessToken) async {
-    final success = await SpotifySdk.connectToSpotifyRemote(
-      clientId: clientId,
-      redirectUrl: redirectUrl,
-      accessToken: accessToken,
-    );
     if (!success) throw Exception('Error connecting to Spotify');
+    await preferences.setString(userKey, userId);
+  }
+
+  Future<String> setUserData(String accessToken) async {
+    final uri = Uri.parse('https://api.spotify.com/v1/me');
+    var response = await http.get(uri, headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $accessToken',
+      'Content-Type': 'application/json',
+    });
+    if (response.statusCode != 200) throw Exception('Failed to get user data');
+    // decode response
+    final parsedJson = jsonDecode(response.body) as Map<String, dynamic>;
+    final userId = parsedJson['uri'] as String;
+    final name = parsedJson['display_name'] as String;
+    final email = parsedJson['email'] as String;
+    final imageUrl = parsedJson['images'].first['url'] as String;
+    // build search array
+    //! I think you can use greaterThenOrEquals in the query instead
+    var prev = '';
+    final searchArray = [];
+    for (final letter in name.split('')) {
+      prev += letter;
+      final word = prev.toLowerCase();
+      searchArray.add(word);
+    }
+    // save user in firestore
+    await firestore.collection('users').doc(userId).set(
+      {
+        'name': name,
+        'email': email,
+        'image_url': imageUrl,
+        'searchArray': searchArray,
+      },
+      SetOptions(merge: true),
+    );
+    return userId;
   }
 }
+
+
+  //! called on sign in
+  // Future<List<Podcast>> getCastList(UserPodiz user) async {
+  //   List<Podcast> result = [];
+  //   int number = user.favPodcastIds.length;
+  //   int count = 0;
+  //   if (number == 0) return [];
+  //   if (number >= 6) {
+  //     for (int i = number - 1; i >= 0; i--) {
+  //       final show = await showManager.fetchShow(user.favPodcastIds[i]);
+  //       final podcast = await podcastManager.getRandomEpisode(show.podcasts);
+  //       if (podcast != null) result.add(podcast);
+  //       count++;
+  //       if (count == 6) {
+  //         break;
+  //       }
+  //     }
+  //   } else {
+  //     for (int i = 0; i < number; i++) {
+  //       final show = await showManager.fetchShow(user.favPodcastIds[i]);
+  //       final podcast = await podcastManager.getRandomEpisode(show.podcasts);
+  //       if (podcast != null) result.add(podcast);
+  //       count++;
+  //       if (i == number - 1) {
+  //         i = 0;
+  //       }
+  //       if (count == 6) {
+  //         break;
+  //       }
+  //     }
+  //   }
+  //   return result;
+  //   //* refact
+  //   // final podcasts = [];
+  //   // final number = user.favPodcastIds.length.clamp(0, 6);
+  //   // final lastFavPodcasts = user.favPodcastIds.reversed.take(number);
+  //   // for (final podcastId in lastFavPodcasts) {
+  //   //   final show = await showManager.fetchShow(podcastId);
+  //   //   final podcast = await podcastManager.getRandomEpisode(show.podcasts);
+  //   //   if (podcast != null) result.add(podcast);
+  //   // }
+  //   // return podcasts;
+  // }
+
+  

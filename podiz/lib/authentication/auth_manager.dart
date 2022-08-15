@@ -6,17 +6,14 @@ import 'package:podiz/aspect/typedefs.dart';
 import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/objects/Comment.dart';
-import 'package:podiz/objects/Podcast.dart';
+import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/utils/instances.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
-//TODO watch or read?
 final authManagerProvider = Provider<AuthManager>(
   (ref) {
     final manager = AuthManager(ref.read);
-    ref.onDispose(manager.dispose);
     return manager;
   },
 );
@@ -29,101 +26,11 @@ class AuthManager {
   FirebaseFirestore get firestore => _read(firestoreProvider);
   StreamingSharedPreferences get preferences => _read(preferencesProvider);
 
-  AuthManager(this._read) {
-    final loggedInUser =
-        preferences.getString('userId', defaultValue: '').getValue();
-    if (loggedInUser.isNotEmpty) {
-      signIn(loggedInUser);
-    } else {
-      _saveUser(null);
-    }
-  }
+  AuthManager(this._read);
 
-  void dispose() {
-    sub?.cancel();
-    _userController.close();
-  }
-
-  final _userController = BehaviorSubject<UserPodiz?>();
-  Stream<UserPodiz?> get userChanges => _userController.stream;
-  UserPodiz? get currentUser => _userController.value;
-
-  List<Podcast> myCast = [];
-
-  Future<void> signIn(String userId) async {
-    _setUpUserStream(userId);
-    // await podcastManager.fetchUserPlayer(userId);
-  }
-
-  StreamSubscription? sub;
-  void _setUpUserStream(String userId) {
-    sub?.cancel();
-    sub = firestore
-        .collection("users")
-        .doc(userId)
-        .snapshots()
-        .listen((doc) async {
-      final data = doc.data();
-      final user = data == null ? null : UserPodiz.fromFirestore(doc);
-      await _saveUser(user);
-    });
-  }
-
-  Future<void> _saveUser(UserPodiz? user) async {
-    if (user == null) {
-      preferences.remove('userId');
-    } else {
-      preferences.setString('userId', user.id);
-      myCast = await getCastList(user);
-    }
-    _userController.add(user);
-  }
-
-  Future<List<Podcast>> getCastList(UserPodiz user) async {
-    List<Podcast> result = [];
-    int number = user.favPodcastIds.length;
-    int count = 0;
-    if (number == 0) return [];
-    if (number >= 6) {
-      for (int i = number - 1; i >= 0; i--) {
-        final show = await showManager.fetchShow(user.favPodcastIds[i]);
-        final podcast = await podcastManager.getRandomEpisode(show.podcasts);
-        if (podcast != null) result.add(podcast);
-        count++;
-        if (count == 6) {
-          break;
-        }
-      }
-    } else {
-      for (int i = 0; i < number; i++) {
-        final show = await showManager.fetchShow(user.favPodcastIds[i]);
-        final podcast = await podcastManager.getRandomEpisode(show.podcasts);
-        if (podcast != null) result.add(podcast);
-        count++;
-        if (i == number - 1) {
-          i = 0;
-        }
-        if (count == 6) {
-          break;
-        }
-      }
-    }
-    return result;
-    //* refact
-    // final podcasts = [];
-    // final number = user.favPodcastIds.length.clamp(0, 6);
-    // final lastFavPodcasts = user.favPodcastIds.reversed.take(number);
-    // for (final podcastId in lastFavPodcasts) {
-    //   final show = await showManager.fetchShow(podcastId);
-    //   final podcast = await podcastManager.getRandomEpisode(show.podcasts);
-    //   if (podcast != null) result.add(podcast);
-    // }
-    // return podcasts;
-  }
-
-  Future<void> signOut() async {
-    await _saveUser(null);
-  }
+  Stream<UserPodiz?> get userChanges =>
+      _read(authRepositoryProvider).authStateChanges();
+  UserPodiz? get currentUser => _read(authRepositoryProvider).currentUser;
 
   ///public
 

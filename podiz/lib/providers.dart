@@ -81,7 +81,7 @@ final lastListenedPodcastStreamProvider = StreamProvider<Podcast?>(
   (ref) {
     final podcastManager = ref.watch(podcastManagerProvider);
     return ref.watch(currentUserStreamProvider.stream).asyncMap((user) {
-      if (user == null) return null;
+      if (user == null || user.lastPodcastId.isEmpty) return null;
       return podcastManager.fetchPodcast(user.lastPodcastId);
     });
   },

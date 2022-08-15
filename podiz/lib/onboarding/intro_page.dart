@@ -29,7 +29,7 @@ class IntroPage extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Image.asset(
-                'assets/images/IntroPageMen.png',
+                'assets/images/onBoardingMen.png',
                 fit: BoxFit.contain,
               ),
             ),
