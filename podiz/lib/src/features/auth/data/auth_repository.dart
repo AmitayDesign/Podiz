@@ -28,7 +28,12 @@ abstract class AuthRepository {
 
 /// awaits for the first authentication state
 final firstUserFutureProvider = FutureProvider<UserPodiz?>(
-  (ref) => ref.watch(authStateChangesProvider.future),
+  (ref) async {
+    print('future user');
+    final user = await ref.watch(authStateChangesProvider.future);
+    print('future user value: $user');
+    return user;
+  },
 );
 
 final authStateChangesProvider = StreamProvider<UserPodiz?>(
