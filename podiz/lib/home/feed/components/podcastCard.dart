@@ -44,7 +44,7 @@ class PodcastCard extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 2),
                 child: InsightsRow(podcast: podcast),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

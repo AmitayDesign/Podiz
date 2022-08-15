@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:podiz/aspect/app_router.dart';
 import 'package:podiz/aspect/widgets/tap_to_unfocus.dart';
 import 'package:podiz/home/feed/feedPage.dart';
 import 'package:podiz/home/notifications/NotificationsPage.dart';
 import 'package:podiz/home/search/searchPage.dart';
 import 'package:podiz/player/playerWidget.dart';
+import 'package:podiz/src/routing/app_router.dart';
 
 enum HomeDestination { feed, search, notifications }
 
