@@ -2,7 +2,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:podiz/aspect/typedefs.dart';
-import 'package:podiz/objects/Comment.dart';
+import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 
 part 'user_podiz.g.dart';
@@ -30,6 +30,7 @@ class UserPodiz with EquatableMixin {
   @JsonKey(name: 'favPodcasts', defaultValue: [])
   final List<String> favPodcastIds;
 
+  //TODO just read this when needed
   @JsonKey(defaultValue: [])
   final List<Comment> comments;
 

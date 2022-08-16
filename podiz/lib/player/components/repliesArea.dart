@@ -5,10 +5,10 @@ import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/widgets/cardButton.dart';
 import 'package:podiz/aspect/widgets/shimmerLoading.dart';
 import 'package:podiz/home/components/replyView.dart';
-import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/player/components/profileRow.dart';
 import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 class RepliesArea extends ConsumerWidget {
@@ -74,7 +74,7 @@ class RepliesArea extends ConsumerWidget {
       Comment c, int lvl, WidgetRef ref, BuildContext context) {
     final theme = Theme.of(context);
     return FutureBuilder(
-      future: ref.read(userManagerProvider).getUserFromUid(c.userUid),
+      future: ref.read(userManagerProvider).getUserFromUid(c.userId),
       initialData: "loading",
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
@@ -114,7 +114,7 @@ class RepliesArea extends ConsumerWidget {
                                 child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    c.comment,
+                                    c.text,
                                     style: context.textTheme.bodyLarge,
                                   ),
                                 ),
@@ -125,9 +125,9 @@ class RepliesArea extends ConsumerWidget {
                                 const SizedBox(height: 8),
                                 commentButton(c, lvl, user, context),
                                 const SizedBox(height: 16),
-                                for (var key in c.replies!.keys)
+                                for (var key in c.replies.keys)
                                   elementOfTree(
-                                      c.replies![key]!, lvl + 1, ref, context)
+                                      c.replies[key]!, lvl + 1, ref, context)
                               ]
                             ],
                           ),

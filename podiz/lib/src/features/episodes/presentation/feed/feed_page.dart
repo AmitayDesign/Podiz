@@ -37,7 +37,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
 
   void openEpisode(Episode episode) {
     final playerRepository = ref.read(playerRepositoryProvider);
-    playerRepository.currentPlayerState().then((playingEpisode) {
+    playerRepository.fetchPlayingEpisode().then((playingEpisode) {
       if (playingEpisode?.id != episode.id) {
         ref.read(playerRepositoryProvider).play(episode.id);
       }

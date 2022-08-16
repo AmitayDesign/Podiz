@@ -2,15 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/widgets/shimmerLoading.dart';
-import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/player/components/discussionAppBar.dart';
 import 'package:podiz/player/components/discussionCard.dart';
 import 'package:podiz/player/components/discussionSnackBar.dart';
-import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/splash_screen.dart';
+import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
-import 'package:podiz/src/features/player/data/player_repository.dart';
-import 'package:podiz/src/features/player/domain/playing_episode.dart';
 
 class DiscussionPage extends ConsumerStatefulWidget {
   final String episodeId;
@@ -22,12 +19,6 @@ class DiscussionPage extends ConsumerStatefulWidget {
 
 class _DiscussionPageState extends ConsumerState<DiscussionPage> {
   final TextEditingController controller = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    ref.read(playerManagerProvider).setUpDiscussionPageStream(widget.episodeId);
-  }
 
   @override
   void dispose() {
@@ -53,18 +44,8 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
 
   @override
   Widget build(BuildContext context) {
-    final commentsValue = ref.watch(commentsStreamProvider);
+    final commentsValue = ref.watch(commentsStreamProvider(widget.episodeId));
     final episodeValue = ref.watch(episodeFutureProvider(widget.episodeId));
-    ref.listen<AsyncValue<PlayingEpisode?>>(
-      playerStateChangesProvider,
-      (_, playingEpisodeValue) {
-        playingEpisodeValue.whenOrNull(data: (playingEpisode) {
-          if (playingEpisode == null) return;
-          final playerManager = ref.read(playerManagerProvider);
-          playerManager.showComments(playingEpisode.initialPosition);
-        });
-      },
-    );
     return episodeValue.when(
         error: (e, st) {
           print('discussionPage episode: ${e.toString()}');

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/objects/user/NotificationPodiz.dart';
-import 'package:podiz/providers.dart';
+import 'package:podiz/src/utils/instances.dart';
 
 final notificationManagerProvider = Provider<NotificationManager>(
   (ref) => NotificationManager(ref.read),

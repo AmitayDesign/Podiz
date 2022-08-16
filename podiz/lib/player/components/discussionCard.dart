@@ -6,11 +6,11 @@ import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/widgets/buttonPlay.dart';
 import 'package:podiz/aspect/widgets/cardButton.dart';
 import 'package:podiz/home/components/replyView.dart';
-import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/player/components/repliesArea.dart';
 import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/theme/palette.dart';
 
@@ -50,7 +50,7 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
     // final numberOfReplies =
     //     ref.read(playerRepositoryProvider).getNumberOfReplies(widget.comment.id);
     return FutureBuilder(
-      future: userManager.getUserFromUid(widget.comment.userUid),
+      future: userManager.getUserFromUid(widget.comment.userId),
       initialData: "loading",
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
@@ -121,7 +121,7 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                         SizedBox(
                           width: kScreenWidth - 28,
                           child: Text(
-                            widget.comment.comment,
+                            widget.comment.text,
                             style: context.textTheme.bodyLarge,
                             textAlign: TextAlign.left,
                           ),
@@ -168,7 +168,7 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                             ),
                           ],
                         ),
-                        widget.comment.replies!.isEmpty
+                        widget.comment.replies.isEmpty
                             ? Container()
                             : const Divider(
                                 color: Palette.grey800,
@@ -177,7 +177,7 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                                 height: 22,
                                 thickness: 1,
                               ),
-                        widget.comment.replies!.isEmpty
+                        widget.comment.replies.isEmpty
                             ? Container()
                             :
                             // ExpandablePanel(
@@ -200,7 +200,7 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                             //     expanded:
                             RepliesArea(
                                 widget.comment.id,
-                                widget.comment.replies!,
+                                widget.comment.replies,
                               ),
                         // builder: (_, collapsed, expanded) {
                         //   return Expandable(

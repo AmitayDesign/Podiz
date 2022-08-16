@@ -9,13 +9,14 @@ import 'package:podiz/home/components/replyView.dart';
 import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/loading.dart/notificationLoading.dart';
 import 'package:podiz/loading.dart/shimmerContainer.dart';
-import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/show.dart';
 import 'package:podiz/profile/components.dart/backAppBar.dart';
 import 'package:podiz/profile/components.dart/followPeopleButton.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
+import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
@@ -213,7 +214,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     final theme = Theme.of(context);
     return Consumer(
       builder: (context, ref, _) {
-        final episodeValue = ref.read(episodeFutureProvider(c.episodeUid));
+        final episodeValue = ref.read(episodeFutureProvider(c.episodeId));
 
         return episodeValue.when(
             loading: () => const NotificationLoading(),
@@ -317,7 +318,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           SizedBox(
                             width: kScreenWidth - 32,
                             child: Text(
-                              c.comment,
+                              c.text,
                               style: context.textTheme.bodyLarge,
                               textAlign: TextAlign.left,
                             ),

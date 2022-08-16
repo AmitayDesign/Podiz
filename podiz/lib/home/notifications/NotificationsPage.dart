@@ -9,13 +9,13 @@ import 'package:podiz/aspect/widgets/cardButton.dart';
 import 'package:podiz/home/components/replyView.dart';
 import 'package:podiz/home/notifications/components/tabBarLabel.dart';
 import 'package:podiz/loading.dart/notificationLoading.dart';
-import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/objects/user/NotificationPodiz.dart';
 import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/splash_screen.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
@@ -155,7 +155,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
     final theme = Theme.of(context);
     // return Container();
     return FutureBuilder(
-        future: ref.read(userManagerProvider).getUserFromUid(c.userUid),
+        future: ref.read(userManagerProvider).getUserFromUid(c.userId),
         initialData: "loading",
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
@@ -171,8 +171,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
               // if we got our data
             } else if (snapshot.hasData) {
               final user = snapshot.data as UserPodiz;
-              final episodeValue =
-                  ref.read(episodeFutureProvider(c.episodeUid));
+              final episodeValue = ref.read(episodeFutureProvider(c.episodeId));
               return episodeValue.when(
                   error: (e, _) => Center(
                         child: Text(
@@ -277,7 +276,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                                 SizedBox(
                                   width: kScreenWidth - 32,
                                   child: Text(
-                                    c.comment,
+                                    c.text,
                                     style: context.textTheme.bodyLarge,
                                     textAlign: TextAlign.left,
                                   ),

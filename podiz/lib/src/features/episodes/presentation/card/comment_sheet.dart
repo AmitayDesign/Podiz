@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/authentication/auth_manager.dart';
-import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
+import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
 
 class CommentSheet extends ConsumerStatefulWidget {
   final Episode episode;
@@ -26,12 +27,21 @@ class _CommentSheetState extends ConsumerState<CommentSheet> {
     super.dispose();
   }
 
-  void sendComment() {
-    ref.read(authManagerProvider).doComment(
+  Future<void> sendComment() async {
+    final playerRepository = ref.read(playerRepositoryProvider);
+    final episode = await playerRepository.fetchPlayingEpisode();
+
+    final time = episode?.id == widget.episode.id
+        ? episode!.initialPosition
+        : widget.episode.duration;
+
+    ref.read(discussionRepositoryProvider).addComment(
           commentController.text,
-          widget.episode.id,
-          widget.episode.duration,
+          episodeId: widget.episode.id,
+          time: time,
+          user: ref.read(currentUserProvider),
         );
+
     // commentController.clear();
     Navigator.pop(context);
   }
