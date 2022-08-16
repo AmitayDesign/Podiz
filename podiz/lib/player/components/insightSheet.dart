@@ -35,7 +35,7 @@ class _CommentSheetState extends ConsumerState<InsightSheet> {
     ref.read(authManagerProvider).doComment(
           commentController.text,
           widget.episode.id,
-          ref.read(playerStateChangesProvider).value!.playbackPosition,
+          ref.read(playerTimeStreamProvider).value!.position,
         );
     commentController.clear();
   }

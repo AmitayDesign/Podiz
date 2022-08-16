@@ -34,12 +34,12 @@ class PlayerWidget extends ConsumerWidget {
           child: InkWell(
             onTap: () => context.goNamed(
               AppRoute.discussion.name,
-              params: {'episodeId': player.episodeId},
+              params: {'episodeId': player.id},
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                PinkProgress(player.episodeDuration),
+                PinkProgress(player.duration),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
@@ -49,7 +49,7 @@ class PlayerWidget extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       PodcastAvatar(
-                        imageUrl: player.episodeImageUrl,
+                        imageUrl: player.imageUrl,
                         size: 52,
                       ),
                       const SizedBox(width: 8),
@@ -65,7 +65,7 @@ class PlayerWidget extends ConsumerWidget {
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                player.episodeName,
+                                player.name,
                                 style: context.textTheme.bodyMedium,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,

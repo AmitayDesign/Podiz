@@ -12,7 +12,8 @@ class PinkTimer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final position = ref.watch(playerTimeProvider).valueOrNull ?? 0;
+    final playerTime = ref.watch(playerTimeStreamProvider).valueOrNull;
+    final position = playerTime?.position ?? 0;
     return Container(
       height: 24,
       decoration: BoxDecoration(

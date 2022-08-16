@@ -10,7 +10,7 @@ import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/splash_screen.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
-import 'package:podiz/src/features/player/domain/player.dart';
+import 'package:podiz/src/features/player/domain/playing_episode.dart';
 
 class DiscussionPage extends ConsumerStatefulWidget {
   final String episodeId;
@@ -55,13 +55,13 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
   Widget build(BuildContext context) {
     final commentsValue = ref.watch(commentsStreamProvider);
     final episodeValue = ref.watch(episodeFutureProvider(widget.episodeId));
-    ref.listen<AsyncValue<Player?>>(
+    ref.listen<AsyncValue<PlayingEpisode?>>(
       playerStateChangesProvider,
-      (_, positionValue) {
-        positionValue.whenOrNull(data: (player) {
-          if (player == null) return;
+      (_, playingEpisodeValue) {
+        playingEpisodeValue.whenOrNull(data: (playingEpisode) {
+          if (playingEpisode == null) return;
           final playerManager = ref.read(playerManagerProvider);
-          playerManager.showComments(player.playbackPosition);
+          playerManager.showComments(playingEpisode.initialPosition);
         });
       },
     );
