@@ -18,6 +18,7 @@ abstract class PlayerRepository {
   Future<void> pause();
   Future<void> fastForward([int seconds = 30]);
   Future<void> rewind([int seconds = 30]);
+  Future<void> seekTo(int seconds);
 }
 
 //* Providers

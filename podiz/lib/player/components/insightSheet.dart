@@ -4,12 +4,11 @@ import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/objects/Podcast.dart';
-import 'package:podiz/player/components/pinkTimer.dart';
-import 'package:podiz/player/playerController.dart';
-import 'package:podiz/player/playerWidget.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
+import 'package:podiz/src/features/player/presentation/player_controller.dart';
+import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 
 class InsightSheet extends ConsumerStatefulWidget {
@@ -43,13 +42,10 @@ class _CommentSheetState extends ConsumerState<InsightSheet> {
   @override
   Widget build(BuildContext context) {
     final playerValue = ref.watch(playerStateChangesProvider);
-    final loadingAction = ref.watch(playerControllerProvider);
     return playerValue.maybeWhen(
       orElse: () => const SizedBox.shrink(),
       data: (player) {
         if (player == null) return const SizedBox.shrink();
-        final action =
-            player.isPlaying ? PlayerAction.pause : PlayerAction.play;
         final icon = player.isPlaying ? Icons.pause : Icons.play_arrow;
         final onTap = player.isPlaying
             ? () => ref.read(playerControllerProvider.notifier).pause()
@@ -123,22 +119,15 @@ class _CommentSheetState extends ConsumerState<InsightSheet> {
                       margin: const EdgeInsets.all(8),
                       child: IconButton(
                         padding: EdgeInsets.zero,
-                        onPressed: loadingAction == null
-                            ? () => ref
-                                .read(playerControllerProvider.notifier)
-                                .goBackward()
-                            : null,
-                        icon: loadingAction == PlayerAction.backward
-                            ? const LoadingAction()
-                            : const Icon(Icons.replay_30),
+                        onPressed:
+                            ref.read(playerControllerProvider.notifier).rewind,
+                        icon: const Icon(Icons.replay_30),
                       ),
                     ),
                     // const SizedBox(width: 18),
-                    PinkTimer(
-                      onPressed: loadingAction == null ? onTap : null,
-                      icon: loadingAction == action
-                          ? const LoadingAction()
-                          : Icon(icon),
+                    TimeChip(
+                      onTap: onTap,
+                      icon: icon,
                     ),
                     // const SizedBox(width: 18),
                     Container(
@@ -147,14 +136,10 @@ class _CommentSheetState extends ConsumerState<InsightSheet> {
                       margin: const EdgeInsets.all(8),
                       child: IconButton(
                         padding: EdgeInsets.zero,
-                        onPressed: loadingAction == null
-                            ? () => ref
-                                .read(playerControllerProvider.notifier)
-                                .goForward()
-                            : null,
-                        icon: loadingAction == PlayerAction.forward
-                            ? const LoadingAction()
-                            : const Icon(Icons.forward_30),
+                        onPressed: ref
+                            .read(playerControllerProvider.notifier)
+                            .fastForward,
+                        icon: const Icon(Icons.forward_30),
                       ),
                     ),
                   ],

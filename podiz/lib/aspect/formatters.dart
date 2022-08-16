@@ -12,10 +12,3 @@ String timeFormatter(int time) {
     return "${minutes.floor()}m";
   }
 }
-
-String timePlayerFormatter(int time) {
-  final timeString = Duration(milliseconds: time).toString();
-  final timeDisplay = timeString.split('.').first;
-  if (timeDisplay.startsWith('0:')) return timeDisplay.substring(2);
-  return timeDisplay;
-}
