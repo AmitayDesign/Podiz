@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/theme/palette.dart';
 
@@ -14,6 +13,7 @@ class PlayerSlider extends ConsumerStatefulWidget {
 }
 
 class _PlayerSliderState extends ConsumerState<PlayerSlider> {
+  final height = 4.0;
   double sliderValue = 0;
   bool updatesWithTime = true;
   bool isPressed = false;
@@ -31,7 +31,7 @@ class _PlayerSliderState extends ConsumerState<PlayerSlider> {
     }
     return SliderTheme(
       data: SliderThemeData(
-        trackHeight: 4,
+        trackHeight: height,
         inactiveTrackColor: Palette.lightPink,
         activeTrackColor: Palette.pink,
         thumbColor: Palette.pink,
@@ -41,7 +41,7 @@ class _PlayerSliderState extends ConsumerState<PlayerSlider> {
         overlayShape: SliderComponentShape.noOverlay,
       ),
       child: SizedBox(
-        height: context.theme.sliderTheme.trackHeight,
+        height: height,
         child: Slider(
           value: sliderValue,
           min: 0,
