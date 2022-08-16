@@ -4,6 +4,7 @@ abstract class Palette {
   static const Color purple = Color(0xFF7101EE);
   static const Color darkPurple = Color(0xFF3E0979);
   static const Color pink = Color(0xFFD74EFF);
+  static const Color lightPink = Color(0xFFE5CEFF);
   static const Color red = Color(0xFF8F1010);
   static const Color white90 = Color(0xE5FFFFFF);
   static const Color grey600 = Color(0xFF9E9E9E);
