@@ -8,9 +8,11 @@ import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 class TimeChip extends ConsumerWidget {
+  final bool loading;
   final IconData? icon;
   final VoidCallback? onTap;
-  const TimeChip({Key? key, this.icon, this.onTap}) : super(key: key);
+  const TimeChip({Key? key, this.loading = false, this.icon, this.onTap})
+      : super(key: key);
 
   String timeFromMilliseconds(int milliseconds) {
     final duration = Duration(milliseconds: milliseconds);
@@ -27,7 +29,7 @@ class TimeChip extends ConsumerWidget {
       shape: const StadiumBorder(),
       color: Palette.pink,
       child: InkWell(
-        onTap: onTap,
+        onTap: () => loading ? null : onTap?.call(),
         child: Container(
           height: 24,
           padding: const EdgeInsets.symmetric(horizontal: 4),

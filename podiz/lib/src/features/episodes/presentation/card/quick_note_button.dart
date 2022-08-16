@@ -3,7 +3,6 @@ import 'package:flutter_locales/flutter_locales.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
-import 'package:podiz/src/theme/palette.dart';
 
 import 'quick_note_sheet.dart';
 
@@ -29,12 +28,6 @@ class QuickNoteButton extends StatelessWidget {
         onPressed: () => showModalBottomSheet(
           context: context,
           isScrollControlled: true,
-          backgroundColor: Palette.grey900,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(kBorderRadius),
-            ),
-          ),
           builder: (context) => Padding(
             padding: MediaQuery.of(context).viewInsets,
             child: QuickNoteSheet(episode: episode),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
+import 'package:podiz/src/features/player/presentation/player_button.dart';
 import 'package:podiz/src/features/player/presentation/player_controller.dart';
 import 'package:podiz/src/features/player/presentation/player_slider.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
@@ -89,27 +90,6 @@ class Player extends ConsumerWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class PlayerButton extends StatelessWidget {
-  final bool loading;
-  final VoidCallback onPressed;
-  final Widget icon;
-  const PlayerButton({
-    Key? key,
-    this.loading = false,
-    required this.onPressed,
-    required this.icon,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      visualDensity: VisualDensity.compact,
-      onPressed: () => loading ? null : onPressed(),
-      icon: icon,
     );
   }
 }

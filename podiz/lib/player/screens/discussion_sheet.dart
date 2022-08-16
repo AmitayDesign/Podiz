@@ -5,19 +5,23 @@ import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
-import 'package:podiz/src/features/episodes/domain/episode.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
+import 'package:podiz/src/features/player/presentation/player_button.dart';
+import 'package:podiz/src/features/player/presentation/player_controller.dart';
+import 'package:podiz/src/features/player/presentation/time_chip.dart';
+import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/palette.dart';
 
-class QuickNoteSheet extends ConsumerStatefulWidget {
-  final Episode episode;
-  const QuickNoteSheet({Key? key, required this.episode}) : super(key: key);
+class DiscussionSheet extends ConsumerStatefulWidget {
+  const DiscussionSheet({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<QuickNoteSheet> createState() => _QuickNoteSheetState();
+  ConsumerState<DiscussionSheet> createState() => _QuickNoteSheetState();
 }
 
-class _QuickNoteSheetState extends ConsumerState<QuickNoteSheet> {
+class _QuickNoteSheetState extends ConsumerState<DiscussionSheet> {
   final buttonSize = kMinInteractiveDimension * 5 / 6;
+  final commentNode = FocusNode();
   final commentController = TextEditingController();
   String get comment => commentController.text;
 
@@ -27,17 +31,21 @@ class _QuickNoteSheetState extends ConsumerState<QuickNoteSheet> {
     super.dispose();
   }
 
-  void sendComment() {
+  //TODO close sheet
+  void sendComment(String episodeId) {
     ref.read(authManagerProvider).doComment(
           commentController.text,
-          widget.episode.id,
-          widget.episode.duration,
+          episodeId,
+          ref.read(playerTimeStreamProvider).value!.position,
         );
-    Navigator.pop(context);
+    commentController.clear();
+    commentNode.unfocus();
   }
 
   @override
   Widget build(BuildContext context) {
+    final episode = ref.watch(playerStateChangesProvider).valueOrNull!;
+    final state = ref.watch(playerControllerProvider);
     return Material(
       color: Palette.grey900,
       shape: const RoundedRectangleBorder(
@@ -62,7 +70,7 @@ class _QuickNoteSheetState extends ConsumerState<QuickNoteSheet> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: TextField(
-                    autofocus: true,
+                    focusNode: commentNode,
                     controller: commentController,
                     keyboardType: TextInputType.multiline,
                     textInputAction: TextInputAction.send,
@@ -82,7 +90,7 @@ class _QuickNoteSheetState extends ConsumerState<QuickNoteSheet> {
                       ),
                       hintText: "Share your insight...",
                     ),
-                    onSubmitted: (_) => sendComment(),
+                    onSubmitted: (_) => sendComment(episode.id),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -94,7 +102,7 @@ class _QuickNoteSheetState extends ConsumerState<QuickNoteSheet> {
                       shape: const CircleBorder(),
                       padding: EdgeInsets.zero,
                     ),
-                    onPressed: sendComment,
+                    onPressed: () => sendComment(episode.id),
                     child: const Icon(Icons.send, size: kSmallIconSize),
                   ),
                 ),
@@ -102,10 +110,40 @@ class _QuickNoteSheetState extends ConsumerState<QuickNoteSheet> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
-              child: Text(
-                //TODO locales text
-                "${widget.episode.peopleWatchingCount} listening right now",
-                style: context.textTheme.bodySmall,
+              child: Row(
+                children: [
+                  Text(
+                    "${episode.peopleWatchingCount} listening with you"
+                        .hardcoded,
+                    style: context.textTheme.bodySmall,
+                  ),
+                  const Spacer(),
+                  PlayerButton(
+                    loading: state.isLoading,
+                    onPressed:
+                        ref.read(playerControllerProvider.notifier).rewind,
+                    icon: const Icon(Icons.replay_30),
+                  ),
+                  episode.isPlaying
+                      ? TimeChip(
+                          loading: state.isLoading,
+                          onTap:
+                              ref.read(playerControllerProvider.notifier).pause,
+                          icon: Icons.pause,
+                        )
+                      : TimeChip(
+                          loading: state.isLoading,
+                          onTap:
+                              ref.read(playerControllerProvider.notifier).play,
+                          icon: Icons.play_arrow,
+                        ),
+                  PlayerButton(
+                    loading: state.isLoading,
+                    onPressed:
+                        ref.read(playerControllerProvider.notifier).fastForward,
+                    icon: const Icon(Icons.forward_30),
+                  ),
+                ],
               ),
             ),
           ],

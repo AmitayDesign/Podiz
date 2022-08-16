@@ -10,9 +10,9 @@ import 'package:podiz/src/features/player/presentation/player_slider.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/palette.dart';
 
-class DiscussionSliverBar extends StatelessWidget {
+class DiscussionBar extends StatelessWidget with PreferredSizeWidget {
   final String episodeId;
-  const DiscussionSliverBar(this.episodeId, {Key? key}) : super(key: key);
+  const DiscussionBar(this.episodeId, {Key? key}) : super(key: key);
 
   void openShow(Episode episode, BuildContext context) {
     context.goNamed(
@@ -22,12 +22,13 @@ class DiscussionSliverBar extends StatelessWidget {
   }
 
   @override
+  Size get preferredSize =>
+      const Size.fromHeight(GradientBar.height + 8 + 108 + 4);
+
+  @override
   Widget build(BuildContext context) {
-    return SliverAppBar(
-      snap: true,
-      floating: true,
+    return AppBar(
       toolbarHeight: GradientBar.height,
-      expandedHeight: GradientBar.height + 8 + 108 + 4, //!
       automaticallyImplyLeading: false,
       backgroundColor: Palette.darkPurple,
       title: const BackAppBarButton(), //!
