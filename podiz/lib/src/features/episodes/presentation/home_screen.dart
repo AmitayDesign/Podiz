@@ -81,25 +81,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         return TapToUnfocus(
           child: Scaffold(
             extendBody: true,
-            body: Stack(
-              alignment: Alignment.bottomCenter,
-              children: [
-                PageView(
-                  controller: pageController,
-                  children: const [
-                    FeedPage(),
-                    SearchPage(),
-                    NotificationsPage(),
-                  ],
-                ),
-                //TODO playerwidget
-                if (!isKeyBoardOpen)
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: HomeScreen.bottomBarHeigh),
-                    child: PlayerWidget(),
-                  ),
+            body: PageView(
+              controller: pageController,
+              children: const [
+                FeedPage(),
+                SearchPage(),
+                NotificationsPage(),
               ],
             ),
+            bottomSheet: isKeyBoardOpen ? null : const PlayerWidget(),
             bottomNavigationBar: SizedBox(
               height: HomeScreen.bottomBarHeigh,
               child: ClipRect(
