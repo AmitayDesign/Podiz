@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/authentication/auth_manager.dart';
-import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
+import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/player_button.dart';
 import 'package:podiz/src/features/player/presentation/player_controller.dart';
@@ -32,12 +31,13 @@ class _QuickNoteSheetState extends ConsumerState<DiscussionSheet> {
   }
 
   //TODO close sheet
+  //TODO send commnet
   void sendComment(String episodeId) {
-    ref.read(authManagerProvider).doComment(
-          commentController.text,
-          episodeId,
-          ref.read(playerTimeStreamProvider).value!.position,
-        );
+    // ref.read(authManagerProvider).doComment(
+    //       commentController.text,
+    //       episodeId,
+    //       ref.read(playerTimeStreamProvider).value!.position,
+    //     );
     commentController.clear();
     commentNode.unfocus();
   }
