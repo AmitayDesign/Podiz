@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/aspect/widgets/gradientAppBar.dart';
+import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 
@@ -32,9 +32,9 @@ class FeedController extends StateNotifier<String> {
     final lastPodcastExists = user.lastListenedEpisodeId.isNotEmpty;
     final myCastsDidNotPass = user.favPodcastIds.isEmpty ||
         myCastsPosition == null ||
-        myCastsPosition > GradientAppBar.height;
+        myCastsPosition > GradientBar.height;
     final hotLiveDidNotPass =
-        hotLivePosition == null || hotLivePosition > GradientAppBar.height;
+        hotLivePosition == null || hotLivePosition > GradientBar.height;
 
     if (lastPodcastExists &&
         user.lastListenedEpisodeId.isNotEmpty &&

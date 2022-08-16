@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:podiz/aspect/widgets/gradientAppBar.dart';
 import 'package:podiz/aspect/widgets/sliverFirestoreQueryBuilder.dart';
+import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
@@ -70,7 +70,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
           slivers: [
             // so it doesnt start behind the app bar
             const SliverToBoxAdapter(
-              child: SizedBox(height: GradientAppBar.backgroundHeight),
+              child: SizedBox(height: GradientBar.backgroundHeight),
             ),
 
             //* Last Listened

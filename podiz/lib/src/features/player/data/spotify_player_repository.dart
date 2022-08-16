@@ -59,6 +59,12 @@ class SpotifyPlayerRepository implements PlayerRepository {
     final position = -Duration(seconds: seconds).inMilliseconds;
     return SpotifySdk.seekToRelativePosition(relativeMilliseconds: position);
   }
+
+  @override
+  Future<void> seekTo(int seconds) {
+    final position = Duration(seconds: seconds).inMilliseconds;
+    return SpotifySdk.seekTo(positionedMilliseconds: position);
+  }
 }
 
 // Future<void> increment(String podcastId) => FirebaseFirestore.instance

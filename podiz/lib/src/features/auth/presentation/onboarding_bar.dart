@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/aspect/widgets/gradientAppBar.dart';
+import 'package:podiz/src/common_widgets/gradient_bar.dart';
 
 class OnboardingBar extends StatelessWidget with PreferredSizeWidget {
   const OnboardingBar({Key? key}) : super(key: key);
 
   @override
-  Size get preferredSize =>
-      const Size.fromHeight(GradientAppBar.backgroundHeight);
+  Size get preferredSize => const Size.fromHeight(GradientBar.backgroundHeight);
 
   @override
   Widget build(BuildContext context) {
-    return GradientAppBar(
+    return GradientBar(
       centerTitle: true,
       title: Row(
         mainAxisSize: MainAxisSize.min,
