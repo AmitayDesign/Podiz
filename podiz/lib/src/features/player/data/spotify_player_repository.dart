@@ -27,7 +27,7 @@ class SpotifyPlayerRepository implements PlayerRepository {
     return Player(
       episodeId: track.uri,
       episodeName: track.name,
-      episodeImageUrl: track.imageUri.raw,
+      episodeImageUrl: track.imageUri.raw, //TODO this is not a url
       episodeDuration: track.duration,
       playbackPosition: state.playbackPosition,
       isPlaying: !state.isPaused,
