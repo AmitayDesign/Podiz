@@ -11,7 +11,7 @@ final playerSliderControllerProvider =
   );
 });
 
-//TODO remove logic from player slider and update TimeChip widget
+//TODO remove logic from player slider and update PlayerTimeChip widget
 class PlayerSliderController extends StateNotifier<int> {
   final PlayerRepository playerRepository;
   // final int playerTime;

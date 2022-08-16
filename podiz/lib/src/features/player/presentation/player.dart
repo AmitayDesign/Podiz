@@ -44,7 +44,7 @@ class Player extends ConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const TimeChip(),
+                            const PlayerTimeChip(),
                             const SizedBox(height: 4),
                             Text(
                               episode.name,

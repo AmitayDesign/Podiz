@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/aspect/widgets/buttonPlay.dart';
 import 'package:podiz/aspect/widgets/cardButton.dart';
 import 'package:podiz/home/components/replyView.dart';
 import 'package:podiz/player/components/repliesArea.dart';
@@ -11,14 +10,16 @@ import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
-import 'package:podiz/src/features/episodes/domain/episode.dart';
+import 'package:podiz/src/features/episodes/data/episode_repository.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
+import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 class DiscussionCard extends ConsumerStatefulWidget {
+  final String episodeId;
   final Comment comment;
-  final Episode episode;
 
-  const DiscussionCard(this.episode, this.comment, {Key? key})
+  const DiscussionCard(this.episodeId, this.comment, {Key? key})
       : super(key: key);
 
   @override
@@ -46,8 +47,11 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final playerRepository = ref.watch(playerRepositoryProvider);
     UserManager userManager = ref.watch(userManagerProvider);
-    // final numberOfReplies =
+    final episode =
+        ref.watch(episodeFutureProvider(widget.episodeId)).valueOrNull!;
+    // final numberOfReplies
     //     ref.read(playerRepositoryProvider).getNumberOfReplies(widget.comment.id);
     return FutureBuilder(
       future: userManager.getUserFromUid(widget.comment.userId),
@@ -114,7 +118,15 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                               ),
                             ),
                             const Spacer(),
-                            ButtonPlay(widget.episode, widget.comment.time),
+                            TimeChip(
+                              icon: Icons.play_arrow,
+                              position: widget.comment.time,
+                              // TODO what if the playingnpodcast is different
+                              onTap: () => playerRepository.play(
+                                episode.id,
+                                widget.comment.time - 10000,
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 12),

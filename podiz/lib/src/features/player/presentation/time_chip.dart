@@ -7,12 +7,47 @@ import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/theme/palette.dart';
 
-class TimeChip extends ConsumerWidget {
+class PlayerTimeChip extends ConsumerWidget {
   final bool loading;
   final IconData? icon;
   final VoidCallback? onTap;
-  const TimeChip({Key? key, this.loading = false, this.icon, this.onTap})
-      : super(key: key);
+
+  const PlayerTimeChip({
+    Key? key,
+    this.loading = false,
+    this.icon,
+    this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final playerTime = ref.watch(playerTimeStreamProvider).valueOrNull;
+    final position = playerTime?.position ?? 0;
+    return TimeChip(
+      loading: loading,
+      position: position,
+      icon: icon,
+      color: Palette.pink,
+      onTap: onTap,
+    );
+  }
+}
+
+class TimeChip extends StatelessWidget {
+  final bool loading;
+  final int position;
+  final IconData? icon;
+  final Color? color;
+  final VoidCallback? onTap;
+
+  const TimeChip({
+    Key? key,
+    this.loading = false,
+    required this.position,
+    this.icon,
+    this.color,
+    this.onTap,
+  }) : super(key: key);
 
   String timeFromMilliseconds(int milliseconds) {
     final duration = Duration(milliseconds: milliseconds);
@@ -22,12 +57,10 @@ class TimeChip extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final playerTime = ref.watch(playerTimeStreamProvider).valueOrNull;
-    final position = playerTime?.position ?? 0;
+  Widget build(BuildContext context) {
     return Material(
       shape: const StadiumBorder(),
-      color: Palette.pink,
+      color: color ?? Palette.grey900,
       child: InkWell(
         onTap: () => loading ? null : onTap?.call(),
         child: Container(
