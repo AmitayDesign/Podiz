@@ -16,9 +16,9 @@ final feedControllerProvider = StateNotifierProvider<FeedController, String>(
 );
 
 class FeedController extends StateNotifier<String> {
-  final lastListenedLocaleKey = 'lastListened';
-  final myCastsLocaleKey = 'myCasts';
-  final hotLiveLocaleKey = 'hotLive';
+  final lastListenedLocaleKey = 'lastlistened';
+  final myCastsLocaleKey = 'mycasts';
+  final hotLiveLocaleKey = 'hotlive';
   final myCastsKey = GlobalKey();
   final hotLiveKey = GlobalKey();
 
@@ -26,7 +26,7 @@ class FeedController extends StateNotifier<String> {
   final AsyncValue<Podcast?> lastPodcastValue; //!
 
   FeedController({required this.user, required this.lastPodcastValue})
-      : super('lastListened') {
+      : super('lastlistened') {
     handleTitles();
   }
 
@@ -37,9 +37,10 @@ class FeedController extends StateNotifier<String> {
     final lastPodcastExists =
         lastPodcastValue.isLoading || lastPodcastValue.valueOrNull != null;
     final myCastsDidNotPass = user.favPodcastIds.isEmpty ||
-        (myCastsPosition != null && myCastsPosition > GradientAppBar.height);
+        myCastsPosition == null ||
+        myCastsPosition > GradientAppBar.height;
     final hotLiveDidNotPass =
-        hotLivePosition != null && hotLivePosition > GradientAppBar.height;
+        hotLivePosition == null || hotLivePosition > GradientAppBar.height;
 
     if (lastPodcastExists &&
         user.lastPodcastId.isNotEmpty &&
