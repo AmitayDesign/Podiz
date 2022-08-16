@@ -20,11 +20,12 @@ class _PlayerSliderState extends ConsumerState<PlayerSlider> {
 
   @override
   Widget build(BuildContext context) {
-    final player = ref.watch(playerStateChangesProvider).valueOrNull!; //?
-    final time = ref.watch(playerTimeProvider).valueOrNull ?? 0;
+    final playerTime = ref.watch(playerTimeStreamProvider).valueOrNull;
+    final position = playerTime?.position ?? 0;
+    final duration = playerTime?.duration ?? 1;
 
-    final timeInSeconds = time ~/ 1000;
-    final durationInSeconds = player.episodeDuration ~/ 1000;
+    final timeInSeconds = position ~/ 1000;
+    final durationInSeconds = duration ~/ 1000;
     if (updatesWithTime) {
       sliderValue = (timeInSeconds).toDouble();
     }

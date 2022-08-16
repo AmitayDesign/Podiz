@@ -21,7 +21,8 @@ class TimeChip extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final time = ref.watch(playerTimeProvider).valueOrNull ?? 0;
+    final playerTime = ref.watch(playerTimeStreamProvider).valueOrNull;
+    final position = playerTime?.position ?? 0;
     return Material(
       shape: const StadiumBorder(),
       color: Palette.pink,
@@ -37,7 +38,7 @@ class TimeChip extends ConsumerWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: Text(
-                  timeFromMilliseconds(time),
+                  timeFromMilliseconds(position),
                   style: context.textTheme.titleSmall!.copyWith(
                     color: Colors.white,
                     fontFeatures: const [FontFeature.tabularFigures()],

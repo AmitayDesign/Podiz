@@ -12,13 +12,13 @@ class MiniPlayer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final playerValue = ref.watch(playerStateChangesProvider);
+    final episodeValue = ref.watch(playerStateChangesProvider);
     final state = ref.watch(playerControllerProvider);
-    return playerValue.when(
+    return episodeValue.when(
       error: (e, _) => const SizedBox.shrink(), //!
       loading: () => const SizedBox.shrink(), //!
-      data: (player) {
-        if (player == null) return const SizedBox.shrink(); //!
+      data: (episode) {
+        if (episode == null) return const SizedBox.shrink(); //!
         return Material(
           color: Palette.darkPurple,
           child: Column(
@@ -29,7 +29,7 @@ class MiniPlayer extends ConsumerWidget {
                 padding: const EdgeInsets.fromLTRB(24, 12, 16, 12),
                 child: Row(
                   children: [
-                    PodcastAvatar(imageUrl: player.episodeImageUrl, size: 52),
+                    PodcastAvatar(imageUrl: episode.imageUrl, size: 52),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Column(
@@ -39,7 +39,7 @@ class MiniPlayer extends ConsumerWidget {
                           const TimeChip(),
                           const SizedBox(height: 4),
                           Text(
-                            player.episodeName,
+                            episode.name,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ],
@@ -52,7 +52,7 @@ class MiniPlayer extends ConsumerWidget {
                           ref.read(playerControllerProvider.notifier).rewind,
                       icon: const Icon(Icons.replay_30),
                     ),
-                    player.isPlaying
+                    episode.isPlaying
                         ? PlayerButton(
                             loading: state.isLoading,
                             onPressed: ref
