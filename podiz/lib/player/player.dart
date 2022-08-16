@@ -7,8 +7,8 @@ import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/theme/palette.dart';
 
-class MiniPlayer extends ConsumerWidget {
-  const MiniPlayer({Key? key}) : super(key: key);
+class Player extends ConsumerWidget {
+  const Player({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

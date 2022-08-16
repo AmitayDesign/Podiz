@@ -5,7 +5,7 @@ import 'package:podiz/home/components/followShowButton.dart';
 import 'package:podiz/home/search/components/podcastShowTile.dart';
 import 'package:podiz/loading.dart/episodeLoading.dart';
 import 'package:podiz/objects/SearchResult.dart';
-import 'package:podiz/player/mini_player.dart';
+import 'package:podiz/player/player.dart';
 import 'package:podiz/profile/components.dart/backAppBar.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/splash_screen.dart';
@@ -80,7 +80,7 @@ class ShowPage extends ConsumerWidget {
                     //         bottom: 0.0,
                     //         left: 0.0,
                     //         right: 0.0,
-                    //         child: MiniPlayer(),
+                    //         child: Player(),
                     //       )
                     //     : Container(),
                   ),
@@ -94,7 +94,7 @@ class ShowPage extends ConsumerWidget {
           imageUrl: show.image_url,
           isPlaying: isPlaying,
         ),
-        bottomNavigationBar: isPlaying ? const MiniPlayer() : null,
+        bottomNavigationBar: isPlaying ? const Player() : null,
       ),
     );
   }
