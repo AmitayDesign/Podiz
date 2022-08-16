@@ -4,13 +4,15 @@ import 'package:podiz/aspect/typedefs.dart';
 
 part 'episode.g.dart';
 
+typedef EpisodeId = String;
+
 @JsonSerializable()
 class Episode with EquatableMixin {
-  String id;
+  EpisodeId id;
   String name;
   String description;
 
-  @JsonKey(name: 'duration_ms') //TODO convert to seconds
+  @JsonKey(name: 'duration_ms')
   int duration;
 
   @JsonKey(name: 'image_url')
@@ -34,8 +36,8 @@ class Episode with EquatableMixin {
   @JsonKey(name: 'show_name')
   String showName;
 
-  Episode(
-    this.id, {
+  Episode({
+    required this.id,
     required this.name,
     required this.description,
     required this.duration,
@@ -48,7 +50,7 @@ class Episode with EquatableMixin {
     required this.peopleWatchingCount,
   });
 
-  // TODO GET SHOW
+  // TODO check if they have show data
   factory Episode.fromSpotify(Map<String, dynamic> json) {
     return Episode.fromJson(json
       ..addAll({

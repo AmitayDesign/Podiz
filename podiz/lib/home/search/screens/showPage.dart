@@ -67,7 +67,7 @@ class ShowPage extends ConsumerWidget {
                                 return PodcastShowTile(
                                   searchResult,
                                   isPlaying: isPlaying &&
-                                      player?.episode.id == podcast.uid,
+                                      player?.episodeId == podcast.uid,
                                 );
                               });
                         },

@@ -12,23 +12,25 @@ class SpotifyPlayerRepository implements PlayerRepository {
 
   @override
   Stream<Player?> playerStateChanges() =>
-      SpotifySdk.subscribePlayerState().asyncMap(_convertStateToPlayer);
+      SpotifySdk.subscribePlayerState().map(playerFromPlayerState);
 
   @override
   Future<Player?> currentPlayerState() async {
     final state = await SpotifySdk.getPlayerState();
     if (state == null) return null;
-    return _convertStateToPlayer(state);
+    return playerFromPlayerState(state);
   }
 
-  Future<Player?> _convertStateToPlayer(PlayerState state) async {
-    final track = state.track; //TODO fix null track
+  Player? playerFromPlayerState(PlayerState state) {
+    final track = state.track; //TODO decide what to do with null track
     if (track == null || !track.isEpisode || !track.isPodcast) return null;
-    final episode = await episodeRepository.fetchEpisode(track.uri);
     return Player(
-      episode: episode,
-      isPlaying: !state.isPaused,
+      episodeId: track.uri,
+      episodeName: track.name,
+      episodeImageUrl: track.imageUri.raw,
+      episodeDuration: track.duration,
       playbackPosition: state.playbackPosition,
+      isPlaying: !state.isPaused,
     );
   }
 
