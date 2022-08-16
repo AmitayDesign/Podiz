@@ -17,10 +17,10 @@ class Player extends ConsumerWidget {
     final episodeValue = ref.watch(playerStateChangesProvider);
     final state = ref.watch(playerControllerProvider);
     return episodeValue.when(
-      error: (e, _) => const SizedBox.shrink(), //!
       loading: () => const SizedBox.shrink(), //!
+      error: (e, _) => const SizedBox.shrink(), //!
       data: (episode) {
-        if (episode == null) return const SizedBox.shrink(); //!
+        if (episode == null) return const SizedBox.shrink();
         return Material(
           color: Palette.darkPurple,
           child: InkWell(

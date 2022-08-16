@@ -58,7 +58,7 @@ class _PlayerSliderState extends ConsumerState<PlayerSlider> {
             ref
                 .read(playerSliderControllerProvider.notifier)
                 .seekTo(time.toInt());
-            isPressed = false;
+            setState(() => isPressed = false);
             await Future.delayed(const Duration(seconds: 2));
             updatesWithTime = true;
           },

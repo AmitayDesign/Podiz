@@ -5,12 +5,12 @@ import 'package:podiz/home/components/followShowButton.dart';
 import 'package:podiz/home/search/components/podcastShowTile.dart';
 import 'package:podiz/loading.dart/episodeLoading.dart';
 import 'package:podiz/objects/SearchResult.dart';
-import 'package:podiz/player/player.dart';
 import 'package:podiz/profile/components.dart/backAppBar.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/splash_screen.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
+import 'package:podiz/src/features/player/presentation/player.dart';
 import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
 
 class ShowPage extends ConsumerWidget {

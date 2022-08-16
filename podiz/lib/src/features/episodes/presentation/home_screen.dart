@@ -7,8 +7,8 @@ import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/widgets/tap_to_unfocus.dart';
 import 'package:podiz/home/notifications/NotificationsPage.dart';
 import 'package:podiz/home/search/searchPage.dart';
-import 'package:podiz/player/player.dart';
 import 'package:podiz/src/features/episodes/presentation/feed/feed_page.dart';
+import 'package:podiz/src/features/player/presentation/player.dart';
 import 'package:podiz/src/routing/app_router.dart';
 
 enum HomePage { feed, search, notifications }

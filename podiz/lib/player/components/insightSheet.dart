@@ -16,10 +16,10 @@ class InsightSheet extends ConsumerStatefulWidget {
   const InsightSheet({Key? key, required this.episode}) : super(key: key);
 
   @override
-  ConsumerState<InsightSheet> createState() => _CommentSheetState();
+  ConsumerState<InsightSheet> createState() => _QuickNoteSheetState();
 }
 
-class _CommentSheetState extends ConsumerState<InsightSheet> {
+class _QuickNoteSheetState extends ConsumerState<InsightSheet> {
   final buttonSize = kMinInteractiveDimension * 5 / 6;
   final commentController = TextEditingController();
   String get comment => commentController.text;

@@ -5,7 +5,7 @@ import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/theme/palette.dart';
 
-import 'comment_sheet.dart';
+import 'quick_note_sheet.dart';
 
 class QuickNoteButton extends StatelessWidget {
   final Episode episode;
@@ -37,7 +37,7 @@ class QuickNoteButton extends StatelessWidget {
           ),
           builder: (context) => Padding(
             padding: MediaQuery.of(context).viewInsets,
-            child: CommentSheet(episode: episode),
+            child: QuickNoteSheet(episode: episode),
           ),
         ),
         icon: Icon(

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/widgets/appBarGradient.dart';
 
-class GradientAppBar extends StatelessWidget with PreferredSizeWidget {
+class GradientBar extends StatelessWidget with PreferredSizeWidget {
   final Widget? title;
   final List<Widget>? actions;
   final bool? centerTitle;
-  const GradientAppBar({Key? key, this.title, this.actions, this.centerTitle})
+  const GradientBar({Key? key, this.title, this.actions, this.centerTitle})
       : super(key: key);
 
   static const height = 64.0;

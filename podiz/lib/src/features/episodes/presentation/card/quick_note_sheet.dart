@@ -7,15 +7,15 @@ import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 
-class CommentSheet extends ConsumerStatefulWidget {
+class QuickNoteSheet extends ConsumerStatefulWidget {
   final Episode episode;
-  const CommentSheet({Key? key, required this.episode}) : super(key: key);
+  const QuickNoteSheet({Key? key, required this.episode}) : super(key: key);
 
   @override
-  ConsumerState<CommentSheet> createState() => _CommentSheetState();
+  ConsumerState<QuickNoteSheet> createState() => _QuickNoteSheetState();
 }
 
-class _CommentSheetState extends ConsumerState<CommentSheet> {
+class _QuickNoteSheetState extends ConsumerState<QuickNoteSheet> {
   final buttonSize = kMinInteractiveDimension * 5 / 6;
   final commentController = TextEditingController();
   String get comment => commentController.text;
