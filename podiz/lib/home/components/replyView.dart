@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/authentication/auth_manager.dart';
-import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
+import 'package:podiz/src/features/discussion/domain/comment.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 class ReplyView extends ConsumerWidget {
@@ -64,7 +65,7 @@ class ReplyView extends ConsumerWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                comment.comment,
+                comment.text,
                 style: context.textTheme.bodyLarge,
               ),
             ),
@@ -103,9 +104,23 @@ class ReplyView extends ConsumerWidget {
                 ),
                 const SizedBox(width: 8),
                 InkWell(
-                  onTap: () => ref
-                      .read(authManagerProvider)
-                      .doReply(comment, controller.text),
+                  onTap: () async {
+                    final playerRepository = ref.read(playerRepositoryProvider);
+                    final episode =
+                        await playerRepository.fetchPlayingEpisode();
+
+                    final time = episode?.id == comment.episodeId
+                        ? episode!.initialPosition
+                        : comment.time;
+
+                    ref.read(discussionRepositoryProvider).addComment(
+                          controller.text,
+                          episodeId: comment.episodeId,
+                          time: time,
+                          user: user,
+                          parent: comment,
+                        );
+                  },
                   child: Container(
                     height: 31,
                     width: 31,

@@ -12,8 +12,8 @@ final playerRepositoryProvider = Provider<PlayerRepository>(
 );
 
 abstract class PlayerRepository {
-  Stream<PlayingEpisode?> playerStateChanges();
-  Future<PlayingEpisode?> currentPlayerState();
+  Stream<PlayingEpisode?> watchPlayingEpisode();
+  Future<PlayingEpisode?> fetchPlayingEpisode();
   Future<void> play(String podcastId, [int? time]);
   Future<void> resume();
   Future<void> pause();
@@ -25,7 +25,7 @@ abstract class PlayerRepository {
 //* Providers
 
 final playerStateChangesProvider = StreamProvider<PlayingEpisode?>(
-  (ref) => ref.watch(playerRepositoryProvider).playerStateChanges(),
+  (ref) => ref.watch(playerRepositoryProvider).watchPlayingEpisode(),
 );
 
 final playerTimeStreamProvider = StreamProvider.autoDispose<PlayerTime>(

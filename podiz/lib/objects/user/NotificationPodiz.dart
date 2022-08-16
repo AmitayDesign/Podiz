@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:podiz/aspect/typedefs.dart';
-import 'package:podiz/objects/Comment.dart';
+import 'package:podiz/src/features/discussion/domain/comment.dart';
 
 part 'NotificationPodiz.g.dart';
 
@@ -48,18 +48,13 @@ class NotificationPodiz {
   factory NotificationPodiz.copyFrom(NotificationPodiz user) =>
       NotificationPodiz.fromJson(user.toJson());
 
-  Comment notificationToComment() {
-    Comment c = Comment(
-      id,
-      episodeUid: episodeUid,
-      userUid: userUid,
-      timestamp: timestamp,
-      comment: comment,
-      time: time,
-      lvl: lvl,
-      parents: parents,
-    );
-    c.replies = {};
-    return c;
-  }
+  Comment notificationToComment() => Comment(
+        id: id,
+        episodeId: episodeUid,
+        userId: userUid,
+        text: comment,
+        time: time,
+        lvl: lvl,
+        parentIds: parents,
+      );
 }

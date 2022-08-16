@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/authentication/auth_manager.dart';
-import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
+import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/theme/palette.dart';
 
@@ -27,12 +26,13 @@ class _QuickNoteSheetState extends ConsumerState<QuickNoteSheet> {
     super.dispose();
   }
 
+  //TODO send comment
   void sendComment() {
-    ref.read(authManagerProvider).doComment(
-          commentController.text,
-          widget.episode.id,
-          widget.episode.duration,
-        );
+    // ref.read(authManagerProvider).doComment(
+    //       commentController.text,
+    //       widget.episode.id,
+    //       widget.episode.duration,
+    //     );
     Navigator.pop(context);
   }
 

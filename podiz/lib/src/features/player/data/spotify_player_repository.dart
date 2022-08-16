@@ -11,11 +11,11 @@ class SpotifyPlayerRepository implements PlayerRepository {
   SpotifyPlayerRepository({required this.episodeRepository});
 
   @override
-  Stream<PlayingEpisode?> playerStateChanges() =>
+  Stream<PlayingEpisode?> watchPlayingEpisode() =>
       SpotifySdk.subscribePlayerState().asyncMap(playingEpisodeFromPlayerState);
 
   @override
-  Future<PlayingEpisode?> currentPlayerState() async {
+  Future<PlayingEpisode?> fetchPlayingEpisode() async {
     final state = await SpotifySdk.getPlayerState();
     if (state == null) return null;
     return playingEpisodeFromPlayerState(state);
@@ -66,3 +66,13 @@ class SpotifyPlayerRepository implements PlayerRepository {
     return SpotifySdk.seekTo(positionedMilliseconds: position);
   }
 }
+
+// Future<void> increment(String podcastId) => FirebaseFirestore.instance
+//     .collection("podcasts")
+//     .doc(podcastId)
+//     .update({"watching": FieldValue.increment(1)});
+
+// Future<void> decrement(String podcastId) => FirebaseFirestore.instance
+//     .collection("podcasts")
+//     .doc(podcastId)
+//     .update({"watching": FieldValue.increment(-1)});

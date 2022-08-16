@@ -8,33 +8,33 @@ typedef EpisodeId = String;
 
 @JsonSerializable()
 class Episode with EquatableMixin {
-  EpisodeId id;
-  String name;
-  String description;
+  final EpisodeId id;
+  final String name;
+  final String description;
 
   @JsonKey(name: 'duration_ms')
-  int duration;
+  final int duration;
 
   @JsonKey(name: 'image_url')
-  String imageUrl;
+  final String imageUrl;
 
   @JsonKey(name: 'comments', defaultValue: 0)
-  int commentsCount;
+  final int commentsCount;
 
   @JsonKey(name: 'commentsImg', defaultValue: [])
-  List<String> commentImageUrls;
+  final List<String> commentImageUrls;
 
   @JsonKey(name: 'release_date')
-  String releaseDateString; //TODO make it a DateTime
+  final String releaseDateString; //TODO make it a DateTime
 
   @JsonKey(name: 'watching', defaultValue: 0)
-  int peopleWatchingCount;
+  final int peopleWatchingCount;
 
   @JsonKey(name: 'show_uri')
-  String showId;
+  final String showId;
 
   @JsonKey(name: 'show_name')
-  String showName;
+  final String showName;
 
   Episode({
     required this.id,

@@ -2,8 +2,8 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/loadingButton.dart';
+import 'package:podiz/src/features/auth/data/auth_repository.dart';
 
 class SpotifySearch extends ConsumerStatefulWidget {
   final String query;
