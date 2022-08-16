@@ -1,5 +1,5 @@
-import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/show.dart';
+import 'package:podiz/src/features/episodes/domain/episode.dart';
 
 class SearchResult {
   String uid;
@@ -39,18 +39,20 @@ class SearchResult {
       this.followers,
       this.watching});
 
-  Podcast toPodcast() {
-    return Podcast(uid,
-        name: name,
-        description: description!,
-        duration_ms: duration_ms!,
-        show_name: show_name!,
-        show_uri: show_uri!,
-        image_url: image_url,
-        comments: comments!,
-        commentsImg: commentsImg!,
-        release_date: release_date!,
-        watching: watching!);
+  Episode toEpisode() {
+    return Episode(
+      id: uid,
+      name: name,
+      description: description!,
+      duration: duration_ms!,
+      showName: show_name!,
+      showId: show_uri!,
+      imageUrl: image_url,
+      commentsCount: comments!,
+      commentImageUrls: commentsImg!,
+      releaseDateString: release_date!,
+      peopleWatchingCount: watching!,
+    );
   }
 
   Show toShow() {
@@ -64,19 +66,19 @@ class SearchResult {
         followers: followers!);
   }
 
-  factory SearchResult.fromPodcast(Podcast episode) {
+  factory SearchResult.fromEpisode(Episode episode) {
     return SearchResult(
-      uid: episode.uid!,
+      uid: episode.id,
       name: episode.name,
       description: episode.description,
-      duration_ms: episode.duration_ms,
-      show_name: episode.show_name,
-      show_uri: episode.show_uri,
-      image_url: episode.image_url,
-      comments: episode.comments,
-      commentsImg: episode.commentsImg,
-      release_date: episode.release_date,
-      watching: episode.watching,
+      duration_ms: episode.duration,
+      show_name: episode.showName,
+      show_uri: episode.showId,
+      image_url: episode.imageUrl,
+      comments: episode.commentsCount,
+      commentsImg: episode.commentImageUrls,
+      release_date: episode.releaseDateString,
+      watching: episode.peopleWatchingCount,
     );
   }
 }

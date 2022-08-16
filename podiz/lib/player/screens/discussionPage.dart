@@ -8,8 +8,9 @@ import 'package:podiz/player/components/discussionCard.dart';
 import 'package:podiz/player/components/discussionSnackBar.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/splash_screen.dart';
+import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
-import 'package:podiz/src/features/player/domain/player.dart';
+import 'package:podiz/src/features/player/domain/playing_episode.dart';
 
 class DiscussionPage extends ConsumerStatefulWidget {
   final String episodeId;
@@ -53,26 +54,26 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
   @override
   Widget build(BuildContext context) {
     final commentsValue = ref.watch(commentsStreamProvider);
-    final podcastValue = ref.watch(podcastFutureProvider(widget.episodeId));
-    ref.listen<AsyncValue<Player?>>(
+    final episodeValue = ref.watch(episodeFutureProvider(widget.episodeId));
+    ref.listen<AsyncValue<PlayingEpisode?>>(
       playerStateChangesProvider,
-      (_, positionValue) {
-        positionValue.whenOrNull(data: (player) {
-          if (player == null) return;
+      (_, playingEpisodeValue) {
+        playingEpisodeValue.whenOrNull(data: (playingEpisode) {
+          if (playingEpisode == null) return;
           final playerManager = ref.read(playerManagerProvider);
-          playerManager.showComments(player.playbackPosition);
+          playerManager.showComments(playingEpisode.initialPosition);
         });
       },
     );
-    return podcastValue.when(
+    return episodeValue.when(
         error: (e, st) {
-          print('discussionPage podcast: ${e.toString()}');
+          print('discussionPage episode: ${e.toString()}');
           return const SplashScreen.error();
         },
         loading: () => loadingWidget,
-        data: (podcast) {
+        data: (episode) {
           return Scaffold(
-            appBar: DiscussionAppBar(podcast),
+            appBar: DiscussionAppBar(episode),
             body: commentsValue.when(
                 error: (e, _) {
                   print('discussionPage comments: ${e.toString()}');
@@ -88,13 +89,13 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
                           itemCount: comments.length,
                           itemBuilder: (context, index) {
                             return DiscussionCard(
-                              podcast,
+                              episode,
                               comments[index],
                             );
                           },
                         ),
                       ),
-                      DiscussionSnackBar(podcast),
+                      DiscussionSnackBar(episode),
                     ],
                   );
                 }),

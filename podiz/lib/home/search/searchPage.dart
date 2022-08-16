@@ -6,12 +6,12 @@ import 'package:podiz/aspect/widgets/showSearchTile.dart';
 import 'package:podiz/aspect/widgets/sliverFirestoreQueryBuilder.dart';
 import 'package:podiz/aspect/widgets/userSearchTile.dart';
 import 'package:podiz/home/search/components/searchBar.dart';
-import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/home/search/managers/showManager.dart';
-import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/show.dart';
 import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/features/episodes/data/episode_repository.dart';
+import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/episodes/presentation/card/episode_Card.dart';
 import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
@@ -36,25 +36,25 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     super.dispose();
   }
 
-  void openEpisode(Podcast podcast) {
-    ref.read(playerRepositoryProvider).play(podcast.uid!); //!
+  void openEpisode(Episode episode) {
+    ref.read(playerRepositoryProvider).play(episode.id); //!
     context.goNamed(
       AppRoute.discussion.name,
-      params: {'episodeId': podcast.uid!},
+      params: {'episodeId': episode.id},
     );
   }
 
-  void openPodcast(Podcast podcast) {
+  void openPodcast(Episode episode) {
     context.goNamed(
       AppRoute.show.name,
-      params: {'showId': podcast.show_uri},
+      params: {'showId': episode.showId},
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final userManager = ref.watch(userManagerProvider);
-    final podcastManager = ref.watch(podcastManagerProvider);
+    final episoddeRepository = ref.watch(episodeRepositoryProvider);
     final showManager = ref.watch(showManagerProvider);
     return Scaffold(
         extendBodyBehindAppBar: true,
@@ -79,8 +79,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                     query: showManager.showsFirestoreQuery(query),
                     builder: (context, podcast) => ShowSearchTile(podcast), //!
                   ),
-                  SliverFirestoreQueryBuilder<Podcast>(
-                    query: podcastManager.podcastsFirestoreQuery(query),
+                  SliverFirestoreQueryBuilder<Episode>(
+                    query: episoddeRepository.episodesFirestoreQuery(query),
                     builder: (context, episode) => EpisodeCard(
                       episode,
                       onTap: () => openEpisode(episode),

@@ -26,6 +26,7 @@ class FirestoreEpisodeRepository extends EpisodeRepository {
         .get(); //! fix collection name
     if (!doc.exists) {
       final accessToken = spotifyApi.getAccessToken();
+      // final uri = Uri.https('api.spotify.com/v1/episodes', '/$episodeId');
       final uri = Uri.parse('https://api.spotify.com/v1/episodes/$episodeId');
       final response = await spotifyApi.client.get(uri, headers: {
         'Accept': 'application/json',
@@ -50,4 +51,23 @@ class FirestoreEpisodeRepository extends EpisodeRepository {
     }
     return Episode.fromFirestore(doc);
   }
+
+  @override
+  Query<Episode> episodesFirestoreQuery(String filter) =>
+      FirebaseFirestore.instance
+          .collection("podcasts")
+          .where("searchArray", arrayContains: filter.toLowerCase())
+          .withConverter(
+            fromFirestore: (doc, _) => Episode.fromFirestore(doc),
+            toFirestore: (episode, _) => {},
+          );
+
+  @override
+  Query<Episode> hotliveFirestoreQuery() => FirebaseFirestore.instance
+      .collection("podcasts")
+      .orderBy("release_date", descending: true)
+      .withConverter(
+        fromFirestore: (doc, _) => Episode.fromFirestore(doc),
+        toFirestore: (episode, _) => {},
+      );
 }

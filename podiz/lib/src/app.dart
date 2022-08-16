@@ -13,7 +13,6 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final firstUserValue = ref.watch(firstUserFutureProvider);
     final goRouter = ref.watch(goRouterProvider);
     final theme = ref.watch(themeProvider);
     return LocaleBuilder(
@@ -29,14 +28,17 @@ class MyApp extends ConsumerWidget {
         restorationScopeId: 'app',
         darkTheme: theme,
         themeMode: ThemeMode.dark,
-        builder: (context, child) => firstUserValue.when(
-          error: (e, _) => const SplashScreen.error(),
-          loading: () => const SplashScreen(),
-          data: (_) {
-            setScreenSize(context); //!
-            return child!;
-          },
-        ),
+        builder: (context, child) => Consumer(builder: (context, ref, _) {
+          final firstUserValue = ref.watch(firstUserFutureProvider);
+          return firstUserValue.when(
+            error: (e, _) => const SplashScreen.error(),
+            loading: () => const SplashScreen(),
+            data: (_) {
+              setScreenSize(context); //!
+              return child!;
+            },
+          );
+        }),
       ),
     );
   }

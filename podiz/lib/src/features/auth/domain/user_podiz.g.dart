@@ -19,7 +19,7 @@ UserPodiz _$UserPodizFromJson(Map<String, dynamic> json) => UserPodiz(
               .toList() ??
           [],
       imageUrl: json['image_url'] as String,
-      lastPodcastId: json['lastListened'] as String,
+      lastListenedEpisodeId: json['lastListened'] as String,
       favPodcastIds: (json['favPodcasts'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
@@ -37,7 +37,7 @@ Map<String, dynamic> _$UserPodizToJson(UserPodiz instance) => <String, dynamic>{
       'followers': instance.followers,
       'following': instance.following,
       'image_url': instance.imageUrl,
-      'lastListened': instance.lastPodcastId,
+      'lastListened': instance.lastListenedEpisodeId,
       'favPodcasts': instance.favPodcastIds,
       'comments': instance.comments,
     };

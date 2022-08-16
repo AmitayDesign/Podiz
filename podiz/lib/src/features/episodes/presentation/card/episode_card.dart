@@ -3,19 +3,19 @@ import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/widgets/dot.dart';
-import 'package:podiz/objects/Podcast.dart';
+import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
 
 import 'insights_info.dart';
 
 class EpisodeCard extends StatelessWidget {
-  final Podcast podcast;
+  final Episode episode;
   final VoidCallback? onTap;
   final VoidCallback? onPodcastTap;
   final Widget? bottom;
 
   const EpisodeCard(
-    this.podcast, {
+    this.episode, {
     Key? key,
     this.onTap,
     this.onPodcastTap,
@@ -43,13 +43,13 @@ class EpisodeCard extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 2),
-                child: InsightsInfo(podcast: podcast),
+                child: InsightsInfo(episode: episode),
               ),
               const SizedBox(height: 16),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  PodcastAvatar(imageUrl: podcast.image_url),
+                  PodcastAvatar(imageUrl: episode.imageUrl),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Padding(
@@ -58,7 +58,7 @@ class EpisodeCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            podcast.name,
+                            episode.name,
                             style: titleStyle,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
@@ -69,14 +69,14 @@ class EpisodeCard extends StatelessWidget {
                                 child: GestureDetector(
                                   onTap: onPodcastTap,
                                   child: Text(
-                                    podcast.show_name,
+                                    episode.showName,
                                     style: subtitleStyle,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ),
                               Text(
-                                ' $dot ${timeFormatter(podcast.duration_ms)}',
+                                ' $dot ${timeFormatter(episode.duration)}',
                                 style: subtitleStyle,
                               ),
                             ],

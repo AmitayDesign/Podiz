@@ -2,14 +2,11 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/typedefs.dart';
-import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/utils/instances.dart';
-import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 final authManagerProvider = Provider<AuthManager>(
   (ref) {
@@ -22,9 +19,7 @@ class AuthManager {
   final Reader _read;
 
   ShowManager get showManager => _read(showManagerProvider);
-  PodcastManager get podcastManager => _read(podcastManagerProvider);
   FirebaseFirestore get firestore => _read(firestoreProvider);
-  StreamingSharedPreferences get preferences => _read(preferencesProvider);
 
   AuthManager(this._read);
 
@@ -64,7 +59,7 @@ class AuthManager {
   }
 
   Future<void> doComment(String comment, String episodeUid, int time) async {
-    DocRef doc = firestore
+    final doc = firestore
         .collection("podcasts")
         .doc(episodeUid)
         .collection("comments")
@@ -104,7 +99,7 @@ class AuthManager {
   }
 
   Future<void> doReply(Comment comment, String reply) async {
-    DocRef doc = firestore
+    final doc = firestore
         .collection("podcasts")
         .doc(comment.episodeUid)
         .collection("comments")

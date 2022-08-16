@@ -9,6 +9,7 @@ import 'package:podiz/player/mini_player.dart';
 import 'package:podiz/profile/components.dart/backAppBar.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/splash_screen.dart';
+import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
 
@@ -50,10 +51,10 @@ class ShowPage extends ConsumerWidget {
                     delegate: SliverChildBuilderDelegate(
                       (context, i) => Consumer(
                         builder: (context, ref, _) {
-                          final podcastId = show.podcasts[i];
-                          final podcastValue =
-                              ref.watch(podcastFutureProvider(podcastId));
-                          return podcastValue.when(
+                          final episodeId = show.podcasts[i];
+                          final episodeValue =
+                              ref.watch(episodeFutureProvider(episodeId));
+                          return episodeValue.when(
                               loading: () => const EpisodeLoading(),
                               error: (e, _) => Center(
                                     child: Text(
@@ -61,13 +62,13 @@ class ShowPage extends ConsumerWidget {
                                       style: const TextStyle(fontSize: 18),
                                     ),
                                   ),
-                              data: (podcast) {
+                              data: (episode) {
                                 final searchResult =
-                                    SearchResult.fromPodcast(podcast);
+                                    SearchResult.fromEpisode(episode);
                                 return PodcastShowTile(
                                   searchResult,
-                                  isPlaying: isPlaying &&
-                                      player?.episodeId == podcast.uid,
+                                  isPlaying:
+                                      isPlaying && player?.id == episode.id,
                                 );
                               });
                         },

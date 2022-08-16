@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/loading.dart/tabBarLabelLoading.dart';
-import 'package:podiz/objects/Podcast.dart';
+import 'package:podiz/src/features/episodes/data/episode_repository.dart';
+import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
 
 class TabBarLabel extends ConsumerWidget {
@@ -13,47 +13,37 @@ class TabBarLabel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Podcast? podcast;
     if (text == "All") {
-      podcast = Podcast("",
-          name: "All",
-          description: "",
-          duration_ms: 0,
-          show_name: "",
-          show_uri: "",
-          image_url: "",
-          comments: 0,
-          commentsImg: [],
-          release_date: "",
-          watching: 0);
-      return _buildItem(podcast, number);
+      final episode = Episode(
+        id: "",
+        name: "All",
+        description: "",
+        duration: 0,
+        showName: "",
+        showId: "",
+        imageUrl: "",
+        commentsCount: 0,
+        commentImageUrls: [],
+        releaseDateString: "",
+        peopleWatchingCount: 0,
+      );
+      return _buildItem(episode, number);
     }
-    return FutureBuilder(
-        future: ref.read(podcastManagerProvider).fetchPodcast(text),
-        initialData: "loading",
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            // If we got an error
-            if (snapshot.hasError) {
-              return Center(
-                child: Text(
-                  '${snapshot.error} occurred',
-                  style: const TextStyle(fontSize: 18),
-                ),
-              );
-
-              // if we got our data
-            } else if (snapshot.hasData) {
-              final episode = snapshot.data as Podcast;
-              return _buildItem(episode, number);
-            }
-          }
-          return const TabBarLabelLoading();
-        });
+    final episodeValue = ref.watch(episodeFutureProvider(text));
+    return episodeValue.when(
+      error: (e, _) => Center(
+        child: Text(
+          '$e occurred',
+          style: const TextStyle(fontSize: 18),
+        ),
+      ),
+      loading: () => const TabBarLabelLoading(),
+      data: (episode) => _buildItem(episode, number),
+    );
   }
 }
 
-Widget _buildItem(Podcast episode, int number) {
+Widget _buildItem(Episode episode, int number) {
   return Tab(
     height: 32,
     child: Center(
@@ -65,7 +55,7 @@ Widget _buildItem(Podcast episode, int number) {
             episode.name != "All"
                 ? Padding(
                     padding: const EdgeInsets.only(left: 8.0),
-                    child: PodcastAvatar(imageUrl: episode.image_url, size: 20),
+                    child: PodcastAvatar(imageUrl: episode.imageUrl, size: 20),
                   )
                 : Container(),
             const SizedBox(width: 8),

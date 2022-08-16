@@ -31,8 +31,8 @@ abstract class AuthRepository {
 /// awaits for the first authentication state
 final firstUserFutureProvider = FutureProvider<void>(
   (ref) async {
-    final user = await ref.watch(authStateChangesProvider.future);
-    if (user != null) await ref.watch(authRepositoryProvider).signIn();
+    final user = await ref.read(authStateChangesProvider.future);
+    if (user != null) await ref.read(authRepositoryProvider).signIn();
   },
 );
 

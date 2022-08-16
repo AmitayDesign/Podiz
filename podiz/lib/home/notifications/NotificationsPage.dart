@@ -8,16 +8,16 @@ import 'package:podiz/aspect/widgets/buttonPlay.dart';
 import 'package:podiz/aspect/widgets/cardButton.dart';
 import 'package:podiz/home/components/replyView.dart';
 import 'package:podiz/home/notifications/components/tabBarLabel.dart';
-import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/loading.dart/notificationLoading.dart';
 import 'package:podiz/objects/Comment.dart';
-import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/user/NotificationPodiz.dart';
 import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/splash_screen.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/features/episodes/data/episode_repository.dart';
+import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/routing/app_router.dart';
@@ -43,10 +43,10 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
     _controller.dispose();
   }
 
-  void openShow(Podcast podcast) {
+  void openShow(Episode episode) {
     context.goNamed(
       AppRoute.show.name,
-      params: {'showId': podcast.show_uri},
+      params: {'showId': episode.showId},
     );
   }
 
@@ -171,210 +171,187 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
               // if we got our data
             } else if (snapshot.hasData) {
               final user = snapshot.data as UserPodiz;
-              return FutureBuilder(
-                  future: ref
-                      .read(podcastManagerProvider)
-                      .fetchPodcast(c.episodeUid),
-                  initialData: "loading",
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      // If we got an error
-                      if (snapshot.hasError) {
-                        return Center(
-                          child: Text(
-                            '${snapshot.error} occurred',
-                            style: const TextStyle(fontSize: 18),
-                          ),
-                        );
-
-                        // if we got our data
-                      } else if (snapshot.hasData) {
-                        final podcast = snapshot.data as Podcast;
-                        podcast.uid = c.episodeUid;
-                        return Column(
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: Row(
-                                children: [
-                                  PodcastAvatar(
-                                      imageUrl: podcast.image_url, size: 32),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            podcast.name,
-                                            style:
-                                                context.textTheme.titleMedium,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 2),
-                                        GestureDetector(
-                                          onTap: () => openShow(podcast),
-                                          child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              podcast.show_name,
-                                              style: context
-                                                  .textTheme.bodyMedium!
-                                                  .copyWith(
-                                                color: Colors.white70,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            Container(
-                              color: theme.colorScheme.surface,
-                              width: kScreenWidth,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 14.0, vertical: 9),
+              final episodeValue =
+                  ref.read(episodeFutureProvider(c.episodeUid));
+              return episodeValue.when(
+                  error: (e, _) => Center(
+                        child: Text(
+                          '${snapshot.error} occurred',
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                      ),
+                  loading: () => const NotificationLoading(),
+                  data: (episode) {
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Row(
+                            children: [
+                              PodcastAvatar(
+                                  imageUrl: episode.imageUrl, size: 32),
+                              const SizedBox(width: 8),
+                              Expanded(
                                 child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Row(
-                                      children: [
-                                        UserAvatar(user: user, radius: 20),
-                                        const SizedBox(
-                                          width: 8,
-                                        ),
-                                        SizedBox(
-                                          width: 200,
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              Align(
-                                                alignment: Alignment.centerLeft,
-                                                child: Text(
-                                                  user.name,
-                                                  style: context
-                                                      .textTheme.titleMedium,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 4),
-                                              Align(
-                                                alignment: Alignment.centerLeft,
-                                                child: Text(
-                                                  "${user.followers.length} followers",
-                                                  style: context
-                                                      .textTheme.bodyMedium!
-                                                      .copyWith(
-                                                    color: Palette.grey600,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const Spacer(),
-                                        ButtonPlay(podcast, c.time),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 12),
-                                    SizedBox(
-                                      width: kScreenWidth - 32,
+                                    Align(
+                                      alignment: Alignment.centerLeft,
                                       child: Text(
-                                        c.comment,
-                                        style: context.textTheme.bodyLarge,
-                                        textAlign: TextAlign.left,
+                                        episode.name,
+                                        style: context.textTheme.titleMedium,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
-                                    const SizedBox(height: 12),
-                                    c.lvl == 4
-                                        ? Container()
-                                        : Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              InkWell(
-                                                onTap: () =>
-                                                    showModalBottomSheet(
-                                                        context: context,
-                                                        isScrollControlled:
-                                                            true,
-                                                        backgroundColor:
-                                                            Palette.grey900,
-                                                        shape:
-                                                            const RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .vertical(
-                                                            top: Radius.circular(
-                                                                kBorderRadius),
-                                                          ),
-                                                        ),
-                                                        builder: (context) =>
-                                                            Padding(
-                                                              padding: MediaQuery
-                                                                      .of(context)
-                                                                  .viewInsets,
-                                                              child: ReplyView(
-                                                                  comment: c,
-                                                                  user: user),
-                                                            )),
-                                                child: Container(
-                                                    width: kScreenWidth -
-                                                        (16 + 20 + 16 + 16),
-                                                    height: 33,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              30),
-                                                      color: Palette.grey900,
-                                                    ),
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 8.0),
-                                                      child: Align(
-                                                        alignment: Alignment
-                                                            .centerLeft,
-                                                        child: Text(
-                                                          "Comment on ${user.name} insight...",
-                                                          style: context
-                                                              .textTheme
-                                                              .bodySmall,
-                                                        ),
-                                                      ),
-                                                    )),
-                                              ),
-                                              const Spacer(),
-                                              const CardButton(
-                                                Icon(
-                                                  Icons.share,
-                                                  color: Color(0xFF9E9E9E),
-                                                  size: 20,
-                                                ),
-                                              ),
-                                            ],
+                                    const SizedBox(height: 2),
+                                    GestureDetector(
+                                      onTap: () => openShow(episode),
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          episode.showName,
+                                          style: context.textTheme.bodyMedium!
+                                              .copyWith(
+                                            color: Colors.white70,
                                           ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Container(
+                          color: theme.colorScheme.surface,
+                          width: kScreenWidth,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 14.0, vertical: 9),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    UserAvatar(user: user, radius: 20),
+                                    const SizedBox(
+                                      width: 8,
+                                    ),
+                                    SizedBox(
+                                      width: 200,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              user.name,
+                                              style:
+                                                  context.textTheme.titleMedium,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              "${user.followers.length} followers",
+                                              style: context
+                                                  .textTheme.bodyMedium!
+                                                  .copyWith(
+                                                color: Palette.grey600,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    ButtonPlay(episode, c.time),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                SizedBox(
+                                  width: kScreenWidth - 32,
+                                  child: Text(
+                                    c.comment,
+                                    style: context.textTheme.bodyLarge,
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                c.lvl == 4
+                                    ? Container()
+                                    : Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          InkWell(
+                                            onTap: () => showModalBottomSheet(
+                                                context: context,
+                                                isScrollControlled: true,
+                                                backgroundColor:
+                                                    Palette.grey900,
+                                                shape:
+                                                    const RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.vertical(
+                                                    top: Radius.circular(
+                                                        kBorderRadius),
+                                                  ),
+                                                ),
+                                                builder: (context) => Padding(
+                                                      padding:
+                                                          MediaQuery.of(context)
+                                                              .viewInsets,
+                                                      child: ReplyView(
+                                                          comment: c,
+                                                          user: user),
+                                                    )),
+                                            child: Container(
+                                                width: kScreenWidth -
+                                                    (16 + 20 + 16 + 16),
+                                                height: 33,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(30),
+                                                  color: Palette.grey900,
+                                                ),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 8.0),
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.centerLeft,
+                                                    child: Text(
+                                                      "Comment on ${user.name} insight...",
+                                                      style: context
+                                                          .textTheme.bodySmall,
+                                                    ),
+                                                  ),
+                                                )),
+                                          ),
+                                          const Spacer(),
+                                          const CardButton(
+                                            Icon(
+                                              Icons.share,
+                                              color: Color(0xFF9E9E9E),
+                                              size: 20,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                              ],
                             ),
-                            const SizedBox(height: 16),
-                          ],
-                        );
-                      }
-                    }
-                    return const NotificationLoading();
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                    );
                   });
             }
           }

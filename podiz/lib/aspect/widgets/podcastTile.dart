@@ -29,7 +29,7 @@ class PodcastTile extends ConsumerWidget {
               params: {'showId': result.show_uri!},
             );
           } else {
-            ref.read(playerRepositoryProvider).play(result.toPodcast().uid!);
+            ref.read(playerRepositoryProvider).play(result.toEpisode().id);
             context.pushNamed(
               AppRoute.discussion.name,
               params: {'episodeId': result.uid},
