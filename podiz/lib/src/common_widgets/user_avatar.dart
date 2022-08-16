@@ -11,14 +11,19 @@ class UserAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => context.pushNamed(
-        AppRoute.profile.name,
-        params: {'userId': user.id},
-      ),
-      child: CircleAvatar(
-        radius: radius,
-        backgroundImage: NetworkImage(user.imageUrl),
+    return CircleAvatar(
+      radius: radius,
+      backgroundImage: NetworkImage(user.imageUrl),
+      child: Material(
+        shape: const CircleBorder(),
+        clipBehavior: Clip.hardEdge,
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => context.pushNamed(
+            AppRoute.profile.name,
+            params: {'userId': user.id},
+          ),
+        ),
       ),
     );
   }

@@ -83,10 +83,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   children: [
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: CircleAvatar(
-                        backgroundImage: NetworkImage(user.imageUrl),
-                        radius: 50,
-                      ),
+                      child: UserAvatar(user: user, radius: 50),
                     ),
 
                     const SizedBox(height: 12),
