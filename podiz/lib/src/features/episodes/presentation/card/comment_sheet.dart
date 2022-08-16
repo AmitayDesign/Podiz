@@ -3,13 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/authentication/auth_manager.dart';
-import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
+import 'package:podiz/src/features/episodes/domain/episode.dart';
 
 class CommentSheet extends ConsumerStatefulWidget {
-  final Podcast podcast;
-  const CommentSheet({Key? key, required this.podcast}) : super(key: key);
+  final Episode episode;
+  const CommentSheet({Key? key, required this.episode}) : super(key: key);
 
   @override
   ConsumerState<CommentSheet> createState() => _CommentSheetState();
@@ -29,8 +29,8 @@ class _CommentSheetState extends ConsumerState<CommentSheet> {
   void sendComment() {
     ref.read(authManagerProvider).doComment(
           commentController.text,
-          widget.podcast.uid!,
-          widget.podcast.duration_ms,
+          widget.episode.id,
+          widget.episode.duration,
         );
     // commentController.clear();
     Navigator.pop(context);
@@ -97,7 +97,7 @@ class _CommentSheetState extends ConsumerState<CommentSheet> {
             padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
             child: Text(
               //TODO locales text
-              "${widget.podcast.watching} listening right now",
+              "${widget.episode.peopleWatchingCount} listening right now",
               style: context.textTheme.bodySmall,
             ),
           ),

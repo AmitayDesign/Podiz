@@ -4,10 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/widgets/gradientAppBar.dart';
 import 'package:podiz/aspect/widgets/sliverFirestoreQueryBuilder.dart';
-import 'package:podiz/home/search/managers/podcastManager.dart';
-import 'package:podiz/objects/Podcast.dart';
-import 'package:podiz/providers.dart' hide currentUserProvider;
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/episodes/data/episode_repository.dart';
+import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/episodes/presentation/card/episode_card.dart';
 import 'package:podiz/src/features/episodes/presentation/card/quick_note_button.dart';
 import 'package:podiz/src/features/episodes/presentation/card/skeleton_episode_card.dart';
@@ -36,31 +35,30 @@ class _FeedPageState extends ConsumerState<FeedPage> {
     super.dispose();
   }
 
-  void openEpisode(Podcast episode) {
+  void openEpisode(Episode episode) {
     final playerRepository = ref.read(playerRepositoryProvider);
     playerRepository.currentPlayerState().then((player) {
-      if (player?.episodeId != episode.uid!) {
-        ref.read(playerRepositoryProvider).play(episode.uid!);
+      if (player?.episodeId != episode.id) {
+        ref.read(playerRepositoryProvider).play(episode.id);
       }
     });
     context.goNamed(
       AppRoute.discussion.name,
-      params: {'episodeId': episode.uid!},
+      params: {'episodeId': episode.id},
     );
   }
 
-  void openPodcast(Podcast podcast) {
+  void openPodcast(Episode episode) {
     context.goNamed(
       AppRoute.show.name,
-      params: {'showId': podcast.show_uri},
+      params: {'showId': episode.showId},
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(currentUserProvider);
-    final lastPodcastValue = ref.watch(lastListenedPodcastStreamProvider); //!
-    final podcastManager = ref.watch(podcastManagerProvider); //!
+    final episodeRepository = ref.watch(episodeRepositoryProvider);
     final controller = ref.read(feedControllerProvider.notifier);
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -76,29 +74,35 @@ class _FeedPageState extends ConsumerState<FeedPage> {
             ),
 
             //* Last Listened
-            SliverToBoxAdapter(
-              child: lastPodcastValue.when(
-                loading: () => const SkeletonEpisodeCard(
-                  bottomHeight: QuickNoteButton.height,
-                ),
-                error: (e, _) => null,
-                data: (lastPodcast) {
-                  if (lastPodcast == null) return null;
-                  return EpisodeCard(
-                    lastPodcast,
-                    onTap: () => openEpisode(lastPodcast),
-                    onPodcastTap: () => openPodcast(lastPodcast),
-                    bottom: QuickNoteButton(podcast: lastPodcast),
+            if (user.lastListenedEpisodeId.isNotEmpty)
+              Consumer(
+                builder: (context, ref, _) {
+                  final lastListenedEpisodeValue = ref
+                      .watch(episodeFutureProvider(user.lastListenedEpisodeId));
+                  return SliverToBoxAdapter(
+                    child: lastListenedEpisodeValue.when(
+                      loading: () => const SkeletonEpisodeCard(
+                        bottomHeight: QuickNoteButton.height,
+                      ),
+                      error: (e, _) => null,
+                      data: (lastListenedEpisode) {
+                        return EpisodeCard(
+                          lastListenedEpisode,
+                          onTap: () => openEpisode(lastListenedEpisode),
+                          onPodcastTap: () => openPodcast(lastListenedEpisode),
+                          bottom: QuickNoteButton(episode: lastListenedEpisode),
+                        );
+                      },
+                    ),
                   );
                 },
               ),
-            ),
 
             //* My Casts
             // if (user.favPodcastIds.isNotEmpty)
             //   SliverList(
             //     delegate: SliverChildListDelegate([
-            //       if (user.lastPodcastId.isNotEmpty)
+            //       if (user.lastListenedEpisodeId.isNotEmpty)
             //         FeedTile(
             //           Locales.string(context, controller.myCastsLocaleKey),
             //           textKey: controller.myCastsKey,
@@ -113,13 +117,14 @@ class _FeedPageState extends ConsumerState<FeedPage> {
             //   ),
 
             //* Hot & Live
-            if (user.lastPodcastId.isNotEmpty || user.favPodcastIds.isNotEmpty)
+            if (user.lastListenedEpisodeId.isNotEmpty ||
+                user.favPodcastIds.isNotEmpty)
               SliverFeedTile(
                 Locales.string(context, controller.hotLiveLocaleKey),
                 textKey: controller.hotLiveKey,
               ),
-            SliverFirestoreQueryBuilder<Podcast>(
-              query: podcastManager.hotliveFirestoreQuery(),
+            SliverFirestoreQueryBuilder<Episode>(
+              query: episodeRepository.hotliveFirestoreQuery(),
               builder: (context, podcast) => EpisodeCard(
                 podcast,
                 onTap: () => openEpisode(podcast),

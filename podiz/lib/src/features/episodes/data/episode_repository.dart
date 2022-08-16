@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/src/features/auth/data/spotify_api.dart';
@@ -14,4 +15,16 @@ final episodeRepositoryProvider = Provider<EpisodeRepository>(
 
 abstract class EpisodeRepository {
   Future<Episode> fetchEpisode(String episodeId);
+  Query<Episode> hotliveFirestoreQuery(); //!
+  Query<Episode> episodesFirestoreQuery(String filter); //!
 }
+
+final episodeFutureProvider =
+    FutureProvider.family.autoDispose<Episode, EpisodeId>(
+  (ref, episodeId) async {
+    final episodeRepository = ref.watch(episodeRepositoryProvider);
+    final episode = await episodeRepository.fetchEpisode(episodeId);
+    ref.keepAlive();
+    return episode;
+  },
+);

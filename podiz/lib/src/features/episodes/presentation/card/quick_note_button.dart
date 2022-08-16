@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/objects/Podcast.dart';
+import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 import 'comment_sheet.dart';
 
 class QuickNoteButton extends StatelessWidget {
-  final Podcast podcast;
-  const QuickNoteButton({Key? key, required this.podcast}) : super(key: key);
+  final Episode episode;
+  const QuickNoteButton({Key? key, required this.episode}) : super(key: key);
 
   static const height = 32.0;
 
@@ -37,7 +37,7 @@ class QuickNoteButton extends StatelessWidget {
           ),
           builder: (context) => Padding(
             padding: MediaQuery.of(context).viewInsets,
-            child: CommentSheet(podcast: podcast),
+            child: CommentSheet(episode: episode),
           ),
         ),
         icon: Icon(

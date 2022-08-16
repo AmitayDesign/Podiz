@@ -6,18 +6,18 @@ import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/widgets/buttonPlay.dart';
 import 'package:podiz/aspect/widgets/cardButton.dart';
 import 'package:podiz/home/components/replyView.dart';
-import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/loading.dart/notificationLoading.dart';
 import 'package:podiz/loading.dart/shimmerContainer.dart';
 import 'package:podiz/objects/Comment.dart';
-import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/objects/show.dart';
 import 'package:podiz/profile/components.dart/backAppBar.dart';
 import 'package:podiz/profile/components.dart/followPeopleButton.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/features/episodes/data/episode_repository.dart';
+import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/palette.dart';
@@ -47,10 +47,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     setState(() {});
   }
 
-  void openShow(Podcast podcast) {
+  void openPodcast(Episode episode) {
     context.goNamed(
       AppRoute.show.name,
-      params: {'showId': podcast.show_uri},
+      params: {'showId': episode.showId},
     );
   }
 
@@ -211,31 +211,26 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
   Widget _buildItem(UserPodiz user, Comment c) {
     final theme = Theme.of(context);
-    return FutureBuilder(
-        future: ref.read(podcastManagerProvider).fetchPodcast(c.episodeUid),
-        initialData: "loading",
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            // If we got an error
-            if (snapshot.hasError) {
-              return Center(
-                child: Text(
-                  '${snapshot.error} occurred',
-                  style: const TextStyle(fontSize: 18),
-                ),
-              );
+    return Consumer(
+      builder: (context, ref, _) {
+        final episodeValue = ref.read(episodeFutureProvider(c.episodeUid));
 
-              // if we got our data
-            } else if (snapshot.hasData) {
-              final episode = snapshot.data as Podcast;
-              episode.uid = c.episodeUid;
+        return episodeValue.when(
+            loading: () => const NotificationLoading(),
+            error: (e, _) => Center(
+                  child: Text(
+                    '$e occurred',
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                ),
+            data: (episode) {
               return Column(
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Row(
                       children: [
-                        PodcastAvatar(imageUrl: episode.image_url, size: 32),
+                        PodcastAvatar(imageUrl: episode.imageUrl, size: 32),
                         const SizedBox(width: 8),
                         Expanded(
                           child: SizedBox(
@@ -251,11 +246,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                   ),
                                 ),
                                 GestureDetector(
-                                  onTap: () => openShow(episode),
+                                  onTap: () => openPodcast(episode),
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      episode.show_name,
+                                      episode.showName,
                                       style: context.textTheme.bodyMedium!
                                           .copyWith(
                                         color: Colors.white70,
@@ -388,9 +383,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   const SizedBox(height: 16),
                 ],
               );
-            }
-          }
-          return const NotificationLoading();
-        });
+            });
+      },
+    );
   }
 }

@@ -7,18 +7,19 @@ import 'package:podiz/aspect/widgets/buttonPlay.dart';
 import 'package:podiz/aspect/widgets/cardButton.dart';
 import 'package:podiz/home/components/replyView.dart';
 import 'package:podiz/objects/Comment.dart';
-import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/player/components/repliesArea.dart';
 import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 class DiscussionCard extends ConsumerStatefulWidget {
   final Comment comment;
-  final Podcast p;
+  final Episode episode;
 
-  const DiscussionCard(this.p, this.comment, {Key? key}) : super(key: key);
+  const DiscussionCard(this.episode, this.comment, {Key? key})
+      : super(key: key);
 
   @override
   ConsumerState<DiscussionCard> createState() => _DiscussionCardState();
@@ -113,7 +114,7 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                               ),
                             ),
                             const Spacer(),
-                            ButtonPlay(widget.p, widget.comment.time),
+                            ButtonPlay(widget.episode, widget.comment.time),
                           ],
                         ),
                         const SizedBox(height: 12),

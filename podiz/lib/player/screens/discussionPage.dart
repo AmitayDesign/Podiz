@@ -8,6 +8,7 @@ import 'package:podiz/player/components/discussionCard.dart';
 import 'package:podiz/player/components/discussionSnackBar.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/splash_screen.dart';
+import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/domain/player.dart';
 
@@ -53,7 +54,7 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
   @override
   Widget build(BuildContext context) {
     final commentsValue = ref.watch(commentsStreamProvider);
-    final podcastValue = ref.watch(podcastFutureProvider(widget.episodeId));
+    final episodeValue = ref.watch(episodeFutureProvider(widget.episodeId));
     ref.listen<AsyncValue<Player?>>(
       playerStateChangesProvider,
       (_, positionValue) {
@@ -64,15 +65,15 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
         });
       },
     );
-    return podcastValue.when(
+    return episodeValue.when(
         error: (e, st) {
-          print('discussionPage podcast: ${e.toString()}');
+          print('discussionPage episode: ${e.toString()}');
           return const SplashScreen.error();
         },
         loading: () => loadingWidget,
-        data: (podcast) {
+        data: (episode) {
           return Scaffold(
-            appBar: DiscussionAppBar(podcast),
+            appBar: DiscussionAppBar(episode),
             body: commentsValue.when(
                 error: (e, _) {
                   print('discussionPage comments: ${e.toString()}');
@@ -88,13 +89,13 @@ class _DiscussionPageState extends ConsumerState<DiscussionPage> {
                           itemCount: comments.length,
                           itemBuilder: (context, index) {
                             return DiscussionCard(
-                              podcast,
+                              episode,
                               comments[index],
                             );
                           },
                         ),
                       ),
-                      DiscussionSnackBar(podcast),
+                      DiscussionSnackBar(episode),
                     ],
                   );
                 }),

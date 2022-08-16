@@ -2,23 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/formatters.dart';
-import 'package:podiz/objects/Podcast.dart';
+import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 class ButtonPlay extends ConsumerWidget {
-  final Podcast podcast;
+  final Episode episode;
   final int time;
 
-  const ButtonPlay(this.podcast, this.time, {Key? key}) : super(key: key);
+  const ButtonPlay(this.episode, this.time, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final playerManager = ref.watch(playerRepositoryProvider);
+    final playerRepository = ref.watch(playerRepositoryProvider);
     return InkWell(
       onTap: () {
         // TODO what if the playingnpodcast is different
-        playerManager.play(podcast.uid!, time - 10000);
+        playerRepository.play(episode.id, time - 10000);
       },
       child: Container(
         width: 76,

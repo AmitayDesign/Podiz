@@ -5,7 +5,6 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/typedefs.dart';
 import 'package:podiz/authentication/auth_manager.dart';
-import 'package:podiz/home/search/managers/podcastManager.dart';
 import 'package:podiz/objects/Comment.dart';
 import 'package:podiz/providers.dart';
 import 'package:rxdart/rxdart.dart';
@@ -18,7 +17,6 @@ class PlayerManager {
   final Reader _read;
 
   AuthManager get authManager => _read(authManagerProvider);
-  PodcastManager get podcastManager => _read(podcastManagerProvider);
   FirebaseFirestore get firestore => _read(firestoreProvider);
   FirebaseFunctions get functions => _read(functionsProvider);
 

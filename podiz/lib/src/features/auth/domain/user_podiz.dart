@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:podiz/aspect/typedefs.dart';
 import 'package:podiz/objects/Comment.dart';
+import 'package:podiz/src/features/episodes/domain/episode.dart';
 
 part 'user_podiz.g.dart';
 
@@ -22,9 +23,9 @@ class UserPodiz with EquatableMixin {
   @JsonKey(name: 'image_url')
   final String imageUrl;
 
-  // TODO make lastPodcastId nullable
+  // TODO make lastListenedEpisodeId nullable
   @JsonKey(name: 'lastListened')
-  final String lastPodcastId;
+  final EpisodeId lastListenedEpisodeId;
 
   @JsonKey(name: 'favPodcasts', defaultValue: [])
   final List<String> favPodcastIds;
@@ -39,7 +40,7 @@ class UserPodiz with EquatableMixin {
     required this.followers,
     required this.following,
     required this.imageUrl,
-    required this.lastPodcastId,
+    required this.lastListenedEpisodeId,
     required this.favPodcastIds,
     required this.comments,
   });
@@ -57,7 +58,7 @@ class UserPodiz with EquatableMixin {
 
   @override
   String toString() =>
-      'UserPodiz(id: $id, name: $name, email: $email, followers: $followers, following: $following, imageUrl: $imageUrl, lastPodcastId: $lastPodcastId, favPodcastIds: $favPodcastIds, comments: $comments)';
+      'UserPodiz(id: $id, name: $name, email: $email, followers: $followers, following: $following, imageUrl: $imageUrl, lastListenedEpisodeId: $lastListenedEpisodeId, favPodcastIds: $favPodcastIds, comments: $comments)';
 
   @override
   List<Object> get props => [id];

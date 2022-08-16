@@ -2,16 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/player/PlayerManager.dart';
 import 'package:podiz/player/components/insightSheet.dart';
+import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 class DiscussionSnackBar extends ConsumerStatefulWidget {
-  final Podcast p;
+  final Episode episode;
   const DiscussionSnackBar(
-    this.p, {
+    this.episode, {
     Key? key,
   }) : super(key: key);
 
@@ -53,7 +53,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
         child: Padding(
           padding: MediaQuery.of(context).viewInsets,
           child: InsightSheet(
-            podcast: widget.p,
+            episode: widget.episode,
           ),
         ),
       ),
@@ -64,7 +64,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
   Widget build(BuildContext context) {
     final playerManager = ref.watch(playerManagerProvider);
     if (firstTime) {
-      episodeUid = widget.p.uid!;
+      episodeUid = widget.episode.id;
       playerManager.increment(episodeUid);
       firstTime = false;
     }
@@ -77,7 +77,7 @@ class _DiscussionSnackBarState extends ConsumerState<DiscussionSnackBar> {
             top: Radius.circular(kBorderRadius),
           ),
         ),
-        child: InsightSheet(podcast: widget.p),
+        child: InsightSheet(episode: widget.episode),
       ),
     );
   }

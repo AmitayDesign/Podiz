@@ -3,18 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/authentication/auth_manager.dart';
-import 'package:podiz/objects/Podcast.dart';
 import 'package:podiz/player/components/pinkTimer.dart';
 import 'package:podiz/player/playerController.dart';
 import 'package:podiz/player/playerWidget.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
+import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 
 class InsightSheet extends ConsumerStatefulWidget {
-  final Podcast podcast;
-  const InsightSheet({Key? key, required this.podcast}) : super(key: key);
+  final Episode episode;
+  const InsightSheet({Key? key, required this.episode}) : super(key: key);
 
   @override
   ConsumerState<InsightSheet> createState() => _CommentSheetState();
@@ -34,7 +34,7 @@ class _CommentSheetState extends ConsumerState<InsightSheet> {
   void sendComment() {
     ref.read(authManagerProvider).doComment(
           commentController.text,
-          widget.podcast.uid!,
+          widget.episode.id,
           ref.read(playerStateChangesProvider).value!.playbackPosition,
         );
     commentController.clear();
@@ -113,7 +113,8 @@ class _CommentSheetState extends ConsumerState<InsightSheet> {
                 child: Row(
                   children: [
                     Text(
-                      "${widget.podcast.watching} listening with you".hardcoded,
+                      "${widget.episode.peopleWatchingCount} listening with you"
+                          .hardcoded,
                       style: context.textTheme.bodySmall,
                     ),
                     const Spacer(),
