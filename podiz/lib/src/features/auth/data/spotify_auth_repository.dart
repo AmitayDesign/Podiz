@@ -31,17 +31,33 @@ class SpotifyAuthRepository implements AuthRepository {
   }
 
   late StreamSubscription sub;
+  StreamSubscription? userSub;
   void listenToAuthStateChanges() {
     // StreamTransformer.fromBind(bind)
-    sub = preferences.watchString(userKey).asyncExpand((uid) async* {
-      if (uid == null) {
-        yield null;
-      } else {
-        final doc = await firestore.collection('users').doc(uid).get();
-        //TODO listen to user changes
-        yield doc.exists ? UserPodiz.fromFirestore(doc) : null;
-      }
-    }).listen((user) => authState.value = user);
+    final preferencesStream = preferences.watchString(userKey);
+    sub = preferencesStream
+        .transform(
+          StreamTransformer<String?, UserPodiz?>.fromHandlers(
+            handleData: (userId, sink) {
+              userSub?.cancel();
+              if (userId == null) sink.add(null);
+              userSub = firestore
+                  .collection('users')
+                  .doc(userId)
+                  .snapshots()
+                  .listen((doc) {
+                final user = UserPodiz.fromFirestore(doc);
+                sink.add(user);
+              });
+            },
+            handleDone: (sink) => userSub?.cancel(),
+            handleError: (e, _, sink) {
+              userSub?.cancel();
+              sink.add(null);
+            },
+          ),
+        )
+        .listen((user) => authState.value = user);
   }
 
   late StreamSubscription connectionSub;
@@ -56,6 +72,7 @@ class SpotifyAuthRepository implements AuthRepository {
 
   void dispose() {
     connectionSub.cancel();
+    userSub?.cancel();
     sub.cancel();
     authState.close();
   }
