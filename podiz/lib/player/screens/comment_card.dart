@@ -72,7 +72,7 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                     const SizedBox(width: 8),
                     TimeChip(
                       icon: Icons.play_arrow,
-                      position: widget.comment.time,
+                      position: widget.comment.time ~/ 1000,
                       onTap: () {}, //TODO resume the episode at this time
                     ),
                   ],

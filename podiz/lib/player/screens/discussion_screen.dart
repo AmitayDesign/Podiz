@@ -23,8 +23,8 @@ class DiscussionScreen extends ConsumerStatefulWidget {
 class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
   late String episodeId = widget.episodeId;
 
-  final GlobalKey<AnimatedListState> commentListKey =
-      GlobalKey<AnimatedListState>();
+  final scrollController = ScrollController();
+  int commentsCount = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -58,41 +58,44 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                       text: 'Error loading comments',
                     ),
                     data: (comments) {
-                      playerTimeValue.when(
+                      return playerTimeValue.when(
                         loading: () => const EmptyDiscussionText(),
                         error: (e, _) => const EmptyDiscussionText(
                           text: 'Error playing this episode',
                         ),
                         data: (playerTime) {
                           if (comments.isEmpty) const EmptyDiscussionText();
-                          comments.retainWhere((comment) =>
-                              comment.time <= playerTime.position * 1000);
-                          return AnimatedList(
-                            key: commentListKey,
-                            itemBuilder: (context, i, animation) =>
-                                SlideTransition(
-                              position: animation.drive(
-                                Tween(
-                                    begin: const Offset(1, 0),
-                                    end: Offset.zero),
-                              ),
+                          final filteredComments = comments.reversed
+                              .where((comment) =>
+                                  comment.time ~/ 1000 <= playerTime.position)
+                              .toList();
+                          if (commentsCount != 0 &&
+                              commentsCount != filteredComments.length &&
+                              scrollController.hasClients &&
+                              scrollController.offset < 100) {
+                            Future.microtask(() => scrollController.animateTo(
+                                  0,
+                                  duration: const Duration(milliseconds: 200),
+                                  curve: Curves.ease,
+                                ));
+                          }
+                          commentsCount = filteredComments.length;
+                          return ListView.builder(
+                            controller: scrollController,
+                            reverse: true,
+                            padding: const EdgeInsets.only(
+                              bottom: DiscussionSheet.height,
+                            ),
+                            itemCount: filteredComments.length,
+                            itemBuilder: (context, i) => Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
                               child: CommentCard(
-                                comments[i],
+                                filteredComments[i],
                                 episodeId: episodeId,
                               ),
                             ),
                           );
                         },
-                      );
-                      return ListView.separated(
-                        padding: const EdgeInsets.only(
-                          bottom: DiscussionSheet.height,
-                        ),
-                        itemCount: comments.length,
-                        separatorBuilder: (context, _) =>
-                            const SizedBox(height: 16),
-                        itemBuilder: (context, i) =>
-                            CommentCard(comments[i], episodeId: episodeId),
                       );
                     },
                   );
