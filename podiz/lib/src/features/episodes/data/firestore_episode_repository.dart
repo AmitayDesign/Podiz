@@ -16,40 +16,48 @@ class FirestoreEpisodeRepository extends EpisodeRepository {
     required this.spotifyApi,
   });
 
-  // TODO do this fetch in the widget
-  // player should only have episodeId field
+  @override
+  Stream<Episode> watchEpisode(String episodeId) {
+    return firestore.collection('podcasts').doc(episodeId).snapshots().asyncMap(
+      (doc) async {
+        if (doc.exists) return Episode.fromFirestore(doc);
+        return fetchEpisodeFromSpotify(episodeId);
+      },
+    );
+  }
+
   @override
   Future<Episode> fetchEpisode(String episodeId) async {
-    final doc = await firestore
-        .collection('podcasts')
-        .doc(episodeId)
-        .get(); //! fix collection name
-    if (!doc.exists) {
-      final accessToken = spotifyApi.getAccessToken();
-      // final uri = Uri.https('api.spotify.com/v1/episodes', '/$episodeId');
-      final uri = Uri.parse('https://api.spotify.com/v1/episodes/$episodeId');
-      final response = await spotifyApi.client.get(uri, headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $accessToken',
-        'Content-Type': 'application/json',
-      });
-      if (response.statusCode != 200) {
-        //TODO always throwing error
-        throw Exception('Failed to get podcast data');
-      }
+    final doc = await firestore.collection('podcasts').doc(episodeId).get();
+    if (doc.exists) return Episode.fromFirestore(doc);
+    return fetchEpisodeFromSpotify(episodeId);
+  }
 
-      final parsedJson = jsonDecode(response.body) as Map<String, dynamic>;
-      debugPrint(parsedJson.toString()); //TODO  get show id and name
-      final episode = Episode.fromSpotify(parsedJson);
-      debugPrint(episode.toFirestore().toString());
-      // await firestore
-      //     .collection('podcasts')
-      //     .doc(episodeId)
-      //     .set(episode.toFirestore());
-      // await showRepository.fetchShow(showId); //TODO load show aswell
-      return episode;
+  Future<Episode> fetchEpisodeFromSpotify(String episodeId) async {
+    final accessToken = spotifyApi.getAccessToken();
+    // final uri = Uri.https('api.spotify.com/v1/episodes', '/$episodeId');
+    final uri = Uri.parse('https://api.spotify.com/v1/episodes/$episodeId');
+    final response = await spotifyApi.client.get(uri, headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $accessToken',
+      'Content-Type': 'application/json',
+    });
+    if (response.statusCode != 200) {
+      //TODO always throwing error
+      throw Exception('Failed to get podcast data');
     }
-    return Episode.fromFirestore(doc);
+
+    final parsedJson = jsonDecode(response.body) as Map<String, dynamic>;
+    debugPrint(parsedJson.toString()); //TODO  get show id and name
+    final episode = Episode.fromSpotify(parsedJson);
+    debugPrint(episode.toFirestore().toString());
+    //TODO save on firestore
+    // await firestore
+    //     .collection('podcasts')
+    //     .doc(episodeId)
+    //     .set(episode.toFirestore());
+    // await showRepository.fetchShow(showId); //TODO load show aswell
+    return episode;
   }
 
   @override
@@ -70,10 +78,4 @@ class FirestoreEpisodeRepository extends EpisodeRepository {
         fromFirestore: (doc, _) => Episode.fromFirestore(doc),
         toFirestore: (episode, _) => {},
       );
-
-  @override
-  Stream<Episode> watchEpisode(String episodeId) {
-    // TODO: implement watchEpisode
-    throw UnimplementedError();
-  }
 }
