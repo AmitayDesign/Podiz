@@ -5,30 +5,25 @@ import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 
-class CommentSheetContent extends StatefulWidget {
+class CommentSheetContent extends StatelessWidget {
+  final FocusNode? focusNode;
+  final TextEditingController controller;
   final ValueSetter<String>? onSend;
-  const CommentSheetContent({Key? key, this.onSend}) : super(key: key);
 
-  @override
-  State<CommentSheetContent> createState() => _CommentSheetContentState();
-}
+  const CommentSheetContent({
+    Key? key,
+    this.focusNode,
+    required this.controller,
+    this.onSend,
+  }) : super(key: key);
 
-class _CommentSheetContentState extends State<CommentSheetContent> {
   final buttonSize = kMinInteractiveDimension * 5 / 6;
-  final commentNode = FocusNode();
-  final commentController = TextEditingController();
-  String get comment => commentController.text;
-
-  @override
-  void dispose() {
-    commentController.dispose();
-    super.dispose();
-  }
+  String get comment => controller.text;
 
   void sendComment() {
-    widget.onSend?.call(commentController.text);
-    commentController.clear();
-    commentNode.unfocus();
+    onSend?.call(controller.text);
+    controller.clear();
+    focusNode?.unfocus();
   }
 
   @override
@@ -44,8 +39,8 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
         const SizedBox(width: 8),
         Expanded(
           child: TextField(
-            focusNode: commentNode,
-            controller: commentController,
+            focusNode: focusNode,
+            controller: controller,
             keyboardType: TextInputType.multiline,
             textInputAction: TextInputAction.send,
             minLines: 1,

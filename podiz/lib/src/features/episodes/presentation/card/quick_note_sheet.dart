@@ -9,12 +9,26 @@ import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/theme/palette.dart';
 
-class QuickNoteSheet extends ConsumerWidget {
+class QuickNoteSheet extends ConsumerStatefulWidget {
   final Episode episode;
   const QuickNoteSheet({Key? key, required this.episode}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<QuickNoteSheet> createState() => _QuickNoteSheetState();
+}
+
+class _QuickNoteSheetState extends ConsumerState<QuickNoteSheet> {
+  final commentNode = FocusNode();
+  final commentController = TextEditingController();
+
+  @override
+  void dispose() {
+    commentController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Material(
       color: Palette.grey900,
       shape: const RoundedRectangleBorder(
@@ -29,11 +43,13 @@ class QuickNoteSheet extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             CommentSheetContent(
+              focusNode: commentNode..requestFocus(),
+              controller: commentController,
               onSend: (comment) async {
                 final time = await ref.read(playerTimeStreamProvider.future);
                 ref.read(discussionRepositoryProvider).addComment(
                       comment,
-                      episodeId: episode.id,
+                      episodeId: widget.episode.id,
                       time: time.position,
                       user: ref.read(currentUserProvider),
                     );
@@ -43,7 +59,7 @@ class QuickNoteSheet extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
               child: Text(
                 //TODO locales text
-                "${episode.userIdsWatching.length} listening right now",
+                "${widget.episode.userIdsWatching.length} listening right now",
                 style: context.textTheme.bodySmall,
               ),
             ),
