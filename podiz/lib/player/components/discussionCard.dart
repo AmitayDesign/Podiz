@@ -97,12 +97,14 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      user.name,
-                                      style: context.textTheme.titleMedium,
-                                      overflow: TextOverflow.ellipsis,
+                                  Expanded(
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        user.name,
+                                        style: context.textTheme.titleMedium,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(height: 4),

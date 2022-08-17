@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/profile/components.dart/backAppBar.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
-import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/episodes/presentation/card/episode_content.dart';
 import 'package:podiz/src/features/player/presentation/player_slider.dart';
@@ -36,22 +35,23 @@ class DiscussionBar extends StatelessWidget with PreferredSizeWidget {
         padding: const EdgeInsets.only(
           top: GradientBar.height + 8,
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Consumer(
-              builder: (context, ref, _) {
-                final episodeValue =
-                    ref.watch(episodeFutureProvider(episodeId));
-                return episodeValue.when(
-                  loading: () => const SizedBox.shrink(), //!
-                  error: (e, _) => const SizedBox.shrink(), //!
-                  data: (episode) => EpisodeContent(episode),
-                );
-              },
-            ),
-            const PlayerSlider(),
-          ],
+        child: Consumer(
+          child: const PlayerSlider(),
+          builder: (context, ref, playerSlider) {
+            // final episodeValue = ref.watch(episodeFutureProvider(episodeId));
+            final episodeValue = const AsyncLoading();
+            return episodeValue.when(
+              loading: () => const SizedBox.shrink(), //!
+              error: (e, _) => const SizedBox.shrink(), //!
+              data: (episode) => Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  EpisodeContent(episode),
+                  playerSlider!,
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
