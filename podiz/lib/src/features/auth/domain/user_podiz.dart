@@ -9,6 +9,7 @@ part 'user_podiz.g.dart';
 
 @JsonSerializable()
 class UserPodiz with EquatableMixin {
+  @JsonKey(ignore: true)
   final String id;
   final String name;
   final String email;

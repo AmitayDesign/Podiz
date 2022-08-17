@@ -10,7 +10,7 @@ typedef EpisodeId = String;
 class Episode with EquatableMixin {
   final EpisodeId id;
   final String name;
-  final String description;
+  final String description; //! not used
 
   @JsonKey(name: 'duration_ms')
   final int duration;
@@ -18,15 +18,18 @@ class Episode with EquatableMixin {
   @JsonKey(name: 'image_url')
   final String imageUrl;
 
+  //TODO remove from here to read by itself
   @JsonKey(name: 'comments', defaultValue: 0)
   final int commentsCount;
 
   @JsonKey(name: 'commentsImg', defaultValue: [])
   final List<String> commentImageUrls;
+  //!
 
   @JsonKey(name: 'release_date')
   final String releaseDateString; //TODO make it a DateTime
 
+  //TODO remove from here to read by itself
   @JsonKey(name: 'users_watching', defaultValue: [])
   final List<String> userIdsWatching;
 
@@ -68,6 +71,8 @@ class Episode with EquatableMixin {
   factory Episode.fromJson(Map<String, dynamic> json) =>
       _$EpisodeFromJson(json);
 
+  factory Episode.copyFrom(Episode user) => Episode.fromJson(user.toJson());
+
   Map<String, dynamic> toJson() => _$EpisodeToJson(this);
 
   Map<String, dynamic> toFirestore() {
@@ -84,8 +89,6 @@ class Episode with EquatableMixin {
       ..remove('uid')
       ..['searchArray'] = searchArray;
   }
-
-  factory Episode.copyFrom(Episode user) => Episode.fromJson(user.toJson());
 
   @override
   String toString() => " user + $id : \n{(name : $name;\n";

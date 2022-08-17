@@ -151,6 +151,15 @@ class SpotifyAuthRepository implements AuthRepository {
     );
     return userId;
   }
+
+  @override
+  Future<void> updateUser(UserPodiz user) {
+    return firestore
+        .collection('users')
+        .doc(user.id)
+        .update(user.toJson())
+        .catchError((e) => throw Exception('Error updating user'));
+  }
 }
 
   // Future<Podcast?> getRandomEpisode(List<String> episodeIds) async {
