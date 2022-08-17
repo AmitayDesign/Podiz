@@ -12,6 +12,7 @@ class Episode with EquatableMixin {
   final String name;
   final String description; //! not used
 
+  //TODO convert to seconds
   @JsonKey(name: 'duration_ms')
   final int duration;
 

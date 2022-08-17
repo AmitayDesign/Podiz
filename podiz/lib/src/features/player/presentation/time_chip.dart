@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/src/features/player/data/player_repository.dart';
+import 'package:podiz/src/features/player/presentation/player_slider_controller.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 class PlayerTimeChip extends ConsumerWidget {
@@ -21,11 +21,10 @@ class PlayerTimeChip extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final playerTime = ref.watch(playerTimeStreamProvider).valueOrNull;
-    final position = playerTime?.position ?? 0;
+    final playerTime = ref.watch(playerSliderControllerProvider);
     return TimeChip(
       loading: loading,
-      position: position,
+      position: playerTime.position,
       icon: icon,
       color: Palette.pink,
       onTap: onTap,
@@ -73,7 +72,7 @@ class TimeChip extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: Text(
-                  timeFromMilliseconds(position),
+                  timeFromMilliseconds(position * 1000),
                   style: context.textTheme.titleSmall!.copyWith(
                     color: Colors.white,
                     fontFeatures: const [FontFeature.tabularFigures()],

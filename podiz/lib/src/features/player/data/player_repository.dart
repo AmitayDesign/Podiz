@@ -1,11 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
-import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/player/domain/player_time.dart';
 import 'package:podiz/src/features/player/domain/playing_episode.dart';
-import 'package:podiz/src/utils/instances.dart';
 
 import 'spotify_player_repository.dart';
 
@@ -36,18 +32,15 @@ final playerTimeStreamProvider = StreamProvider.autoDispose<PlayerTime>(
   (ref) async* {
     final episode = ref.watch(playerStateChangesProvider).valueOrNull;
     if (episode == null) {
-      yield PlayerTime(
-        duration: 0,
-        position: 0,
-      );
+      yield PlayerTime.zero;
       return;
     }
     // player has an episode
     // ref.watch(listeningProvider(episode.id));
     if (!episode.isPlaying) {
       yield PlayerTime(
-        duration: episode.duration,
-        position: episode.initialPosition,
+        duration: episode.duration ~/ 1000,
+        position: episode.initialPosition ~/ 1000,
       );
     } else {
       final initialPosition = episode.initialPosition;
@@ -59,8 +52,8 @@ final playerTimeStreamProvider = StreamProvider.autoDispose<PlayerTime>(
           final position =
               (initialPosition + timeUntilPreciseSecond) + (tick + 1) * 1000;
           return PlayerTime(
-            duration: episode.duration,
-            position: position,
+            duration: episode.duration ~/ 1000,
+            position: position ~/ 1000,
           );
         },
       );
@@ -69,25 +62,25 @@ final playerTimeStreamProvider = StreamProvider.autoDispose<PlayerTime>(
 );
 
 //TODO test this when closing app
-final listeningProvider = Provider.family.autoDispose<void, EpisodeId>(
-  (ref, episodeId) {
-    print('LISTENING TO $episodeId');
-    final doc =
-        ref.read(firestoreProvider).collection('podcasts').doc(episodeId);
-    const field = 'users_watching';
-    // get the user that's watching
-    final user = ref.read(currentUserProvider);
-    // add new watcher
-    doc.set({
-      field: FieldValue.arrayUnion([user.id])
-    }, SetOptions(merge: true));
-    // remove watcher
-    ref.onDispose(() {
-      print('STOPPED $episodeId');
-      doc.update({
-        field: FieldValue.arrayRemove([user.id])
-      });
-    });
-  },
-  disposeDelay: const Duration(milliseconds: 200),
-);
+// final listeningProvider = Provider.family.autoDispose<void, EpisodeId>(
+//   (ref, episodeId) {
+//     print('LISTENING TO $episodeId');
+//     final doc =
+//         ref.read(firestoreProvider).collection('podcasts').doc(episodeId);
+//     const field = 'users_watching';
+//     // get the user that's watching
+//     final user = ref.read(currentUserProvider);
+//     // add new watcher
+//     doc.set({
+//       field: FieldValue.arrayUnion([user.id])
+//     }, SetOptions(merge: true));
+//     // remove watcher
+//     ref.onDispose(() {
+//       print('STOPPED $episodeId');
+//       doc.update({
+//         field: FieldValue.arrayRemove([user.id])
+//       });
+//     });
+//   },
+//   disposeDelay: const Duration(milliseconds: 200),
+// );
