@@ -4,7 +4,6 @@ import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/widgets/dot.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
-import 'package:podiz/src/utils/zwsp_string.dart';
 
 import 'insights_info.dart';
 
@@ -37,9 +36,6 @@ class EpisodeContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final titleStyle = context.textTheme.titleMedium;
     final subtitleStyle = context.textTheme.bodyMedium;
-
-    print(episode.showName);
-    print(episode.showName.useCorrectEllipsis());
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16)
@@ -74,7 +70,7 @@ class EpisodeContent extends StatelessWidget {
                             child: GestureDetector(
                               onTap: onTap,
                               child: Text(
-                                episode.showName.useCorrectEllipsis(),
+                                episode.showName,
                                 style: subtitleStyle,
                                 overflow: TextOverflow.ellipsis,
                               ),
