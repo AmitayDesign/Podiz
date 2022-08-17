@@ -82,7 +82,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
               Consumer(
                 builder: (context, ref, _) {
                   final lastListenedValue = ref
-                      .watch(episodeStreamProvider(user.lastListenedEpisodeId));
+                      .watch(episodeFutureProvider(user.lastListenedEpisodeId));
                   return SliverToBoxAdapter(
                     child: lastListenedValue.when(
                       loading: () => const SkeletonEpisodeCard(
