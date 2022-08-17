@@ -6,7 +6,7 @@ import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 
 class CommentSheetContent extends StatefulWidget {
-  final VoidCallback? onSend;
+  final ValueSetter<String>? onSend;
   const CommentSheetContent({Key? key, this.onSend}) : super(key: key);
 
   @override
@@ -26,7 +26,7 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
   }
 
   void sendComment() {
-    widget.onSend?.call();
+    widget.onSend?.call(commentController.text);
     commentController.clear();
     commentNode.unfocus();
   }

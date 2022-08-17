@@ -13,6 +13,7 @@ final discussionRepositoryProvider = Provider<DiscussionRepository>(
 );
 
 abstract class DiscussionRepository {
+  //TODO change how comments are saved
   Stream<List<Comment>> watchComments(EpisodeId episodeId);
   Future<void> addComment(
     String text, {
