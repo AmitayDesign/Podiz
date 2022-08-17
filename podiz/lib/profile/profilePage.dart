@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/aspect/widgets/buttonPlay.dart';
 import 'package:podiz/aspect/widgets/cardButton.dart';
 import 'package:podiz/home/components/replyView.dart';
 import 'package:podiz/home/search/managers/showManager.dart';
@@ -19,6 +18,8 @@ import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
+import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/palette.dart';
@@ -209,6 +210,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
   Widget _buildItem(UserPodiz user, Comment c) {
     final theme = Theme.of(context);
+    final playerRepository = ref.watch(playerRepositoryProvider);
     return Consumer(
       builder: (context, ref, _) {
         final episodeValue = ref.read(episodeFutureProvider(c.episodeId));
@@ -307,8 +309,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                   ],
                                 ),
                               ),
-                              const Spacer(),
-                              ButtonPlay(episode, c.time),
+                              TimeChip(
+                                icon: Icons.play_arrow,
+                                position: c.time,
+                                onTap: () => playerRepository.play(
+                                    episode.id, c.time - 10000), //!
+                              ),
                             ],
                           ),
                           const SizedBox(height: 12),
