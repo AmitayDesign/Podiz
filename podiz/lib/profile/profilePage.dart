@@ -313,7 +313,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                 icon: Icons.play_arrow,
                                 position: c.time,
                                 onTap: () => playerRepository.play(
-                                    episode.id, c.time - 10000), //!
+                                    episode.id, c.time ~/ 1000 - 10), //!
                               ),
                             ],
                           ),

@@ -18,7 +18,7 @@ final playerRepositoryProvider = Provider<PlayerRepository>(
 abstract class PlayerRepository {
   Stream<PlayingEpisode?> watchPlayingEpisode();
   Future<PlayingEpisode?> fetchPlayingEpisode();
-  Future<void> play(String podcastId, [int? time]);
+  Future<void> play(String podcastId, [int? seconds]);
   Future<void> resume();
   Future<void> pause();
   Future<void> fastForward([int seconds = 30]);

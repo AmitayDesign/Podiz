@@ -126,7 +126,7 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                               // TODO what if the playingnpodcast is different
                               onTap: () => playerRepository.play(
                                 episode.id,
-                                widget.comment.time - 10000,
+                                widget.comment.time ~/ 1000 - 10,
                               ),
                             ),
                           ],
