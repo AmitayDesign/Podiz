@@ -19,6 +19,15 @@ class EpisodeContent extends StatelessWidget {
     this.bottom,
   }) : super(key: key);
 
+  String format(int milliseconds) {
+    final duration = Duration(milliseconds: milliseconds);
+    final time = duration.toString().split('.').first.split(':');
+    final hours = time.first;
+    final minutes = time.last;
+    if (hours == '0') return '${minutes}m';
+    return '${hours}h ${minutes}m';
+  }
+
   @override
   Widget build(BuildContext context) {
     final titleStyle = context.textTheme.titleMedium;
