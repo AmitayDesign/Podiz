@@ -2,43 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/player/screens/discussion_sheet.dart';
+import 'package:podiz/player/screens/reply_sheet.dart';
+import 'package:podiz/player/screens/reply_widget.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/theme/palette.dart';
 
-class CommentCard extends ConsumerStatefulWidget {
+class CommentCard extends ConsumerWidget {
   final Comment comment;
   final String episodeId;
   const CommentCard(this.comment, {Key? key, required this.episodeId})
       : super(key: key);
 
-  @override
-  ConsumerState<CommentCard> createState() => _CommentCardState();
-}
-
-class _CommentCardState extends ConsumerState<CommentCard> {
   final buttonSize = 32.0;
-  final commentNode = FocusNode();
-  final commentController = TextEditingController();
-  String get comment => commentController.text;
+
+  void openCommentSheet(BuildContext context) => showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) => Padding(
+          padding: MediaQuery.of(context).viewInsets,
+          child: ReplySheet(comment: comment),
+        ),
+      );
+
+  void share() {} //!
 
   @override
-  void dispose() {
-    commentController.dispose();
-    super.dispose();
-  }
-
-  void openCommentSheet() => showModalBottomSheet(
-      context: context, builder: (context) => const DiscussionSheet());
-  void share() {}
-
-  @override
-  Widget build(BuildContext context) {
-    final userValue = ref.watch(userFutureProvider(widget.comment.userId));
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userValue = ref.watch(userFutureProvider(comment.userId));
     return userValue.when(
+      //! call this later
       loading: () => SizedBox.fromSize(), //!
       error: (e, _) => const SizedBox.shrink(), //!
       data: (user) {
@@ -72,13 +67,13 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                     const SizedBox(width: 8),
                     TimeChip(
                       icon: Icons.play_arrow,
-                      position: widget.comment.time ~/ 1000,
+                      position: comment.time ~/ 1000,
                       onTap: () {}, //TODO resume the episode at this time
                     ),
                   ],
                 ),
                 const SizedBox(height: 16),
-                Text(widget.comment.text, style: context.textTheme.bodyLarge),
+                Text(comment.text, style: context.textTheme.bodyLarge),
                 const SizedBox(height: 16),
                 Row(
                   children: [
@@ -92,7 +87,7 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                             shape: const StadiumBorder(),
                             alignment: Alignment.centerLeft,
                           ),
-                          onPressed: share,
+                          onPressed: () => openCommentSheet(context),
                           child: Text(
                             'Add a comment...',
                             style: context.textTheme.bodyMedium,
@@ -116,7 +111,13 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                       ),
                     ),
                   ],
-                )
+                ),
+                if (comment.replies.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  const Divider(),
+                  for (final reply in comment.replies.values)
+                    ReplyWidget(reply, episodeId: episodeId),
+                ],
               ],
             ),
           ),

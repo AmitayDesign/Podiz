@@ -77,5 +77,11 @@ final themeProvider = Provider<ThemeData>((ref) {
             : null,
       ),
     ),
+    dividerTheme: const DividerThemeData(
+        color: Palette.grey800,
+        thickness: 1,
+        indent: 0,
+        endIndent: 0,
+        space: 1),
   );
 });
