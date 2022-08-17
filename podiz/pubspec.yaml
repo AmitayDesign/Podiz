@@ -28,6 +28,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_keyboard_visibility: ^5.3.0
+  flutter_linkify: ^5.0.2
   flutter_locales: ^2.0.1
   flutter_riverpod: ^2.0.0-dev.9
   flutter_svg: ^1.1.1+1
@@ -47,6 +48,7 @@ dependencies:
   skeletons: ^0.0.3
   spotify_sdk: ^2.3.0
   streaming_shared_preferences: ^2.0.0
+  url_launcher: ^6.1.5
 
 dev_dependencies:
   build_runner: ^2.1.8
