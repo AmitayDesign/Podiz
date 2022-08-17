@@ -23,6 +23,9 @@ class DiscussionScreen extends ConsumerStatefulWidget {
 class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
   late String episodeId = widget.episodeId;
 
+  final GlobalKey<AnimatedListState> commentListKey =
+      GlobalKey<AnimatedListState>();
+
   @override
   Widget build(BuildContext context) {
     // update discussion episode
@@ -45,16 +48,42 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
             Expanded(
               child: Consumer(
                 builder: (context, ref, _) {
+                  // watch player time
                   final commentsValue =
                       ref.watch(commentsStreamProvider(episodeId));
-                  //TODO no comments yet widget
+                  final playerTimeValue = ref.watch(playerTimeStreamProvider);
                   return commentsValue.when(
                     loading: () => const EmptyDiscussionText(),
                     error: (e, _) => const EmptyDiscussionText(
                       text: 'Error loading comments',
                     ),
                     data: (comments) {
-                      if (comments.isEmpty) const EmptyDiscussionText();
+                      playerTimeValue.when(
+                        loading: () => const EmptyDiscussionText(),
+                        error: (e, _) => const EmptyDiscussionText(
+                          text: 'Error playing this episode',
+                        ),
+                        data: (playerTime) {
+                          if (comments.isEmpty) const EmptyDiscussionText();
+                          comments.retainWhere((comment) =>
+                              comment.time <= playerTime.position * 1000);
+                          return AnimatedList(
+                            key: commentListKey,
+                            itemBuilder: (context, i, animation) =>
+                                SlideTransition(
+                              position: animation.drive(
+                                Tween(
+                                    begin: const Offset(1, 0),
+                                    end: Offset.zero),
+                              ),
+                              child: CommentCard(
+                                comments[i],
+                                episodeId: episodeId,
+                              ),
+                            ),
+                          );
+                        },
+                      );
                       return ListView.separated(
                         padding: const EdgeInsets.only(
                           bottom: DiscussionSheet.height,
@@ -78,6 +107,7 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
   }
 }
 
+//TODO no comments yet widget
 class EmptyDiscussionText extends StatelessWidget {
   final String? text;
   const EmptyDiscussionText({Key? key, this.text}) : super(key: key);
