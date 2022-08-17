@@ -13,11 +13,15 @@ class EpisodeContent extends StatelessWidget {
   final VoidCallback? onTap;
   final Widget? bottom;
 
+  /// The color to give to the stacked avatars border
+  final Color? color;
+
   const EpisodeContent(
     this.episode, {
     Key? key,
     this.onTap,
     this.bottom,
+    this.color,
   }) : super(key: key);
 
   String format(int milliseconds) {
@@ -44,7 +48,7 @@ class EpisodeContent extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 2),
-            child: InsightsInfo(episode: episode),
+            child: InsightsInfo(episode: episode, borderColor: color),
           ),
           const SizedBox(height: 16),
           Row(

@@ -9,7 +9,9 @@ import 'package:podiz/src/features/episodes/domain/episode.dart';
 
 class InsightsInfo extends StatelessWidget {
   final Episode episode;
-  const InsightsInfo({Key? key, required this.episode}) : super(key: key);
+  final Color? borderColor;
+  const InsightsInfo({Key? key, required this.episode, this.borderColor})
+      : super(key: key);
 
   int get insightsCount => episode.commentsCount;
   int get insightUsersCount => episode.commentImageUrls.length;
@@ -19,7 +21,10 @@ class InsightsInfo extends StatelessWidget {
     return Row(
       children: [
         insightUsersCount > 1
-            ? StackedAvatars(imageUrls: episode.commentImageUrls)
+            ? StackedAvatars(
+                imageUrls: episode.commentImageUrls,
+                borderColor: borderColor,
+              )
             : Consumer(
                 builder: (context, ref, _) {
                   final user = ref.watch(currentUserProvider);
