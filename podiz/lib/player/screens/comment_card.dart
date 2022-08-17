@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
@@ -10,6 +11,7 @@ import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/theme/palette.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class CommentCard extends ConsumerWidget {
   final Comment comment;
@@ -71,12 +73,21 @@ class CommentCard extends ConsumerWidget {
                       position: comment.time ~/ 1000,
                       onTap: () => ref
                           .read(playerRepositoryProvider)
-                          .play(episodeId, comment.time ~/ 1000 - 10),
+                          .resume(episodeId, comment.time ~/ 1000 - 10),
                     ),
                   ],
                 ),
                 const SizedBox(height: 16),
-                Text(comment.text, style: context.textTheme.bodyLarge),
+                Linkify(
+                  options: const LinkifyOptions(removeWww: true),
+                  onOpen: (link) async {
+                    if (await canLaunchUrlString(link.url)) {
+                      await launchUrlString(link.url);
+                    }
+                  },
+                  text: comment.text,
+                  style: context.textTheme.bodyLarge,
+                ),
                 const SizedBox(height: 16),
                 Row(
                   children: [

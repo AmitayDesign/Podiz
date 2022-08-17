@@ -15,8 +15,6 @@ import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/theme/palette.dart';
 
-// https://pub.dev/packages/flutter_linkify
-
 class DiscussionCard extends ConsumerStatefulWidget {
   final String episodeId;
   final Comment comment;
@@ -126,7 +124,7 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                               icon: Icons.play_arrow,
                               position: widget.comment.time,
                               // TODO what if the playingnpodcast is different
-                              onTap: () => playerRepository.play(
+                              onTap: () => playerRepository.resume(
                                 episode.id,
                                 widget.comment.time ~/ 1000 - 10,
                               ),

@@ -15,7 +15,7 @@ abstract class PlayerRepository {
   Stream<PlayingEpisode?> watchPlayingEpisode();
   Future<PlayingEpisode?> fetchPlayingEpisode();
   Future<void> play(String episodeId, [int? seconds]);
-  Future<void> resume(String episodeId);
+  Future<void> resume(String episodeId, [int? seconds]);
   Future<void> pause();
   Future<void> fastForward([int seconds = 30]);
   Future<void> rewind([int seconds = 30]);

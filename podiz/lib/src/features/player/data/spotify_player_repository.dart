@@ -36,16 +36,18 @@ class SpotifyPlayerRepository implements PlayerRepository {
   //TODO add seconds to resume instead
   @override
   Future<void> play(String episodeId, [int? seconds]) async {
+    await SpotifySdk.play(spotifyUri: episodeId);
     if (seconds != null) {
       await SpotifySdk.seekTo(positionedMilliseconds: seconds);
-      return resume(episodeId);
     }
-    return SpotifySdk.play(spotifyUri: episodeId);
   }
 
   @override
-  Future<void> resume(String episodeId) async {
+  Future<void> resume(String episodeId, [int? seconds]) async {
     try {
+      if (seconds != null) {
+        await SpotifySdk.seekTo(positionedMilliseconds: seconds);
+      }
       await SpotifySdk.resume();
     } catch (_) {
       await play(episodeId);
