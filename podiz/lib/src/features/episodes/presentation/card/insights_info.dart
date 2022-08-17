@@ -5,24 +5,24 @@ import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/src/common_widgets/stacked_avatars.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 
-class InsightsInfo extends StatelessWidget {
+class InsightsInfo extends ConsumerWidget {
   final Episode episode;
   final Color? borderColor;
   const InsightsInfo({Key? key, required this.episode, this.borderColor})
       : super(key: key);
 
-  int get insightsCount => episode.commentsCount;
-  int get insightUsersCount => episode.commentImageUrls.length;
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final liveEpisode =
+        ref.watch(episodeStreamProvider(episode.id)).valueOrNull ?? episode;
     return Row(
       children: [
-        insightUsersCount > 1
+        liveEpisode.commentImageUrls.length > 1
             ? StackedAvatars(
-                imageUrls: episode.commentImageUrls,
+                imageUrls: liveEpisode.commentImageUrls,
                 borderColor: borderColor,
               )
             : Consumer(
@@ -34,11 +34,11 @@ class InsightsInfo extends StatelessWidget {
         const SizedBox(width: 8),
         Expanded(
           child: Text(
-            insightsCount == 0
+            liveEpisode.commentsCount == 0
                 ? Locales.string(context, "noinsigths")
-                : insightsCount == 1
+                : liveEpisode.commentsCount == 1
                     ? '1 insight'
-                    : '${episode.commentsCount} insights',
+                    : '${liveEpisode.commentsCount} insights',
             style: context.textTheme.bodySmall,
             overflow: TextOverflow.ellipsis,
           ),
