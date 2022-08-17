@@ -55,13 +55,14 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                   return commentsValue.when(
                     loading: () => const EmptyDiscussionText(),
                     error: (e, _) => EmptyDiscussionText(
-                      text: 'Error loading comments'.hardcoded,
+                      text: 'There was an error loading comments'.hardcoded,
                     ),
                     data: (comments) {
                       return playerTimeValue.when(
                         loading: () => const EmptyDiscussionText(),
                         error: (e, _) => EmptyDiscussionText(
-                          text: 'Error playing this episode'.hardcoded,
+                          text: 'There was an error playing this episode'
+                              .hardcoded,
                         ),
                         data: (playerTime) {
                           if (comments.isEmpty) const EmptyDiscussionText();

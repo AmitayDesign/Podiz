@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
+import 'package:podiz/src/features/player/presentation/error_player.dart';
 import 'package:podiz/src/features/player/presentation/player_button.dart';
 import 'package:podiz/src/features/player/presentation/player_controller.dart';
 import 'package:podiz/src/features/player/presentation/player_slider.dart';
@@ -12,9 +13,10 @@ import 'package:podiz/src/theme/palette.dart';
 
 import 'skeleton_player.dart';
 
-//TODO dismissible
 class Player extends ConsumerWidget {
   const Player({Key? key}) : super(key: key);
+
+  static const height = 80.0; //! hardcoded
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,7 +24,7 @@ class Player extends ConsumerWidget {
     final state = ref.watch(playerControllerProvider);
     return episodeValue.when(
       loading: () => const SkeletonPlayer(),
-      error: (e, _) => const SizedBox.shrink(), //TODO player error widget
+      error: (e, _) => const ErrorPlayer(),
       data: (episode) {
         if (episode == null) return const SizedBox.shrink();
         return Material(
