@@ -54,14 +54,15 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                   final playerTimeValue = ref.watch(playerTimeStreamProvider);
                   return commentsValue.when(
                     loading: () => const EmptyDiscussionText(),
-                    error: (e, _) => const EmptyDiscussionText(
-                      text: 'Error loading comments',
+                    error: (e, _) => EmptyDiscussionText(
+                      text: 'There was an error loading comments'.hardcoded,
                     ),
                     data: (comments) {
                       return playerTimeValue.when(
                         loading: () => const EmptyDiscussionText(),
-                        error: (e, _) => const EmptyDiscussionText(
-                          text: 'Error playing this episode',
+                        error: (e, _) => EmptyDiscussionText(
+                          text: 'There was an error playing this episode'
+                              .hardcoded,
                         ),
                         data: (playerTime) {
                           if (comments.isEmpty) const EmptyDiscussionText();
