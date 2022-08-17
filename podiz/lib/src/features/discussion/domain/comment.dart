@@ -26,8 +26,8 @@ class Comment with EquatableMixin {
   @JsonKey(name: 'parents', defaultValue: [])
   final List<String> parentIds; //!
 
-  @JsonKey(ignore: true, defaultValue: {})
-  final Map<String, Comment> replies; //!
+  @JsonKey(ignore: true)
+  final Map<String, Comment> replies = {};
 
   Comment({
     required this.id,
@@ -37,7 +37,6 @@ class Comment with EquatableMixin {
     required this.time,
     required this.lvl,
     this.parentIds = const [],
-    this.replies = const {},
   });
 
   factory Comment.fromFirestore(Doc doc) =>
