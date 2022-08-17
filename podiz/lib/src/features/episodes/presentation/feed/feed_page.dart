@@ -38,12 +38,14 @@ class _FeedPageState extends ConsumerState<FeedPage> {
   }
 
   void openEpisode(Episode episode) {
-    final playerRepository = ref.read(playerRepositoryProvider);
-    playerRepository.fetchPlayingEpisode().then((playingEpisode) {
-      if (playingEpisode?.id != episode.id) {
-        ref.read(playerRepositoryProvider).play(episode.id);
-      }
-    });
+    // just call play() if the episode is NOT playing
+    ref.read(playerRepositoryProvider).fetchPlayingEpisode().then(
+      (playingEpisode) {
+        if (playingEpisode?.id != episode.id) {
+          ref.read(playerRepositoryProvider).play(episode.id);
+        }
+      },
+    );
     context.goNamed(
       AppRoute.discussion.name,
       params: {'episodeId': episode.id},
