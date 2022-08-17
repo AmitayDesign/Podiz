@@ -10,6 +10,8 @@ import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.da
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/palette.dart';
 
+import 'skeleton_player.dart';
+
 //TODO dismissible
 class Player extends ConsumerWidget {
   const Player({Key? key}) : super(key: key);
@@ -19,7 +21,7 @@ class Player extends ConsumerWidget {
     final episodeValue = ref.watch(playerStateChangesProvider);
     final state = ref.watch(playerControllerProvider);
     return episodeValue.when(
-      loading: () => const SizedBox.shrink(), //TODO player skeleton
+      loading: () => const SkeletonPlayer(),
       error: (e, _) => const SizedBox.shrink(), //TODO player error widget
       data: (episode) {
         if (episode == null) return const SizedBox.shrink();

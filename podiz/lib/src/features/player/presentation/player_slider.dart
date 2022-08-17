@@ -6,6 +6,7 @@ import 'player_slider_controller.dart';
 
 class PlayerSlider extends ConsumerStatefulWidget {
   const PlayerSlider({Key? key}) : super(key: key);
+  static const height = 4.0;
 
   @override
   ConsumerState<PlayerSlider> createState() => _PlayerSliderState();
@@ -37,7 +38,7 @@ class _PlayerSliderState extends ConsumerState<PlayerSlider> {
     final playerTime = ref.watch(playerSliderControllerProvider);
     return SliderTheme(
       data: SliderThemeData(
-        trackHeight: height,
+        trackHeight: PlayerSlider.height,
         inactiveTrackColor: Palette.lightPink,
         activeTrackColor: Palette.pink,
         thumbColor: Palette.pink,
@@ -48,7 +49,7 @@ class _PlayerSliderState extends ConsumerState<PlayerSlider> {
         overlayShape: SliderComponentShape.noOverlay,
       ),
       child: SizedBox(
-        height: height,
+        height: PlayerSlider.height,
         child: Slider(
           value: playerTime.position.toDouble(),
           min: 0,
