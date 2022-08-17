@@ -27,7 +27,9 @@ class FeedPage extends ConsumerStatefulWidget {
 
 class _FeedPageState extends ConsumerState<FeedPage> {
   late final scrollController = ScrollController()
-    ..addListener(ref.read(feedControllerProvider.notifier).handleTitles);
+    ..addListener(
+      () => ref.read(feedControllerProvider.notifier).handleTitles(),
+    );
 
   @override
   void dispose() {
