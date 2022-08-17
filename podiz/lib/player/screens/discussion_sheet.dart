@@ -44,6 +44,7 @@ class _QuickNoteSheetState extends ConsumerState<DiscussionSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(currentUserProvider);
     final episode = ref.watch(playerStateChangesProvider).valueOrNull!;
     final state = ref.watch(playerControllerProvider);
     return Material(
@@ -113,7 +114,7 @@ class _QuickNoteSheetState extends ConsumerState<DiscussionSheet> {
               child: Row(
                 children: [
                   Text(
-                    "${episode.peopleWatchingCount} listening with you"
+                    "${episode.userIdsWatching.length - 1} listening with you"
                         .hardcoded,
                     style: context.textTheme.bodySmall,
                   ),

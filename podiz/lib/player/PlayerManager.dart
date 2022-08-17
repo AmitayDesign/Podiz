@@ -16,12 +16,12 @@ class PlayerManager {
   PlayerManager(this._read);
 
   Future<void> increment(String podcastId) => firestore
-      .collection("podcasts")
+      .collection('podcasts')
       .doc(podcastId)
-      .update({"watching": FieldValue.increment(1)});
+      .update({'watching': FieldValue.increment(1)});
 
   Future<void> decrement(String podcastId) => firestore
-      .collection("podcasts")
+      .collection('podcasts')
       .doc(podcastId)
-      .update({"watching": FieldValue.increment(-1)});
+      .update({'watching': FieldValue.increment(-1)});
 }

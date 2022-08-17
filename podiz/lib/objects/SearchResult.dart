@@ -14,7 +14,7 @@ class SearchResult {
   int? comments;
   List<String>? commentsImg;
   String? release_date;
-  int? watching;
+  List<String>? users_watching;
 
   //podcaster
   String? publisher;
@@ -37,7 +37,7 @@ class SearchResult {
       this.commentsImg,
       this.release_date,
       this.followers,
-      this.watching});
+      this.users_watching});
 
   Episode toEpisode() {
     return Episode(
@@ -51,7 +51,7 @@ class SearchResult {
       commentsCount: comments!,
       commentImageUrls: commentsImg!,
       releaseDateString: release_date!,
-      peopleWatchingCount: watching!,
+      userIdsWatching: users_watching!,
     );
   }
 
@@ -78,7 +78,7 @@ class SearchResult {
       comments: episode.commentsCount,
       commentsImg: episode.commentImageUrls,
       release_date: episode.releaseDateString,
-      watching: episode.peopleWatchingCount,
+      users_watching: episode.userIdsWatching,
     );
   }
 }

@@ -15,7 +15,7 @@ class PlayingEpisode extends Episode {
     required int commentsCount,
     required List<String> commentImageUrls,
     required String releaseDateString,
-    required int peopleWatchingCount,
+    required List<String> userIdsWatching,
     required this.initialPosition,
     required this.isPlaying,
   }) : super(
@@ -29,7 +29,7 @@ class PlayingEpisode extends Episode {
           commentsCount: commentsCount,
           commentImageUrls: commentImageUrls,
           releaseDateString: releaseDateString,
-          peopleWatchingCount: peopleWatchingCount,
+          userIdsWatching: userIdsWatching,
         );
 
   factory PlayingEpisode.fromEpisode(
@@ -48,7 +48,7 @@ class PlayingEpisode extends Episode {
         commentsCount: episode.commentsCount,
         commentImageUrls: episode.commentImageUrls,
         releaseDateString: episode.releaseDateString,
-        peopleWatchingCount: episode.peopleWatchingCount,
+        userIdsWatching: episode.userIdsWatching,
         initialPosition: position,
         isPlaying: isPlaying,
       );

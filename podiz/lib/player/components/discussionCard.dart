@@ -14,6 +14,8 @@ import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/theme/palette.dart';
 
+// https://pub.dev/packages/flutter_linkify
+
 class DiscussionCard extends ConsumerStatefulWidget {
   final Comment comment;
   final Episode episode;

@@ -27,8 +27,8 @@ class Episode with EquatableMixin {
   @JsonKey(name: 'release_date')
   final String releaseDateString; //TODO make it a DateTime
 
-  @JsonKey(name: 'watching', defaultValue: 0)
-  final int peopleWatchingCount;
+  @JsonKey(name: 'users_watching', defaultValue: [])
+  final List<String> userIdsWatching;
 
   @JsonKey(name: 'show_uri')
   final String showId;
@@ -47,7 +47,7 @@ class Episode with EquatableMixin {
     required this.commentsCount,
     required this.commentImageUrls,
     required this.releaseDateString,
-    required this.peopleWatchingCount,
+    required this.userIdsWatching,
   });
 
   // TODO check if they have show data

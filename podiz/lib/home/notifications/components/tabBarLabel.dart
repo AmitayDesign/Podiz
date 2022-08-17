@@ -25,7 +25,7 @@ class TabBarLabel extends ConsumerWidget {
         commentsCount: 0,
         commentImageUrls: [],
         releaseDateString: "",
-        peopleWatchingCount: 0,
+        userIdsWatching: [],
       );
       return _buildItem(episode, number);
     }

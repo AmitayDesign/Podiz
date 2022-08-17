@@ -104,7 +104,7 @@ class _QuickNoteSheetState extends ConsumerState<QuickNoteSheet> {
               padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
               child: Text(
                 //TODO locales text
-                "${widget.episode.peopleWatchingCount} listening right now",
+                "${widget.episode.userIdsWatching.length} listening right now",
                 style: context.textTheme.bodySmall,
               ),
             ),
