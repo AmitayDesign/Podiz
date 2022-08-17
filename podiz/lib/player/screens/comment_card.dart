@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/player/screens/discussion_sheet.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
@@ -19,7 +20,7 @@ class CommentCard extends ConsumerStatefulWidget {
 }
 
 class _CommentCardState extends ConsumerState<CommentCard> {
-  final buttonSize = kMinInteractiveDimension * 5 / 6;
+  final buttonSize = 32.0;
   final commentNode = FocusNode();
   final commentController = TextEditingController();
   String get comment => commentController.text;
@@ -30,7 +31,9 @@ class _CommentCardState extends ConsumerState<CommentCard> {
     super.dispose();
   }
 
-  void sendComment() {}
+  void openCommentSheet() => showModalBottomSheet(
+      context: context, builder: (context) => const DiscussionSheet());
+  void share() {}
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +47,7 @@ class _CommentCardState extends ConsumerState<CommentCard> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Row(
                   children: [
@@ -73,36 +77,27 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                Text(widget.comment.text),
-                const SizedBox(height: 8),
+                const SizedBox(height: 16),
+                Text(widget.comment.text, style: context.textTheme.bodyLarge),
+                const SizedBox(height: 16),
                 Row(
                   children: [
                     Expanded(
-                      //TODO similar wth comment sheet content
-                      child: TextField(
-                        focusNode: commentNode,
-                        controller: commentController,
-                        keyboardType: TextInputType.multiline,
-                        textInputAction: TextInputAction.send,
-                        minLines: 1,
-                        maxLines: 3,
-                        style: context.textTheme.bodyMedium!.copyWith(
-                          color: Colors.white,
-                        ),
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Palette.grey900,
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(
-                              kMinInteractiveDimension / 2,
-                            ),
+                      child: SizedBox.fromSize(
+                        size: Size.fromHeight(buttonSize),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Palette.grey900,
+                            elevation: 0,
+                            shape: const StadiumBorder(),
+                            alignment: Alignment.centerLeft,
                           ),
-                          hintText:
-                              'Commment on ${user.name.split(' ').first}\'s insight...',
+                          onPressed: share,
+                          child: Text(
+                            'Add a comment...',
+                            style: context.textTheme.bodyMedium,
+                          ),
                         ),
-                        onSubmitted: (_) => sendComment(),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -111,12 +106,13 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                       dimension: buttonSize,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
+                          primary: Colors.black87,
                           elevation: 0,
                           shape: const CircleBorder(),
                           padding: EdgeInsets.zero,
                         ),
-                        onPressed: sendComment,
-                        child: const Icon(Icons.send, size: kSmallIconSize),
+                        onPressed: share,
+                        child: const Icon(Icons.share, size: kSmallIconSize),
                       ),
                     ),
                   ],

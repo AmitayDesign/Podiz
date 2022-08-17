@@ -59,7 +59,7 @@ class TimeChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       shape: const StadiumBorder(),
-      color: color ?? Palette.grey900,
+      color: color ?? Colors.black87,
       child: InkWell(
         onTap: () => loading ? null : onTap?.call(),
         child: Container(
