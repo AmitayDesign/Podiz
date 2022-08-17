@@ -56,7 +56,8 @@ class FirestoreEpisodeRepository extends EpisodeRepository {
     //     .collection('podcasts')
     //     .doc(episodeId)
     //     .set(episode.toFirestore());
-    // await showRepository.fetchShow(showId); //TODO load show aswell
+    ////TODO load show aswell
+    // await showRepository.fetchShow(showId);
     return episode;
   }
 
