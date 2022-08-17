@@ -73,9 +73,9 @@ class Player extends ConsumerWidget {
                             )
                           : PlayerButton(
                               loading: state.isLoading,
-                              onPressed: ref
+                              onPressed: () => ref
                                   .read(playerControllerProvider.notifier)
-                                  .play,
+                                  .play(episode.id),
                               icon: const Icon(Icons.play_arrow),
                             ),
                       PlayerButton(

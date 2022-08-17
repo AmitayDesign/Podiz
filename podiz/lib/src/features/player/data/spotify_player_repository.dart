@@ -34,16 +34,22 @@ class SpotifyPlayerRepository implements PlayerRepository {
   }
 
   @override
-  Future<void> play(String podcastId, [int? seconds]) async {
+  Future<void> play(String episodeId, [int? seconds]) async {
     if (seconds != null) {
       await SpotifySdk.seekTo(positionedMilliseconds: seconds);
-      return resume();
+      return resume(episodeId);
     }
-    return SpotifySdk.play(spotifyUri: podcastId);
+    return SpotifySdk.play(spotifyUri: episodeId);
   }
 
   @override
-  Future<void> resume() => SpotifySdk.resume();
+  Future<void> resume(String episodeId) async {
+    try {
+      await SpotifySdk.resume();
+    } catch (_) {
+      await play(episodeId);
+    }
+  }
 
   @override
   Future<void> pause() => SpotifySdk.pause();

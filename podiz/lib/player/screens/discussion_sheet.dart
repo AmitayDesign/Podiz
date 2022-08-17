@@ -64,8 +64,9 @@ class DiscussionSheet extends ConsumerWidget {
                         )
                       : PlayerTimeChip(
                           loading: state.isLoading,
-                          onTap:
-                              ref.read(playerControllerProvider.notifier).play,
+                          onTap: () => ref
+                              .read(playerControllerProvider.notifier)
+                              .play(episode.id),
                           icon: Icons.play_arrow,
                         ),
                   PlayerButton(

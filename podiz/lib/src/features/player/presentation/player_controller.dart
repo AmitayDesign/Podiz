@@ -12,9 +12,9 @@ class PlayerController extends StateNotifier<AsyncValue> {
   PlayerController({required this.playerRepository})
       : super(const AsyncValue.data(null));
 
-  Future<void> play() async {
+  Future<void> play(String episodeId) async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() => playerRepository.resume());
+    state = await AsyncValue.guard(() => playerRepository.resume(episodeId));
   }
 
   Future<void> pause() async {
