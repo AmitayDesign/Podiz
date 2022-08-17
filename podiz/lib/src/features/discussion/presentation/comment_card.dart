@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/player/screens/reply_sheet.dart';
-import 'package:podiz/player/screens/reply_widget.dart';
 import 'package:podiz/providers.dart';
+import 'package:podiz/src/common_widgets/circle_button.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
+import 'package:podiz/src/features/discussion/presentation/reply_button.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
-import 'package:podiz/src/theme/palette.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+
+import 'reply_widget.dart';
 
 class CommentCard extends ConsumerWidget {
   final Comment comment;
@@ -36,9 +37,8 @@ class CommentCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userValue = ref.watch(userFutureProvider(comment.userId));
     return userValue.when(
-      //! call this later
-      loading: () => SizedBox.fromSize(), //!
-      error: (e, _) => const SizedBox.shrink(), //!
+      loading: () => SizedBox.fromSize(),
+      error: (e, _) => const SizedBox.shrink(),
       data: (user) {
         return Material(
           color: context.colorScheme.surface,
@@ -92,37 +92,16 @@ class CommentCard extends ConsumerWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: SizedBox.fromSize(
-                        size: Size.fromHeight(buttonSize),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: Palette.grey900,
-                            elevation: 0,
-                            shape: const StadiumBorder(),
-                            alignment: Alignment.centerLeft,
-                          ),
-                          onPressed: () => openCommentSheet(context),
-                          child: Text(
-                            'Add a comment...',
-                            style: context.textTheme.bodyMedium,
-                          ),
-                        ),
+                      child: ReplyButton(
+                        size: buttonSize,
+                        onPressed: () => openCommentSheet(context),
                       ),
                     ),
                     const SizedBox(width: 8),
-                    //TODO similar wth comment sheet content
-                    SizedBox.square(
-                      dimension: buttonSize,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.black87,
-                          elevation: 0,
-                          shape: const CircleBorder(),
-                          padding: EdgeInsets.zero,
-                        ),
-                        onPressed: share,
-                        child: const Icon(Icons.share, size: kSmallIconSize),
-                      ),
+                    CircleButton(
+                      size: buttonSize,
+                      onPressed: share,
+                      icon: Icons.share,
                     ),
                   ],
                 ),

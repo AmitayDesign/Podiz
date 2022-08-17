@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
-import 'package:podiz/src/features/discussion/presentation/comment_sheet_content.dart';
+import 'package:podiz/src/features/discussion/presentation/comment_text_field.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/theme/palette.dart';
 
@@ -22,7 +22,7 @@ class ReplySheet extends ConsumerWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        child: CommentSheetContent(
+        child: CommentTextField(
           onSend: (text) {
             // comment
           },

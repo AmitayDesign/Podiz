@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/src/common_widgets/circle_button.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 
-class CommentSheetContent extends StatefulWidget {
+class CommentTextField extends StatefulWidget {
   final ValueSetter<String>? onSend;
-  const CommentSheetContent({Key? key, this.onSend}) : super(key: key);
+  const CommentTextField({Key? key, this.onSend}) : super(key: key);
 
   @override
-  State<CommentSheetContent> createState() => _CommentSheetContentState();
+  State<CommentTextField> createState() => _CommentTextFieldState();
 }
 
-class _CommentSheetContentState extends State<CommentSheetContent> {
-  final buttonSize = kMinInteractiveDimension * 5 / 6;
+class _CommentTextFieldState extends State<CommentTextField> {
   final commentNode = FocusNode();
   final commentController = TextEditingController();
   String get comment => commentController.text;
@@ -38,7 +37,10 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
         Consumer(
           builder: (context, ref, _) {
             final user = ref.watch(currentUserProvider);
-            return UserAvatar(user: user, radius: buttonSize / 2);
+            return UserAvatar(
+              user: user,
+              radius: CircleButton.defaultSize / 2,
+            );
           },
         ),
         const SizedBox(width: 8),
@@ -68,17 +70,9 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
           ),
         ),
         const SizedBox(width: 8),
-        SizedBox.square(
-          dimension: buttonSize,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              elevation: 0,
-              shape: const CircleBorder(),
-              padding: EdgeInsets.zero,
-            ),
-            onPressed: sendComment,
-            child: const Icon(Icons.send, size: kSmallIconSize),
-          ),
+        CircleButton(
+          onPressed: sendComment,
+          icon: Icons.send,
         ),
       ],
     );

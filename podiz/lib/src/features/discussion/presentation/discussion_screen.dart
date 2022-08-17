@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/widgets/tap_to_unfocus.dart';
-import 'package:podiz/player/screens/comment_card.dart';
-import 'package:podiz/player/screens/discussion_header.dart';
 import 'package:podiz/src/common_widgets/back_text_button.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
@@ -10,7 +8,9 @@ import 'package:podiz/src/features/player/domain/playing_episode.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/palette.dart';
 
-import 'discussion_sheet.dart';
+import 'comment_card.dart';
+import 'comment_sheet.dart';
+import 'discussion_header.dart';
 
 class DiscussionScreen extends ConsumerStatefulWidget {
   final String episodeId;
@@ -55,13 +55,13 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                   return commentsValue.when(
                     loading: () => const EmptyDiscussionText(),
                     error: (e, _) => EmptyDiscussionText(
-                      text: 'There was an error loading comments'.hardcoded,
+                      text: 'There was an error loading comments.'.hardcoded,
                     ),
                     data: (comments) {
                       return playerTimeValue.when(
                         loading: () => const EmptyDiscussionText(),
                         error: (e, _) => EmptyDiscussionText(
-                          text: 'There was an error playing this episode'
+                          text: 'There was an error playing this episode.'
                               .hardcoded,
                         ),
                         data: (playerTime) {
@@ -85,7 +85,7 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                             controller: scrollController,
                             reverse: true,
                             padding: const EdgeInsets.only(
-                              bottom: DiscussionSheet.height,
+                              bottom: CommentSheet.height,
                             ),
                             itemCount: filteredComments.length,
                             itemBuilder: (context, i) => Padding(
@@ -105,7 +105,7 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
             ),
           ],
         ),
-        bottomSheet: const DiscussionSheet(),
+        bottomSheet: const CommentSheet(),
       ),
     );
   }
@@ -121,7 +121,7 @@ class EmptyDiscussionText extends StatelessWidget {
     return Container(
       alignment: Alignment.center,
       padding: const EdgeInsets.only(
-        bottom: DiscussionSheet.height,
+        bottom: CommentSheet.height,
       ).add(const EdgeInsets.symmetric(horizontal: 16)),
       child: Text(
         text ??

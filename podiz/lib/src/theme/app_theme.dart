@@ -78,10 +78,11 @@ final themeProvider = Provider<ThemeData>((ref) {
       ),
     ),
     dividerTheme: const DividerThemeData(
-        color: Palette.grey800,
-        thickness: 1,
-        indent: 0,
-        endIndent: 0,
-        space: 1),
+      color: Palette.grey800,
+      thickness: 1,
+      indent: 0,
+      endIndent: 0,
+      space: 1,
+    ),
   );
 });
