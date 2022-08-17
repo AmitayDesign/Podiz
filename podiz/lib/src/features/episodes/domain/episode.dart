@@ -4,11 +4,9 @@ import 'package:podiz/aspect/typedefs.dart';
 
 part 'episode.g.dart';
 
-typedef EpisodeId = String;
-
 @JsonSerializable()
 class Episode with EquatableMixin {
-  final EpisodeId id;
+  final String id;
   final String name;
   final String description; //! not used
 

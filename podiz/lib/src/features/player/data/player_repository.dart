@@ -62,7 +62,7 @@ final playerTimeStreamProvider = StreamProvider.autoDispose<PlayerTime>(
 );
 
 //TODO test this when closing app
-// final listeningProvider = Provider.family.autoDispose<void, EpisodeId>(
+// final listeningProvider = Provider.family.autoDispose<void, String>(
 //   (ref, episodeId) {
 //     print('LISTENING TO $episodeId');
 //     final doc =

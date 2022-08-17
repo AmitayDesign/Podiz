@@ -5,7 +5,7 @@ class PlayingEpisode extends Episode {
   final bool isPlaying;
 
   PlayingEpisode({
-    required EpisodeId id,
+    required String id,
     required String name,
     required String description,
     required int duration,

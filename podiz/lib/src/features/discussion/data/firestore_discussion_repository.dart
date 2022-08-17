@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
-import 'package:podiz/src/features/episodes/domain/episode.dart';
 
 import 'discussion_repository.dart';
 
@@ -11,7 +10,7 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
 
   //TODO make this more scalable
   @override
-  Stream<List<Comment>> watchComments(EpisodeId episodeId) {
+  Stream<List<Comment>> watchComments(String episodeId) {
     return firestore
         .collection('podcasts')
         .doc(episodeId)
@@ -55,7 +54,7 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
   @override
   Future<void> addComment(
     String text, {
-    required EpisodeId episodeId,
+    required String episodeId,
     required int time,
     required UserPodiz user,
     Comment? parent,

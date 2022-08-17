@@ -3,7 +3,6 @@ import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:podiz/aspect/typedefs.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
-import 'package:podiz/src/features/episodes/domain/episode.dart';
 
 part 'user_podiz.g.dart';
 
@@ -26,7 +25,7 @@ class UserPodiz with EquatableMixin {
 
   // TODO make lastListenedEpisodeId nullable
   @JsonKey(name: 'lastListened')
-  final EpisodeId lastListenedEpisodeId;
+  final String lastListenedEpisodeId;
 
   @JsonKey(name: 'favPodcasts', defaultValue: [])
   final List<String> favPodcastIds;
