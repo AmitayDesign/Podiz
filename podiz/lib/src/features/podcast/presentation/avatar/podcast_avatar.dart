@@ -17,6 +17,8 @@ class PodcastAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return CachedNetworkImage(
       imageUrl: imageUrl,
+      height: size,
+      width: size,
       placeholder: (context, url) => SkeletonPodcastAvatar(size: size),
       errorWidget: (context, url, error) => RoundedSquareImage(
         image: const AssetImage("assets/images/loadingImage.png"),
