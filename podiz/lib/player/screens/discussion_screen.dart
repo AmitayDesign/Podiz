@@ -34,6 +34,7 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
     );
     return TapToUnfocus(
       child: Scaffold(
+        extendBody: true,
         appBar: AppBar(
           backgroundColor: Palette.darkPurple,
           automaticallyImplyLeading: false,
@@ -72,7 +73,7 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
             ),
           ],
         ),
-        bottomSheet: const DiscussionSheet(),
+        bottomNavigationBar: const DiscussionSheet(),
       ),
     );
   }
