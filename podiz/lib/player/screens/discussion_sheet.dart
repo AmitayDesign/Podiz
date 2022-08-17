@@ -12,26 +12,13 @@ import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/palette.dart';
 
-class DiscussionSheet extends ConsumerStatefulWidget {
-  static const height = 116.0;
+class DiscussionSheet extends ConsumerWidget {
   const DiscussionSheet({Key? key}) : super(key: key);
 
-  @override
-  ConsumerState<DiscussionSheet> createState() => _DiscussionSheetState();
-}
-
-class _DiscussionSheetState extends ConsumerState<DiscussionSheet> {
-  final commentNode = FocusNode();
-  final commentController = TextEditingController();
+  static const height = 116.0;
 
   @override
-  void dispose() {
-    commentController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final episodeValue = ref.watch(playerStateChangesProvider);
     final state = ref.watch(playerControllerProvider);
     return episodeValue.when(
@@ -53,8 +40,6 @@ class _DiscussionSheetState extends ConsumerState<DiscussionSheet> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   CommentSheetContent(
-                    focusNode: commentNode,
-                    controller: commentController,
                     onSend: (comment) async {
                       final time =
                           await ref.read(playerTimeStreamProvider.future);

@@ -9,26 +9,12 @@ import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/theme/palette.dart';
 
-class QuickNoteSheet extends ConsumerStatefulWidget {
+class QuickNoteSheet extends ConsumerWidget {
   final Episode episode;
   const QuickNoteSheet({Key? key, required this.episode}) : super(key: key);
 
   @override
-  ConsumerState<QuickNoteSheet> createState() => _QuickNoteSheetState();
-}
-
-class _QuickNoteSheetState extends ConsumerState<QuickNoteSheet> {
-  final commentNode = FocusNode();
-  final commentController = TextEditingController();
-
-  @override
-  void dispose() {
-    commentController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Material(
       color: Palette.grey900,
       shape: const RoundedRectangleBorder(
@@ -43,13 +29,11 @@ class _QuickNoteSheetState extends ConsumerState<QuickNoteSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             CommentSheetContent(
-              focusNode: commentNode..requestFocus(),
-              controller: commentController,
               onSend: (comment) async {
                 final time = await ref.read(playerTimeStreamProvider.future);
                 ref.read(discussionRepositoryProvider).addComment(
                       comment,
-                      episodeId: widget.episode.id,
+                      episodeId: episode.id,
                       time: time.position,
                       user: ref.read(currentUserProvider),
                     );
@@ -59,7 +43,7 @@ class _QuickNoteSheetState extends ConsumerState<QuickNoteSheet> {
               padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
               child: Text(
                 //TODO locales text
-                "${widget.episode.userIdsWatching.length} listening right now",
+                "${episode.userIdsWatching.length} listening right now",
                 style: context.textTheme.bodySmall,
               ),
             ),
