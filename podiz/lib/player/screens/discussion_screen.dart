@@ -89,7 +89,8 @@ class EmptyDiscussionText extends StatelessWidget {
       ).add(const EdgeInsets.symmetric(horizontal: 16)),
       child: Text(
         text ??
-            'Comments will be displayed at the time they were sent'.hardcoded,
+            'Comments will be displayed at their respective timestamp...'
+                .hardcoded,
         textAlign: TextAlign.center,
       ),
     );
