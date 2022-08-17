@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 import 'player_slider_controller.dart';
@@ -14,21 +13,29 @@ class PlayerSlider extends ConsumerStatefulWidget {
 }
 
 class _PlayerSliderState extends ConsumerState<PlayerSlider> {
-  double sliderValue = 0;
-  bool updatesWithTime = true;
+  final height = 4.0;
   bool isPressed = false;
+
+  void enableSliderUpdates(_) {
+    setState(() => isPressed = true);
+    ref.read(playerSliderControllerProvider.notifier).updatesWithTime = false;
+  }
+
+  void updateSlider(double time) {
+    ref.read(playerSliderControllerProvider.notifier).position = time.toInt();
+  }
+
+  void updatePlayerTime(double time) async {
+    ref.read(playerSliderControllerProvider.notifier).seekTo(time.toInt());
+    setState(() => isPressed = false);
+    //TODO find a way to wait precisely
+    await Future.delayed(const Duration(seconds: 2));
+    ref.read(playerSliderControllerProvider.notifier).updatesWithTime = true;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final playerTime = ref.watch(playerTimeStreamProvider).valueOrNull;
-    final position = playerTime?.position ?? 0;
-    final duration = playerTime?.duration ?? 1;
-
-    final timeInSeconds = position ~/ 1000;
-    final durationInSeconds = duration ~/ 1000;
-    if (updatesWithTime) {
-      sliderValue = (timeInSeconds).toDouble();
-    }
+    final playerTime = ref.watch(playerSliderControllerProvider);
     return SliderTheme(
       data: SliderThemeData(
         trackHeight: PlayerSlider.height,
@@ -36,6 +43,7 @@ class _PlayerSliderState extends ConsumerState<PlayerSlider> {
         activeTrackColor: Palette.pink,
         thumbColor: Palette.pink,
         trackShape: CustomTrackShape(),
+        //TODO make interactive area bigger
         thumbShape:
             RoundSliderThumbShape(enabledThumbRadius: isPressed ? 8 : 4),
         overlayShape: SliderComponentShape.noOverlay,
@@ -43,26 +51,12 @@ class _PlayerSliderState extends ConsumerState<PlayerSlider> {
       child: SizedBox(
         height: PlayerSlider.height,
         child: Slider(
-          value: sliderValue,
+          value: playerTime.position.toDouble(),
           min: 0,
-          max: durationInSeconds.toDouble(),
-          // enables ui to update
-          onChangeStart: (_) => setState(() {
-            updatesWithTime = false;
-            isPressed = true;
-          }),
-          // update ui
-          onChanged: (value) => setState(() => sliderValue = value),
-          // update player time
-          onChangeEnd: (time) async {
-            ref
-                .read(playerSliderControllerProvider.notifier)
-                .seekTo(time.toInt());
-            setState(() => isPressed = false);
-            await Future.delayed(const Duration(seconds: 2));
-            updatesWithTime = true;
-          },
-          label: timeInSeconds.toString(),
+          max: playerTime.duration.toDouble(),
+          onChangeStart: enableSliderUpdates,
+          onChanged: updateSlider,
+          onChangeEnd: updatePlayerTime,
         ),
       ),
     );

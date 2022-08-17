@@ -12,6 +12,7 @@ import 'package:podiz/src/theme/palette.dart';
 
 import 'skeleton_player.dart';
 
+//TODO dismissible
 class Player extends ConsumerWidget {
   const Player({Key? key}) : super(key: key);
 
@@ -21,7 +22,7 @@ class Player extends ConsumerWidget {
     final state = ref.watch(playerControllerProvider);
     return episodeValue.when(
       loading: () => const SkeletonPlayer(),
-      error: (e, _) => const SizedBox.shrink(), //!
+      error: (e, _) => const SizedBox.shrink(), //TODO player error widget
       data: (episode) {
         if (episode == null) return const SizedBox.shrink();
         return Material(

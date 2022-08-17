@@ -29,51 +29,46 @@ class SkeletonPlayer extends StatelessWidget {
         ]),
         themeMode: ThemeMode.light,
         child: SkeletonItem(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 12, 16, 12),
-                child: Row(
-                  children: [
-                    const SkeletonPodcastAvatar(size: 52),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SkeletonAvatar(
-                            style: SkeletonAvatarStyle(
-                              width: 60,
-                              height: 24,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          const SizedBox(height: 7),
-                          SkeletonLine(
-                            style: SkeletonLineStyle(height: subtitleHeight),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    for (var i = 0; i < 3; i++)
-                      const IconButton(
-                        visualDensity: VisualDensity.compact,
-                        onPressed: null,
-                        icon: SkeletonAvatar(
-                          style: SkeletonAvatarStyle(
-                            width: 24,
-                            height: 24,
-                            shape: BoxShape.circle,
-                          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 12, 16, 12),
+            child: Row(
+              children: [
+                const SkeletonPodcastAvatar(size: 52),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SkeletonAvatar(
+                        style: SkeletonAvatarStyle(
+                          width: 60,
+                          height: 24,
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                  ],
+                      const SizedBox(height: 7),
+                      SkeletonLine(
+                        style: SkeletonLineStyle(height: subtitleHeight),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(width: 4),
+                for (var i = 0; i < 3; i++)
+                  const IconButton(
+                    visualDensity: VisualDensity.compact,
+                    onPressed: null,
+                    icon: SkeletonAvatar(
+                      style: SkeletonAvatarStyle(
+                        width: 24,
+                        height: 24,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       ),

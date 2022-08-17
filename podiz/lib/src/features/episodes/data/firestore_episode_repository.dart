@@ -17,16 +17,6 @@ class FirestoreEpisodeRepository extends EpisodeRepository {
   });
 
   @override
-  Stream<Episode> watchEpisode(String episodeId) {
-    return firestore.collection('podcasts').doc(episodeId).snapshots().asyncMap(
-      (doc) async {
-        if (doc.exists) return Episode.fromFirestore(doc);
-        return fetchEpisodeFromSpotify(episodeId);
-      },
-    );
-  }
-
-  @override
   Future<Episode> fetchEpisode(String episodeId) async {
     final doc = await firestore.collection('podcasts').doc(episodeId).get();
     if (doc.exists) return Episode.fromFirestore(doc);
