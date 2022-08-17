@@ -70,7 +70,7 @@
 //                       position: widget.comment.time,
 //                       // TODO what if the playingnpodcast is different
 //                       onTap: () => playerRepository.play(
-//                           episode.id, widget.comment.time - 10000),
+//                           episode.id, widget.comment.time ~/1000 - 10),
 //                     ),
 //                   ],
 //                 ),

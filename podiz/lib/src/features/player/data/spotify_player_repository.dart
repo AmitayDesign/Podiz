@@ -34,9 +34,9 @@ class SpotifyPlayerRepository implements PlayerRepository {
   }
 
   @override
-  Future<void> play(String podcastId, [int? time]) async {
-    if (time != null) {
-      await SpotifySdk.seekTo(positionedMilliseconds: time);
+  Future<void> play(String podcastId, [int? seconds]) async {
+    if (seconds != null) {
+      await SpotifySdk.seekTo(positionedMilliseconds: seconds);
       return resume();
     }
     return SpotifySdk.play(spotifyUri: podcastId);
@@ -66,13 +66,3 @@ class SpotifyPlayerRepository implements PlayerRepository {
     return SpotifySdk.seekTo(positionedMilliseconds: position);
   }
 }
-
-// Future<void> increment(String podcastId) => FirebaseFirestore.instance
-//     .collection("podcasts")
-//     .doc(podcastId)
-//     .update({"watching": FieldValue.increment(1)});
-
-// Future<void> decrement(String podcastId) => FirebaseFirestore.instance
-//     .collection("podcasts")
-//     .doc(podcastId)
-//     .update({"watching": FieldValue.increment(-1)});
