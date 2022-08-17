@@ -19,8 +19,10 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
         .orderBy('time')
         .snapshots()
         .map((snapshot) {
+      print(1);
       final commentList =
           snapshot.docs.map((doc) => Comment.fromFirestore(doc)).toList();
+      print(2);
       return groupComments(commentList);
     });
   }

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/widgets/tap_to_unfocus.dart';
+import 'package:podiz/player/components/discussionCard.dart';
 import 'package:podiz/player/screens/discussion_header.dart';
 import 'package:podiz/src/common_widgets/back_text_button.dart';
+import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/domain/playing_episode.dart';
+import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 import 'discussion_sheet.dart';
@@ -29,8 +32,6 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
         if (episode != null) episodeId = episode.id;
       }),
     );
-    // final episodeValue = ref.watch(episodeFutureProvider(episodeId));
-    // final commentsValue = ref.watch(commentsStreamProvider(episodeId));
     return TapToUnfocus(
       child: Scaffold(
         appBar: AppBar(
@@ -41,26 +42,53 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
         body: Column(
           children: [
             DiscussionHeader(episodeId),
-            // Expanded(
-            //   child: child,
-            // ),
+            Expanded(
+              child: Consumer(
+                builder: (context, ref, _) {
+                  final commentsValue =
+                      ref.watch(commentsStreamProvider(episodeId));
+                  //TODO no comments yet widget
+                  return commentsValue.when(
+                    loading: () => const EmptyDiscussionText(),
+                    error: (e, _) => const EmptyDiscussionText(
+                      text: 'Error loading comments',
+                    ),
+                    data: (comments) {
+                      if (comments.isEmpty) const EmptyDiscussionText();
+                      return ListView.builder(
+                        padding: const EdgeInsets.only(
+                          bottom: DiscussionSheet.height,
+                        ),
+                        itemCount: comments.length,
+                        itemBuilder: (context, i) =>
+                            DiscussionCard(episodeId, comments[i]),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
           ],
         ),
-        // body: commentsValue.when(
-        //   // loading: () => const SizedBox.shrink(), //!
-        //   // error: (e, _) => const SizedBox.shrink(), //!
-        //   loading: () => const Text('loading'), //!
-        //   error: (e, _) => const Text('error'), //!
-        //   data: (comments) {
-        //     return ListView.builder(
-        //       itemCount: comments.length,
-        //       itemBuilder: (context, i) =>
-        //           DiscussionCard(episodeId, comments[i]),
-        //     );
-        //   },
-        // ),
         bottomSheet: const DiscussionSheet(),
       ),
+    );
+  }
+}
+
+class EmptyDiscussionText extends StatelessWidget {
+  final String? text;
+  const EmptyDiscussionText({Key? key, this.text}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      padding: const EdgeInsets.only(
+        bottom: DiscussionSheet.height,
+      ),
+      child: Text(text ??
+          'Comments will be displayed at the time they were sent'.hardcoded),
     );
   }
 }

@@ -11,7 +11,7 @@ class Comment with EquatableMixin {
   final String id;
 
   @JsonKey(name: 'episodeUid')
-  final String episodeId;
+  final String episodeId; //!
 
   @JsonKey(name: 'userUid')
   final String userId;
@@ -21,13 +21,13 @@ class Comment with EquatableMixin {
 
   final int time;
 
-  final int lvl;
+  final int lvl; //!
 
   @JsonKey(name: 'parents', defaultValue: [])
-  final List<String> parentIds;
+  final List<String> parentIds; //!
 
   @JsonKey(ignore: true, defaultValue: {})
-  final Map<String, Comment> replies;
+  final Map<String, Comment> replies; //!
 
   Comment({
     required this.id,
