@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/widgets/tap_to_unfocus.dart';
-import 'package:podiz/player/components/discussionCard.dart';
 import 'package:podiz/player/screens/discussion_header.dart';
 import 'package:podiz/src/common_widgets/back_text_button.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
@@ -48,6 +47,7 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                   final commentsValue =
                       ref.watch(commentsStreamProvider(episodeId));
                   //TODO no comments yet widget
+                  commentsValue.value;
                   return commentsValue.when(
                     loading: () => const EmptyDiscussionText(),
                     error: (e, _) => const EmptyDiscussionText(
@@ -61,7 +61,7 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                         ),
                         itemCount: comments.length,
                         itemBuilder: (context, i) =>
-                            DiscussionCard(episodeId, comments[i]),
+                            ListTile(title: Text(comments[i].text)),
                       );
                     },
                   );
@@ -86,9 +86,12 @@ class EmptyDiscussionText extends StatelessWidget {
       alignment: Alignment.center,
       padding: const EdgeInsets.only(
         bottom: DiscussionSheet.height,
+      ).add(const EdgeInsets.symmetric(horizontal: 16)),
+      child: Text(
+        text ??
+            'Comments will be displayed at the time they were sent'.hardcoded,
+        textAlign: TextAlign.center,
       ),
-      child: Text(text ??
-          'Comments will be displayed at the time they were sent'.hardcoded),
     );
   }
 }
