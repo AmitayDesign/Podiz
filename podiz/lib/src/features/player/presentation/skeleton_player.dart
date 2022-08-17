@@ -29,8 +29,10 @@ class SkeletonPlayer extends StatelessWidget {
         ]),
         themeMode: ThemeMode.light,
         child: SkeletonItem(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 12, 16, 12),
+          child: Container(
+            height: 76, //! hardcoded
+            padding: const EdgeInsets.only(left: 24, right: 16),
+            // padding: const EdgeInsets.fromLTRB(24, 12, 16, 12),
             child: Row(
               children: [
                 const SkeletonPodcastAvatar(size: 52),
