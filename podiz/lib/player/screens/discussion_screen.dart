@@ -48,6 +48,7 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                   final commentsValue =
                       ref.watch(commentsStreamProvider(episodeId));
                   //TODO no comments yet widget
+                  commentsValue.value;
                   return commentsValue.when(
                     loading: () => const EmptyDiscussionText(),
                     error: (e, _) => const EmptyDiscussionText(
@@ -87,9 +88,12 @@ class EmptyDiscussionText extends StatelessWidget {
       alignment: Alignment.center,
       padding: const EdgeInsets.only(
         bottom: DiscussionSheet.height,
+      ).add(const EdgeInsets.symmetric(horizontal: 16)),
+      child: Text(
+        text ??
+            'Comments will be displayed at the time they were sent'.hardcoded,
+        textAlign: TextAlign.center,
       ),
-      child: Text(text ??
-          'Comments will be displayed at the time they were sent'.hardcoded),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
@@ -19,11 +20,13 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
         .orderBy('time')
         .snapshots()
         .map((snapshot) {
-      print(1);
       final commentList =
           snapshot.docs.map((doc) => Comment.fromFirestore(doc)).toList();
-      print(2);
-      return groupComments(commentList);
+      debugPrint(commentList[17].toJson().toString());
+      debugPrint(commentList[18].toJson().toString());
+      debugPrint(commentList[19].toJson().toString());
+      return commentList;
+      // return groupComments(commentList);
     });
   }
 
