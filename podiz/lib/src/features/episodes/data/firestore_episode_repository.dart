@@ -70,4 +70,10 @@ class FirestoreEpisodeRepository extends EpisodeRepository {
         fromFirestore: (doc, _) => Episode.fromFirestore(doc),
         toFirestore: (episode, _) => {},
       );
+
+  @override
+  Stream<Episode> watchEpisode(String episodeId) {
+    // TODO: implement watchEpisode
+    throw UnimplementedError();
+  }
 }

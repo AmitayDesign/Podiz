@@ -14,18 +14,22 @@ final episodeRepositoryProvider = Provider<EpisodeRepository>(
 );
 
 abstract class EpisodeRepository {
-  //TODO watch episode
+  Stream<Episode> watchEpisode(String episodeId);
   Future<Episode> fetchEpisode(String episodeId);
   Query<Episode> hotliveFirestoreQuery(); //!
   Query<Episode> episodesFirestoreQuery(String filter); //!
 }
 
-final episodeFutureProvider =
-    FutureProvider.family.autoDispose<Episode, EpisodeId>(
-  (ref, episodeId) async {
+final episodeStreamProvider = StreamProvider.family<Episode, EpisodeId>(
+  (ref, episodeId) {
     final episodeRepository = ref.watch(episodeRepositoryProvider);
-    final episode = await episodeRepository.fetchEpisode(episodeId);
-    ref.keepAlive();
-    return episode;
+    return episodeRepository.watchEpisode(episodeId);
+  },
+);
+
+final episodeFutureProvider = FutureProvider.family<Episode, EpisodeId>(
+  (ref, episodeId) {
+    final episodeRepository = ref.watch(episodeRepositoryProvider);
+    return episodeRepository.fetchEpisode(episodeId);
   },
 );

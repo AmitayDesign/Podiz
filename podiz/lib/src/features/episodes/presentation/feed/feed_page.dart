@@ -60,9 +60,8 @@ class _FeedPageState extends ConsumerState<FeedPage> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(currentUserProvider);
-    print(user.lastListenedEpisodeId);
     final episodeRepository = ref.watch(episodeRepositoryProvider);
-    final controller = ref.read(feedControllerProvider.notifier);
+    final feedController = ref.read(feedControllerProvider.notifier);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: const FeedBar(),
@@ -107,8 +106,8 @@ class _FeedPageState extends ConsumerState<FeedPage> {
             //     delegate: SliverChildListDelegate([
             //       if (user.lastListenedEpisodeId.isNotEmpty)
             //         FeedTile(
-            //           Locales.string(context, controller.myCastsLocaleKey),
-            //           textKey: controller.myCastsKey,
+            //           Locales.string(context, feedController.myCastsLocaleKey),
+            //           textKey: feedController.myCastsKey,
             //         ),
             //       for (final podcast in authManager.myCast)
             //         EpisodeCard(
@@ -123,8 +122,8 @@ class _FeedPageState extends ConsumerState<FeedPage> {
             if (user.lastListenedEpisodeId.isNotEmpty ||
                 user.favPodcastIds.isNotEmpty)
               SliverFeedTile(
-                Locales.string(context, controller.hotLiveLocaleKey),
-                textKey: controller.hotLiveKey,
+                Locales.string(context, feedController.hotLiveLocaleKey),
+                textKey: feedController.hotLiveKey,
               ),
             SliverFirestoreQueryBuilder<Episode>(
               query: episodeRepository.hotliveFirestoreQuery(),
