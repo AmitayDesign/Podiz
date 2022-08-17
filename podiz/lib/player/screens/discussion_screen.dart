@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/widgets/tap_to_unfocus.dart';
+import 'package:podiz/player/screens/comment_card.dart';
 import 'package:podiz/player/screens/discussion_header.dart';
 import 'package:podiz/src/common_widgets/back_text_button.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
@@ -55,13 +56,14 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                     ),
                     data: (comments) {
                       if (comments.isEmpty) const EmptyDiscussionText();
-                      return ListView.builder(
+                      return ListView(
                         padding: const EdgeInsets.only(
                           bottom: DiscussionSheet.height,
                         ),
-                        itemCount: comments.length,
-                        itemBuilder: (context, i) =>
-                            ListTile(title: Text(comments[i].text)),
+                        children: [
+                          for (final comment in comments)
+                            CommentCard(comment, episodeId: episodeId),
+                        ],
                       );
                     },
                   );
