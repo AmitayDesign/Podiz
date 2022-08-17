@@ -79,20 +79,20 @@ class _FeedPageState extends ConsumerState<FeedPage> {
             if (user.lastListenedEpisodeId.isNotEmpty)
               Consumer(
                 builder: (context, ref, _) {
-                  final lastListenedEpisodeValue = ref
-                      .watch(episodeFutureProvider(user.lastListenedEpisodeId));
+                  final lastListenedValue = ref
+                      .watch(episodeStreamProvider(user.lastListenedEpisodeId));
                   return SliverToBoxAdapter(
-                    child: lastListenedEpisodeValue.when(
+                    child: lastListenedValue.when(
                       loading: () => const SkeletonEpisodeCard(
                         bottomHeight: QuickNoteButton.height,
                       ),
                       error: (e, _) => null,
-                      data: (lastListenedEpisode) {
+                      data: (lastListened) {
                         return EpisodeCard(
-                          lastListenedEpisode,
-                          onTap: () => openEpisode(lastListenedEpisode),
-                          onPodcastTap: () => openPodcast(lastListenedEpisode),
-                          bottom: QuickNoteButton(episode: lastListenedEpisode),
+                          lastListened,
+                          onTap: () => openEpisode(lastListened),
+                          onPodcastTap: () => openPodcast(lastListened),
+                          bottom: QuickNoteButton(episode: lastListened),
                         );
                       },
                     ),
