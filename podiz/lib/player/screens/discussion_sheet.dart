@@ -56,7 +56,7 @@ class DiscussionSheet extends ConsumerWidget {
                     child: Row(
                       children: [
                         Text(
-                          "${episode.userIdsWatching.length - 1} listening with you"
+                          '${episode.userIdsWatching.length - 1} listening with you'
                               .hardcoded,
                           style: context.textTheme.bodySmall,
                         ),

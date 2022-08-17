@@ -49,7 +49,7 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
             keyboardType: TextInputType.multiline,
             textInputAction: TextInputAction.send,
             minLines: 1,
-            maxLines: 5,
+            maxLines: 3,
             style: context.textTheme.bodyMedium!.copyWith(
               color: Colors.white,
             ),
@@ -62,7 +62,7 @@ class _CommentSheetContentState extends State<CommentSheetContent> {
                   kMinInteractiveDimension / 2,
                 ),
               ),
-              hintText: "Share your insight...",
+              hintText: 'Share your insight...',
             ),
             onSubmitted: (_) => sendComment(),
           ),
