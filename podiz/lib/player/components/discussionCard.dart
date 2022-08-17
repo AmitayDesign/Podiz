@@ -102,7 +102,7 @@ class _DiscussionCardState extends ConsumerState<DiscussionCard> {
                                     child: Text(
                                       user.name,
                                       style: context.textTheme.titleMedium,
-                                      overflow: TextOverflow.ellipsis,
+                                      overflow: TextOverflow.ellipsis, //?
                                     ),
                                   ),
                                   const SizedBox(height: 4),
