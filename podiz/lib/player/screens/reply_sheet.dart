@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/src/features/auth/data/auth_repository.dart';
-import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/discussion/presentation/comment_sheet_content.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
@@ -14,6 +12,7 @@ class ReplySheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final episode = ref.watch(playerStateChangesProvider).valueOrNull!;
     return Material(
       color: Palette.grey900,
       shape: const RoundedRectangleBorder(
@@ -24,17 +23,8 @@ class ReplySheet extends ConsumerWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: CommentSheetContent(
-          key: UniqueKey(),
           onSend: (text) {
-            final episode = ref.read(playerStateChangesProvider).valueOrNull!;
-            final playerTime = ref.read(playerTimeStreamProvider).valueOrNull!;
-            ref.read(discussionRepositoryProvider).addComment(
-                  text,
-                  episodeId: episode.id,
-                  time: playerTime.position,
-                  user: ref.read(currentUserProvider),
-                  parent: comment,
-                );
+            // comment
           },
         ),
       ),
