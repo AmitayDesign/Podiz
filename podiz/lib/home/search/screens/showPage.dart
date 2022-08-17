@@ -5,7 +5,7 @@ import 'package:podiz/home/components/followShowButton.dart';
 import 'package:podiz/home/search/components/podcastShowTile.dart';
 import 'package:podiz/loading.dart/episodeLoading.dart';
 import 'package:podiz/objects/SearchResult.dart';
-import 'package:podiz/profile/components.dart/backAppBar.dart';
+import 'package:podiz/profile/components.dart/back_bar.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/splash_screen.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
@@ -28,7 +28,7 @@ class ShowPage extends ConsumerWidget {
       },
       loading: () => const SplashScreen(),
       data: (show) => Scaffold(
-        appBar: BackAppBar(),
+        appBar: BackBar(),
         body: Column(
           children: [
             //TODO SliverAppBar

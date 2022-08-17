@@ -9,7 +9,7 @@ import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/loading.dart/notificationLoading.dart';
 import 'package:podiz/loading.dart/shimmerContainer.dart';
 import 'package:podiz/objects/show.dart';
-import 'package:podiz/profile/components.dart/backAppBar.dart';
+import 'package:podiz/profile/components.dart/back_bar.dart';
 import 'package:podiz/profile/components.dart/followPeopleButton.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
@@ -76,7 +76,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             const Center(child: CircularProgressIndicator()), //TODO shimmer?
         data: (user) {
           return Scaffold(
-            appBar: BackAppBar(),
+            appBar: BackBar(),
             body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),

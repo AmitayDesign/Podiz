@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/widgets/tap_to_unfocus.dart';
+import 'package:podiz/player/screens/discussion_header.dart';
+import 'package:podiz/src/common_widgets/back_text_button.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/domain/playing_episode.dart';
+import 'package:podiz/src/theme/palette.dart';
 
-import 'discussion_bar.dart';
 import 'discussion_sheet.dart';
 
 class DiscussionScreen extends ConsumerStatefulWidget {
@@ -31,7 +33,19 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
     // final commentsValue = ref.watch(commentsStreamProvider(episodeId));
     return TapToUnfocus(
       child: Scaffold(
-        appBar: DiscussionBar(widget.episodeId),
+        appBar: AppBar(
+          backgroundColor: Palette.darkPurple,
+          automaticallyImplyLeading: false,
+          title: const BackTextButton(),
+        ),
+        body: Column(
+          children: [
+            DiscussionHeader(episodeId),
+            // Expanded(
+            //   child: child,
+            // ),
+          ],
+        ),
         // body: commentsValue.when(
         //   // loading: () => const SizedBox.shrink(), //!
         //   // error: (e, _) => const SizedBox.shrink(), //!
