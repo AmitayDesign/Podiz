@@ -12,6 +12,8 @@ class DiscussionHeader extends ConsumerWidget {
   final String episodeId;
   const DiscussionHeader(this.episodeId, {Key? key}) : super(key: key);
 
+  final backgroundColor = Palette.darkPurple;
+
   void openShow(Episode episode, BuildContext context) {
     context.goNamed(
       AppRoute.show.name,
@@ -26,11 +28,11 @@ class DiscussionHeader extends ConsumerWidget {
       loading: () => const SizedBox.shrink(), //TODO skeleton
       error: (e, _) => const SizedBox.shrink(),
       data: (episode) => Container(
-        color: Palette.darkPurple,
+        color: backgroundColor,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            EpisodeContent(episode),
+            EpisodeContent(episode, color: backgroundColor),
             const PlayerSlider(),
           ],
         ),

@@ -6,12 +6,14 @@ class StackedAvatars extends StatelessWidget {
   final List<String> imageUrls;
   final double radius;
   final double borderWidth;
+  final Color? borderColor;
 
   const StackedAvatars({
     Key? key,
     required this.imageUrls,
     this.radius = 16,
     this.borderWidth = 2,
+    this.borderColor,
   }) : super(key: key);
 
   List<String> decideImages() {
@@ -30,7 +32,7 @@ class StackedAvatars extends StatelessWidget {
               padding:
                   imageUrls.length > 1 ? EdgeInsets.all(borderWidth) : null,
               decoration: BoxDecoration(
-                color: context.colorScheme.surface,
+                color: borderColor ?? context.colorScheme.surface,
                 shape: BoxShape.circle,
               ),
               child: CircleAvatar(

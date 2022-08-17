@@ -4,7 +4,6 @@ import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/widgets/dot.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
-import 'package:podiz/src/utils/zwsp_string.dart';
 
 import 'insights_info.dart';
 
@@ -13,11 +12,15 @@ class EpisodeContent extends StatelessWidget {
   final VoidCallback? onTap;
   final Widget? bottom;
 
+  /// The color to give to the stacked avatars border
+  final Color? color;
+
   const EpisodeContent(
     this.episode, {
     Key? key,
     this.onTap,
     this.bottom,
+    this.color,
   }) : super(key: key);
 
   String format(int milliseconds) {
@@ -34,9 +37,6 @@ class EpisodeContent extends StatelessWidget {
     final titleStyle = context.textTheme.titleMedium;
     final subtitleStyle = context.textTheme.bodyMedium;
 
-    print(episode.showName);
-    print(episode.showName.useCorrectEllipsis());
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16)
           .add(const EdgeInsets.only(top: 8, bottom: 12)),
@@ -44,7 +44,7 @@ class EpisodeContent extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 2),
-            child: InsightsInfo(episode: episode),
+            child: InsightsInfo(episode: episode, borderColor: color),
           ),
           const SizedBox(height: 16),
           Row(
@@ -70,7 +70,7 @@ class EpisodeContent extends StatelessWidget {
                             child: GestureDetector(
                               onTap: onTap,
                               child: Text(
-                                episode.showName.useCorrectEllipsis(),
+                                episode.showName,
                                 style: subtitleStyle,
                                 overflow: TextOverflow.ellipsis,
                               ),
