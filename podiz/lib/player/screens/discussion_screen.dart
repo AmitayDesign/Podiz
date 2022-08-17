@@ -88,9 +88,13 @@ class EmptyDiscussionText extends StatelessWidget {
       alignment: Alignment.center,
       padding: const EdgeInsets.only(
         bottom: DiscussionSheet.height,
+      ).add(const EdgeInsets.symmetric(horizontal: 16)),
+      child: Text(
+        text ??
+            'Comments will be displayed at their respective timestamp...'
+                .hardcoded,
+        textAlign: TextAlign.center,
       ),
-      child: Text(text ??
-          'Comments will be displayed at the time they were sent'.hardcoded),
     );
   }
 }

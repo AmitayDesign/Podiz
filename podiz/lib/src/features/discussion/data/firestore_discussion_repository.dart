@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
@@ -10,6 +9,7 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
   FirebaseFirestore firestore;
   FirestoreDiscussionRepository({required this.firestore});
 
+  //TODO make this more scalable
   @override
   Stream<List<Comment>> watchComments(EpisodeId episodeId) {
     return firestore
@@ -22,15 +22,10 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
         .map((snapshot) {
       final commentList =
           snapshot.docs.map((doc) => Comment.fromFirestore(doc)).toList();
-      debugPrint(commentList[17].toJson().toString());
-      debugPrint(commentList[18].toJson().toString());
-      debugPrint(commentList[19].toJson().toString());
-      return commentList;
-      // return groupComments(commentList);
+      return groupComments(commentList);
     });
   }
 
-  //! make this more scalable
   List<Comment> groupComments(List<Comment> comments) {
     final commentsGroup = <String, Comment>{};
     for (final comment in comments) {
