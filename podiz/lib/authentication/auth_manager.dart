@@ -28,34 +28,11 @@ class AuthManager {
 
   ///public
 
-  // //TODO confirm if this is well done
-  // Future<void> updateUser(
-  //   BuildContext context, {
-  //   required UserPodiz user,
-  // }) async {
-  //   try {
-  //     await firebaseAuth.currentUser!.updateDisplayName(user.name);
-  //     await firestore
-  //         .collection('users')
-  //         .doc(firebaseAuth.currentUser!.id)
-  //         .update(user.toJson());
-  //   } catch (_) {
-  //     throw Failure.unexpected(context);
-  //   }
-  // }
-
   // Future<void> requestUserData(Map<String, String> request, context) async {
   //   //TODO review (had a loading before)
   //   await firestore.collection("clientInfo").doc(currentUser!.id).set(request);
   //   Navigator.pop(context);
   // } //GDPR conserns
-
-  Future<void> updateLastListened(String episodeUid) async {
-    await firestore
-        .collection("users")
-        .doc(currentUser!.id)
-        .update({"lastListened": episodeUid});
-  }
 
   Future<void> followPeople(String uid) async {
     final userUid = currentUser!.id;

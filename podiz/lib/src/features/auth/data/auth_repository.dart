@@ -24,6 +24,7 @@ abstract class AuthRepository {
   UserPodiz? get currentUser;
   Future<void> signIn();
   Future<void> signOut();
+  Future<void> updateUser(UserPodiz user);
 }
 
 //* Providers
