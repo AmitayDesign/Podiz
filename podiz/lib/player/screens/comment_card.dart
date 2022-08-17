@@ -7,6 +7,7 @@ import 'package:podiz/player/screens/reply_widget.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/theme/palette.dart';
 
@@ -68,7 +69,9 @@ class CommentCard extends ConsumerWidget {
                     TimeChip(
                       icon: Icons.play_arrow,
                       position: comment.time ~/ 1000,
-                      onTap: () {}, //TODO resume the episode at this time
+                      onTap: () => ref
+                          .read(playerRepositoryProvider)
+                          .play(episodeId, comment.time ~/ 1000 - 10),
                     ),
                   ],
                 ),
