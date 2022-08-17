@@ -1,30 +1,51 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
+import 'package:podiz/src/features/player/domain/player_time.dart';
 
 final playerSliderControllerProvider =
-    StateNotifierProvider.autoDispose<PlayerSliderController, int>((ref) {
+    StateNotifierProvider.autoDispose<PlayerSliderController, PlayerTime>(
+        (ref) {
   final repository = ref.watch(playerRepositoryProvider);
-  // final time = ref.watch(playerTimeProvider).valueOrNull ?? 0;
+  final playerTimeStream = ref.watch(playerTimeStreamProvider.stream);
   return PlayerSliderController(
     playerRepository: repository,
-    // playerTime: time,
+    playerTimeStream: playerTimeStream,
   );
 });
 
 //TODO remove logic from player slider and update PlayerTimeChip widget
-class PlayerSliderController extends StateNotifier<int> {
+class PlayerSliderController extends StateNotifier<PlayerTime> {
+  static PlayerTime? cachedPlayerTime;
+
   final PlayerRepository playerRepository;
-  // final int playerTime;
+  final Stream<PlayerTime> playerTimeStream;
+  bool updatesWithTime = true;
 
   PlayerSliderController({
     required this.playerRepository,
-    // required this.playerTime,
-  }) : super(0);
+    required this.playerTimeStream,
+  }) : super(cachedPlayerTime ?? PlayerTime.zero) {
+    listenToPlayerTime();
+  }
 
-  // bool updatesWithTime = true;
-  // void decideTime() {
-  //   return updatesWithTime ? playerTime :
-  // }
+  late final StreamSubscription sub;
+  void listenToPlayerTime() {
+    sub = playerTimeStream.listen((playerTime) {
+      if (updatesWithTime) state = playerTime;
+    });
+  }
+
+  set position(int position) =>
+      state = PlayerTime(position: position, duration: state.duration);
 
   Future<void> seekTo(int seconds) => playerRepository.seekTo(seconds);
+
+  @override
+  void dispose() {
+    sub.cancel();
+    cachedPlayerTime = state;
+    super.dispose();
+  }
 }
