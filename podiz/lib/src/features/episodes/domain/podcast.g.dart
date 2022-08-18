@@ -13,7 +13,7 @@ Podcast _$PodcastFromJson(Map<String, dynamic> json) => Podcast(
       description: json['description'] as String,
       imageUrl: json['image_url'] as String,
       totalEpisodes: json['total_episodes'] as int,
-      podcasts: (json['podcasts'] as List<dynamic>?)
+      episodeIds: (json['podcasts'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],
@@ -30,6 +30,6 @@ Map<String, dynamic> _$PodcastToJson(Podcast instance) => <String, dynamic>{
       'description': instance.description,
       'image_url': instance.imageUrl,
       'total_episodes': instance.totalEpisodes,
-      'podcasts': instance.podcasts,
+      'podcasts': instance.episodeIds,
       'followers': instance.followers,
     };

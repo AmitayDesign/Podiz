@@ -67,7 +67,7 @@ class _PodcastScreenState extends ConsumerState<PodcastScreen> {
                 delegate: SliverChildBuilderDelegate(
                   (context, i) => Consumer(
                     builder: (context, ref, _) {
-                      final episodeId = podcast.podcasts[i];
+                      final episodeId = podcast.episodeIds[i];
                       final episodeValue =
                           ref.watch(episodeFutureProvider(episodeId));
                       return episodeValue.when(
@@ -84,7 +84,7 @@ class _PodcastScreenState extends ConsumerState<PodcastScreen> {
                       );
                     },
                   ),
-                  childCount: podcast.podcasts.length,
+                  childCount: podcast.episodeIds.length,
                 ),
               ),
 
