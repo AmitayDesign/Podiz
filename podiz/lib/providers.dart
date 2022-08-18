@@ -35,14 +35,3 @@ final showFutureProvider = FutureProvider.family.autoDispose<Show, String>(
     return show;
   },
 );
-
-//* USER
-
-final userFutureProvider = FutureProvider.family.autoDispose<UserPodiz, String>(
-  (ref, userId) async {
-    final userManager = ref.watch(userManagerProvider);
-    final user = await userManager.getUserFromUid(userId);
-    ref.keepAlive();
-    return user;
-  },
-);

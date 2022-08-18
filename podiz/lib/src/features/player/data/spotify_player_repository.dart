@@ -25,6 +25,7 @@ class SpotifyPlayerRepository implements PlayerRepository {
       PlayerState state) async {
     final track = state.track;
     if (track == null || !track.isEpisode || !track.isPodcast) return null;
+    if (state.playbackPosition > track.duration) return null;
     final episode = await episodeRepository.fetchEpisode(track.uri);
     return PlayingEpisode.fromEpisode(
       episode,
