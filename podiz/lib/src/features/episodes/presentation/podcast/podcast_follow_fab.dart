@@ -18,15 +18,17 @@ class PodcastFollowFab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final podcastRepository = ref.watch(podcastRepositoryProvider);
     final user = ref.watch(currentUserProvider);
     final isFollowing = user.favPodcastIds.contains(podcastId);
 
     return FloatingActionButton.extended(
       backgroundColor: context.colorScheme.primary,
-      onPressed: () => isFollowing
-          ? podcastRepository.unfollow(user.id, podcastId)
-          : podcastRepository.follow(user.id, podcastId),
+      onPressed: () {
+        final podcastRepository = ref.read(podcastRepositoryProvider);
+        isFollowing
+            ? podcastRepository.unfollow(user.id, podcastId)
+            : podcastRepository.follow(user.id, podcastId);
+      },
       icon: PodcastAvatar(
         podcastId: podcastId,
         imageUrl: imageUrl,

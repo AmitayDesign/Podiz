@@ -39,7 +39,7 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
         .map((snapshot) {
       final commentList =
           snapshot.docs.map((doc) => Comment.fromFirestore(doc)).toList();
-      return groupComments(commentList);
+      return commentList;
     });
   }
 

@@ -32,7 +32,9 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
     ref.listen<AsyncValue<PlayingEpisode?>>(
       playerStateChangesProvider,
       (_, episodeValue) => episodeValue.whenData((episode) {
-        if (episode != null) episodeId = episode.id;
+        if (episode != null) {
+          Future.microtask(() => setState(() => episodeId = episode.id));
+        }
       }),
     );
     return TapToUnfocus(
