@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/player/screens/reply_sheet.dart';
 import 'package:podiz/providers.dart';
-import 'package:podiz/src/common_widgets/circle_button.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
+import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
-import 'package:podiz/src/features/discussion/presentation/reply_button.dart';
+import 'package:podiz/src/features/discussion/presentation/comment/reply_sheet.dart';
+import 'package:podiz/src/features/discussion/presentation/comment_sheet.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
+import 'comment_text.dart';
+import 'comment_trailing.dart';
 import 'reply_widget.dart';
 
 class CommentCard extends ConsumerWidget {
@@ -20,18 +21,37 @@ class CommentCard extends ConsumerWidget {
   const CommentCard(this.comment, {Key? key, required this.episodeId})
       : super(key: key);
 
-  final buttonSize = 32.0;
-
-  void openCommentSheet(BuildContext context) => showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (context) => Padding(
+  void openCommentSheet(BuildContext context, Reader read, Comment comment) {
+    read(commentSheetVisibilityProvider.notifier).state = false;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => WillPopScope(
+        onWillPop: () async {
+          read(commentSheetVisibilityProvider.notifier).state = true;
+          return true;
+        },
+        child: Padding(
           padding: MediaQuery.of(context).viewInsets,
-          child: ReplySheet(comment: comment),
+          child: ReplySheet(
+            comment: comment,
+            onReply: (reply) async {
+              final time = await read(playerTimeStreamProvider.future);
+              read(discussionRepositoryProvider).addComment(
+                reply,
+                parent: comment,
+                episodeId: episodeId,
+                time: time.position,
+                user: read(currentUserProvider),
+              );
+            },
+          ),
         ),
-      );
+      ),
+    );
+  }
 
-  void share() {} //!
+  void share(Comment comment) {} //!
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -78,38 +98,22 @@ class CommentCard extends ConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Linkify(
-                  options: const LinkifyOptions(removeWww: true),
-                  onOpen: (link) async {
-                    if (await canLaunchUrlString(link.url)) {
-                      await launchUrlString(link.url);
-                    }
-                  },
-                  text: comment.text,
-                  style: context.textTheme.bodyLarge,
-                ),
+                CommentText(comment.text),
                 const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ReplyButton(
-                        size: buttonSize,
-                        onPressed: () => openCommentSheet(context),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    CircleButton(
-                      size: buttonSize,
-                      onPressed: share,
-                      icon: Icons.share,
-                    ),
-                  ],
+                CommentTrailing(
+                  onReply: () => openCommentSheet(context, ref.read, comment),
+                  onShare: () => share(comment),
                 ),
                 if (comment.replies.isNotEmpty) ...[
                   const SizedBox(height: 16),
                   const Divider(),
                   for (final reply in comment.replies.values)
-                    ReplyWidget(reply, episodeId: episodeId),
+                    ReplyWidget(
+                      reply,
+                      episodeId: episodeId,
+                      onReply: () => openCommentSheet(context, ref.read, reply),
+                      onShare: () => share(reply),
+                    ),
                 ],
               ],
             ),

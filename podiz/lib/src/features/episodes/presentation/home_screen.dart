@@ -110,32 +110,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 NotificationsPage(),
               ],
             ),
-            bottomSheet: isKeyBoardOpen ? null : const Player(),
-            bottomNavigationBar: SizedBox(
-              height: HomeScreen.bottomBarHeigh,
-              child: ClipRect(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                  child: BottomNavigationBar(
-                    onTap: goToDestination,
-                    currentIndex: destination.index,
-                    items: const [
-                      BottomNavigationBarItem(
-                        label: 'Home',
-                        icon: Icon(Icons.home),
-                      ),
-                      BottomNavigationBarItem(
-                        label: 'Search',
-                        icon: Icon(Icons.search),
-                      ),
-                      BottomNavigationBarItem(
-                        label: 'Notifications',
-                        icon: Icon(Icons.notifications),
-                      ),
-                    ],
+            bottomNavigationBar: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (!isKeyBoardOpen) const Player(),
+                ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: BottomNavigationBar(
+                      onTap: goToDestination,
+                      currentIndex: destination.index,
+                      items: const [
+                        BottomNavigationBarItem(
+                          label: 'Home',
+                          icon: Icon(Icons.home),
+                        ),
+                        BottomNavigationBarItem(
+                          label: 'Search',
+                          icon: Icon(Icons.search),
+                        ),
+                        BottomNavigationBarItem(
+                          label: 'Notifications',
+                          icon: Icon(Icons.notifications),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
           ),
         );

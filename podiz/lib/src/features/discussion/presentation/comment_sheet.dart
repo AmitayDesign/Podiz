@@ -4,7 +4,6 @@ import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
-import 'package:podiz/src/features/discussion/presentation/comment_text_field.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/player_button.dart';
 import 'package:podiz/src/features/player/presentation/player_controller.dart';
@@ -12,10 +11,13 @@ import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/palette.dart';
 
-class CommentSheet extends ConsumerWidget {
-  const CommentSheet({Key? key}) : super(key: key);
+import 'comment/comment_text_field.dart';
 
-  static const height = 116.0;
+final commentSheetVisibilityProvider = StateProvider<bool>((ref) => true);
+
+class CommentSheet extends ConsumerWidget {
+  static const height = 116.0; //! hardcoded
+  const CommentSheet({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

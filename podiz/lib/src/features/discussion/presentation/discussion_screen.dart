@@ -10,7 +10,7 @@ import 'package:podiz/src/features/player/domain/playing_episode.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/palette.dart';
 
-import 'comment_card.dart';
+import 'comment/comment_card.dart';
 import 'comment_sheet.dart';
 import 'discussion_header.dart';
 
@@ -59,70 +59,72 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
           automaticallyImplyLeading: false,
           title: const BackTextButton(),
         ),
-        body: Column(
+        body: Stack(
           children: [
-            DiscussionHeader(episodeId),
-            Expanded(
-              child: Consumer(
-                builder: (context, ref, _) {
-                  // watch player time
-                  final commentsValue =
-                      ref.watch(commentsStreamProvider(episodeId));
-                  final playerTimeValue = ref.watch(playerTimeStreamProvider);
-                  return commentsValue.when(
-                    loading: () => const EmptyDiscussionText(),
-                    error: (e, _) => EmptyDiscussionText(
-                      text: 'There was an error loading comments.'.hardcoded,
-                    ),
-                    data: (comments) {
-                      return playerTimeValue.when(
-                        loading: () => const EmptyDiscussionText(),
-                        error: (e, _) => EmptyDiscussionText(
-                          text: 'There was an error playing this episode.'
-                              .hardcoded,
-                        ),
-                        data: (playerTime) {
-                          if (comments.isEmpty) const EmptyDiscussionText();
-                          final filteredComments = comments.reversed
-                              .where((comment) =>
-                                  comment.time ~/ 1000 <= playerTime.position)
-                              .toList();
-                          if (commentsCount != 0 &&
-                              commentsCount != filteredComments.length &&
-                              scrollController.hasClients &&
-                              scrollController.offset < 100) {
-                            Future.microtask(() => scrollController.animateTo(
-                                  0,
-                                  duration: const Duration(milliseconds: 200),
-                                  curve: Curves.ease,
-                                ));
-                          }
-                          commentsCount = filteredComments.length;
-                          return ListView.builder(
-                            controller: scrollController,
-                            reverse: true,
-                            padding: const EdgeInsets.only(
-                              bottom: CommentSheet.height,
+            Consumer(
+              builder: (context, ref, _) {
+                // watch player time
+                final commentsValue =
+                    ref.watch(commentsStreamProvider(episodeId));
+                final playerTimeValue = ref.watch(playerTimeStreamProvider);
+                return commentsValue.when(
+                  loading: () => const EmptyDiscussionText(),
+                  error: (e, _) => EmptyDiscussionText(
+                    text: 'There was an error loading comments.'.hardcoded,
+                  ),
+                  data: (comments) {
+                    return playerTimeValue.when(
+                      loading: () => const EmptyDiscussionText(),
+                      error: (e, _) => EmptyDiscussionText(
+                        text: 'There was an error playing this episode.'
+                            .hardcoded,
+                      ),
+                      data: (playerTime) {
+                        if (comments.isEmpty) const EmptyDiscussionText();
+                        final filteredComments = comments.reversed
+                            .where((comment) =>
+                                comment.time ~/ 1000 <= playerTime.position)
+                            .toList();
+                        if (commentsCount != 0 &&
+                            commentsCount != filteredComments.length &&
+                            scrollController.hasClients &&
+                            scrollController.offset < 100) {
+                          Future.microtask(() => scrollController.animateTo(
+                                0,
+                                duration: const Duration(milliseconds: 200),
+                                curve: Curves.ease,
+                              ));
+                        }
+                        commentsCount = filteredComments.length;
+                        return ListView.builder(
+                          controller: scrollController,
+                          reverse: true,
+                          padding: const EdgeInsets.only(
+                            top: DiscussionHeader.height + 8,
+                            bottom: CommentSheet.height + 8,
+                          ),
+                          itemCount: filteredComments.length,
+                          itemBuilder: (context, i) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: CommentCard(
+                              filteredComments[i],
+                              episodeId: episodeId,
                             ),
-                            itemCount: filteredComments.length,
-                            itemBuilder: (context, i) => Padding(
-                              padding: const EdgeInsets.only(bottom: 16),
-                              child: CommentCard(
-                                filteredComments[i],
-                                episodeId: episodeId,
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  );
-                },
-              ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                );
+              },
             ),
+            DiscussionHeader(episodeId),
           ],
         ),
-        bottomSheet: const CommentSheet(),
+        bottomSheet: Visibility(
+          visible: ref.watch(commentSheetVisibilityProvider),
+          child: const CommentSheet(),
+        ),
       ),
     );
   }
@@ -138,6 +140,7 @@ class EmptyDiscussionText extends StatelessWidget {
     return Container(
       alignment: Alignment.center,
       padding: const EdgeInsets.only(
+        top: DiscussionHeader.height,
         bottom: CommentSheet.height,
       ).add(const EdgeInsets.symmetric(horizontal: 16)),
       child: Text(

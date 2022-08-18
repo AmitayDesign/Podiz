@@ -9,6 +9,7 @@ import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 class DiscussionHeader extends ConsumerWidget {
+  static const height = 136.0; //! hardcoded
   final String episodeId;
   const DiscussionHeader(this.episodeId, {Key? key}) : super(key: key);
 
@@ -27,15 +28,24 @@ class DiscussionHeader extends ConsumerWidget {
     return episodeValue.when(
       loading: () => const SizedBox.shrink(), //TODO skeleton
       error: (e, _) => const SizedBox.shrink(),
-      data: (episode) => Container(
-        color: backgroundColor,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            EpisodeContent(episode, color: backgroundColor),
-            const PlayerSlider(),
-          ],
-        ),
+      data: (episode) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.only(bottom: PlayerSlider.height / 2 + 2),
+                child: Container(
+                  color: backgroundColor,
+                  child: EpisodeContent(episode, color: backgroundColor),
+                ),
+              ),
+              const PlayerSlider(),
+            ],
+          ),
+        ],
       ),
     );
   }
