@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/common_widgets/splash_screen.dart';
+import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/auth/presentation/profile/profile_follow_fab.dart';
 import 'package:podiz/src/features/auth/presentation/profile/profile_sliver_header.dart';
@@ -19,6 +20,8 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+  late final bool isCurrentUser =
+      ref.read(currentUserProvider).id == widget.userId;
   final scrollController = ScrollController();
 
   double get statusBarHeight => MediaQuery.of(context).padding.top;
@@ -42,7 +45,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final userValue = ref.watch(userFutureProvider(widget.userId));
+    final userValue = ref.watch(userStreamProvider(widget.userId));
     return userValue.when(
       error: (e, _) => const SplashScreen.error(), //!
       loading: () => const SplashScreen(), //!
@@ -94,23 +97,25 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ],
                 ),
               const SliverToBoxAdapter(child: SizedBox(height: 48)),
-              // Consumer(
-              //   builder: (context, ref, _) {
-              //     final commentsValue =
-              //         ref.watch(userCommentsStreamProvider(user.id));
-              //     return commentsValue.when(
-              //         loading: () => const SizedBox.shrink(), //!
-              //         error: (e, _) => const SizedBox.shrink(),
-              //         data: (comments) {
-              //           return SliverList(
-              //             delegate: SliverChildBuilderDelegate(
-              //               (context, i) =>
-              //                   ProfileEpisodeInfo(comments[i].episodeId),
-              //               childCount: comments.length,
-              //             ),
-              //           );
-              //         });
-              //   },
+              // SliverList(
+              //   delegate: SliverChildBuilderDelegate(
+              //     (context, i) => Consumer(
+              //       builder: (context, ref, _) {
+              //         final podcastId = user.favPodcastIds[i];
+              //         final podcastValue =
+              //             ref.watch(podcastFutureProvider(podcastId));
+              //         return podcastValue.when(
+              //           loading: () => const SkeletonPodcastAvatar(),
+              //           error: (e, _) => const SizedBox.shrink(),
+              //           data: (podcast) => PodcastAvatar(
+              //             podcastId: podcast.id,
+              //             imageUrl: podcast.imageUrl,
+              //           ),
+              //         );
+              //       },
+              //     ),
+              //     childCount: user.favPodcastIds.length,
+              //   ),
               // ),
 
               // so it doesnt end behind the bottom bar
@@ -118,7 +123,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ],
           ),
         ),
-        floatingActionButton: ProfileFollowFab(user),
+        floatingActionButton: isCurrentUser ? null : ProfileFollowFab(user),
         bottomNavigationBar: const Player(),
       ),
     );
