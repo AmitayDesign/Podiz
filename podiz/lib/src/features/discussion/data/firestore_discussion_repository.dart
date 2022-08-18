@@ -10,6 +10,7 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
 
   //TODO make this more scalable
   //! do like a paginated list and when no more comments added, fetch more
+  //! to do so, save lvl1 comments separatedly from the other levels
   @override
   Stream<List<Comment>> watchComments(String episodeId) {
     return firestore

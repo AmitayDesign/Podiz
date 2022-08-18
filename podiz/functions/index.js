@@ -843,24 +843,26 @@ exports.updateEpisodeListening = functions.database.ref('users/{userId}/lastList
     const listeningNow = change.after.val();
 
     if (lastListened != null)
-      await admin.firestore().collection("test").doc(lastListened).update({
+      await admin.firestore().collection("podcasts").doc(lastListened).set({
         users_watching: admin.firestore.FieldValue.arrayRemove(userId)
-      });
+      }, { merge: true });
 
     if (listeningNow != null)
-      await admin.firestore().collection("test").doc(listeningNow).update({
+      await admin.firestore().collection("podcasts").doc(listeningNow).set({
         users_watching: admin.firestore.FieldValue.arrayUnion(userId)
-      });
+      }, { merge: true });
   });
 
 
 exports.removeEpisodeListening = functions.database.ref('users/{userId}/connections')
-  .onWrite((change, context) => {
+  .onWrite(async (change, context) => {
     const userId = context.params.userId;
-    const connections = change.after.val();
-    const isDisconnected = connections.length == 0;
+    const connections = change.after.val() ?? new Map();
+    const isDisconnected = connections.size == 0;
+    console.log(connections);
+    console.log(isDisconnected);
 
     if (isDisconnected) {
-      return functions.database.ref(`users/${userId}/lastListened`).set(null);
+      await admin.database().ref(`users/${userId}/lastListened`).set(null);
     }
   });

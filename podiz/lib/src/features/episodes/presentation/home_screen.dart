@@ -124,7 +124,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             bottomNavigationBar: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (!isKeyBoardOpen) const Player(),
+                const Player(),
                 ClipRect(
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
