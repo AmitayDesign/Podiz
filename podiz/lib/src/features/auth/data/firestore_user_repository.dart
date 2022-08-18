@@ -31,6 +31,7 @@ class FirestoreUserRepository implements UserRepository {
             toFirestore: (podcast, _) => {},
           );
 
+  @override
   Future<void> follow(String userId, String userToFollowId) async {
     final batch = firestore.batch();
     batch.update(firestore.collection("users").doc(userToFollowId), {
@@ -42,6 +43,7 @@ class FirestoreUserRepository implements UserRepository {
     await batch.commit();
   }
 
+  @override
   Future<void> unfollow(String userId, String userToFollowId) async {
     final batch = firestore.batch();
     batch.update(firestore.collection("users").doc(userToFollowId), {

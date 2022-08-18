@@ -63,7 +63,6 @@ class ProfileHeader extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final ratio = calculateRatio(constraints).clamp(0.0, 1.0);
-        print(ratio);
         final animation = AlwaysStoppedAnimation(ratio);
         double tween(double begin, double end) =>
             Tween<double>(begin: begin, end: end).evaluate(animation);
