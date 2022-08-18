@@ -56,34 +56,4 @@ class AuthManager {
     });
     await batch.commit();
   }
-
-  Future<void> followShow(String uid) async {
-    final userUid = currentUser!.id;
-    final batch = firestore.batch();
-    batch.update(firestore.collection("podcasters").doc(uid), {
-      "followers": FieldValue.arrayUnion([userUid])
-    });
-    batch.update(firestore.collection("users").doc(userUid), {
-      "favPodcasts": FieldValue.arrayUnion([uid]),
-      "following": FieldValue.arrayUnion([uid])
-    });
-    await batch.commit();
-  }
-
-  Future<void> unfollowShow(String uid) async {
-    final userUid = currentUser!.id;
-    final batch = firestore.batch();
-    batch.update(firestore.collection("podcasters").doc(uid), {
-      "followers": FieldValue.arrayRemove([userUid])
-    });
-    batch.update(firestore.collection("users").doc(userUid), {
-      "favPodcasts": FieldValue.arrayRemove([uid]),
-      "following": FieldValue.arrayRemove([uid])
-    });
-    await batch.commit();
-  }
-
-  bool isFollowing(String showUid) {
-    return currentUser!.favPodcastIds.contains(showUid);
-  }
 }

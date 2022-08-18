@@ -7,7 +7,6 @@ import 'package:podiz/aspect/widgets/cardButton.dart';
 import 'package:podiz/home/components/replyView.dart';
 import 'package:podiz/loading.dart/notificationLoading.dart';
 import 'package:podiz/loading.dart/shimmerContainer.dart';
-import 'package:podiz/profile/components.dart/followPeopleButton.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/back_text_button.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
@@ -173,8 +172,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               //       )
               //     : Container() //change this
             ]),
-            floatingActionButton:
-                currentUser.id == user.id ? null : followPeopleButton(user),
+            // floatingActionButton:
+            //     currentUser.id == user.id ? null : followPeopleButton(user),
           );
         });
   }

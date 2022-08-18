@@ -16,6 +16,8 @@ final podcastRepositoryProvider = Provider<PodcastRepository>(
 abstract class PodcastRepository {
   Future<Podcast> fetchPodcast(String podcastId);
   Query<Podcast> podcastsFirestoreQuery(String filter); //!
+  Future<void> follow(String userId, String podcastId);
+  Future<void> unfollow(String userId, String podcastId);
 }
 
 final podcastFutureProvider = FutureProvider.family<Podcast, String>(

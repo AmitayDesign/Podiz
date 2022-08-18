@@ -58,6 +58,32 @@ class FirestorePodcastRepository extends PodcastRepository {
             toFirestore: (show, _) => {},
           );
 
+  @override
+  Future<void> follow(String userId, String podcastId) async {
+    final batch = firestore.batch();
+    batch.update(firestore.collection("podcasters").doc(podcastId), {
+      "followers": FieldValue.arrayUnion([userId])
+    });
+    batch.update(firestore.collection("users").doc(userId), {
+      "favPodcasts": FieldValue.arrayUnion([podcastId]),
+      "following": FieldValue.arrayUnion([podcastId])
+    });
+    await batch.commit();
+  }
+
+  @override
+  Future<void> unfollow(String userId, String podcastId) async {
+    final batch = firestore.batch();
+    batch.update(firestore.collection("podcasters").doc(podcastId), {
+      "followers": FieldValue.arrayRemove([userId])
+    });
+    batch.update(firestore.collection("users").doc(userId), {
+      "favPodcasts": FieldValue.arrayRemove([podcastId]),
+      "following": FieldValue.arrayRemove([podcastId])
+    });
+    await batch.commit();
+  }
+
   // List<String> getFavoritePodcasts() {
   //   return favShow;
   // }
