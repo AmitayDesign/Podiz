@@ -85,9 +85,15 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
       comment.toJson(),
     );
     // add comment to user comments list
-    batch.update(firestore.collection("users").doc(user.id), {
-      'comments': FieldValue.arrayUnion([comment.toJson()]),
-    });
+    batch.update(
+        firestore
+            .collection("users")
+            .doc(user.id)
+            .collection('comments')
+            .doc(comment.id),
+        {
+          'comments': FieldValue.arrayUnion([comment.toJson()]),
+        });
     // increment podcast comment counter
     //TODO do not save img urls, save user ids
     //! then swap user argument for userId

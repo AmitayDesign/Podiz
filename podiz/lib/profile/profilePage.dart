@@ -158,16 +158,16 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                 ),
               ),
               const SizedBox(height: 54),
-              user.comments.isNotEmpty
-                  ? Expanded(
-                      child: ListView(
-                        children: user.comments.reversed
-                            .map((c) => _buildItem(
-                                user, c)) //change this to notifications
-                            .toList(),
-                      ),
-                    )
-                  : Container() //change this
+              // user.comments.isNotEmpty
+              //     ? Expanded(
+              //         child: ListView(
+              //           children: user.comments.reversed
+              //               .map((c) => _buildItem(
+              //                   user, c)) //change this to notifications
+              //               .toList(),
+              //         ),
+              //       )
+              //     : Container() //change this
             ]),
             floatingActionButton:
                 currentUser.id == user.id ? null : followPeopleButton(user),

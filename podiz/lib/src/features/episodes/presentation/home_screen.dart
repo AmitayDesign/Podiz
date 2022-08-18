@@ -84,6 +84,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     ref.listen<AsyncValue<PlayingEpisode?>>(
       playerStateChangesProvider,
       (lastEpisodeValue, episodeValue) {
+        final lastEpisodeId = lastEpisodeValue?.valueOrNull?.id;
+        final wasPlaying = lastEpisodeValue?.valueOrNull?.isPlaying ?? false;
         episodeValue.whenData((episode) {
           if (episode == null) return;
           final presenceRepository = ref.read(presenceRepositoryProvider);
@@ -93,10 +95,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               .updateLastListenedEpisode(episode.id);
           ref.read(authRepositoryProvider).updateUser(user);
           // update listening right now
-          if (episode.isPlaying) {
+          if (!wasPlaying && episode.isPlaying) {
             presenceRepository.configureUserPresence(user.id, episode.id);
-          } else {
+          } else if (wasPlaying && !episode.isPlaying) {
             presenceRepository.disconnect();
+          } else if (wasPlaying &&
+              episode.isPlaying &&
+              lastEpisodeId == episode.id) {
+            presenceRepository.updateLastListened(user.id, episode.id);
           }
         });
       },
