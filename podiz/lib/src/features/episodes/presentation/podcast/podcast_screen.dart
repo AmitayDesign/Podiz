@@ -8,6 +8,7 @@ import 'package:podiz/src/features/episodes/presentation/card/episode_card.dart'
 import 'package:podiz/src/features/episodes/presentation/card/skeleton_episode_card.dart';
 import 'package:podiz/src/features/episodes/presentation/podcast/podcast_follow_fab.dart';
 import 'package:podiz/src/features/episodes/presentation/podcast/podcast_sliver_bar.dart';
+import 'package:podiz/src/features/player/presentation/player.dart';
 import 'package:podiz/src/utils/zwsp_string.dart';
 
 class PodcastScreen extends ConsumerStatefulWidget {
@@ -47,7 +48,7 @@ class _PodcastScreenState extends ConsumerState<PodcastScreen> {
       error: (e, _) => const SplashScreen.error(), //!
       loading: () => const SplashScreen(), //!
       data: (podcast) => Scaffold(
-        extendBodyBehindAppBar: true,
+        extendBody: true,
         body: NotificationListener<ScrollEndNotification>(
           onNotification: (_) {
             snapHeader();
@@ -86,6 +87,9 @@ class _PodcastScreenState extends ConsumerState<PodcastScreen> {
                   childCount: podcast.podcasts.length,
                 ),
               ),
+
+              // so it doesnt end behind the bottom bar
+              const SliverToBoxAdapter(child: SizedBox(height: Player.height)),
             ],
           ),
         ),
@@ -93,6 +97,7 @@ class _PodcastScreenState extends ConsumerState<PodcastScreen> {
           podcastId: widget.podcastId,
           imageUrl: podcast.imageUrl,
         ),
+        bottomNavigationBar: const Player(),
       ),
     );
   }
