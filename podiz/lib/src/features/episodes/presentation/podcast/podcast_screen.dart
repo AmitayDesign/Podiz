@@ -69,18 +69,23 @@ class _PodcastScreenState extends ConsumerState<PodcastScreen> {
                     builder: (context, ref, _) {
                       final episodeId = podcast.episodeIds[i];
                       final episodeValue =
-                          ref.watch(episodeFutureProvider(episodeId));
+                          ref.watch(episodeStreamProvider(episodeId));
                       return episodeValue.when(
                         loading: () => const SkeletonEpisodeCard(),
                         error: (e, _) => const SizedBox.shrink(),
-                        data: (episode) => EpisodeCard(
-                          episode,
-                          bottom: Text(
-                            episode.description.useCorrectEllipsis(),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
+                        data: (episode) {
+                          if (episode == null) {
+                            return const SkeletonEpisodeCard();
+                          }
+                          return EpisodeCard(
+                            episode,
+                            bottom: Text(
+                              episode.description.useCorrectEllipsis(),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          );
+                        },
                       );
                     },
                   ),
