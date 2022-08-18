@@ -43,59 +43,62 @@ class _PodcastScreenState extends ConsumerState<PodcastScreen> {
     return podcastValue.when(
       error: (e, _) => const SplashScreen.error(), //!
       loading: () => const SplashScreen(), //!
-      data: (podcast) => Scaffold(
-        extendBodyBehindAppBar: true,
-        body: NotificationListener<ScrollEndNotification>(
-          onNotification: (_) {
-            // snapHeader();
-            return false;
-          },
-          child: CustomScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            controller: scrollController,
-            slivers: [
-              // so it doesnt start behind the app bar
-              // const SliverToBoxAdapter(
-              //   child: SizedBox(height: GradientBar.backgroundHeight),
-              // ),
+      data: (podcast) {
+        print(podcast.toJson());
+        return Scaffold(
+          extendBodyBehindAppBar: true,
+          body: NotificationListener<ScrollEndNotification>(
+            onNotification: (_) {
+              // snapHeader();
+              return false;
+            },
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              controller: scrollController,
+              slivers: [
+                // so it doesnt start behind the app bar
+                // const SliverToBoxAdapter(
+                //   child: SizedBox(height: GradientBar.backgroundHeight),
+                // ),
 
-              PodcastSliverHeader(
-                podcast: podcast,
-                minHeight: minHeight,
-                maxHeight: maxHeight,
-              ),
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, i) => Consumer(
-                    builder: (context, ref, _) {
-                      final episodeId = podcast.podcasts[i];
-                      final episodeValue =
-                          ref.watch(episodeFutureProvider(episodeId));
-                      return episodeValue.when(
-                        loading: () => const SkeletonEpisodeCard(),
-                        error: (e, _) => const SizedBox.shrink(),
-                        data: (episode) => EpisodeCard(
-                          episode,
-                          bottom: Text(
-                            episode.description.useCorrectEllipsis(),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  childCount: podcast.podcasts.length,
+                PodcastSliverHeader(
+                  podcast: podcast,
+                  minHeight: minHeight,
+                  maxHeight: maxHeight,
                 ),
-              ),
-            ],
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, i) => Consumer(
+                      builder: (context, ref, _) {
+                        final episodeId = podcast.episodeIds[i];
+                        final episodeValue =
+                            ref.watch(episodeFutureProvider(episodeId));
+                        return episodeValue.when(
+                          loading: () => const SkeletonEpisodeCard(),
+                          error: (e, _) => const SizedBox.shrink(),
+                          data: (episode) => EpisodeCard(
+                            episode,
+                            bottom: Text(
+                              episode.description.useCorrectEllipsis(),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    childCount: podcast.episodeIds.length,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        floatingActionButton: FollowPodcastFab(
-          podcastId: widget.podcastId,
-          imageUrl: podcast.imageUrl,
-        ),
-      ),
+          floatingActionButton: FollowPodcastFab(
+            podcastId: widget.podcastId,
+            imageUrl: podcast.imageUrl,
+          ),
+        );
+      },
     );
   }
 }

@@ -17,8 +17,8 @@ class Podcast with EquatableMixin {
   @JsonKey(name: 'total_episodes')
   final int totalEpisodes;
 
-  @JsonKey(defaultValue: [])
-  final List<String> podcasts;
+  @JsonKey(defaultValue: [], name: 'podcasts')
+  final List<String> episodeIds;
 
   @JsonKey(defaultValue: [])
   final List<String> followers;
@@ -30,7 +30,7 @@ class Podcast with EquatableMixin {
     required this.description,
     required this.imageUrl,
     required this.totalEpisodes,
-    required this.podcasts,
+    required this.episodeIds,
     required this.followers,
   });
 

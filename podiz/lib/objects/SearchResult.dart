@@ -63,7 +63,7 @@ class SearchResult {
         description: description!,
         imageUrl: image_url,
         totalEpisodes: total_episodes!,
-        podcasts: podcasts!,
+        episodeIds: podcasts!,
         followers: followers!);
   }
 
