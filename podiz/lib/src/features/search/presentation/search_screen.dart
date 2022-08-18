@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:podiz/aspect/widgets/showSearchTile.dart';
 import 'package:podiz/aspect/widgets/sliverFirestoreQueryBuilder.dart';
-import 'package:podiz/aspect/widgets/userSearchTile.dart';
-import 'package:podiz/home/search/components/searchBar.dart';
 import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
@@ -12,12 +9,15 @@ import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/episodes/domain/podcast.dart';
-import 'package:podiz/src/features/episodes/presentation/card/episode_Card.dart';
+import 'package:podiz/src/features/episodes/presentation/card/episode_card.dart';
 import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
+import 'package:podiz/src/features/search/presentation/search_bar.dart';
 import 'package:podiz/src/routing/app_router.dart';
 
-import 'components/spotifySearch.dart';
+import 'podcast_card.dart';
+import 'spotify_search_button.dart';
+import 'user_card.dart';
 
 class SearchPage extends ConsumerStatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -68,24 +68,27 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                 slivers: [
                   // so it doesnt start behind the app bar
                   const SliverToBoxAdapter(
-                    child: SizedBox(height: GradientBar.backgroundHeight),
+                    child: SizedBox(height: GradientBar.backgroundHeight + 16),
                   ),
 
                   SliverFirestoreQueryBuilder<UserPodiz>(
                     query: userManager.usersFirestoreQuery(query),
-                    builder: (context, user) => UserSearchTile(user), //!
+                    builder: (context, user) => UserCard(user),
                   ),
                   SliverFirestoreQueryBuilder<Podcast>(
                     query: podcastRepository.podcastsFirestoreQuery(query),
-                    builder: (context, podcast) => ShowSearchTile(podcast), //!
+                    builder: (context, podcast) => PodcastCard(podcast),
                   ),
                   SliverFirestoreQueryBuilder<Episode>(
                     query: episoddeRepository.episodesFirestoreQuery(query),
-                    builder: (context, episode) => EpisodeCard(episode),
+                    builder: (context, episode) => EpisodeCard(
+                      episode,
+                      insights: false,
+                    ),
                   ),
 
                   if (query.isNotEmpty)
-                    SliverToBoxAdapter(child: SpotifySearch(query)),
+                    SliverToBoxAdapter(child: SpotifySearchButton(query)),
 
                   // so it doesnt end behind the bottom bar
                   const SliverToBoxAdapter(

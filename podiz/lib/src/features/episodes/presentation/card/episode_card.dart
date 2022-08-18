@@ -9,8 +9,15 @@ import 'package:podiz/src/routing/app_router.dart';
 
 class EpisodeCard extends ConsumerWidget {
   final Episode episode;
+  final bool insights;
   final Widget? bottom;
-  const EpisodeCard(this.episode, {Key? key, this.bottom}) : super(key: key);
+
+  const EpisodeCard(
+    this.episode, {
+    Key? key,
+    this.insights = true,
+    this.bottom,
+  }) : super(key: key);
 
   void openEpisode(BuildContext context, Reader read, Episode episode) {
     // just call play() if the episode is NOT playing
@@ -38,7 +45,7 @@ class EpisodeCard extends ConsumerWidget {
       ),
       child: InkWell(
         onTap: () => openEpisode(context, ref.read, episode),
-        child: EpisodeContent(episode, bottom: bottom),
+        child: EpisodeContent(episode, insights: insights, bottom: bottom),
       ),
     );
   }

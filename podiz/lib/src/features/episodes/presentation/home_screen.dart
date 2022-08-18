@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/widgets/tap_to_unfocus.dart';
 import 'package:podiz/home/notifications/NotificationsPage.dart';
-import 'package:podiz/home/search/searchPage.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/domain/mutable_user_podiz.dart';
 import 'package:podiz/src/features/discussion/data/presence_repository.dart';
@@ -14,6 +13,7 @@ import 'package:podiz/src/features/episodes/presentation/feed/feed_page.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/domain/playing_episode.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
+import 'package:podiz/src/features/search/presentation/search_screen.dart';
 import 'package:podiz/src/routing/app_router.dart';
 
 enum HomePage { feed, search, notifications }

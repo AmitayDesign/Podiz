@@ -12,6 +12,7 @@ import 'insights_info.dart';
 
 class EpisodeContent extends StatelessWidget {
   final Episode episode;
+  final bool insights;
   final Widget? bottom;
 
   /// The color to give to the stacked avatars border
@@ -20,6 +21,7 @@ class EpisodeContent extends StatelessWidget {
   const EpisodeContent(
     this.episode, {
     Key? key,
+    this.insights = true,
     this.bottom,
     this.color,
   }) : super(key: key);
@@ -43,11 +45,11 @@ class EpisodeContent extends StatelessWidget {
           .add(const EdgeInsets.only(top: 8, bottom: 12)),
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 2),
-            child: InsightsInfo(episode: episode, borderColor: color),
-          ),
-          const SizedBox(height: 16),
+          if (insights)
+            Padding(
+              padding: const EdgeInsets.only(left: 2, bottom: 16),
+              child: InsightsInfo(episode: episode, borderColor: color),
+            ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

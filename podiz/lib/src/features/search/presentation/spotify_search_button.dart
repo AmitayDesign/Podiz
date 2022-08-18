@@ -5,15 +5,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/loadingButton.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 
-class SpotifySearch extends ConsumerStatefulWidget {
+class SpotifySearchButton extends ConsumerStatefulWidget {
   final String query;
-  const SpotifySearch(this.query, {Key? key}) : super(key: key);
+  const SpotifySearchButton(this.query, {Key? key}) : super(key: key);
 
   @override
-  ConsumerState<SpotifySearch> createState() => _SpotifySearchState();
+  ConsumerState<SpotifySearchButton> createState() =>
+      _SpotifySearchButtonState();
 }
 
-class _SpotifySearchState extends ConsumerState<SpotifySearch> {
+class _SpotifySearchButtonState extends ConsumerState<SpotifySearchButton> {
   bool isLoading = false;
 
   void searchInSpotify() async {
