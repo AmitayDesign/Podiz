@@ -52,13 +52,6 @@ class _FeedPageState extends ConsumerState<FeedPage> {
     );
   }
 
-  void openPodcast(Episode episode) {
-    context.goNamed(
-      AppRoute.show.name,
-      params: {'showId': episode.showId},
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(currentUserProvider);
@@ -93,7 +86,6 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                         return EpisodeCard(
                           lastListened,
                           onTap: () => openEpisode(lastListened),
-                          onPodcastTap: () => openPodcast(lastListened),
                           bottom: QuickNoteButton(episode: lastListened),
                         );
                       },
@@ -132,7 +124,6 @@ class _FeedPageState extends ConsumerState<FeedPage> {
               builder: (context, podcast) => EpisodeCard(
                 podcast,
                 onTap: () => openEpisode(podcast),
-                onPodcastTap: () => openPodcast(podcast),
               ),
             ),
 

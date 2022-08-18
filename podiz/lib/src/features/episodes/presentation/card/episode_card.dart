@@ -6,14 +6,12 @@ import 'package:podiz/src/features/episodes/presentation/card/episode_content.da
 class EpisodeCard extends StatelessWidget {
   final Episode episode;
   final VoidCallback? onTap;
-  final VoidCallback? onPodcastTap;
   final Widget? bottom;
 
   const EpisodeCard(
     this.episode, {
     Key? key,
     this.onTap,
-    this.onPodcastTap,
     this.bottom,
   }) : super(key: key);
 
@@ -28,11 +26,7 @@ class EpisodeCard extends StatelessWidget {
       ),
       child: InkWell(
         onTap: onTap,
-        child: EpisodeContent(
-          episode,
-          onTap: onPodcastTap,
-          bottom: bottom,
-        ),
+        child: EpisodeContent(episode, bottom: bottom),
       ),
     );
   }

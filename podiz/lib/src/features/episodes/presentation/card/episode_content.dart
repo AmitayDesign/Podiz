@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/aspect/widgets/dot.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
+import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/utils/zwsp_string.dart';
 
 import 'insights_info.dart';
 
 class EpisodeContent extends StatelessWidget {
   final Episode episode;
-  final VoidCallback? onTap;
   final Widget? bottom;
 
   /// The color to give to the stacked avatars border
@@ -19,7 +20,6 @@ class EpisodeContent extends StatelessWidget {
   const EpisodeContent(
     this.episode, {
     Key? key,
-    this.onTap,
     this.bottom,
     this.color,
   }) : super(key: key);
@@ -69,7 +69,10 @@ class EpisodeContent extends StatelessWidget {
                         children: [
                           Flexible(
                             child: GestureDetector(
-                              onTap: onTap,
+                              onTap: () => context.goNamed(
+                                AppRoute.show.name,
+                                params: {'showId': episode.showId},
+                              ),
                               child: Text(
                                 episode.showName.useCorrectEllipsis(),
                                 style: subtitleStyle,

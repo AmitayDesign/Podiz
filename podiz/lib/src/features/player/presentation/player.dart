@@ -51,9 +51,15 @@ class Player extends ConsumerWidget {
                             children: [
                               const PlayerTimeChip(),
                               const SizedBox(height: 4),
-                              Text(
-                                episode.name,
-                                overflow: TextOverflow.ellipsis,
+                              GestureDetector(
+                                onTap: () => context.goNamed(
+                                  AppRoute.show.name,
+                                  params: {'showId': episode.showId},
+                                ),
+                                child: Text(
+                                  episode.name,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                             ],
                           ),
