@@ -53,8 +53,8 @@ class Player extends ConsumerWidget {
                               const SizedBox(height: 4),
                               GestureDetector(
                                 onTap: () => context.goNamed(
-                                  AppRoute.show.name,
-                                  params: {'showId': episode.showId},
+                                  AppRoute.podcast.name,
+                                  params: {'podcastId': episode.showId},
                                 ),
                                 child: Text(
                                   episode.name,

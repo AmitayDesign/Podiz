@@ -18,8 +18,8 @@ class DiscussionHeader extends ConsumerWidget {
 
   void openShow(Episode episode, BuildContext context) {
     context.goNamed(
-      AppRoute.show.name,
-      params: {'showId': episode.showId},
+      AppRoute.podcast.name,
+      params: {'podcastId': episode.showId},
     );
   }
 

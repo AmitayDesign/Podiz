@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/widgets/sliverFirestoreQueryBuilder.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
@@ -11,8 +10,6 @@ import 'package:podiz/src/features/episodes/presentation/card/episode_card.dart'
 import 'package:podiz/src/features/episodes/presentation/card/quick_note_button.dart';
 import 'package:podiz/src/features/episodes/presentation/card/skeleton_episode_card.dart';
 import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
-import 'package:podiz/src/features/player/data/player_repository.dart';
-import 'package:podiz/src/routing/app_router.dart';
 
 import 'feed_bar.dart';
 import 'feed_controller.dart';
@@ -35,21 +32,6 @@ class _FeedPageState extends ConsumerState<FeedPage> {
   void dispose() {
     scrollController.dispose();
     super.dispose();
-  }
-
-  void openEpisode(Episode episode) {
-    // just call play() if the episode is NOT playing
-    ref.read(playerRepositoryProvider).fetchPlayingEpisode().then(
-      (playingEpisode) {
-        if (playingEpisode?.id != episode.id) {
-          ref.read(playerRepositoryProvider).play(episode.id);
-        }
-      },
-    );
-    context.goNamed(
-      AppRoute.discussion.name,
-      params: {'episodeId': episode.id},
-    );
   }
 
   @override
@@ -85,7 +67,6 @@ class _FeedPageState extends ConsumerState<FeedPage> {
                       data: (lastListened) {
                         return EpisodeCard(
                           lastListened,
-                          onTap: () => openEpisode(lastListened),
                           bottom: QuickNoteButton(episode: lastListened),
                         );
                       },
@@ -121,10 +102,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
               ),
             SliverFirestoreQueryBuilder<Episode>(
               query: episodeRepository.hotliveFirestoreQuery(),
-              builder: (context, podcast) => EpisodeCard(
-                podcast,
-                onTap: () => openEpisode(podcast),
-              ),
+              builder: (context, podcast) => EpisodeCard(podcast),
             ),
 
             // so it doesnt end behind the bottom bar

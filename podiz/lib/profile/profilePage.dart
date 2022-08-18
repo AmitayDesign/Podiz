@@ -9,9 +9,10 @@ import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/loading.dart/notificationLoading.dart';
 import 'package:podiz/loading.dart/shimmerContainer.dart';
 import 'package:podiz/objects/show.dart';
-import 'package:podiz/profile/components.dart/back_bar.dart';
 import 'package:podiz/profile/components.dart/followPeopleButton.dart';
 import 'package:podiz/providers.dart';
+import 'package:podiz/src/common_widgets/back_text_button.dart';
+import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
@@ -51,15 +52,15 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
   void openPodcast(Episode episode) {
     context.goNamed(
-      AppRoute.show.name,
-      params: {'showId': episode.showId},
+      AppRoute.podcast.name,
+      params: {'podcastId': episode.showId},
     );
   }
 
   void openShowFavourite(Show show) {
     context.goNamed(
-      AppRoute.show.name,
-      params: {'showId': show.uid!},
+      AppRoute.podcast.name,
+      params: {'podcastId': show.uid!},
     );
   }
 
@@ -76,7 +77,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             const Center(child: CircularProgressIndicator()), //TODO shimmer?
         data: (user) {
           return Scaffold(
-            appBar: BackBar(),
+            appBar: const GradientBar(
+              automaticallyImplyLeading: false,
+              title: BackTextButton(),
+            ),
             body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),

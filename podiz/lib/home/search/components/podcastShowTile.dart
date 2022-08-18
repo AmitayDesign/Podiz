@@ -41,7 +41,7 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
                 .play(widget.result.toEpisode().id);
             context.goNamed(
               AppRoute.discussion.name,
-              params: {'showId': widget.result.show_uri!},
+              params: {'podcastId': widget.result.show_uri!},
             );
           },
           child: Padding(

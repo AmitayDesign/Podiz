@@ -45,8 +45,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
 
   void openShow(Episode episode) {
     context.goNamed(
-      AppRoute.show.name,
-      params: {'showId': episode.showId},
+      AppRoute.podcast.name,
+      params: {'podcastId': episode.showId},
     );
   }
 

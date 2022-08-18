@@ -60,7 +60,7 @@ class CommentSheet extends ConsumerWidget {
                     child: Row(
                       children: [
                         UsersListeningText(
-                          (_, others) => '$others listening with you'.hardcoded,
+                          (others) => '$others listening with you'.hardcoded,
                           episode: episode,
                         ),
                         const Spacer(),

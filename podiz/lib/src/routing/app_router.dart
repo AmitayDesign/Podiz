@@ -2,19 +2,19 @@ import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/authentication/auth_manager.dart';
-import 'package:podiz/home/search/screens/showPage.dart';
 import 'package:podiz/profile/profilePage.dart';
 import 'package:podiz/profile/screens/settingsPage.dart';
 import 'package:podiz/src/features/auth/presentation/onboarding_screen.dart';
 import 'package:podiz/src/features/discussion/presentation/discussion_screen.dart';
 import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
+import 'package:podiz/src/features/episodes/presentation/podcast/podcast_screen.dart';
 
 enum AppRoute {
   home,
   onboarding,
   profile,
   settings,
-  show,
+  podcast,
   discussion,
 }
 
@@ -66,11 +66,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             },
           ),
           GoRoute(
-            path: 'show/:showId',
-            name: AppRoute.show.name,
+            path: 'podcast/:podcastId',
+            name: AppRoute.podcast.name,
             builder: (_, state) {
-              final showId = state.params['showId']!;
-              return ShowPage(showId);
+              final podcastId = state.params['podcastId']!;
+              return PodcastScreen(podcastId);
             },
           ),
           GoRoute(

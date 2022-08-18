@@ -17,8 +17,8 @@ class ShowSearchTile extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: InkWell(
         onTap: () => context.goNamed(
-          AppRoute.show.name,
-          params: {'showId': show.uid!},
+          AppRoute.podcast.name,
+          params: {'podcastId': show.uid!},
         ),
         child: Container(
           height: 148,

@@ -45,7 +45,7 @@ class QuickNoteSheet extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
               child: UsersListeningText(
-                (total, _) => '$total listening right now'.hardcoded,
+                (others) => '${others + 1} listening right now'.hardcoded,
                 episode: episode,
               ),
             ),

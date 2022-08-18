@@ -25,8 +25,8 @@ class PodcastTile extends ConsumerWidget {
         onTap: () {
           if (result.show_name == null) {
             context.goNamed(
-              AppRoute.show.name,
-              params: {'showId': result.show_uri!},
+              AppRoute.podcast.name,
+              params: {'podcastId': result.show_uri!},
             );
           } else {
             ref.read(playerRepositoryProvider).play(result.toEpisode().id);
@@ -72,8 +72,8 @@ class PodcastTile extends ConsumerWidget {
                                 Expanded(
                                   child: GestureDetector(
                                     onTap: () => context.goNamed(
-                                      AppRoute.show.name,
-                                      params: {'showId': result.show_uri!},
+                                      AppRoute.podcast.name,
+                                      params: {'podcastId': result.show_uri!},
                                     ),
                                     child: Text(
                                       result.show_name!,

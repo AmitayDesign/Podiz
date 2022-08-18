@@ -46,8 +46,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
 
   void openPodcast(Episode episode) {
     context.goNamed(
-      AppRoute.show.name,
-      params: {'showId': episode.showId},
+      AppRoute.podcast.name,
+      params: {'podcastId': episode.showId},
     );
   }
 
@@ -81,11 +81,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                   ),
                   SliverFirestoreQueryBuilder<Episode>(
                     query: episoddeRepository.episodesFirestoreQuery(query),
-                    builder: (context, episode) => EpisodeCard(
-                      episode,
-                      onTap: () => openEpisode(episode),
-                      onPodcastTap: () => openPodcast(episode),
-                    ),
+                    builder: (context, episode) => EpisodeCard(episode),
                   ),
 
                   if (query.isNotEmpty)
