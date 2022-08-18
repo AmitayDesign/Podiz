@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/utils/instances.dart';
@@ -17,7 +16,6 @@ final authManagerProvider = Provider<AuthManager>(
 class AuthManager {
   final Reader _read;
 
-  ShowManager get showManager => _read(showManagerProvider);
   FirebaseFirestore get firestore => _read(firestoreProvider);
 
   AuthManager(this._read);

@@ -5,13 +5,13 @@ import 'package:podiz/aspect/widgets/showSearchTile.dart';
 import 'package:podiz/aspect/widgets/sliverFirestoreQueryBuilder.dart';
 import 'package:podiz/aspect/widgets/userSearchTile.dart';
 import 'package:podiz/home/search/components/searchBar.dart';
-import 'package:podiz/home/search/managers/showManager.dart';
-import 'package:podiz/objects/show.dart';
 import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
+import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
+import 'package:podiz/src/features/episodes/domain/podcast.dart';
 import 'package:podiz/src/features/episodes/presentation/card/episode_Card.dart';
 import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
@@ -55,7 +55,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   Widget build(BuildContext context) {
     final userManager = ref.watch(userManagerProvider);
     final episoddeRepository = ref.watch(episodeRepositoryProvider);
-    final showManager = ref.watch(showManagerProvider);
+    final podcastRepository = ref.watch(podcastRepositoryProvider);
     return Scaffold(
         extendBodyBehindAppBar: true,
         appBar: SearchBar(controller: searchController),
@@ -75,8 +75,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                     query: userManager.usersFirestoreQuery(query),
                     builder: (context, user) => UserSearchTile(user), //!
                   ),
-                  SliverFirestoreQueryBuilder<Show>(
-                    query: showManager.showsFirestoreQuery(query),
+                  SliverFirestoreQueryBuilder<Podcast>(
+                    query: podcastRepository.podcastsFirestoreQuery(query),
                     builder: (context, podcast) => ShowSearchTile(podcast), //!
                   ),
                   SliverFirestoreQueryBuilder<Episode>(

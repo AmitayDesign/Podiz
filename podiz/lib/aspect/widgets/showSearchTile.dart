@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/objects/show.dart';
+import 'package:podiz/src/features/episodes/domain/podcast.dart';
 import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/routing/app_router.dart';
 
 class ShowSearchTile extends StatelessWidget {
-  final Show show;
+  final Podcast show;
   const ShowSearchTile(this.show, {Key? key}) : super(key: key);
 
   @override
@@ -18,7 +18,7 @@ class ShowSearchTile extends StatelessWidget {
       child: InkWell(
         onTap: () => context.goNamed(
           AppRoute.podcast.name,
-          params: {'podcastId': show.uid!},
+          params: {'podcastId': show.id},
         ),
         child: Container(
           height: 148,
@@ -31,7 +31,7 @@ class ShowSearchTile extends StatelessWidget {
             child: Column(children: [
               Row(
                 children: [
-                  PodcastAvatar(imageUrl: show.image_url, size: 68),
+                  PodcastAvatar(imageUrl: show.imageUrl, size: 68),
                   const SizedBox(width: 8),
                   Expanded(
                     child: SizedBox(

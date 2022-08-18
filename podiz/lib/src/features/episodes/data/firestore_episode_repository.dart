@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:podiz/src/features/auth/data/spotify_api.dart';
-import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
+
+import 'episode_repository.dart';
 
 class FirestoreEpisodeRepository extends EpisodeRepository {
   final FirebaseFirestore firestore;

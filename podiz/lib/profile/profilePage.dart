@@ -5,10 +5,8 @@ import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/widgets/cardButton.dart';
 import 'package:podiz/home/components/replyView.dart';
-import 'package:podiz/home/search/managers/showManager.dart';
 import 'package:podiz/loading.dart/notificationLoading.dart';
 import 'package:podiz/loading.dart/shimmerContainer.dart';
-import 'package:podiz/objects/show.dart';
 import 'package:podiz/profile/components.dart/followPeopleButton.dart';
 import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/back_text_button.dart';
@@ -18,7 +16,9 @@ import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
+import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
+import 'package:podiz/src/features/episodes/domain/podcast.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
@@ -57,10 +57,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     );
   }
 
-  void openShowFavourite(Show show) {
+  void openShowFavourite(Podcast podcast) {
     context.goNamed(
       AppRoute.podcast.name,
-      params: {'podcastId': show.uid!},
+      params: {'podcastId': podcast.id},
     );
   }
 
@@ -181,7 +181,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
   Widget _buildFavouriteItem(String showUid) {
     return FutureBuilder(
-        future: ref.read(showManagerProvider).fetchShow(showUid),
+        future: ref.read(podcastRepositoryProvider).fetchPodcast(showUid),
         initialData: "loading",
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
@@ -196,12 +196,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
               // if we got our data
             } else if (snapshot.hasData) {
-              final show = snapshot.data as Show;
+              final podcast = snapshot.data as Podcast;
               return InkWell(
-                onTap: () => openShowFavourite(show),
+                onTap: () => openShowFavourite(podcast),
                 child: Padding(
                     padding: const EdgeInsets.only(right: 16),
-                    child: PodcastAvatar(imageUrl: show.image_url, size: 68)),
+                    child: PodcastAvatar(imageUrl: podcast.imageUrl, size: 68)),
               );
             }
           }

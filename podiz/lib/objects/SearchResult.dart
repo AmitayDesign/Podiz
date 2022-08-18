@@ -1,5 +1,5 @@
-import 'package:podiz/objects/show.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
+import 'package:podiz/src/features/episodes/domain/podcast.dart';
 
 class SearchResult {
   String uid;
@@ -55,13 +55,14 @@ class SearchResult {
     );
   }
 
-  Show toShow() {
-    return Show(uid,
+  Podcast toPodcast() {
+    return Podcast(
+        id: uid,
         name: name,
         publisher: publisher!,
         description: description!,
-        image_url: image_url,
-        total_episodes: total_episodes!,
+        imageUrl: image_url,
+        totalEpisodes: total_episodes!,
         podcasts: podcasts!,
         followers: followers!);
   }
