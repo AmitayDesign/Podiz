@@ -6,8 +6,16 @@ import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 
 class CommentTextField extends StatefulWidget {
+  final bool autofocus;
+  final String hint;
   final ValueSetter<String>? onSend;
-  const CommentTextField({Key? key, this.onSend}) : super(key: key);
+
+  const CommentTextField({
+    Key? key,
+    this.autofocus = false,
+    this.hint = 'Share your insight...',
+    this.onSend,
+  }) : super(key: key);
 
   @override
   State<CommentTextField> createState() => _CommentTextFieldState();
@@ -25,7 +33,8 @@ class _CommentTextFieldState extends State<CommentTextField> {
   }
 
   void sendComment() {
-    widget.onSend?.call(commentController.text);
+    if (comment.isEmpty) return;
+    widget.onSend?.call(comment);
     commentController.clear();
     commentNode.unfocus();
   }
@@ -46,6 +55,7 @@ class _CommentTextFieldState extends State<CommentTextField> {
         const SizedBox(width: 8),
         Expanded(
           child: TextField(
+            autofocus: widget.autofocus,
             focusNode: commentNode,
             controller: commentController,
             keyboardType: TextInputType.multiline,
@@ -64,7 +74,7 @@ class _CommentTextFieldState extends State<CommentTextField> {
                   kMinInteractiveDimension / 2,
                 ),
               ),
-              hintText: 'Share your insight...',
+              hintText: widget.hint,
             ),
             onSubmitted: (_) => sendComment(),
           ),

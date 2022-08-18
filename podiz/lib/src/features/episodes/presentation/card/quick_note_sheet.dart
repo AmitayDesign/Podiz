@@ -4,7 +4,7 @@ import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
-import 'package:podiz/src/features/discussion/presentation/comment_text_field.dart';
+import 'package:podiz/src/features/discussion/presentation/comment/comment_text_field.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/theme/palette.dart';
@@ -29,6 +29,7 @@ class QuickNoteSheet extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             CommentTextField(
+              autofocus: true,
               onSend: (comment) async {
                 final time = await ref.read(playerTimeStreamProvider.future);
                 ref.read(discussionRepositoryProvider).addComment(

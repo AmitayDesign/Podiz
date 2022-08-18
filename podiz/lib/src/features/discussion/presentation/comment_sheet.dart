@@ -4,13 +4,16 @@ import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
-import 'package:podiz/src/features/discussion/presentation/comment_text_field.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/player_button.dart';
 import 'package:podiz/src/features/player/presentation/player_controller.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/palette.dart';
+
+import 'comment/comment_text_field.dart';
+
+final commentSheetVisibilityProvider = StateProvider<bool>((ref) => true);
 
 class CommentSheet extends ConsumerWidget {
   static const height = 116.0; //! hardcoded

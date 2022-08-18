@@ -1,31 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/player/screens/reply_sheet.dart';
 import 'package:podiz/providers.dart';
-import 'package:podiz/src/common_widgets/circle_button.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
-import 'package:podiz/src/features/discussion/presentation/reply_button.dart';
+
+import 'comment_text.dart';
+import 'comment_trailing.dart';
 
 class ReplyWidget extends ConsumerWidget {
   final Comment comment;
   final String episodeId;
-  const ReplyWidget(this.comment, {Key? key, required this.episodeId})
-      : super(key: key);
-
-  final buttonSize = 32.0;
-
-  void openCommentSheet(BuildContext context) => showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (context) => Padding(
-          padding: MediaQuery.of(context).viewInsets,
-          child: ReplySheet(comment: comment),
-        ),
-      );
-
-  void share() {} //!
+  final VoidCallback? onReply;
+  final VoidCallback? onShare;
+  const ReplyWidget(
+    this.comment, {
+    Key? key,
+    required this.episodeId,
+    this.onReply,
+    this.onShare,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -65,24 +59,11 @@ class ReplyWidget extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           const SizedBox(height: 4),
-                          Text(comment.text,
-                              style: context.textTheme.bodyLarge),
+                          CommentText(comment.text),
                           const SizedBox(height: 12),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: ReplyButton(
-                                  size: buttonSize,
-                                  onPressed: () => openCommentSheet(context),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              CircleButton(
-                                size: buttonSize,
-                                onPressed: share,
-                                icon: Icons.share,
-                              ),
-                            ],
+                          CommentTrailing(
+                            onReply: onReply,
+                            onShare: onShare,
                           ),
                           if (comment.replies.isNotEmpty) ...[
                             for (final reply in comment.replies.values)

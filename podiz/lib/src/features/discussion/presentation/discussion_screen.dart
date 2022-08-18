@@ -8,7 +8,7 @@ import 'package:podiz/src/features/player/domain/playing_episode.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/palette.dart';
 
-import 'comment_card.dart';
+import 'comment/comment_card.dart';
 import 'comment_sheet.dart';
 import 'discussion_header.dart';
 
@@ -83,8 +83,8 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                           controller: scrollController,
                           reverse: true,
                           padding: const EdgeInsets.only(
-                            top: DiscussionHeader.height,
-                            bottom: CommentSheet.height,
+                            top: DiscussionHeader.height + 8,
+                            bottom: CommentSheet.height + 8,
                           ),
                           itemCount: filteredComments.length,
                           itemBuilder: (context, i) => Padding(
@@ -104,7 +104,10 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
             DiscussionHeader(episodeId),
           ],
         ),
-        bottomSheet: const CommentSheet(),
+        bottomSheet: Visibility(
+          visible: ref.watch(commentSheetVisibilityProvider),
+          child: const CommentSheet(),
+        ),
       ),
     );
   }
