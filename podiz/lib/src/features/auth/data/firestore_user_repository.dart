@@ -30,4 +30,26 @@ class FirestoreUserRepository implements UserRepository {
             fromFirestore: (user, _) => UserPodiz.fromFirestore(user),
             toFirestore: (podcast, _) => {},
           );
+
+  Future<void> follow(String userId, String userToFollowId) async {
+    final batch = firestore.batch();
+    batch.update(firestore.collection("users").doc(userToFollowId), {
+      "followers": FieldValue.arrayUnion([userId])
+    });
+    batch.update(firestore.collection("users").doc(userId), {
+      "following": FieldValue.arrayUnion([userToFollowId])
+    });
+    await batch.commit();
+  }
+
+  Future<void> unfollow(String userId, String userToFollowId) async {
+    final batch = firestore.batch();
+    batch.update(firestore.collection("users").doc(userToFollowId), {
+      "followers": FieldValue.arrayRemove([userId])
+    });
+    batch.update(firestore.collection("users").doc(userId), {
+      "following": FieldValue.arrayRemove([userToFollowId])
+    });
+    await batch.commit();
+  }
 }

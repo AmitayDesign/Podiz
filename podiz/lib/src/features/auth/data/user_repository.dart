@@ -15,6 +15,8 @@ abstract class UserRepository {
   Future<UserPodiz> fetchUser(String userId);
   Stream<UserPodiz> watchUser(String userId);
   Query<UserPodiz> usersFirestoreQuery(String filter);
+  Future<void> follow(String userId, String userToFollowId);
+  Future<void> unfollow(String userId, String userToFollowId);
 }
 
 final userFutureProvider = FutureProvider.family<UserPodiz, String>(
