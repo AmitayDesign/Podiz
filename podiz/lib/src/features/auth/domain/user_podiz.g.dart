@@ -24,10 +24,6 @@ UserPodiz _$UserPodizFromJson(Map<String, dynamic> json) => UserPodiz(
               ?.map((e) => e as String)
               .toList() ??
           [],
-      comments: (json['comments'] as List<dynamic>?)
-              ?.map((e) => Comment.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
     );
 
 Map<String, dynamic> _$UserPodizToJson(UserPodiz instance) => <String, dynamic>{
@@ -39,5 +35,4 @@ Map<String, dynamic> _$UserPodizToJson(UserPodiz instance) => <String, dynamic>{
       'image_url': instance.imageUrl,
       'lastListened': instance.lastListenedEpisodeId,
       'favPodcasts': instance.favPodcastIds,
-      'comments': instance.comments,
     };

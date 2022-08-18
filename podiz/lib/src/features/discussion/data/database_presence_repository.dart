@@ -17,9 +17,12 @@ class DatabasePresenceRepository implements PresenceRepository {
     sub?.cancel();
   }
 
+  DatabaseReference lastListenedRef(String userId) =>
+      database.ref('users/$userId/lastListened');
+
   StreamSubscription? sub;
   @override
-  Future<void> configureUserListeningPresence(
+  Future<void> configureUserPresence(
     String userId,
     String episodeId,
   ) async {
@@ -30,7 +33,7 @@ class DatabasePresenceRepository implements PresenceRepository {
 
     // Stores the timestamp of my last disconnect
     // (the last time I was seen online)
-    final myLastListenedRef = database.ref('users/$userId/lastListened');
+    final myLastListenedRef = lastListenedRef(userId);
 
     await database.goOnline();
 
@@ -54,5 +57,12 @@ class DatabasePresenceRepository implements PresenceRepository {
   }
 
   @override
-  Future<void> disconnect() => database.goOffline();
+  Future<void> updateLastListened(String userId, String episodeId) {
+    return lastListenedRef(userId).set(episodeId);
+  }
+
+  @override
+  Future<void> disconnect() {
+    return database.goOffline();
+  }
 }

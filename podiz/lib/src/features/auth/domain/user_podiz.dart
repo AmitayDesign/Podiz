@@ -2,13 +2,11 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:podiz/aspect/typedefs.dart';
-import 'package:podiz/src/features/discussion/domain/comment.dart';
 
 part 'user_podiz.g.dart';
 
 @JsonSerializable()
 class UserPodiz with EquatableMixin {
-  @JsonKey(ignore: true)
   final String id;
   final String name;
   final String email;
@@ -30,10 +28,6 @@ class UserPodiz with EquatableMixin {
   @JsonKey(name: 'favPodcasts', defaultValue: [])
   final List<String> favPodcastIds;
 
-  //TODO just read this when needed
-  @JsonKey(defaultValue: [])
-  final List<Comment> comments;
-
   UserPodiz({
     required this.id,
     required this.name,
@@ -43,7 +37,6 @@ class UserPodiz with EquatableMixin {
     required this.imageUrl,
     required this.lastListenedEpisodeId,
     required this.favPodcastIds,
-    required this.comments,
   });
 
   factory UserPodiz.fromFirestore(Doc doc) =>
@@ -59,7 +52,7 @@ class UserPodiz with EquatableMixin {
 
   @override
   String toString() =>
-      'UserPodiz(id: $id, name: $name, email: $email, followers: $followers, following: $following, imageUrl: $imageUrl, lastListenedEpisodeId: $lastListenedEpisodeId, favPodcastIds: $favPodcastIds, comments: $comments)';
+      'UserPodiz(id: $id, name: $name, email: $email, followers: $followers, following: $following, imageUrl: $imageUrl, lastListenedEpisodeId: $lastListenedEpisodeId, favPodcastIds: $favPodcastIds)';
 
   @override
   List<Object> get props => [id];

@@ -44,6 +44,8 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
         ),
         body: Stack(
           children: [
+            //TODO too much set states
+            //! make a controller for this to only expose comments when needed
             Consumer(
               builder: (context, ref, _) {
                 // watch player time
