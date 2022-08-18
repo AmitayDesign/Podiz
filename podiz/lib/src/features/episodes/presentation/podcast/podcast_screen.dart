@@ -91,7 +91,7 @@ class _PodcastScreenState extends ConsumerState<PodcastScreen> {
         ),
         floatingActionButton: PodcastFollowFab(
           podcastId: widget.podcastId,
-          imageUrl: podcast.image_url,
+          imageUrl: podcast.imageUrl,
         ),
       ),
     );

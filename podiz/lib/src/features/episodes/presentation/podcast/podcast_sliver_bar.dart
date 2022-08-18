@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/widgets/appBarGradient.dart';
-import 'package:podiz/objects/show.dart';
 import 'package:podiz/src/common_widgets/back_text_button.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
+import 'package:podiz/src/features/episodes/domain/podcast.dart';
 import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
 
 class PodcastSliverHeader extends StatelessWidget {
-  final Show podcast;
+  final Podcast podcast;
   final double minHeight;
   final double maxHeight;
 
@@ -45,7 +45,7 @@ class PodcastSliverHeader extends StatelessWidget {
 }
 
 class PodcastHeader extends StatelessWidget {
-  final Show podcast;
+  final Podcast podcast;
   final double minHeight;
   final double maxHeight;
 
@@ -76,8 +76,8 @@ class PodcastHeader extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               PodcastAvatar(
-                podcastId: podcast.uid!,
-                imageUrl: podcast.image_url,
+                podcastId: podcast.id,
+                imageUrl: podcast.imageUrl,
                 size: tween(0, 128),
               ),
               SizedBox(height: tween(0, 16)),
