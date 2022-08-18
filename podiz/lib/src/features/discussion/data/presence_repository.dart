@@ -16,6 +16,6 @@ final presenceRepositoryProvider = Provider<PresenceRepository>(
 );
 
 abstract class PresenceRepository {
-  Future<void> configureUserListeningPresence(String userId, String episodeId);
+  Future<void> configureUserPresence(String userId, String episodeId);
   Future<void> disconnect();
 }

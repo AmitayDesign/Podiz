@@ -19,7 +19,7 @@ class DatabasePresenceRepository implements PresenceRepository {
 
   StreamSubscription? sub;
   @override
-  Future<void> configureUserListeningPresence(
+  Future<void> configureUserPresence(
     String userId,
     String episodeId,
   ) async {

@@ -8,6 +8,7 @@ import 'package:podiz/aspect/widgets/tap_to_unfocus.dart';
 import 'package:podiz/home/notifications/NotificationsPage.dart';
 import 'package:podiz/home/search/searchPage.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/auth/domain/mutable_user_podiz.dart';
 import 'package:podiz/src/features/discussion/data/presence_repository.dart';
 import 'package:podiz/src/features/episodes/presentation/feed/feed_page.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
@@ -86,10 +87,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         episodeValue.whenData((episode) {
           if (episode == null) return;
           final presenceRepository = ref.read(presenceRepositoryProvider);
-          final user = ref.read(currentUserProvider);
+          // update last listened
+          final user = ref
+              .read(currentUserProvider)
+              .updateLastListenedEpisode(episode.id);
+          ref.read(authRepositoryProvider).updateUser(user);
+          // update listening right now
           if (episode.isPlaying) {
-            presenceRepository.configureUserListeningPresence(
-                user.id, episode.id);
+            presenceRepository.configureUserPresence(user.id, episode.id);
           } else {
             presenceRepository.disconnect();
           }

@@ -1,7 +1,6 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const fetch = require("node-fetch");
-const { firestore } = require("firebase-admin");
 
 const utf8 = require("utf8");
 const { user } = require("firebase-functions/v1/auth");
@@ -297,10 +296,10 @@ async function getShowEpisodes(showUid, total_episodes, showName, userUid) {
   while (offset < total_episodes) {
     var response = await fetch(
       host +
-        "/shows/" +
-        showUid.split(":")[2] +
-        "/episodes?limit=50&offset=" +
-        offset.toString(),
+      "/shows/" +
+      showUid.split(":")[2] +
+      "/episodes?limit=50&offset=" +
+      offset.toString(),
       {
         headers: {
           Accept: "application/json",
@@ -347,8 +346,8 @@ async function getShowEpisodes(showUid, total_episodes, showName, userUid) {
     a.release_date < b.release_date
       ? 1
       : b.release_date < a.release_date
-      ? -1
-      : 0
+        ? -1
+        : 0
   );
   let count = 0;
   for (aux of sortedList) {
@@ -832,3 +831,36 @@ async function getDeviceToken(userUid) {
   let userInfo = ref.data();
   return userInfo.token;
 }
+
+/*********************************************
+ ***************** LISTENING *****************
+ *********************************************/
+
+exports.updateEpisodeListening = functions.database.ref('users/{userId}/lastListened')
+  .onWrite(async (change, context) => {
+    const userId = context.params.userId;
+    const lastListened = change.before.val();
+    const listeningNow = change.after.val();
+
+    if (lastListened != null)
+      await admin.firestore().collection("test").doc(lastListened).update({
+        users_watching: admin.firestore.FieldValue.arrayRemove(userId)
+      });
+
+    if (listeningNow != null)
+      await admin.firestore().collection("test").doc(listeningNow).update({
+        users_watching: admin.firestore.FieldValue.arrayUnion(userId)
+      });
+  });
+
+
+exports.removeEpisodeListening = functions.database.ref('users/{userId}/connections')
+  .onWrite((change, context) => {
+    const userId = context.params.userId;
+    const connections = change.after.val();
+    const isDisconnected = connections.length == 0;
+
+    if (isDisconnected) {
+      return functions.database.ref(`users/${userId}/lastListened`).set(null);
+    }
+  });
