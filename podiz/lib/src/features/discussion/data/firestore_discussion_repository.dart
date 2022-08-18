@@ -86,7 +86,7 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
       comment.toJson(),
     );
     // add comment to user comments collection
-    batch.update(
+    batch.set(
       firestore
           .collection("users")
           .doc(user.id)
