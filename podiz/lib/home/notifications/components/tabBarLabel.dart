@@ -55,7 +55,11 @@ Widget _buildItem(Episode episode, int number) {
             episode.name != "All"
                 ? Padding(
                     padding: const EdgeInsets.only(left: 8.0),
-                    child: PodcastAvatar(imageUrl: episode.imageUrl, size: 20),
+                    child: PodcastAvatar(
+                      podcastId: episode.showId,
+                      imageUrl: episode.imageUrl,
+                      size: 20,
+                    ),
                   )
                 : Container(),
             const SizedBox(width: 8),

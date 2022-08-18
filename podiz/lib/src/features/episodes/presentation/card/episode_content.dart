@@ -51,7 +51,10 @@ class EpisodeContent extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              PodcastAvatar(imageUrl: episode.imageUrl),
+              PodcastAvatar(
+                podcastId: episode.showId,
+                imageUrl: episode.imageUrl,
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Padding(
@@ -71,7 +74,7 @@ class EpisodeContent extends StatelessWidget {
                             child: GestureDetector(
                               onTap: () => context.goNamed(
                                 AppRoute.podcast.name,
-                                params: {'podcastId': episode.showId},
+                                params: {'showId': episode.showId},
                               ),
                               child: Text(
                                 episode.showName.useCorrectEllipsis(),

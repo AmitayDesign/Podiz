@@ -10,6 +10,7 @@ import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/palette.dart';
+import 'package:podiz/src/utils/zwsp_string.dart';
 
 import 'skeleton_player.dart';
 
@@ -42,7 +43,11 @@ class Player extends ConsumerWidget {
                     padding: const EdgeInsets.fromLTRB(24, 12, 16, 12),
                     child: Row(
                       children: [
-                        PodcastAvatar(imageUrl: episode.imageUrl, size: 52),
+                        PodcastAvatar(
+                          podcastId: episode.showId,
+                          imageUrl: episode.imageUrl,
+                          size: 52,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Column(
@@ -57,7 +62,7 @@ class Player extends ConsumerWidget {
                                   params: {'podcastId': episode.showId},
                                 ),
                                 child: Text(
-                                  episode.name,
+                                  episode.name.useCorrectEllipsis(),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),

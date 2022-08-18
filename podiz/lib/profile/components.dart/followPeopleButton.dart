@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/authentication/auth_manager.dart';
+import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
-import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 class followPeopleButton extends ConsumerWidget {
@@ -17,7 +17,7 @@ class followPeopleButton extends ConsumerWidget {
     String follow =
         isFollowing ? "UNFOLLOW ${user.name}" : "FOLLOW ${user.name}";
     return FloatingActionButton.extended(
-      icon: PodcastAvatar(imageUrl: user.imageUrl, size: 23),
+      icon: UserAvatar(user: user, radius: 12),
       label: Text(
         follow,
         style: context.textTheme.titleMedium!.copyWith(

@@ -1,15 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/src/features/podcast/presentation/avatar/skeleton_podcast_avatar.dart';
+import 'package:podiz/src/routing/app_router.dart';
 
 class PodcastAvatar extends StatelessWidget {
+  final String podcastId;
   final String imageUrl;
   final double size;
 
   const PodcastAvatar({
     Key? key,
     required this.imageUrl,
+    required this.podcastId,
     this.size = 64,
   }) : super(key: key);
 
@@ -27,6 +31,10 @@ class PodcastAvatar extends StatelessWidget {
       imageBuilder: (context, imageProvider) => RoundedSquareImage(
         image: imageProvider,
         size: size,
+        onTap: () => context.pushNamed(
+          AppRoute.podcast.name,
+          params: {'podcastId': podcastId},
+        ),
       ),
     );
   }
@@ -35,11 +43,13 @@ class PodcastAvatar extends StatelessWidget {
 class RoundedSquareImage extends StatelessWidget {
   final ImageProvider image;
   final double size;
+  final VoidCallback? onTap;
 
   const RoundedSquareImage({
     Key? key,
     required this.image,
     required this.size,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -53,6 +63,12 @@ class RoundedSquareImage extends StatelessWidget {
           image: image,
           fit: BoxFit.cover,
         ),
+      ),
+      child: Material(
+        borderRadius: BorderRadius.circular(kBorderRadius),
+        clipBehavior: Clip.hardEdge,
+        color: Colors.transparent,
+        child: InkWell(onTap: onTap),
       ),
     );
   }
