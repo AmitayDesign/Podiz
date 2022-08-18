@@ -23,7 +23,7 @@ class ReplyWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userValue = ref.watch(userFutureProvider(comment.userId));
+    final userValue = ref.watch(userProvider(comment.userId));
     return userValue.when(
       loading: () => SizedBox.fromSize(),
       error: (e, _) => const SizedBox.shrink(),

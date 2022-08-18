@@ -36,7 +36,6 @@ final playerTimeStreamProvider = StreamProvider.autoDispose<PlayerTime>(
       return;
     }
     // player has an episode
-    // ref.watch(listeningProvider(episode.id));
     if (!episode.isPlaying) {
       yield PlayerTime(
         duration: episode.duration ~/ 1000,
@@ -60,27 +59,3 @@ final playerTimeStreamProvider = StreamProvider.autoDispose<PlayerTime>(
     }
   },
 );
-
-//TODO test this when closing app
-// final listeningProvider = Provider.family.autoDispose<void, String>(
-//   (ref, episodeId) {
-//     print('LISTENING TO $episodeId');
-//     final doc =
-//         ref.read(firestoreProvider).collection('podcasts').doc(episodeId);
-//     const field = 'users_watching';
-//     // get the user that's watching
-//     final user = ref.read(currentUserProvider);
-//     // add new watcher
-//     doc.set({
-//       field: FieldValue.arrayUnion([user.id])
-//     }, SetOptions(merge: true));
-//     // remove watcher
-//     ref.onDispose(() {
-//       print('STOPPED $episodeId');
-//       doc.update({
-//         field: FieldValue.arrayRemove([user.id])
-//       });
-//     });
-//   },
-//   disposeDelay: const Duration(milliseconds: 200),
-// );
