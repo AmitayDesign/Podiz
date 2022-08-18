@@ -13,9 +13,8 @@ import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 class CommentSheet extends ConsumerWidget {
+  static const height = 116.0; //! hardcoded
   const CommentSheet({Key? key}) : super(key: key);
-
-  static const height = 116.0;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

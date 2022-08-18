@@ -6,14 +6,13 @@ import 'player_slider_controller.dart';
 
 class PlayerSlider extends ConsumerStatefulWidget {
   const PlayerSlider({Key? key}) : super(key: key);
-  static const height = 4.0;
+  static const height = 24;
 
   @override
   ConsumerState<PlayerSlider> createState() => _PlayerSliderState();
 }
 
 class _PlayerSliderState extends ConsumerState<PlayerSlider> {
-  final height = 4.0;
   bool isPressed = false;
 
   void enableSliderUpdates(_) {
@@ -38,26 +37,26 @@ class _PlayerSliderState extends ConsumerState<PlayerSlider> {
     final playerTime = ref.watch(playerSliderControllerProvider);
     return SliderTheme(
       data: SliderThemeData(
-        trackHeight: PlayerSlider.height,
+        trackHeight: 4,
         inactiveTrackColor: Palette.lightPink,
         activeTrackColor: Palette.pink,
         thumbColor: Palette.pink,
         trackShape: CustomTrackShape(),
         //TODO make interactive area bigger
-        thumbShape:
-            RoundSliderThumbShape(enabledThumbRadius: isPressed ? 8 : 4),
-        overlayShape: SliderComponentShape.noOverlay,
-      ),
-      child: SizedBox(
-        height: PlayerSlider.height,
-        child: Slider(
-          value: playerTime.position.toDouble(),
-          min: 0,
-          max: playerTime.duration.toDouble(),
-          onChangeStart: enableSliderUpdates,
-          onChanged: updateSlider,
-          onChangeEnd: updatePlayerTime,
+        thumbShape: RoundSliderThumbShape(
+          enabledThumbRadius: isPressed ? 8 : 4,
         ),
+        overlayShape: const RoundSliderOverlayShape(
+          overlayRadius: PlayerSlider.height / 2,
+        ),
+      ),
+      child: Slider(
+        value: playerTime.position.toDouble(),
+        min: 0,
+        max: playerTime.duration.toDouble(),
+        onChangeStart: enableSliderUpdates,
+        onChanged: updateSlider,
+        onChangeEnd: updatePlayerTime,
       ),
     );
   }
@@ -72,8 +71,10 @@ class CustomTrackShape extends RectangularSliderTrackShape {
     bool isEnabled = false,
     bool isDiscrete = false,
   }) {
+    final availableHeight = parentBox.size.height;
     final height = sliderTheme.trackHeight!;
     final width = parentBox.size.width;
-    return Rect.fromLTWH(0, 0, width, height);
+    final top = (availableHeight - height) / 2;
+    return Rect.fromLTWH(0, top, width, height);
   }
 }
