@@ -14,6 +14,7 @@ final discussionRepositoryProvider = Provider<DiscussionRepository>(
 abstract class DiscussionRepository {
   //TODO change how comments are saved
   Stream<List<Comment>> watchComments(String episodeId);
+  Stream<List<Comment>> watchUserComments(String userId);
   Future<void> addComment(
     String text, {
     required String episodeId,
@@ -29,4 +30,9 @@ final commentsStreamProvider =
     StreamProvider.family.autoDispose<List<Comment>, String>(
   (ref, episodeId) =>
       ref.watch(discussionRepositoryProvider).watchComments(episodeId),
+);
+final userCommentsStreamProvider =
+    StreamProvider.family.autoDispose<List<Comment>, String>(
+  (ref, userId) =>
+      ref.watch(discussionRepositoryProvider).watchUserComments(userId),
 );

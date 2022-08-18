@@ -27,6 +27,22 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
     });
   }
 
+  @override
+  Stream<List<Comment>> watchUserComments(String userId) {
+    return firestore
+        .collection('users')
+        .doc(userId)
+        .collection('comments')
+        .orderBy('lvl')
+        .orderBy('time')
+        .snapshots()
+        .map((snapshot) {
+      final commentList =
+          snapshot.docs.map((doc) => Comment.fromFirestore(doc)).toList();
+      return groupComments(commentList);
+    });
+  }
+
   List<Comment> groupComments(List<Comment> comments) {
     final commentsGroup = <String, Comment>{};
     for (final comment in comments) {

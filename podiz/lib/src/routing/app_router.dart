@@ -1,8 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:podiz/authentication/auth_manager.dart';
 import 'package:podiz/profile/screens/settingsPage.dart';
+import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/presentation/onboarding/onboarding_screen.dart';
 import 'package:podiz/src/features/auth/presentation/profile/profile_screen.dart';
 import 'package:podiz/src/features/discussion/presentation/discussion_screen.dart';
@@ -21,12 +21,12 @@ enum AppRoute {
 //TODO test login in no premium account
 
 final goRouterProvider = Provider<GoRouter>((ref) {
-  final authManager = ref.watch(authManagerProvider);
+  final authRepository = ref.watch(authRepositoryProvider);
   return GoRouter(
     initialLocation: '/',
     debugLogDiagnostics: false,
     redirect: (state) {
-      final isLoggedIn = authManager.currentUser != null;
+      final isLoggedIn = authRepository.currentUser != null;
       if (isLoggedIn) {
         if (state.location.contains('/onboarding')) return '/';
       } else {
@@ -34,7 +34,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       }
       return null;
     },
-    refreshListenable: GoRouterRefreshStream(authManager.userChanges),
+    refreshListenable: GoRouterRefreshStream(authRepository.authStateChanges()),
     routes: [
       GoRoute(
         path: '/onboarding',
