@@ -4,7 +4,7 @@ import 'package:skeletons/skeletons.dart';
 
 class SkeletonPodcastAvatar extends StatelessWidget {
   final double? size;
-  const SkeletonPodcastAvatar({Key? key, this.size}) : super(key: key);
+  const SkeletonPodcastAvatar({Key? key, this.size = 64}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -13,7 +13,9 @@ import 'package:podiz/src/theme/palette.dart';
 
 import 'comment/comment_text_field.dart';
 
-final commentSheetVisibilityProvider = StateProvider<bool>((ref) => true);
+final commentSheetVisibilityProvider = StateProvider.autoDispose<bool>(
+  (ref) => true,
+);
 
 class CommentSheet extends ConsumerWidget {
   static const height = 116.0; //! hardcoded
@@ -42,9 +44,9 @@ class CommentSheet extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   CommentTextField(
-                    onSend: (comment) async {
+                    onSend: (comment) {
                       final time =
-                          await ref.read(playerTimeStreamProvider.future);
+                          ref.read(playerTimeStreamProvider).valueOrNull!;
                       ref.read(discussionRepositoryProvider).addComment(
                             comment,
                             episodeId: episode.id,

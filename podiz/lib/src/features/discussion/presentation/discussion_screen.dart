@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/widgets/tap_to_unfocus.dart';
 import 'package:podiz/src/common_widgets/back_text_button.dart';
-import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
-import 'package:podiz/src/features/discussion/data/presence_repository.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/domain/playing_episode.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
@@ -27,21 +25,6 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
 
   final scrollController = ScrollController();
   int commentsCount = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    ref.read(presenceRepositoryProvider).configureUserListeningPresence(
-          ref.read(currentUserProvider).id,
-          episodeId,
-        );
-  }
-
-  @override
-  void dispose() {
-    ref.read(presenceRepositoryProvider).disconnect();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {

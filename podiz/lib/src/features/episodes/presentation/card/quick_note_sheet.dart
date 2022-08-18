@@ -31,13 +31,14 @@ class QuickNoteSheet extends ConsumerWidget {
             CommentTextField(
               autofocus: true,
               onSend: (comment) async {
-                final time = await ref.read(playerTimeStreamProvider.future);
+                final time = ref.read(playerTimeStreamProvider).valueOrNull!;
                 ref.read(discussionRepositoryProvider).addComment(
                       comment,
                       episodeId: episode.id,
                       time: time.position,
                       user: ref.read(currentUserProvider),
                     );
+                Navigator.pop(context);
               },
             ),
             Padding(
