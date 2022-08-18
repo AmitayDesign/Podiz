@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/src/common_widgets/users_listening_text.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
-import 'package:podiz/src/features/episodes/presentation/card/quick_note_sheet.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/player_button.dart';
 import 'package:podiz/src/features/player/presentation/player_controller.dart';
@@ -60,16 +59,9 @@ class CommentSheet extends ConsumerWidget {
                     padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
                     child: Row(
                       children: [
-                        UsersListening(
+                        UsersListeningText(
+                          (_, others) => '$others listening with you'.hardcoded,
                           episode: episode,
-                          //TODO locales text
-                          textBuilder: (_, count) =>
-                              "$count listening with you",
-                        ),
-                        Text(
-                          '${episode.userIdsWatching.length - 1} listening with you'
-                              .hardcoded,
-                          style: context.textTheme.bodySmall,
                         ),
                         const Spacer(),
                         PlayerButton(
