@@ -24,7 +24,7 @@ class ProfileSliverHeader extends StatelessWidget {
       pinned: true,
       stretch: true,
       automaticallyImplyLeading: false,
-      backgroundColor: Colors.teal,
+      backgroundColor: Colors.transparent,
       toolbarHeight: GradientBar.height,
       title: const BackTextButton(),
       flexibleSpace: Container(

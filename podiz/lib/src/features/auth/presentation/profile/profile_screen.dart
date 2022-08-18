@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/common_widgets/splash_screen.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
@@ -63,35 +64,47 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 maxHeight: maxHeight,
               ),
               if (user.favPodcastIds.isNotEmpty)
-                CustomScrollView(
-                  scrollDirection: Axis.horizontal,
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: Text(
-                        '${user.name.split(' ')[0]}\'s Favorite Podcasts',
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          '${user.name.split(' ')[0]}\'s Favorite Podcasts',
+                          style: context.textTheme.titleSmall,
+                        ),
                       ),
-                    ),
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, i) => Consumer(
-                          builder: (context, ref, _) {
-                            final podcastId = user.favPodcastIds[i];
-                            final podcastValue =
-                                ref.watch(podcastFutureProvider(podcastId));
-                            return podcastValue.when(
-                              loading: () => const SkeletonPodcastAvatar(),
-                              error: (e, _) => const SizedBox.shrink(),
-                              data: (podcast) => PodcastAvatar(
-                                podcastId: podcast.id,
-                                imageUrl: podcast.imageUrl,
-                              ),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        height: 64,
+                        child: ListView.separated(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          scrollDirection: Axis.horizontal,
+                          itemCount: user.favPodcastIds.length,
+                          separatorBuilder: (context, i) =>
+                              const SizedBox(width: 16),
+                          itemBuilder: (context, i) {
+                            return Consumer(
+                              builder: (context, ref, _) {
+                                final podcastId = user.favPodcastIds[i];
+                                final podcastValue =
+                                    ref.watch(podcastFutureProvider(podcastId));
+                                return podcastValue.when(
+                                  loading: () => const SkeletonPodcastAvatar(),
+                                  error: (e, _) => const SizedBox.shrink(),
+                                  data: (podcast) => PodcastAvatar(
+                                    podcastId: podcast.id,
+                                    imageUrl: podcast.imageUrl,
+                                  ),
+                                );
+                              },
                             );
                           },
                         ),
-                        childCount: user.favPodcastIds.length,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               const SliverToBoxAdapter(child: SizedBox(height: 48)),
               // Consumer(
