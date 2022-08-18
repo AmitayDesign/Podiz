@@ -14,6 +14,15 @@ class FirestorePodcastRepository extends PodcastRepository {
   });
 
   @override
+  Stream<Podcast> watchPodcast(String podcastId) {
+    return firestore
+        .collection('podcasters')
+        .doc(podcastId)
+        .snapshots()
+        .map((doc) => Podcast.fromFirestore(doc));
+  }
+
+  @override
   Future<Podcast> fetchPodcast(String podcastId) async {
     final doc = await firestore.collection('podcasters').doc(podcastId).get();
     // if (doc.exists)

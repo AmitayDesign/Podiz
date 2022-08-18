@@ -36,7 +36,7 @@ class _FeedPageState extends ConsumerState<FeedPage> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(currentUserProvider);
+    final user = ref.watch(currentuserFutureProvider);
     final episodeRepository = ref.watch(episodeRepositoryProvider);
     final feedController = ref.read(feedControllerProvider.notifier);
     return Scaffold(

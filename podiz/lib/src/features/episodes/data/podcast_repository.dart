@@ -14,11 +14,19 @@ final podcastRepositoryProvider = Provider<PodcastRepository>(
 );
 
 abstract class PodcastRepository {
+  Stream<Podcast> watchPodcast(String podcastId);
   Future<Podcast> fetchPodcast(String podcastId);
   Query<Podcast> podcastsFirestoreQuery(String filter); //!
   Future<void> follow(String userId, String podcastId);
   Future<void> unfollow(String userId, String podcastId);
 }
+
+final podcastStreamProvider = StreamProvider.family<Podcast, String>(
+  (ref, podcastId) {
+    final podcastRepository = ref.watch(podcastRepositoryProvider);
+    return podcastRepository.watchPodcast(podcastId);
+  },
+);
 
 final podcastFutureProvider = FutureProvider.family<Podcast, String>(
   (ref, podcastId) {

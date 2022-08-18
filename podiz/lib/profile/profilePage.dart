@@ -7,11 +7,11 @@ import 'package:podiz/aspect/widgets/cardButton.dart';
 import 'package:podiz/home/components/replyView.dart';
 import 'package:podiz/loading.dart/notificationLoading.dart';
 import 'package:podiz/loading.dart/shimmerContainer.dart';
-import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/back_text_button.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
@@ -65,10 +65,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = ref.watch(currentUserProvider);
+    final currentUser = ref.watch(currentuserFutureProvider);
     final userValue = currentUser.id == widget.userId
         ? AsyncData(currentUser)
-        : ref.watch(userProvider(widget.userId));
+        : ref.watch(userFutureProvider(widget.userId));
 
     return userValue.when(
         error: (e, _) => Text(e.toString()),

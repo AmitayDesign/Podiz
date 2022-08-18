@@ -19,7 +19,7 @@ class PodcastFollowFab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final podcastRepository = ref.watch(podcastRepositoryProvider);
-    final user = ref.watch(currentUserProvider);
+    final user = ref.watch(currentuserFutureProvider);
     final isFollowing = user.favPodcastIds.contains(podcastId);
 
     return FloatingActionButton.extended(

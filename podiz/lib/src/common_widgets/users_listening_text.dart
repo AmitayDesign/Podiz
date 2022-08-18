@@ -19,7 +19,7 @@ class UsersListeningText extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final liveEpisode =
         ref.watch(episodeStreamProvider(episode.id)).valueOrNull ?? episode;
-    final user = ref.watch(currentUserProvider);
+    final user = ref.watch(currentuserFutureProvider);
     final otherUsersWatching = liveEpisode.userIdsWatching..remove(user);
     //TODO add faces
     return Text(

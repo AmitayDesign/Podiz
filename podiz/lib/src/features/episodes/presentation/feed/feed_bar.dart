@@ -18,7 +18,7 @@ class FeedBar extends ConsumerWidget with PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(currentUserProvider);
+    final user = ref.watch(currentuserFutureProvider);
     final title = ref.watch(feedControllerProvider);
     return GradientBar(
       title: Text(

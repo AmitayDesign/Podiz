@@ -41,7 +41,7 @@ final authStateChangesProvider = StreamProvider<UserPodiz?>(
   (ref) => ref.watch(authRepositoryProvider).authStateChanges(),
 );
 
-final currentUserProvider =
+final currentuserFutureProvider =
     StateNotifierProvider<StreamNotifier<UserPodiz>, UserPodiz>(
   (ref) {
     final repository = ref.watch(authRepositoryProvider);

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/providers.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/common_widgets/splash_screen.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
+import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/episodes/presentation/card/episode_card.dart';
 import 'package:podiz/src/features/episodes/presentation/card/skeleton_episode_card.dart';
 import 'package:podiz/src/features/episodes/presentation/podcast/podcast_follow_fab.dart';
@@ -43,7 +43,7 @@ class _PodcastScreenState extends ConsumerState<PodcastScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final podcastValue = ref.watch(showFutureProvider(widget.podcastId));
+    final podcastValue = ref.watch(podcastStreamProvider(widget.podcastId));
     return podcastValue.when(
       error: (e, _) => const SplashScreen.error(), //!
       loading: () => const SplashScreen(), //!

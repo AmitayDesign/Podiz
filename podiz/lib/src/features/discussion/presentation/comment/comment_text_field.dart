@@ -45,7 +45,7 @@ class _CommentTextFieldState extends State<CommentTextField> {
       children: [
         Consumer(
           builder: (context, ref, _) {
-            final user = ref.watch(currentUserProvider);
+            final user = ref.watch(currentuserFutureProvider);
             return UserAvatar(
               user: user,
               radius: CircleButton.defaultSize / 2,

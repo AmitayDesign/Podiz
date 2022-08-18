@@ -18,7 +18,7 @@ class _SpotifySearchState extends ConsumerState<SpotifySearch> {
 
   void searchInSpotify() async {
     setState(() => isLoading = true);
-    final user = ref.read(currentUserProvider);
+    final user = ref.read(currentuserFutureProvider);
     await FirebaseFunctions.instance.httpsCallable("searchInSpotify").call({
       "query": widget.query,
       "userUid": user.id,
