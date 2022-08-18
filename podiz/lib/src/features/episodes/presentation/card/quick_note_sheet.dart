@@ -37,7 +37,7 @@ class QuickNoteSheet extends ConsumerWidget {
                       comment,
                       episodeId: episode.id,
                       time: time.position,
-                      user: ref.read(currentuserFutureProvider),
+                      user: ref.read(currentUserProvider),
                     );
                 Navigator.pop(context);
               },

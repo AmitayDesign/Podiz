@@ -7,7 +7,7 @@ import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 
 final feedControllerProvider = StateNotifierProvider<FeedController, String>(
   (ref) {
-    final user = ref.watch(currentuserFutureProvider);
+    final user = ref.watch(currentUserProvider);
     return FeedController(user: user);
   },
 );

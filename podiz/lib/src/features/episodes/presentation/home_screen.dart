@@ -91,7 +91,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           final presenceRepository = ref.read(presenceRepositoryProvider);
           // update last listened
           final user = ref
-              .read(currentuserFutureProvider)
+              .read(currentUserProvider)
               .updateLastListenedEpisode(episode.id);
           ref.read(authRepositoryProvider).updateUser(user);
           // update listening right now

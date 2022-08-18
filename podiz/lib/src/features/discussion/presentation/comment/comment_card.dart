@@ -42,7 +42,7 @@ class CommentCard extends ConsumerWidget {
                 parent: comment,
                 episodeId: episodeId,
                 time: time.position,
-                user: read(currentuserFutureProvider),
+                user: read(currentUserProvider),
               );
               Navigator.pop(context);
             },

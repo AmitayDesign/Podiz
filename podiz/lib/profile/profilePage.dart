@@ -65,7 +65,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = ref.watch(currentuserFutureProvider);
+    final currentUser = ref.watch(currentUserProvider);
     final userValue = currentUser.id == widget.userId
         ? AsyncData(currentUser)
         : ref.watch(userFutureProvider(widget.userId));

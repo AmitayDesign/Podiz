@@ -27,7 +27,7 @@ class InsightsInfo extends ConsumerWidget {
               )
             : Consumer(
                 builder: (context, ref, _) {
-                  final user = ref.watch(currentuserFutureProvider);
+                  final user = ref.watch(currentUserProvider);
                   return UserAvatar(user: user);
                 },
               ),
