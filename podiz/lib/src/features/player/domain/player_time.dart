@@ -1,5 +1,8 @@
 class PlayerTime {
+  /// Player position in seconds
   final int position;
+
+  /// Episode duration in seconds
   final int duration;
 
   const PlayerTime({

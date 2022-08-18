@@ -72,7 +72,7 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
       episodeId: episodeId,
       userId: user.id,
       text: text,
-      time: time,
+      time: time * 1000,
       lvl: parent == null ? 1 : parent.parentIds.length + 2,
       parentIds:
           parent == null ? <String>[] : (parent.parentIds..add(parent.id)),

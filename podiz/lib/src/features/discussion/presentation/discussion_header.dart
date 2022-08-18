@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:podiz/src/features/discussion/presentation/skeleton_discussion_header.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/episodes/presentation/card/episode_content.dart';
@@ -26,7 +27,7 @@ class DiscussionHeader extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final episodeValue = ref.watch(episodeFutureProvider(episodeId));
     return episodeValue.when(
-      loading: () => const SizedBox.shrink(), //TODO skeleton
+      loading: () => const SkeletonDiscussionHeader(),
       error: (e, _) => const SizedBox.shrink(),
       data: (episode) => Column(
         mainAxisSize: MainAxisSize.min,
@@ -37,7 +38,7 @@ class DiscussionHeader extends ConsumerWidget {
               Padding(
                 padding:
                     const EdgeInsets.only(bottom: PlayerSlider.height / 2 + 2),
-                child: Container(
+                child: Material(
                   color: backgroundColor,
                   child: EpisodeContent(episode, color: backgroundColor),
                 ),

@@ -36,7 +36,7 @@ class CommentCard extends ConsumerWidget {
           child: ReplySheet(
             comment: comment,
             onReply: (reply) async {
-              final time = await read(playerTimeStreamProvider.future);
+              final time = read(playerTimeStreamProvider).valueOrNull!;
               read(discussionRepositoryProvider).addComment(
                 reply,
                 parent: comment,
@@ -44,6 +44,7 @@ class CommentCard extends ConsumerWidget {
                 time: time.position,
                 user: read(currentUserProvider),
               );
+              Navigator.pop(context);
             },
           ),
         ),
