@@ -18,9 +18,9 @@ import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/episodes/domain/podcast.dart';
+import 'package:podiz/src/features/episodes/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
-import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/palette.dart';
 

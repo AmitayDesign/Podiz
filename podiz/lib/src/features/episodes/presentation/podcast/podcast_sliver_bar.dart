@@ -4,7 +4,7 @@ import 'package:podiz/aspect/widgets/appBarGradient.dart';
 import 'package:podiz/src/common_widgets/back_text_button.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/features/episodes/domain/podcast.dart';
-import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
+import 'package:podiz/src/features/episodes/presentation/avatar/podcast_avatar.dart';
 
 class PodcastSliverHeader extends StatelessWidget {
   final Podcast podcast;

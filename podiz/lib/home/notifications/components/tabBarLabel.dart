@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/loading.dart/tabBarLabelLoading.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
-import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
+import 'package:podiz/src/features/episodes/presentation/avatar/podcast_avatar.dart';
 
 class TabBarLabel extends ConsumerWidget {
   final String text;

@@ -5,8 +5,8 @@ import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/objects/SearchResult.dart';
+import 'package:podiz/src/features/episodes/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
-import 'package:podiz/src/features/podcast/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/palette.dart';
 

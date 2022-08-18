@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/src/features/episodes/presentation/card/skeleton_episode_content.dart';
+import 'package:podiz/src/features/episodes/presentation/avatar/skeleton_episode_content.dart';
 
 class SkeletonEpisodeCard extends StatelessWidget {
   final double? bottomHeight;

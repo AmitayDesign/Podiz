@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/src/features/podcast/presentation/avatar/skeleton_podcast_avatar.dart';
+import 'package:podiz/src/features/episodes/avatar/skeleton_podcast_avatar.dart';
 import 'package:skeletons/skeletons.dart';
 
 class SkeletonEpisodeContent extends StatelessWidget {
