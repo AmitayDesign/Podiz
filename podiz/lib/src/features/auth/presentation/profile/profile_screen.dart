@@ -30,7 +30,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   double get statusBarHeight => MediaQuery.of(context).padding.top;
   double get minHeight => statusBarHeight + GradientBar.height * 1.5;
-  double get maxHeight => statusBarHeight + 280;
+  double get maxHeight => statusBarHeight + 296;
 
   void snapHeader() {
     final distance = maxHeight - minHeight;
@@ -120,18 +120,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ],
                       ),
                     ),
-                  const SliverToBoxAdapter(child: SizedBox(height: 48)),
+                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
                   SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, i) {
                         final comment = comments[i];
                         final episodeId = comment.episodeId;
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ProfileEpisodeInfo(episodeId),
-                            CommentCard(comment, episodeId: episodeId)
-                          ],
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 16),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ProfileEpisodeInfo(episodeId),
+                              CommentCard(comment, episodeId: episodeId)
+                            ],
+                          ),
                         );
                       },
                     ),
