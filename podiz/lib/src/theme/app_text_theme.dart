@@ -4,11 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 /*
 36 - 700 - white        displaySmall
 32 - 700 - white        headlineLarge
-24 - 600 - white        headlineSmall
+24 - 700 - white        headlineSmall
 18 - 700 - white        titleLarge
 16 - 700 - white        titleMedium
-16 - 400 - white        bodyLarge
 14 - 700 - white        titleSmall
+16 - 400 - white        bodyLarge
 14 - 400 - white70      bodyMedium
 12 - 400 - grey600      bodySmall
 */

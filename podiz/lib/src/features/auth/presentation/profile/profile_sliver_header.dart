@@ -3,17 +3,17 @@ import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/widgets/appBarGradient.dart';
 import 'package:podiz/src/common_widgets/back_text_button.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
-import 'package:podiz/src/features/episodes/domain/podcast.dart';
-import 'package:podiz/src/features/episodes/presentation/avatar/podcast_avatar.dart';
+import 'package:podiz/src/common_widgets/user_avatar.dart';
+import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 
-class PodcastSliverHeader extends StatelessWidget {
-  final Podcast podcast;
+class ProfileSliverHeader extends StatelessWidget {
+  final UserPodiz user;
   final double minHeight;
   final double maxHeight;
 
-  const PodcastSliverHeader({
+  const ProfileSliverHeader({
     Key? key,
-    required this.podcast,
+    required this.user,
     required this.minHeight,
     required this.maxHeight,
   }) : super(key: key);
@@ -24,7 +24,7 @@ class PodcastSliverHeader extends StatelessWidget {
       pinned: true,
       stretch: true,
       automaticallyImplyLeading: false,
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.teal,
       toolbarHeight: GradientBar.height,
       title: const BackTextButton(),
       flexibleSpace: Container(
@@ -32,8 +32,8 @@ class PodcastSliverHeader extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: extendedAppBarGradient(context.colorScheme.background),
         ),
-        child: PodcastHeader(
-          podcast: podcast,
+        child: ProfileHeader(
+          user: user,
           minHeight: minHeight * 1.25,
           maxHeight: maxHeight,
         ),
@@ -44,14 +44,14 @@ class PodcastSliverHeader extends StatelessWidget {
   }
 }
 
-class PodcastHeader extends StatelessWidget {
-  final Podcast podcast;
+class ProfileHeader extends StatelessWidget {
+  final UserPodiz user;
   final double minHeight;
   final double maxHeight;
 
-  const PodcastHeader({
+  const ProfileHeader({
     Key? key,
-    required this.podcast,
+    required this.user,
     required this.minHeight,
     required this.maxHeight,
   }) : super(key: key);
@@ -71,29 +71,48 @@ class PodcastHeader extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16)
               .add(const EdgeInsets.only(top: GradientBar.height)),
-          alignment: Alignment.center,
+          alignment: Alignment.centerLeft,
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              PodcastAvatar(
-                podcastId: podcast.id,
-                imageUrl: podcast.imageUrl,
-                size: tween(0, 128),
-              ),
-              SizedBox(height: tween(0, 16)),
-              Text(
-                podcast.name,
-                style: context.textTheme.headlineLarge!.copyWith(
-                  fontSize: tween(18, 32),
-                ),
-                maxLines: ratio == 0 ? 1 : 2,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-              ),
+              UserAvatar(user: user, radius: tween(0, 48)),
               SizedBox(height: tween(0, 8)),
               Text(
-                '${podcast.followers.length} Followers',
-                style: TextStyle(fontSize: tween(0, 16)),
+                user.name,
+                style: context.textTheme.titleLarge,
+                maxLines: ratio == 0 ? 1 : 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: tween(0, 16)),
+              Row(
+                children: [
+                  Text.rich(
+                    TextSpan(
+                      text: user.followers.length.toString(),
+                      style: context.textTheme.titleLarge,
+                      children: [
+                        TextSpan(
+                          text: ' Followers',
+                          style: context.textTheme.bodyLarge,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Text.rich(
+                    TextSpan(
+                      text: user.following.length.toString(),
+                      style: context.textTheme.titleLarge,
+                      children: [
+                        TextSpan(
+                          text: ' Following',
+                          style: context.textTheme.bodyLarge,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

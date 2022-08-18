@@ -33,22 +33,6 @@ class ProfilePage extends ConsumerStatefulWidget {
 }
 
 class _ProfilePageState extends ConsumerState<ProfilePage> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  void didUpdateWidget(covariant ProfilePage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    setState(() {});
-  }
-
   void openPodcast(Episode episode) {
     context.goNamed(
       AppRoute.podcast.name,

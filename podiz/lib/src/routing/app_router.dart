@@ -2,9 +2,9 @@ import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/authentication/auth_manager.dart';
-import 'package:podiz/profile/profilePage.dart';
 import 'package:podiz/profile/screens/settingsPage.dart';
 import 'package:podiz/src/features/auth/presentation/onboarding/onboarding_screen.dart';
+import 'package:podiz/src/features/auth/presentation/profile/profile_screen.dart';
 import 'package:podiz/src/features/discussion/presentation/discussion_screen.dart';
 import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
 import 'package:podiz/src/features/episodes/presentation/podcast/podcast_screen.dart';
@@ -62,7 +62,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             name: AppRoute.profile.name,
             builder: (_, state) {
               final userId = state.params['userId']!;
-              return ProfilePage(userId: userId);
+              return ProfileScreen(userId);
             },
           ),
           GoRoute(
