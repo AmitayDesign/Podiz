@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
+import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 
@@ -11,14 +13,17 @@ class ProfileFollowFab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isFollowing = user.following.contains(user.id);
+    final currentUser = ref.watch(currentUserProvider);
+    final isFollowing = currentUser.following.contains(user.id);
 
     return FloatingActionButton.extended(
       backgroundColor: context.colorScheme.primary,
-      onPressed: () {},
-      // => isFollowing
-      //     ? podcastRepository.unfollow(user.id, userId)
-      //     : podcastRepository.follow(user.id, userId),
+      onPressed: () {
+        final userRepository = ref.read(userRepositoryProvider);
+        isFollowing
+            ? userRepository.unfollow(currentUser.id, user.id)
+            : userRepository.follow(currentUser.id, user.id);
+      },
       icon: UserAvatar(user: user, radius: 12),
       label: Text(
         isFollowing
