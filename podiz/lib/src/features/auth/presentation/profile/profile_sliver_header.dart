@@ -28,7 +28,6 @@ class ProfileSliverHeader extends StatelessWidget {
       toolbarHeight: GradientBar.height,
       title: const BackTextButton(),
       flexibleSpace: Container(
-        padding: EdgeInsets.only(bottom: minHeight * 0.25),
         decoration: BoxDecoration(
           gradient: extendedAppBarGradient(context.colorScheme.background),
         ),
@@ -64,37 +63,46 @@ class ProfileHeader extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final ratio = calculateRatio(constraints).clamp(0.0, 1.0);
+        print(ratio);
         final animation = AlwaysStoppedAnimation(ratio);
         double tween(double begin, double end) =>
             Tween<double>(begin: begin, end: end).evaluate(animation);
 
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16)
-              .add(const EdgeInsets.only(top: GradientBar.height)),
+          padding: const EdgeInsets.symmetric(horizontal: 16).add(
+            EdgeInsets.only(
+              top: GradientBar.height,
+              bottom: tween(minHeight * 1 / 5, 0),
+            ),
+          ),
           alignment: Alignment.centerLeft,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               UserAvatar(user: user, radius: tween(0, 48)),
-              SizedBox(height: tween(0, 8)),
+              SizedBox(height: tween(0, 16)),
               Text(
                 user.name,
                 style: context.textTheme.titleLarge,
                 maxLines: ratio == 0 ? 1 : 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              SizedBox(height: tween(0, 16)),
+              SizedBox(height: tween(0, 8)),
               Row(
                 children: [
                   Text.rich(
                     TextSpan(
                       text: user.followers.length.toString(),
-                      style: context.textTheme.titleLarge,
+                      style: context.textTheme.titleLarge!.copyWith(
+                        fontSize: tween(0, 18),
+                      ),
                       children: [
                         TextSpan(
                           text: ' Followers',
-                          style: context.textTheme.bodyLarge,
+                          style: context.textTheme.bodyLarge!.copyWith(
+                            fontSize: tween(0, 16),
+                          ),
                         ),
                       ],
                     ),
@@ -103,11 +111,15 @@ class ProfileHeader extends StatelessWidget {
                   Text.rich(
                     TextSpan(
                       text: user.following.length.toString(),
-                      style: context.textTheme.titleLarge,
+                      style: context.textTheme.titleLarge!.copyWith(
+                        fontSize: tween(0, 18),
+                      ),
                       children: [
                         TextSpan(
                           text: ' Following',
-                          style: context.textTheme.bodyLarge,
+                          style: context.textTheme.bodyLarge!.copyWith(
+                            fontSize: tween(0, 16),
+                          ),
                         ),
                       ],
                     ),
