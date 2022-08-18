@@ -46,7 +46,11 @@ class PodcastTile extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
             child: Row(
               children: [
-                PodcastAvatar(imageUrl: result.image_url, size: 68),
+                PodcastAvatar(
+                  podcastId: result.show_uri!,
+                  imageUrl: result.image_url,
+                  size: 68,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Column(

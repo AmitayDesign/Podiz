@@ -31,7 +31,11 @@ class ShowSearchTile extends StatelessWidget {
             child: Column(children: [
               Row(
                 children: [
-                  PodcastAvatar(imageUrl: show.imageUrl, size: 68),
+                  PodcastAvatar(
+                    podcastId: show.id,
+                    imageUrl: show.imageUrl,
+                    size: 68,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: SizedBox(

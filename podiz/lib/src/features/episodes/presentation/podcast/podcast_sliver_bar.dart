@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/aspect/widgets/appBarGradient.dart';
 import 'package:podiz/src/common_widgets/back_text_button.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/features/episodes/domain/podcast.dart';
@@ -23,13 +24,21 @@ class PodcastSliverHeader extends StatelessWidget {
       pinned: true,
       stretch: true,
       automaticallyImplyLeading: false,
-      backgroundColor: Colors.teal,
+      backgroundColor: Colors.transparent,
+      toolbarHeight: GradientBar.height,
       title: const BackTextButton(),
-      flexibleSpace: PodcastHeader(
-        podcast: podcast,
-        minHeight: minHeight,
-        maxHeight: maxHeight,
+      flexibleSpace: Container(
+        padding: EdgeInsets.only(bottom: minHeight * 0.25),
+        decoration: BoxDecoration(
+          gradient: extendedAppBarGradient(context.colorScheme.background),
+        ),
+        child: PodcastHeader(
+          podcast: podcast,
+          minHeight: minHeight * 1.25,
+          maxHeight: maxHeight,
+        ),
       ),
+      collapsedHeight: minHeight * 1.25 - MediaQuery.of(context).padding.top,
       expandedHeight: maxHeight - MediaQuery.of(context).padding.top,
     );
   }
@@ -47,60 +56,44 @@ class PodcastHeader extends StatelessWidget {
     required this.maxHeight,
   }) : super(key: key);
 
-  double calculateRatio(BuildContext context, BoxConstraints constraints) =>
-      ((constraints.maxHeight - minHeight) / (maxHeight - minHeight))
-          .clamp(0, 1);
+  double calculateRatio(BoxConstraints constraints) =>
+      (constraints.maxHeight - minHeight) / (maxHeight - minHeight);
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final ratio = calculateRatio(context, constraints);
-        print(ratio);
+        final ratio = calculateRatio(constraints).clamp(0.0, 1.0);
         final animation = AlwaysStoppedAnimation(ratio);
+        double tween(double begin, double end) =>
+            Tween<double>(begin: begin, end: end).evaluate(animation);
+
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16)
-              .add(EdgeInsets.only(top: MediaQuery.of(context).padding.top)),
+              .add(const EdgeInsets.only(top: GradientBar.height)),
           alignment: Alignment.center,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Padding(
-                padding: EdgeInsets.only(
-                  top: Tween<double>(
-                    begin: 0,
-                    end: GradientBar.height,
-                  ).evaluate(animation),
-                ),
-                child: PodcastAvatar(
-                  imageUrl: podcast.imageUrl,
-                  size: Tween<double>(
-                    begin: 0,
-                    end: 128,
-                  ).evaluate(animation),
-                ),
+              PodcastAvatar(
+                podcastId: podcast.id,
+                imageUrl: podcast.imageUrl,
+                size: tween(0, 128),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: tween(0, 16)),
               Text(
                 podcast.name,
                 style: context.textTheme.headlineLarge!.copyWith(
-                  fontSize: Tween<double>(
-                    begin: 18,
-                    end: 32,
-                  ).evaluate(animation),
+                  fontSize: tween(18, 32),
                 ),
-                maxLines: 2,
+                maxLines: ratio == 0 ? 1 : 2,
                 textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: tween(0, 8)),
               Text(
                 '${podcast.followers.length} FOLLOWERS',
-                style: TextStyle(
-                  fontSize: Tween<double>(
-                    begin: 0,
-                    end: 16,
-                  ).evaluate(animation),
-                ),
+                style: TextStyle(fontSize: tween(0, 16)),
               ),
             ],
           ),

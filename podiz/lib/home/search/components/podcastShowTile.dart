@@ -52,7 +52,11 @@ class _PodcastShowTileState extends ConsumerState<PodcastShowTile> {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    PodcastAvatar(imageUrl: widget.result.image_url, size: 52),
+                    PodcastAvatar(
+                      podcastId: widget.result.show_uri!,
+                      imageUrl: widget.result.image_url,
+                      size: 52,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Column(

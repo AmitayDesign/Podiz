@@ -61,7 +61,6 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
     return notifications.when(
         loading: () => const NotificationLoading(),
         error: (e, _) {
-          print('notificationPage: ${e.toString()}');
           return const SplashScreen.error();
         },
         data: (n) {
@@ -189,7 +188,10 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                           child: Row(
                             children: [
                               PodcastAvatar(
-                                  imageUrl: episode.imageUrl, size: 32),
+                                podcastId: episode.showId,
+                                imageUrl: episode.imageUrl,
+                                size: 32,
+                              ),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Column(

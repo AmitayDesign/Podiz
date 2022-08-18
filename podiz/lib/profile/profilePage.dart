@@ -199,8 +199,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               return InkWell(
                 onTap: () => openShowFavourite(podcast),
                 child: Padding(
-                    padding: const EdgeInsets.only(right: 16),
-                    child: PodcastAvatar(imageUrl: podcast.imageUrl, size: 68)),
+                  padding: const EdgeInsets.only(right: 16),
+                  child: PodcastAvatar(
+                    podcastId: podcast.id,
+                    imageUrl: podcast.imageUrl,
+                    size: 68,
+                  ),
+                ),
               );
             }
           }
@@ -233,7 +238,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Row(
                       children: [
-                        PodcastAvatar(imageUrl: episode.imageUrl, size: 32),
+                        PodcastAvatar(
+                          podcastId: episode.showId,
+                          imageUrl: episode.imageUrl,
+                          size: 32,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: SizedBox(
