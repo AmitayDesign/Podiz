@@ -7,7 +7,7 @@ class TapToUnfocus extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: FocusScope.of(context).unfocus,
+      onTap: FocusManager.instance.primaryFocus?.unfocus,
       behavior: HitTestBehavior.translucent,
       child: child,
     );
