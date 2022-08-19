@@ -89,6 +89,9 @@ class CommentSheet extends ConsumerWidget {
                             time: time.position,
                             user: ref.read(currentUserProvider),
                           );
+
+                      ref.read(commentSheetTargetProvider.notifier).state =
+                          null;
                     },
                   ),
                   const SizedBox(height: 4),
