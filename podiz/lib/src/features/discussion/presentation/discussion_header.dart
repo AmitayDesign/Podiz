@@ -40,7 +40,12 @@ class DiscussionHeader extends ConsumerWidget {
                     const EdgeInsets.only(bottom: PlayerSlider.height / 2 + 2),
                 child: Material(
                   color: backgroundColor,
-                  child: EpisodeContent(episode, color: backgroundColor),
+                  child: EpisodeContent(
+                    episode,
+                    color: backgroundColor,
+                    avatarSize: 48,
+                    titleMaxLines: 1,
+                  ),
                 ),
               ),
               const PlayerSlider(),

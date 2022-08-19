@@ -17,6 +17,8 @@ class EpisodeContent extends StatelessWidget {
 
   /// The color to give to the stacked avatars border
   final Color? color;
+  final double avatarSize;
+  final int titleMaxLines;
 
   const EpisodeContent(
     this.episode, {
@@ -24,6 +26,8 @@ class EpisodeContent extends StatelessWidget {
     this.insights = true,
     this.bottom,
     this.color,
+    this.avatarSize = 64,
+    this.titleMaxLines = 2,
   }) : super(key: key);
 
   String format(int milliseconds) {
@@ -56,6 +60,7 @@ class EpisodeContent extends StatelessWidget {
               PodcastAvatar(
                 podcastId: episode.showId,
                 imageUrl: episode.imageUrl,
+                size: avatarSize,
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -68,7 +73,7 @@ class EpisodeContent extends StatelessWidget {
                         episode.name,
                         style: titleStyle,
                         overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
+                        maxLines: titleMaxLines,
                       ),
                       Row(
                         children: [
