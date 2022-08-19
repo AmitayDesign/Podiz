@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/src/common_widgets/stacked_avatars.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 
 class InsightsInfo extends ConsumerWidget {
   final Episode episode;

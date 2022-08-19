@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/src/constants/constants.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 
 class ConnectPage extends ConsumerWidget {
   const ConnectPage({Key? key}) : super(key: key);

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/extensions.dart';
+import 'package:go_router/go_router.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/discussion/presentation/sheet/comment_sheet.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
+import 'package:podiz/src/routing/app_router.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 
 import 'comment_text.dart';
 import 'comment_trailing.dart';
@@ -18,7 +20,8 @@ class CommentCard extends ConsumerWidget {
   const CommentCard(this.comment, {Key? key, required this.episodeId})
       : super(key: key);
 
-  void share(Comment comment) {} //!
+  //? https://pub.dev/packages/share_plus
+  void share(Comment comment) {}
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -58,9 +61,25 @@ class CommentCard extends ConsumerWidget {
                     TimeChip(
                       icon: Icons.play_arrow,
                       position: comment.time ~/ 1000,
-                      onTap: () => ref
-                          .read(playerRepositoryProvider)
-                          .resume(episodeId, comment.time ~/ 1000 - 10),
+                      onTap: () {
+                        // just call play() if the episode is NOT playing
+                        ref
+                            .read(playerRepositoryProvider)
+                            .fetchPlayingEpisode()
+                            .then(
+                          (playingEpisode) {
+                            if (playingEpisode?.id != episodeId) {
+                              ref
+                                  .read(playerRepositoryProvider)
+                                  .play(episodeId, comment.time ~/ 1000 - 10);
+                            }
+                          },
+                        );
+                        context.goNamed(
+                          AppRoute.discussion.name,
+                          params: {'episodeId': episodeId},
+                        );
+                      },
                     ),
                   ],
                 ),

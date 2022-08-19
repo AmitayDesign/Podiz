@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/src/constants/constants.dart';
 
 class SuffixIcon extends StatelessWidget {
   final IconData icon;

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/aspect/widgets/appBarGradient.dart';
+import 'package:podiz/src/common_widgets/app_bar_gradient.dart';
 import 'package:podiz/src/common_widgets/back_text_button.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 
 class ProfileSliverHeader extends StatelessWidget {
   final UserPodiz user;

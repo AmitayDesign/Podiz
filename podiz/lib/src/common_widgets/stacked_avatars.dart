@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 
 class StackedAvatars extends StatelessWidget {
   final List<String> imageUrls;

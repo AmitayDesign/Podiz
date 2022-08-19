@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 
 class FeedTile extends StatelessWidget {
   final String text;

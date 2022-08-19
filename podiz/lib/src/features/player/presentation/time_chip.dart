@@ -2,9 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/src/constants/constants.dart';
 import 'package:podiz/src/features/player/presentation/player_slider_controller.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 class PlayerTimeChip extends ConsumerWidget {
@@ -60,6 +60,7 @@ class TimeChip extends StatelessWidget {
     return Material(
       shape: const StadiumBorder(),
       color: color ?? Colors.black87,
+      clipBehavior: Clip.hardEdge,
       child: InkWell(
         onTap: () => loading ? null : onTap?.call(),
         child: Container(
@@ -69,16 +70,15 @@ class TimeChip extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (icon != null) Icon(icon!, size: kSmallIconSize),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Text(
-                  timeFromMilliseconds(position * 1000),
-                  style: context.textTheme.titleSmall!.copyWith(
-                    color: Colors.white,
-                    fontFeatures: const [FontFeature.tabularFigures()],
-                  ),
+              const SizedBox(width: 4),
+              Text(
+                timeFromMilliseconds(position * 1000),
+                style: context.textTheme.titleSmall!.copyWith(
+                  color: Colors.white,
+                  fontFeatures: const [FontFeature.tabularFigures()],
                 ),
               ),
+              const SizedBox(width: 4),
             ],
           ),
         ),

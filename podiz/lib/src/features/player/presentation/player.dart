@@ -10,7 +10,7 @@ import 'package:podiz/src/features/player/presentation/player_slider.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/palette.dart';
-import 'package:podiz/src/utils/zwsp_string.dart';
+import 'package:podiz/src/utils/string_zwsp.dart';
 
 import 'skeleton_player.dart';
 

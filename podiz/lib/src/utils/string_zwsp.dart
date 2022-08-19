@@ -1,4 +1,4 @@
-extension ZwspString on String {
+extension StringZwsp on String {
   /// Inserts a Zero Width Space (ZWSP) character between every character.
   ///
   /// This character is intended for invisible word separation and for line break control.

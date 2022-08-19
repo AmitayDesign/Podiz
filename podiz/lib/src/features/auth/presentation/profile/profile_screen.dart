@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/src/common_widgets/empty_screen.dart';
+import 'package:podiz/src/common_widgets/episode_subtitle.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
-import 'package:podiz/src/features/auth/presentation/profile/profile_episode_info.dart';
 import 'package:podiz/src/features/auth/presentation/profile/profile_follow_fab.dart';
 import 'package:podiz/src/features/auth/presentation/profile/profile_sliver_header.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
@@ -14,6 +13,7 @@ import 'package:podiz/src/features/episodes/avatar/skeleton_podcast_avatar.dart'
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/episodes/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   final String userId;
@@ -69,7 +69,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             return commentsValue.when(
               loading: () => EmptyScreen.loading(padding: playerPadding),
               error: (e, _) => EmptyScreen.text(
-                'There was an error loading the user information.',
+                'There was an error displaying the user information.',
                 padding: playerPadding,
               ),
               data: (comments) => CustomScrollView(
@@ -142,7 +142,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              ProfileEpisodeInfo(episodeId),
+                              EpisodeSubtitle(episodeId),
                               CommentCard(comment, episodeId: episodeId)
                             ],
                           ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:podiz/aspect/widgets/sliverFirestoreQueryBuilder.dart';
 import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
+import 'package:podiz/src/common_widgets/sliver_firestore_query_builder.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';

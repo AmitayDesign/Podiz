@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/src/constants/constants.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 
 class SpoilerAlertCard extends StatelessWidget {
   const SpoilerAlertCard({Key? key}) : super(key: key);

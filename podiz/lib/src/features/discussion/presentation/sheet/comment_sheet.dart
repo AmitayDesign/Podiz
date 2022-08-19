@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/src/common_widgets/users_listening_text.dart';
+import 'package:podiz/src/constants/constants.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
@@ -12,6 +11,7 @@ import 'package:podiz/src/features/player/presentation/player_button.dart';
 import 'package:podiz/src/features/player/presentation/player_controller.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 import 'target_comment.dart';

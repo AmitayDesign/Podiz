@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
-import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/src/constants/constants.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 
 import 'quick_note_sheet.dart';
 

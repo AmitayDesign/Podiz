@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/widgets/sliverFirestoreQueryBuilder.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
+import 'package:podiz/src/common_widgets/sliver_firestore_query_builder.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';

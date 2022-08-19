@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:podiz/aspect/constants.dart';
-import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/src/constants/constants.dart';
 import 'package:podiz/src/features/episodes/domain/podcast.dart';
 import 'package:podiz/src/features/episodes/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/routing/app_router.dart';
-import 'package:podiz/src/utils/zwsp_string.dart';
+import 'package:podiz/src/theme/context_theme.dart';
+import 'package:podiz/src/utils/string_zwsp.dart';
 
 class PodcastCard extends ConsumerWidget {
   final Podcast podcast;

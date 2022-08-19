@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-extension GlobalKeyX on GlobalKey {
+extension GlobalKeyBox on GlobalKey {
   /// global screen offset
   Offset? get offset {
     final box = currentContext?.findRenderObject() as RenderBox?;
@@ -12,10 +12,4 @@ extension GlobalKeyX on GlobalKey {
     if (box != null && box.hasSize) return box.size;
     return null;
   }
-}
-
-extension ContextX on BuildContext {
-  ThemeData get theme => Theme.of(this);
-  TextTheme get textTheme => Theme.of(this).textTheme;
-  ColorScheme get colorScheme => Theme.of(this).colorScheme;
 }

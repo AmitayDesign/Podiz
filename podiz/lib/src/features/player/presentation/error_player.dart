@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 
 class ErrorPlayer extends StatelessWidget {
   const ErrorPlayer({Key? key}) : super(key: key);

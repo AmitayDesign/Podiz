@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/aspect/widgets/suffixIcon.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
+import 'package:podiz/src/common_widgets/suffix_icon.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 
 class SearchBar extends StatelessWidget with PreferredSizeWidget {
   final TextEditingController controller;

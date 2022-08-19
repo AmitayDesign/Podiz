@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/src/constants/constants.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/episodes/presentation/card/episode_content.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';

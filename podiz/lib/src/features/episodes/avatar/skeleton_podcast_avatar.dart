@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/src/constants/constants.dart';
 import 'package:skeletons/skeletons.dart';
 
 class SkeletonPodcastAvatar extends StatelessWidget {

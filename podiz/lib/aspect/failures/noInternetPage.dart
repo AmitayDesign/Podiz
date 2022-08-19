@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
-import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 
 class NoInternetPage extends StatelessWidget {
   const NoInternetPage({Key? key}) : super(key: key);

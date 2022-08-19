@@ -9,7 +9,7 @@ import 'package:podiz/src/features/episodes/presentation/card/skeleton_episode_c
 import 'package:podiz/src/features/episodes/presentation/podcast/podcast_follow_fab.dart';
 import 'package:podiz/src/features/episodes/presentation/podcast/podcast_sliver_bar.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
-import 'package:podiz/src/utils/zwsp_string.dart';
+import 'package:podiz/src/utils/string_zwsp.dart';
 
 class PodcastScreen extends ConsumerStatefulWidget {
   final String podcastId;

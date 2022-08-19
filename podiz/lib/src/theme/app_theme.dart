@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/src/constants/constants.dart';
 
 import 'app_text_theme.dart';
 import 'palette.dart';

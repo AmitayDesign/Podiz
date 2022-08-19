@@ -67,7 +67,7 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                       padding: bodyPadding,
                     ),
                     error: (e, _) => EmptyScreen.text(
-                      'There was an error loading comments.'.hardcoded,
+                      'There was an error displaying the comments.'.hardcoded,
                       padding: bodyPadding,
                     ),
                     data: (comments) {
@@ -76,7 +76,8 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                           padding: bodyPadding,
                         ),
                         error: (e, _) => EmptyScreen.text(
-                          'There was an error loading comments.'.hardcoded,
+                          'There was an error displaying the comments.'
+                              .hardcoded,
                           padding: bodyPadding,
                         ),
                         data: (playerTime) {
