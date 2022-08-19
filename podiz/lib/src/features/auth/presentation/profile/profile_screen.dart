@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/src/common_widgets/empty_screen.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
-import 'package:podiz/src/common_widgets/splash_screen.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/auth/presentation/profile/profile_episode_info.dart';
@@ -51,8 +51,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     final userValue = ref.watch(userStreamProvider(widget.userId));
     return userValue.when(
-      error: (e, _) => const SplashScreen.error(), //!
-      loading: () => const SplashScreen(), //!
+      loading: () => EmptyScreen.loading(),
+      error: (e, _) => EmptyScreen.text(
+        'There was an error opening this profile.',
+      ),
       data: (user) => Scaffold(
         extendBody: true,
         body: NotificationListener<ScrollEndNotification>(
@@ -63,18 +65,25 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           child: Consumer(builder: (context, ref, _) {
             final commentsValue =
                 ref.watch(userCommentsStreamProvider(user.id));
+            const playerPadding = EdgeInsets.only(bottom: Player.height);
             return commentsValue.when(
-              loading: () => const SizedBox.shrink(), //!
-              error: (e, _) => const SizedBox.shrink(),
+              loading: () => EmptyScreen.loading(padding: playerPadding),
+              error: (e, _) => EmptyScreen.text(
+                'There was an error loading the user information.',
+                padding: playerPadding,
+              ),
               data: (comments) => CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 controller: scrollController,
                 slivers: [
+                  //* Sliver app bar
                   ProfileSliverHeader(
                     user: user,
                     minHeight: minHeight,
                     maxHeight: maxHeight,
                   ),
+
+                  //* Favorite podcasts (horizontal scroll)
                   if (user.favPodcastIds.isNotEmpty)
                     SliverToBoxAdapter(
                       child: Column(
@@ -121,6 +130,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ),
                     ),
                   const SliverToBoxAdapter(child: SizedBox(height: 16)),
+
+                  //* List of comments
                   SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, i) {
@@ -139,26 +150,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       },
                     ),
                   ),
-                  // SliverList(
-                  //   delegate: SliverChildBuilderDelegate(
-                  //     (context, i) => Consumer(
-                  //       builder: (context, ref, _) {
-                  //         final podcastId = user.favPodcastIds[i];
-                  //         final podcastValue =
-                  //             ref.watch(podcastFutureProvider(podcastId));
-                  //         return podcastValue.when(
-                  //           loading: () => const SkeletonPodcastAvatar(),
-                  //           error: (e, _) => const SizedBox.shrink(),
-                  //           data: (podcast) => PodcastAvatar(
-                  //             podcastId: podcast.id,
-                  //             imageUrl: podcast.imageUrl,
-                  //           ),
-                  //         );
-                  //       },
-                  //     ),
-                  //     childCount: user.favPodcastIds.length,
-                  //   ),
-                  // ),
 
                   // so it doesnt end behind the bottom bar
                   const SliverToBoxAdapter(

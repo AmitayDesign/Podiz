@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/src/common_widgets/empty_screen.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
-import 'package:podiz/src/common_widgets/splash_screen.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/episodes/presentation/card/episode_card.dart';
@@ -45,8 +45,10 @@ class _PodcastScreenState extends ConsumerState<PodcastScreen> {
   Widget build(BuildContext context) {
     final podcastValue = ref.watch(podcastStreamProvider(widget.podcastId));
     return podcastValue.when(
-      error: (e, _) => const SplashScreen.error(), //!
-      loading: () => const SplashScreen(), //!
+      loading: () => EmptyScreen.loading(),
+      error: (e, _) => EmptyScreen.text(
+        'There was an error opening this podcast.',
+      ),
       data: (podcast) => Scaffold(
         extendBody: true,
         body: NotificationListener<ScrollEndNotification>(
@@ -58,11 +60,14 @@ class _PodcastScreenState extends ConsumerState<PodcastScreen> {
             physics: const AlwaysScrollableScrollPhysics(),
             controller: scrollController,
             slivers: [
+              //* Sliver app bar
               PodcastSliverHeader(
                 podcast: podcast,
                 minHeight: minHeight,
                 maxHeight: maxHeight,
               ),
+
+              //* List of episodes
               SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, i) => Consumer(

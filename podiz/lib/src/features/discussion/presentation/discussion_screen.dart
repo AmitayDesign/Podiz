@@ -8,6 +8,7 @@ import 'package:podiz/src/features/player/domain/playing_episode.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/palette.dart';
 
+import '../../../common_widgets/empty_screen.dart';
 import 'comment/comment_card.dart';
 import 'comment_sheet.dart';
 import 'discussion_header.dart';
@@ -54,20 +55,35 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                 final commentsValue =
                     ref.watch(commentsStreamProvider(episodeId));
                 final playerTimeValue = ref.watch(playerTimeStreamProvider);
+                const bodyPadding = EdgeInsets.only(
+                  top: DiscussionHeader.height,
+                  bottom: CommentSheet.height,
+                );
                 return commentsValue.when(
-                  loading: () => const EmptyDiscussionText(),
-                  error: (e, _) => EmptyDiscussionText(
-                    text: 'There was an error loading comments.'.hardcoded,
+                  loading: () => EmptyScreen.loading(
+                    padding: bodyPadding,
+                  ),
+                  error: (e, _) => EmptyScreen.text(
+                    'There was an error loading comments.'.hardcoded,
+                    padding: bodyPadding,
                   ),
                   data: (comments) {
                     return playerTimeValue.when(
-                      loading: () => const EmptyDiscussionText(),
-                      error: (e, _) => EmptyDiscussionText(
-                        text: 'There was an error playing this episode.'
-                            .hardcoded,
+                      loading: () => EmptyScreen.loading(
+                        padding: bodyPadding,
+                      ),
+                      error: (e, _) => EmptyScreen.text(
+                        'There was an error loading comments.'.hardcoded,
+                        padding: bodyPadding,
                       ),
                       data: (playerTime) {
-                        if (comments.isEmpty) const EmptyDiscussionText();
+                        if (comments.isEmpty) {
+                          EmptyScreen.text(
+                            'Comments will be displayed at their respective timestamp...'
+                                .hardcoded,
+                            padding: bodyPadding,
+                          );
+                        }
                         final filteredComments = comments.reversed
                             .where((comment) =>
                                 comment.time ~/ 1000 <= playerTime.position)
@@ -86,10 +102,8 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                         return ListView.builder(
                           controller: scrollController,
                           reverse: true,
-                          padding: const EdgeInsets.only(
-                            top: DiscussionHeader.height + 8,
-                            bottom: CommentSheet.height + 8,
-                          ),
+                          padding: bodyPadding
+                              .add(const EdgeInsets.symmetric(vertical: 8)),
                           itemCount: filteredComments.length,
                           itemBuilder: (context, i) => Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -112,29 +126,6 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
           visible: ref.watch(commentSheetVisibilityProvider),
           child: const CommentSheet(),
         ),
-      ),
-    );
-  }
-}
-
-//TODO no comments yet widget
-class EmptyDiscussionText extends StatelessWidget {
-  final String? text;
-  const EmptyDiscussionText({Key? key, this.text}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      padding: const EdgeInsets.only(
-        top: DiscussionHeader.height,
-        bottom: CommentSheet.height,
-      ).add(const EdgeInsets.symmetric(horizontal: 16)),
-      child: Text(
-        text ??
-            'Comments will be displayed at their respective timestamp...'
-                .hardcoded,
-        textAlign: TextAlign.center,
       ),
     );
   }
