@@ -1,19 +1,21 @@
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:podiz/profile/screens/settingsPage.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/presentation/onboarding/onboarding_screen.dart';
 import 'package:podiz/src/features/auth/presentation/profile/profile_screen.dart';
 import 'package:podiz/src/features/discussion/presentation/discussion_screen.dart';
 import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
 import 'package:podiz/src/features/episodes/presentation/podcast/podcast_screen.dart';
+import 'package:podiz/src/features/settings/presentation/privacy_screen.dart';
+import 'package:podiz/src/features/settings/presentation/settings_screen.dart';
 
 enum AppRoute {
   home,
   onboarding,
   profile,
   settings,
+  privacy,
   podcast,
   discussion,
 }
@@ -55,7 +57,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: 'settings',
             name: AppRoute.settings.name,
-            builder: (_, state) => const SettingsPage(),
+            builder: (_, state) => const SettingsScreen(),
+            routes: [
+              GoRoute(
+                path: 'privacy',
+                name: AppRoute.privacy.name,
+                builder: (_, state) => const PrivacyScreen(),
+              ),
+            ],
           ),
           GoRoute(
             path: 'profile/:userId',

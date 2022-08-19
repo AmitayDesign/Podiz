@@ -62,6 +62,20 @@ final themeProvider = Provider<ThemeData>((ref) {
         textStyle: textTheme.titleMedium,
       ),
     ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        shape: const StadiumBorder(),
+        side: const BorderSide(
+          color: Colors.white70,
+          width: 1,
+        ),
+        primary: Colors.white70,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        minimumSize: const Size.fromHeight(56),
+        textStyle: textTheme.titleMedium,
+      ),
+    ),
     iconTheme: IconThemeData(
       color: colorScheme.onBackground,
     ),

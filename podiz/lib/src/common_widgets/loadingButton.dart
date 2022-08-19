@@ -8,23 +8,20 @@ import 'package:podiz/src/constants/constants.dart';
 /// the text.
 /// @param onPressed - callback to be called when the button is pressed.
 class LoadingElevatedButton extends StatelessWidget {
-  final Widget child;
   final bool loading;
   final VoidCallback? onPressed;
-  final ButtonStyle? style;
+  final Widget child;
 
   const LoadingElevatedButton({
     Key? key,
     required this.child,
     this.loading = false,
     this.onPressed,
-    this.style,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      style: style,
       onPressed: loading ? null : onPressed,
       child: loading
           ? const SizedBox.square(
@@ -43,13 +40,15 @@ class LoadingElevatedButton extends StatelessWidget {
 /// the text.
 /// @param onPressed - callback to be called when the button is pressed.
 class LoadingOutlinedButton extends StatelessWidget {
-  final Widget child;
   final bool loading;
+  final Color? color;
   final VoidCallback? onPressed;
+  final Widget child;
 
   const LoadingOutlinedButton({
     Key? key,
     required this.child,
+    this.color,
     this.loading = false,
     this.onPressed,
   }) : super(key: key);
@@ -57,6 +56,12 @@ class LoadingOutlinedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
+      style: color == null
+          ? null
+          : OutlinedButton.styleFrom(
+              side: BorderSide(color: color!, width: 1),
+              primary: color,
+            ),
       onPressed: loading ? null : onPressed,
       child: loading
           ? const SizedBox.square(
@@ -75,8 +80,8 @@ class LoadingOutlinedButton extends StatelessWidget {
 /// the text.
 /// @param onPressed - callback to be called when the button is pressed.
 class LoadingTextButton extends StatelessWidget {
-  final Widget child;
   final bool loading;
+  final Widget child;
   final VoidCallback? onPressed;
 
   const LoadingTextButton({
