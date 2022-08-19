@@ -76,7 +76,7 @@ class EpisodeContent extends StatelessWidget {
                             child: GestureDetector(
                               onTap: () => context.goNamed(
                                 AppRoute.podcast.name,
-                                params: {'showId': episode.showId},
+                                params: {'podcastId': episode.showId},
                               ),
                               child: Text(
                                 episode.showName.useCorrectEllipsis(),

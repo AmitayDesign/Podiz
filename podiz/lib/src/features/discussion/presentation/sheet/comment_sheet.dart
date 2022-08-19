@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/src/common_widgets/users_listening_text.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
+import 'package:podiz/src/features/discussion/domain/comment.dart';
+import 'package:podiz/src/features/discussion/presentation/comment/comment_text_field.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/player_button.dart';
 import 'package:podiz/src/features/player/presentation/player_controller.dart';
@@ -11,11 +14,9 @@ import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/palette.dart';
 
-import 'comment/comment_text_field.dart';
+import 'target_comment.dart';
 
-final commentSheetVisibilityProvider = StateProvider.autoDispose<bool>(
-  (ref) => true,
-);
+final commentSheetTargetProvider = StateProvider<Comment?>((ref) => null);
 
 class CommentSheet extends ConsumerWidget {
   static const height = 116.0; //! hardcoded
@@ -25,7 +26,14 @@ class CommentSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final episodeValue = ref.watch(playerStateChangesProvider);
     final state = ref.watch(playerControllerProvider);
-    return episodeValue.when(
+    final target = ref.watch(commentSheetTargetProvider);
+    final isReply = target != null;
+    return WillPopScope(
+      onWillPop: () async {
+        ref.read(commentSheetTargetProvider.notifier).state = null;
+        return true;
+      },
+      child: episodeValue.when(
         loading: () => const SizedBox.shrink(),
         error: (e, _) => const SizedBox.shrink(),
         data: (episode) {
@@ -43,27 +51,60 @@ class CommentSheet extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  //* Parent comment (if is a reply)
+                  if (isReply) ...[
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Replying to...'.hardcoded,
+                            style: context.textTheme.bodySmall,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => ref
+                              .read(commentSheetTargetProvider.notifier)
+                              .state = null,
+                          child: Text(
+                            'Cancel'.hardcoded,
+                            style: context.textTheme.bodySmall,
+                          ),
+                        ),
+                      ],
+                    ),
+                    TargetComment(target),
+                    const SizedBox(height: 16),
+                  ],
+
+                  //* Comment text field
                   CommentTextField(
+                    hint: isReply ? 'Add a reply...' : 'Share your insight...',
                     onSend: (comment) {
                       final time =
                           ref.read(playerTimeStreamProvider).valueOrNull!;
                       ref.read(discussionRepositoryProvider).addComment(
                             comment,
+                            parent: target,
                             episodeId: episode.id,
                             time: time.position,
                             user: ref.read(currentUserProvider),
                           );
                     },
                   ),
+                  const SizedBox(height: 4),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
+                    padding: const EdgeInsets.all(4),
                     child: Row(
                       children: [
-                        UsersListeningText(
-                          (others) => '$others listening with you'.hardcoded,
-                          episode: episode,
+                        //* Listening with you
+                        Expanded(
+                          child: UsersListeningText(
+                            (others) => '$others listening with you'.hardcoded,
+                            episode: episode,
+                          ),
                         ),
-                        const Spacer(),
+
+                        //* Player controls
                         PlayerButton(
                           loading: state.isLoading,
                           onPressed: ref
@@ -100,6 +141,8 @@ class CommentSheet extends ConsumerWidget {
               ),
             ),
           );
-        });
+        },
+      ),
+    );
   }
 }

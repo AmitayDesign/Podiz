@@ -10,8 +10,8 @@ import 'package:podiz/src/theme/palette.dart';
 
 import '../../../common_widgets/empty_screen.dart';
 import 'comment/comment_card.dart';
-import 'comment_sheet.dart';
 import 'discussion_header.dart';
+import 'sheet/comment_sheet.dart';
 
 class DiscussionScreen extends ConsumerStatefulWidget {
   final String episodeId;
@@ -59,6 +59,8 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                   top: DiscussionHeader.height,
                   bottom: CommentSheet.height,
                 );
+
+                //* Loading / Error Widgets
                 return commentsValue.when(
                   loading: () => EmptyScreen.loading(
                     padding: bodyPadding,
@@ -99,12 +101,14 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                               ));
                         }
                         commentsCount = filteredComments.length;
+
+                        //* List of comments
                         return ListView.builder(
                           controller: scrollController,
                           reverse: true,
                           padding: bodyPadding
                               .add(const EdgeInsets.symmetric(vertical: 8)),
-                          itemCount: filteredComments.length,
+                          itemCount: commentsCount,
                           itemBuilder: (context, i) => Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8),
                             child: CommentCard(
@@ -122,10 +126,7 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
             DiscussionHeader(episodeId),
           ],
         ),
-        bottomSheet: Visibility(
-          visible: ref.watch(commentSheetVisibilityProvider),
-          child: const CommentSheet(),
-        ),
+        bottomSheet: const CommentSheet(),
       ),
     );
   }
