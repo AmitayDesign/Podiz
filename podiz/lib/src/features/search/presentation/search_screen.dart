@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/common_widgets/sliver_firestore_query_builder.dart';
@@ -11,9 +10,7 @@ import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/episodes/domain/podcast.dart';
 import 'package:podiz/src/features/episodes/presentation/card/episode_card.dart';
 import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
-import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/search/presentation/search_bar.dart';
-import 'package:podiz/src/routing/app_router.dart';
 
 import 'podcast_card.dart';
 import 'spotify_search_button.dart';
@@ -34,21 +31,6 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   void dispose() {
     searchController.dispose();
     super.dispose();
-  }
-
-  void openEpisode(Episode episode) {
-    ref.read(playerRepositoryProvider).play(episode.id); //!
-    context.goNamed(
-      AppRoute.discussion.name,
-      params: {'episodeId': episode.id},
-    );
-  }
-
-  void openPodcast(Episode episode) {
-    context.goNamed(
-      AppRoute.podcast.name,
-      params: {'podcastId': episode.showId},
-    );
   }
 
   @override

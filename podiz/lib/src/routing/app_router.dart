@@ -11,8 +11,8 @@ import 'package:podiz/src/features/settings/presentation/privacy_screen.dart';
 import 'package:podiz/src/features/settings/presentation/settings_screen.dart';
 
 enum AppRoute {
-  home,
   onboarding,
+  home,
   profile,
   settings,
   privacy,
