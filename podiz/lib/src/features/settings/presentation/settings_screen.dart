@@ -36,7 +36,7 @@ class SettingsScreen extends ConsumerWidget {
       body: Column(
         children: [
           //* Profile
-          UserAvatar(user: user, radius: 48),
+          UserAvatar(user: user, radius: 48, enableNavigation: false),
           const SizedBox(height: 12),
           Text(user.name, style: context.textTheme.titleLarge),
           const SizedBox(height: 32),

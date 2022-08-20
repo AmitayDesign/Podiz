@@ -6,8 +6,14 @@ import 'package:podiz/src/routing/app_router.dart';
 class UserAvatar extends StatelessWidget {
   final UserPodiz user;
   final double radius;
-  const UserAvatar({Key? key, required this.user, this.radius = 16})
-      : super(key: key);
+  final bool enableNavigation;
+
+  const UserAvatar({
+    Key? key,
+    required this.user,
+    this.radius = 16,
+    this.enableNavigation = true,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,10 +25,12 @@ class UserAvatar extends StatelessWidget {
         clipBehavior: Clip.hardEdge,
         color: Colors.transparent,
         child: InkWell(
-          onTap: () => context.pushNamed(
-            AppRoute.profile.name,
-            params: {'userId': user.id},
-          ),
+          onTap: enableNavigation
+              ? () => context.pushNamed(
+                    AppRoute.profile.name,
+                    params: {'userId': user.id},
+                  )
+              : null,
         ),
       ),
     );
