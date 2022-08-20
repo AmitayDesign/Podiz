@@ -24,6 +24,10 @@ abstract class PlayerRepository {
 
 //* Providers
 
+final firstEpisodeFutureProvider = FutureProvider<PlayingEpisode?>(
+  (ref) => ref.read(playerStateChangesProvider.future),
+);
+
 final playerStateChangesProvider = StreamProvider<PlayingEpisode?>(
   (ref) => ref.watch(playerRepositoryProvider).watchPlayingEpisode(),
 );

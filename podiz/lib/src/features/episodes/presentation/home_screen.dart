@@ -5,9 +5,6 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/src/common_widgets/tap_to_unfocus.dart';
-import 'package:podiz/src/features/auth/data/auth_repository.dart';
-import 'package:podiz/src/features/auth/domain/mutable_user_podiz.dart';
-import 'package:podiz/src/features/discussion/data/presence_repository.dart';
 import 'package:podiz/src/features/episodes/presentation/feed/feed_page.dart';
 import 'package:podiz/src/features/notifications/presentation/notifications_page.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
@@ -74,31 +71,44 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     ref.listen<AsyncValue<PlayingEpisode?>>(
-      playerStateChangesProvider,
-      (lastEpisodeValue, episodeValue) {
-        final lastEpisodeId = lastEpisodeValue?.valueOrNull?.id;
-        final wasPlaying = lastEpisodeValue?.valueOrNull?.isPlaying ?? false;
-        episodeValue.whenData((episode) {
-          if (episode == null) return;
-          final presenceRepository = ref.read(presenceRepositoryProvider);
-          // update last listened
-          final user = ref
-              .read(currentUserProvider)
-              .updateLastListenedEpisode(episode.id);
-          ref.read(authRepositoryProvider).updateUser(user);
-          // update listening right now
-          if (!wasPlaying && episode.isPlaying) {
-            presenceRepository.configureUserPresence(user.id, episode.id);
-          } else if (wasPlaying && !episode.isPlaying) {
-            presenceRepository.disconnect();
-          } else if (wasPlaying &&
-              episode.isPlaying &&
-              lastEpisodeId == episode.id) {
-            presenceRepository.updateLastListened(user.id, episode.id);
+      firstEpisodeFutureProvider,
+      (_, firstEpisodeValue) {
+        firstEpisodeValue.whenData((firstEpisode) {
+          if (firstEpisode != null && firstEpisode.isPlaying) {
+            context.goNamed(
+              AppRoute.discussion.name,
+              params: {'episodeId': firstEpisode.id},
+            );
           }
         });
       },
     );
+    // ref.listen<AsyncValue<PlayingEpisode?>>(
+    //   playerStateChangesProvider,
+    //   (lastEpisodeValue, episodeValue) {
+    //     final lastEpisodeId = lastEpisodeValue?.valueOrNull?.id;
+    //     final wasPlaying = lastEpisodeValue?.valueOrNull?.isPlaying ?? false;
+    //     episodeValue.whenData((episode) {
+    //       if (episode == null) return;
+    //       final presenceRepository = ref.read(presenceRepositoryProvider);
+    //       // update last listened
+    //       final user = ref
+    //           .read(currentUserProvider)
+    //           .updateLastListenedEpisode(episode.id);
+    //       ref.read(authRepositoryProvider).updateUser(user);
+    //       // update listening right now
+    //       if (!wasPlaying && episode.isPlaying) {
+    //         presenceRepository.configureUserPresence(user.id, episode.id);
+    //       } else if (wasPlaying && !episode.isPlaying) {
+    //         presenceRepository.disconnect();
+    //       } else if (wasPlaying &&
+    //           episode.isPlaying &&
+    //           lastEpisodeId == episode.id) {
+    //         presenceRepository.updateLastListened(user.id, episode.id);
+    //       }
+    //     });
+    //   },
+    // );
 
     return KeyboardVisibilityBuilder(
       builder: (context, isKeyBoardOpen) {
