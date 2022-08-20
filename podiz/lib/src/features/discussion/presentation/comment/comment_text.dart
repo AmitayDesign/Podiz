@@ -13,7 +13,10 @@ class CommentText extends StatelessWidget {
       options: const LinkifyOptions(removeWww: true),
       onOpen: (link) async {
         if (await canLaunchUrlString(link.url)) {
-          await launchUrlString(link.url);
+          await launchUrlString(
+            link.url,
+            mode: LaunchMode.externalApplication,
+          );
         }
       },
       text: text,
