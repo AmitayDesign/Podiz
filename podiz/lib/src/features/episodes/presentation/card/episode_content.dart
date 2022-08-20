@@ -58,7 +58,7 @@ class EpisodeContent extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               PodcastAvatar(
-                podcastId: episode.showId,
+                episodeId: episode.showId,
                 imageUrl: episode.imageUrl,
                 size: avatarSize,
               ),

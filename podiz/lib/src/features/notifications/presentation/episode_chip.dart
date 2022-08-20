@@ -41,7 +41,6 @@ class EpisodeChip extends StatelessWidget {
               if (episode != null)
                 PodcastAvatar(
                   imageUrl: episode!.imageUrl,
-                  podcastId: episode!.id,
                   size: kSmallIconSize,
                 ),
               const SizedBox(width: 4),

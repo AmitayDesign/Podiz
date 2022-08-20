@@ -2,20 +2,26 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/src/constants/constants.dart';
-import 'package:podiz/src/features/episodes/avatar/skeleton_podcast_avatar.dart';
+import 'package:podiz/src/features/episodes/presentation/avatar/skeleton_podcast_avatar.dart';
 import 'package:podiz/src/routing/app_router.dart';
 
 class PodcastAvatar extends StatelessWidget {
-  final String podcastId;
+  final String? episodeId;
+  final String? podcastId;
   final String imageUrl;
   final double size;
 
   const PodcastAvatar({
     Key? key,
     required this.imageUrl,
-    required this.podcastId,
+    this.episodeId,
+    this.podcastId,
     this.size = 64,
-  }) : super(key: key);
+  })  : assert(episodeId == null || podcastId == null),
+        super(key: key);
+
+  bool get isEpisode => episodeId != null;
+  bool get isPodcast => podcastId != null;
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +37,17 @@ class PodcastAvatar extends StatelessWidget {
       imageBuilder: (context, imageProvider) => RoundedSquareImage(
         image: imageProvider,
         size: size,
-        onTap: () => context.pushNamed(
-          AppRoute.podcast.name,
-          params: {'podcastId': podcastId},
-        ),
+        onTap: isEpisode
+            ? () => context.pushNamed(
+                  AppRoute.discussion.name,
+                  params: {'episodeId': episodeId!},
+                )
+            : isPodcast
+                ? () => context.pushNamed(
+                      AppRoute.podcast.name,
+                      params: {'podcastId': podcastId!},
+                    )
+                : null,
       ),
     );
   }

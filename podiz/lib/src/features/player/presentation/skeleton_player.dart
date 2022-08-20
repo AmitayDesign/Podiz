@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:podiz/src/features/episodes/avatar/skeleton_podcast_avatar.dart';
+import 'package:podiz/src/features/episodes/presentation/avatar/skeleton_podcast_avatar.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 import 'package:podiz/src/theme/palette.dart';

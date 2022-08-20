@@ -32,7 +32,7 @@ class EpisodeSubtitle extends ConsumerWidget {
             child: Row(
               children: [
                 PodcastAvatar(
-                  podcastId: episode.showId,
+                  episodeId: episode.id,
                   imageUrl: episode.imageUrl,
                   size: 32,
                 ),

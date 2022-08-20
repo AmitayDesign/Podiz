@@ -9,9 +9,9 @@ import 'package:podiz/src/features/auth/presentation/profile/profile_follow_fab.
 import 'package:podiz/src/features/auth/presentation/profile/profile_sliver_header.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/presentation/comment/comment_card.dart';
-import 'package:podiz/src/features/episodes/avatar/skeleton_podcast_avatar.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/episodes/presentation/avatar/podcast_avatar.dart';
+import 'package:podiz/src/features/episodes/presentation/avatar/skeleton_episode_avatar.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 

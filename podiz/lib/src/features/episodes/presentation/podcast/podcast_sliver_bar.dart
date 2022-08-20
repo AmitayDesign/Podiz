@@ -76,7 +76,6 @@ class PodcastHeader extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               PodcastAvatar(
-                podcastId: podcast.id,
                 imageUrl: podcast.imageUrl,
                 size: tween(0, 128),
               ),
