@@ -94,8 +94,8 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                               );
                             }
                             final filteredComments = isShowingAllComments
-                                ? comments.reversed.toList()
-                                : comments.reversed
+                                ? comments
+                                : comments
                                     .where((comment) =>
                                         comment.time <=
                                         playerTime.position.inMilliseconds)
@@ -103,9 +103,11 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                             if (commentsCount != 0 &&
                                 commentsCount != filteredComments.length &&
                                 scrollController.hasClients &&
-                                scrollController.offset < 100) {
+                                scrollController.offset >
+                                    scrollController.position.maxScrollExtent -
+                                        100) {
                               Future.microtask(() => scrollController.animateTo(
-                                    0,
+                                    scrollController.position.maxScrollExtent,
                                     duration: const Duration(milliseconds: 200),
                                     curve: Curves.ease,
                                   ));
@@ -116,7 +118,6 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                             return Padding(
                               padding: bodyPadding,
                               child: SpoilerIndicator(
-                                reverse: false,
                                 enabled: !isShowingAllComments,
                                 onAction: (showAll) {
                                   if (showAll) {
@@ -129,7 +130,6 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                                     physics: showingAlert
                                         ? const NeverScrollableScrollPhysics()
                                         : const AlwaysScrollableScrollPhysics(),
-                                    reverse: true,
                                     padding:
                                         const EdgeInsets.symmetric(vertical: 8),
                                     itemCount: commentsCount,

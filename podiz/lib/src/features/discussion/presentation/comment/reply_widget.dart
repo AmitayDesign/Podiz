@@ -10,12 +10,15 @@ import 'comment_trailing.dart';
 
 class ReplyWidget extends ConsumerWidget {
   final Comment comment;
+  final bool collapsed;
   final String episodeId;
   final VoidCallback? onReply;
   final VoidCallback? onShare;
+
   const ReplyWidget(
     this.comment, {
     Key? key,
+    this.collapsed = false,
     required this.episodeId,
     this.onReply,
     this.onShare,
@@ -29,7 +32,7 @@ class ReplyWidget extends ConsumerWidget {
       error: (e, _) => const SizedBox.shrink(),
       data: (user) {
         return Padding(
-          padding: const EdgeInsets.only(top: 16),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -52,8 +55,10 @@ class ReplyWidget extends ConsumerWidget {
               IntrinsicHeight(
                 child: Row(
                   children: [
-                    const VerticalDivider(width: 24),
-                    const SizedBox(width: 8),
+                    if (!collapsed) ...[
+                      const VerticalDivider(width: 24),
+                      const SizedBox(width: 8),
+                    ],
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -61,13 +66,14 @@ class ReplyWidget extends ConsumerWidget {
                           const SizedBox(height: 4),
                           CommentText(comment.text),
                           const SizedBox(height: 12),
-                          CommentTrailing(
-                            onReply: onReply,
-                            onShare: onShare,
-                          ),
-                          if (comment.replies.isNotEmpty) ...[
-                            for (final reply in comment.replies.values)
-                              ReplyWidget(reply, episodeId: episodeId),
+                          if (!collapsed) ...[
+                            CommentTrailing(
+                              onReply: onReply,
+                              onShare: onShare,
+                            ),
+                            if (comment.replies.isNotEmpty)
+                              for (final reply in comment.replies.values)
+                                ReplyWidget(reply, episodeId: episodeId),
                           ],
                         ],
                       ),
