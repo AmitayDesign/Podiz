@@ -19,19 +19,15 @@ class EpisodeCard extends ConsumerWidget {
     this.bottom,
   }) : super(key: key);
 
-  void openEpisode(BuildContext context, Reader read, Episode episode) {
-    // just call play() if the episode is NOT playing
-    read(playerRepositoryProvider).fetchPlayingEpisode().then(
-      (playingEpisode) {
-        if (playingEpisode?.id != episode.id) {
-          read(playerRepositoryProvider).play(episode.id);
-        }
-      },
-    );
+  void openEpisode(BuildContext context, Reader read) async {
+    final playerRepository = read(playerRepositoryProvider);
     context.pushNamed(
       AppRoute.discussion.name,
       params: {'episodeId': episode.id},
     );
+    // just call play() if the episode is NOT playing
+    final playingEpisode = await playerRepository.fetchPlayingEpisode();
+    if (playingEpisode?.id != episode.id) playerRepository.play(episode.id);
   }
 
   @override
@@ -44,7 +40,7 @@ class EpisodeCard extends ConsumerWidget {
         borderRadius: BorderRadius.circular(kBorderRadius),
       ),
       child: InkWell(
-        onTap: () => openEpisode(context, ref.read, episode),
+        onTap: () => openEpisode(context, ref.read),
         child: EpisodeContent(episode, insights: insights, bottom: bottom),
       ),
     );

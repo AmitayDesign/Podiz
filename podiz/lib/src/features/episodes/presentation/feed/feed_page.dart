@@ -57,7 +57,7 @@ class _FeedPageState extends ConsumerState<FeedPage>
           slivers: [
             // so it doesnt start behind the app bar
             const SliverToBoxAdapter(
-              child: SizedBox(height: GradientBar.backgroundHeight),
+              child: SizedBox(height: GradientBar.backgroundHeight + 16),
             ),
 
             //* Last Listened
@@ -92,12 +92,8 @@ class _FeedPageState extends ConsumerState<FeedPage>
             //           Locales.string(context, feedController.myCastsLocaleKey),
             //           textKey: feedController.myCastsKey,
             //         ),
-            //       for (final podcast in authManager.myCast)
-            //         EpisodeCard(
-            //           podcast,
-            //           onTap: () => openEpisode(podcast),
-            //           onPodcastTap: () => openPodcast(podcast),
-            //         ),
+            //       for (final episode in authManager.myCast)
+            //         EpisodeCard(episode),
             //     ]),
             //   ),
 

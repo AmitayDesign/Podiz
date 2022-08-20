@@ -17,9 +17,36 @@ import 'reply_widget.dart';
 class CommentCard extends ConsumerWidget {
   final Comment comment;
   final String episodeId;
-  const CommentCard(this.comment, {Key? key, required this.episodeId})
-      : super(key: key);
+  final bool navigate;
 
+  const CommentCard(
+    this.comment, {
+    Key? key,
+    required this.episodeId,
+    this.navigate = true,
+  }) : super(key: key);
+
+  void openEpisode(BuildContext context, Reader read) async {
+    final playerRepository = read(playerRepositoryProvider);
+    context.pushNamed(
+      AppRoute.discussion.name,
+      params: {'episodeId': episodeId},
+    );
+    // just call play() if the episode is NOT playing
+    final playingEpisode = await playerRepository.fetchPlayingEpisode();
+    // play 10 seconds before
+    final commentTime = Duration(milliseconds: comment.time);
+    const delay = Duration(seconds: 10);
+    final playTime = commentTime - delay;
+
+    if (playingEpisode?.id != episodeId) {
+      playerRepository.play(episodeId, playTime);
+    } else {
+      playerRepository.resume(episodeId, playTime);
+    }
+  }
+
+  //TODO share feature
   //? https://pub.dev/packages/share_plus
   void share(Comment comment) {}
 
@@ -60,26 +87,8 @@ class CommentCard extends ConsumerWidget {
                     const SizedBox(width: 8),
                     TimeChip(
                       icon: Icons.play_arrow,
-                      position: comment.time ~/ 1000,
-                      onTap: () {
-                        // just call play() if the episode is NOT playing
-                        ref
-                            .read(playerRepositoryProvider)
-                            .fetchPlayingEpisode()
-                            .then(
-                          (playingEpisode) {
-                            if (playingEpisode?.id != episodeId) {
-                              ref
-                                  .read(playerRepositoryProvider)
-                                  .play(episodeId, comment.time ~/ 1000 - 10);
-                            }
-                          },
-                        );
-                        context.goNamed(
-                          AppRoute.discussion.name,
-                          params: {'episodeId': episodeId},
-                        );
-                      },
+                      position: Duration(milliseconds: comment.time),
+                      onTap: () => openEpisode(context, ref.read),
                     ),
                   ],
                 ),

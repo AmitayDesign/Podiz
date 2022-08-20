@@ -19,6 +19,7 @@ class Comment with EquatableMixin {
   @JsonKey(name: 'comment')
   final String text;
 
+  /// Comment timestamp in milliseconds
   final int time;
 
   final int lvl; //!

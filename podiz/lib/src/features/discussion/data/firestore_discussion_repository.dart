@@ -73,7 +73,7 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
   Future<void> addComment(
     String text, {
     required String episodeId,
-    required int time,
+    required Duration time,
     required UserPodiz user,
     Comment? parent,
   }) async {
@@ -89,7 +89,7 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
       episodeId: episodeId,
       userId: user.id,
       text: text,
-      time: time * 1000,
+      time: time.inMilliseconds,
       lvl: parent == null ? 1 : parent.parentIds.length + 2,
       parentIds:
           parent == null ? <String>[] : (parent.parentIds..add(parent.id)),

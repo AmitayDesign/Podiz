@@ -34,7 +34,7 @@ class PlayerTimeChip extends ConsumerWidget {
 
 class TimeChip extends StatelessWidget {
   final bool loading;
-  final int position;
+  final Duration position;
   final IconData? icon;
   final Color? color;
   final VoidCallback? onTap;
@@ -48,8 +48,7 @@ class TimeChip extends StatelessWidget {
     this.onTap,
   }) : super(key: key);
 
-  String timeFromMilliseconds(int milliseconds) {
-    final duration = Duration(milliseconds: milliseconds);
+  String format(Duration duration) {
     final time = duration.toString().split('.').first;
     if (time.startsWith('0:')) return time.substring(2);
     return time;
@@ -72,7 +71,7 @@ class TimeChip extends StatelessWidget {
               if (icon != null) Icon(icon!, size: kSmallIconSize),
               const SizedBox(width: 4),
               Text(
-                timeFromMilliseconds(position * 1000),
+                format(position),
                 style: context.textTheme.titleSmall!.copyWith(
                   color: Colors.white,
                   fontFeatures: const [FontFeature.tabularFigures()],

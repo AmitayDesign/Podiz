@@ -93,7 +93,8 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                           }
                           final filteredComments = comments.reversed
                               .where((comment) =>
-                                  comment.time ~/ 1000 <= playerTime.position)
+                                  comment.time <=
+                                  playerTime.position.inMilliseconds)
                               .toList();
                           if (commentsCount != 0 &&
                               commentsCount != filteredComments.length &&
@@ -135,6 +136,7 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                                     child: CommentCard(
                                       filteredComments[i],
                                       episodeId: episodeId,
+                                      navigate: false,
                                     ),
                                   ),
                                 );

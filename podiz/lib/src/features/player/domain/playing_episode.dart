@@ -1,7 +1,7 @@
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 
 class PlayingEpisode extends Episode {
-  final int initialPosition;
+  final Duration initialPosition;
   final bool isPlaying;
 
   PlayingEpisode({
@@ -34,7 +34,7 @@ class PlayingEpisode extends Episode {
 
   factory PlayingEpisode.fromEpisode(
     Episode episode, {
-    required int position,
+    required Duration position,
     required bool isPlaying,
   }) =>
       PlayingEpisode(

@@ -31,7 +31,7 @@ class NotificationsPage extends ConsumerWidget {
               slivers: [
                 // so it doesnt start behind the app bar
                 const SliverToBoxAdapter(
-                  child: SizedBox(height: GradientBar.backgroundHeight),
+                  child: SizedBox(height: GradientBar.backgroundHeight + 16),
                 ),
 
                 SliverList(

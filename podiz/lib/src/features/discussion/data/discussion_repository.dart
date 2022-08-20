@@ -18,7 +18,7 @@ abstract class DiscussionRepository {
   Future<void> addComment(
     String text, {
     required String episodeId,
-    required int time,
+    required Duration time,
     required UserPodiz user,
     Comment? parent,
   });
