@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/profile/userManager.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/common_widgets/sliver_firestore_query_builder.dart';
+import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
@@ -35,8 +35,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    final userManager = ref.watch(userManagerProvider);
-    final episoddeRepository = ref.watch(episodeRepositoryProvider);
+    final userRepository = ref.watch(userRepositoryProvider);
+    final episodeRepository = ref.watch(episodeRepositoryProvider);
     final podcastRepository = ref.watch(podcastRepositoryProvider);
     return Scaffold(
         extendBodyBehindAppBar: true,
@@ -54,7 +54,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                   ),
 
                   SliverFirestoreQueryBuilder<UserPodiz>(
-                    query: userManager.usersFirestoreQuery(query),
+                    query: userRepository.usersFirestoreQuery(query),
                     builder: (context, user) => UserCard(user),
                   ),
                   SliverFirestoreQueryBuilder<Podcast>(
@@ -62,7 +62,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                     builder: (context, podcast) => PodcastCard(podcast),
                   ),
                   SliverFirestoreQueryBuilder<Episode>(
-                    query: episoddeRepository.episodesFirestoreQuery(query),
+                    query: episodeRepository.episodesFirestoreQuery(query),
                     builder: (context, episode) => EpisodeCard(
                       episode,
                       insights: false,

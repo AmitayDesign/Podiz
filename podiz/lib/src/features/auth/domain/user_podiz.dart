@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:podiz/aspect/typedefs.dart';
+import 'package:podiz/src/utils/doc_typedef.dart';
 
 part 'user_podiz.g.dart';
 

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/src/common_widgets/dot.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/episodes/presentation/avatar/podcast_avatar.dart';
@@ -90,7 +89,7 @@ class EpisodeContent extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            ' $dot ${timeFormatter(episode.duration)}',
+                            ' $dot ${format(episode.duration)}',
                             style: subtitleStyle,
                           ),
                         ],
