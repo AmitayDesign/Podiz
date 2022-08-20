@@ -28,14 +28,9 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-/// Use the [AutomaticKeepAliveClientMixin] to keep the state.
-class _HomeScreenState extends ConsumerState<HomeScreen>
-    with AutomaticKeepAliveClientMixin {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   late var destination = widget.destination ?? HomePage.feed;
   late final pageController = PageController(initialPage: destination.index);
-
-  @override
-  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -78,9 +73,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    // call 'super.build' when using 'AutomaticKeepAliveClientMixin'
-    super.build(context);
-
     ref.listen<AsyncValue<PlayingEpisode?>>(
       playerStateChangesProvider,
       (lastEpisodeValue, episodeValue) {
