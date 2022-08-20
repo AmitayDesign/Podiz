@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:podiz/src/common_widgets/empty_screen.dart';
 import 'package:podiz/src/common_widgets/episode_subtitle.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
@@ -11,8 +12,9 @@ import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/presentation/comment/comment_card.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/episodes/presentation/avatar/podcast_avatar.dart';
-import 'package:podiz/src/features/episodes/presentation/avatar/skeleton_episode_avatar.dart';
+import 'package:podiz/src/features/episodes/presentation/avatar/skeleton_podcast_avatar.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
+import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -117,8 +119,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                           const SkeletonPodcastAvatar(),
                                       error: (e, _) => const SizedBox.shrink(),
                                       data: (podcast) => PodcastAvatar(
-                                        podcastId: podcast.id,
                                         imageUrl: podcast.imageUrl,
+                                        onTap: () => context.pushNamed(
+                                          AppRoute.podcast.name,
+                                          params: {'podcastId': podcast.id},
+                                        ),
                                       ),
                                     );
                                   },

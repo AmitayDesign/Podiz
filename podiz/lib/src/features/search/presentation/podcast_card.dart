@@ -40,10 +40,7 @@ class PodcastCard extends ConsumerWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  PodcastAvatar(
-                    podcastId: podcast.id,
-                    imageUrl: podcast.imageUrl,
-                  ),
+                  PodcastAvatar(imageUrl: podcast.imageUrl),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Padding(

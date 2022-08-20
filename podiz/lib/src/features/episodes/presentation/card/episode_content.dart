@@ -60,11 +60,7 @@ class EpisodeContent extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              PodcastAvatar(
-                episodeId: disableAvatarNavigation ? null : episode.showId,
-                imageUrl: episode.imageUrl,
-                size: avatarSize,
-              ),
+              PodcastAvatar(imageUrl: episode.imageUrl, size: avatarSize),
               const SizedBox(width: 8),
               Expanded(
                 child: Padding(

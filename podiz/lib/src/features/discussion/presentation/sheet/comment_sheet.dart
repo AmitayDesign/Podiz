@@ -78,6 +78,7 @@ class CommentSheet extends ConsumerWidget {
 
                   //* Comment text field
                   CommentTextField(
+                    autofocus: isReply,
                     hint: isReply ? 'Add a reply...' : 'Share your insight...',
                     onSend: (comment) {
                       final time =

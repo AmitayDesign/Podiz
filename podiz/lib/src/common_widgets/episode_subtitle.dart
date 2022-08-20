@@ -31,11 +31,7 @@ class EpisodeSubtitle extends ConsumerWidget {
                 .add(const EdgeInsets.only(top: 8, bottom: 12)),
             child: Row(
               children: [
-                PodcastAvatar(
-                  episodeId: episode.id,
-                  imageUrl: episode.imageUrl,
-                  size: 32,
-                ),
+                PodcastAvatar(imageUrl: episode.imageUrl, size: 32),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Column(
