@@ -10,7 +10,7 @@ import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 class DiscussionHeader extends ConsumerWidget {
-  static const height = 136.0; //! hardcoded
+  static const height = 120.0; //! hardcoded
   final String episodeId;
   const DiscussionHeader(this.episodeId, {Key? key}) : super(key: key);
 

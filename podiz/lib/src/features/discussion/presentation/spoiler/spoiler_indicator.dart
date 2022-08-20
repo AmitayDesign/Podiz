@@ -6,14 +6,16 @@ import 'package:podiz/src/features/discussion/presentation/spoiler/spoiler_alert
 
 class SpoilerIndicator extends StatefulWidget {
   final bool enabled;
+  final bool reverse;
   final ValueSetter<bool> onAction;
-  final Widget child;
+  final Widget Function(bool showingAlert) builder;
 
   const SpoilerIndicator({
     Key? key,
     this.enabled = true,
+    this.reverse = true,
     required this.onAction,
-    required this.child,
+    required this.builder,
   }) : super(key: key);
 
   @override
@@ -21,28 +23,29 @@ class SpoilerIndicator extends StatefulWidget {
 }
 
 class _SpoilerIndicatorState extends State<SpoilerIndicator> {
+  final controller = IndicatorController();
   var completer = Completer();
 
   @override
   Widget build(BuildContext context) {
     const height = 200.0;
     return !widget.enabled
-        ? widget.child
+        ? widget.builder(false)
         : CustomRefreshIndicator(
+            controller: controller,
             onRefresh: () async {
               await completer.future;
               completer = Completer();
             },
-            reversed: true,
-            trailingScrollIndicatorVisible: false,
-            leadingScrollIndicatorVisible: true,
-            child: widget.child,
+            reversed: widget.reverse,
+            trailingScrollIndicatorVisible: !widget.reverse,
+            leadingScrollIndicatorVisible: widget.reverse,
+            child: widget.builder(controller.isLoading),
             builder: (context, child, controller) {
               return AnimatedBuilder(
                 animation: controller,
                 builder: (context, _) {
-                  final dy =
-                      -controller.value.clamp(0.0, 1.25) * (height * 0.8);
+                  final dy = -controller.value.clamp(0.0, 1.2) * (height - 44);
                   return Stack(
                     children: [
                       Transform.translate(
@@ -50,7 +53,7 @@ class _SpoilerIndicatorState extends State<SpoilerIndicator> {
                         child: child,
                       ),
                       Positioned(
-                        bottom: -height,
+                        bottom: -height + 16,
                         left: 0,
                         right: 0,
                         height: height,
@@ -58,6 +61,7 @@ class _SpoilerIndicatorState extends State<SpoilerIndicator> {
                           transform: Matrix4.translationValues(0.0, dy, 0.0),
                           child: Column(
                             children: [
+                              const SizedBox(height: 8),
                               SpoilerAlertCard(
                                 onAction: (value) {
                                   widget.onAction(value);

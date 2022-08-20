@@ -3,6 +3,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/back_text_button.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
+import 'package:podiz/src/features/discussion/presentation/spoiler/spoiler_indicator.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/domain/playing_episode.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
@@ -26,6 +27,8 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
 
   final scrollController = ScrollController();
   int commentsCount = 0;
+
+  var showSpoilerAlert = true;
 
   @override
   Widget build(BuildContext context) {
@@ -105,18 +108,37 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                           commentsCount = filteredComments.length;
 
                           //* List of comments
-                          return ListView.builder(
-                            controller: scrollController,
-                            reverse: true,
-                            padding: bodyPadding
-                                .add(const EdgeInsets.symmetric(vertical: 8)),
-                            itemCount: commentsCount,
-                            itemBuilder: (context, i) => Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: CommentCard(
-                                filteredComments[i],
-                                episodeId: episodeId,
-                              ),
+                          return Padding(
+                            padding: bodyPadding,
+                            child: SpoilerIndicator(
+                              reverse: false,
+                              enabled: showSpoilerAlert,
+                              onAction: (showAll) {
+                                if (showAll) {
+                                  setState(() => showSpoilerAlert = false);
+                                }
+                                //TODO show all comments
+                              },
+                              builder: (showingAlert) {
+                                return ListView.builder(
+                                  controller: scrollController,
+                                  physics: showingAlert
+                                      ? const NeverScrollableScrollPhysics()
+                                      : null,
+                                  reverse: true,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8),
+                                  itemCount: commentsCount,
+                                  itemBuilder: (context, i) => Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                    child: CommentCard(
+                                      filteredComments[i],
+                                      episodeId: episodeId,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           );
                         },
