@@ -30,7 +30,6 @@ class PodcastFollowFab extends ConsumerWidget {
             : podcastRepository.follow(user.id, podcastId);
       },
       icon: PodcastAvatar(
-        podcastId: podcastId,
         imageUrl: imageUrl,
         size: 24,
       ),
