@@ -32,6 +32,7 @@ class DiscussionHeader extends ConsumerWidget {
                   color: backgroundColor,
                   child: EpisodeContent(
                     episode,
+                    disableAvatarNavigation: true,
                     color: backgroundColor,
                     avatarSize: 48,
                     titleMaxLines: 1,

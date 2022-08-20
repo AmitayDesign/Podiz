@@ -39,7 +39,7 @@ class Player extends ConsumerWidget {
                   child: Material(
                     color: Palette.darkPurple,
                     child: InkWell(
-                      onTap: () => context.goNamed(
+                      onTap: () => context.pushNamed(
                         AppRoute.discussion.name,
                         params: {'episodeId': episode.id},
                       ),

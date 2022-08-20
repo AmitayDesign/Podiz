@@ -21,8 +21,8 @@ class EpisodeSubtitle extends ConsumerWidget {
       loading: () => const SizedBox.shrink(), //!
       error: (e, _) => const SizedBox.shrink(),
       data: (episode) {
-        return GestureDetector(
-          onTap: () => context.goNamed(
+        return InkWell(
+          onTap: () => context.pushNamed(
             AppRoute.discussion.name,
             params: {'episodeId': episode.id},
           ),

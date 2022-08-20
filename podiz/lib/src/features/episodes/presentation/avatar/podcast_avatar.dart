@@ -43,7 +43,7 @@ class PodcastAvatar extends StatelessWidget {
                   params: {'episodeId': episodeId!},
                 )
             : isPodcast
-                ? () => context.pushNamed(
+                ? () => context.goNamed(
                       AppRoute.podcast.name,
                       params: {'podcastId': podcastId!},
                     )

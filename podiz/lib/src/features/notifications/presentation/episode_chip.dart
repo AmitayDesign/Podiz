@@ -6,6 +6,7 @@ import 'package:podiz/src/theme/context_theme.dart';
 import 'package:podiz/src/utils/string_zwsp.dart';
 
 class EpisodeChip extends StatelessWidget {
+  static const height = 32.0;
   final Episode? episode;
   final int counter;
   final Color? color;
@@ -28,8 +29,8 @@ class EpisodeChip extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          height: 24,
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          height: height,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -37,13 +38,14 @@ class EpisodeChip extends StatelessWidget {
                 counter.toString(),
                 style: context.textTheme.titleSmall,
               ),
-              const SizedBox(width: 4),
-              if (episode != null)
+              if (episode != null) ...[
+                const SizedBox(width: 8),
                 PodcastAvatar(
                   imageUrl: episode!.imageUrl,
                   size: kSmallIconSize,
                 ),
-              const SizedBox(width: 4),
+              ],
+              const SizedBox(width: 8),
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 128),
                 child: Text(

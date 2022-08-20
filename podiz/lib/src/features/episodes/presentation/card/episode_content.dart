@@ -20,6 +20,8 @@ class EpisodeContent extends StatelessWidget {
   final double avatarSize;
   final int titleMaxLines;
 
+  final bool disableAvatarNavigation;
+
   const EpisodeContent(
     this.episode, {
     Key? key,
@@ -28,6 +30,7 @@ class EpisodeContent extends StatelessWidget {
     this.color,
     this.avatarSize = 64,
     this.titleMaxLines = 2,
+    this.disableAvatarNavigation = false,
   }) : super(key: key);
 
   String format(int milliseconds) {
@@ -58,7 +61,7 @@ class EpisodeContent extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               PodcastAvatar(
-                episodeId: episode.showId,
+                episodeId: disableAvatarNavigation ? null : episode.showId,
                 imageUrl: episode.imageUrl,
                 size: avatarSize,
               ),

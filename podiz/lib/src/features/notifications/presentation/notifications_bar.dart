@@ -21,7 +21,7 @@ class NotificationsBar extends ConsumerWidget with PreferredSizeWidget {
     return GradientBar(
       titleSpacing: 0,
       title: SizedBox(
-        height: 24,
+        height: EpisodeChip.height,
         child: ListView.separated(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           scrollDirection: Axis.horizontal,

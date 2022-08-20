@@ -28,7 +28,7 @@ class EpisodeCard extends ConsumerWidget {
         }
       },
     );
-    context.goNamed(
+    context.pushNamed(
       AppRoute.discussion.name,
       params: {'episodeId': episode.id},
     );
