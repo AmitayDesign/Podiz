@@ -7,7 +7,7 @@ class BackTextButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton.icon(
-      onPressed: Navigator.of(context).pop,
+      onPressed: Navigator.of(context).maybePop,
       label: Text(
         Locales.string(context, "back"),
         style: const TextStyle(color: Colors.white70),
