@@ -64,7 +64,6 @@ class SpotifyAuthRepository with AuthState implements AuthRepository {
       );
       await fetchUser(accessToken);
     } catch (e) {
-      print(e);
       throw Exception('Sign in error: $e');
     }
     if (!success) throw Exception('Error connecting to Spotify');
@@ -157,12 +156,12 @@ abstract class AuthState {
   //! called on sign in
   // Future<List<Podcast>> getCastList(UserPodiz user) async {
   //   List<Podcast> result = [];
-  //   int number = user.favPodcastIds.length;
+  //   int number = user.favPodcasts.length;
   //   int count = 0;
   //   if (number == 0) return [];
   //   if (number >= 6) {
   //     for (int i = number - 1; i >= 0; i--) {
-  //       final show = await showManager.fetchShow(user.favPodcastIds[i]);
+  //       final show = await showManager.fetchShow(user.favPodcasts[i]);
   //       final podcast = await podcastManager.getRandomEpisode(show.podcasts);
   //       if (podcast != null) result.add(podcast);
   //       count++;
@@ -172,7 +171,7 @@ abstract class AuthState {
   //     }
   //   } else {
   //     for (int i = 0; i < number; i++) {
-  //       final show = await showManager.fetchShow(user.favPodcastIds[i]);
+  //       final show = await showManager.fetchShow(user.favPodcasts[i]);
   //       final podcast = await podcastManager.getRandomEpisode(show.podcasts);
   //       if (podcast != null) result.add(podcast);
   //       count++;
@@ -187,8 +186,8 @@ abstract class AuthState {
   //   return result;
   //   //* refact
   //   // final podcasts = [];
-  //   // final number = user.favPodcastIds.length.clamp(0, 6);
-  //   // final lastFavPodcasts = user.favPodcastIds.reversed.take(number);
+  //   // final number = user.favPodcasts.length.clamp(0, 6);
+  //   // final lastFavPodcasts = user.favPodcasts.reversed.take(number);
   //   // for (final podcastId in lastFavPodcasts) {
   //   //   final show = await showManager.fetchShow(podcastId);
   //   //   final podcast = await podcastManager.getRandomEpisode(show.podcasts);

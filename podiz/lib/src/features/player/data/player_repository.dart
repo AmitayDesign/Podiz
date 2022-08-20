@@ -14,12 +14,12 @@ final playerRepositoryProvider = Provider<PlayerRepository>(
 abstract class PlayerRepository {
   Stream<PlayingEpisode?> watchPlayingEpisode();
   Future<PlayingEpisode?> fetchPlayingEpisode();
-  Future<void> play(String episodeId, [int? seconds]);
-  Future<void> resume(String episodeId, [int? seconds]);
+  Future<void> play(String episodeId, [Duration? time]);
+  Future<void> resume(String episodeId, [Duration? time]);
   Future<void> pause();
-  Future<void> fastForward([int seconds = 30]);
-  Future<void> rewind([int seconds = 30]);
-  Future<void> seekTo(int seconds);
+  Future<void> fastForward([Duration time = const Duration(seconds: 30)]);
+  Future<void> rewind([Duration time = const Duration(seconds: 30)]);
+  Future<void> seekTo(Duration time);
 }
 
 //* Providers
@@ -39,23 +39,14 @@ final playerTimeStreamProvider = StreamProvider.autoDispose<PlayerTime>(
     // player has an episode
     if (!episode.isPlaying) {
       yield PlayerTime(
-        duration: episode.duration ~/ 1000,
-        position: episode.initialPosition ~/ 1000,
-      );
+          duration: episode.duration, position: episode.initialPosition);
     } else {
-      final initialPosition = episode.initialPosition;
-      final timeUntilPreciseSecond = 1000 - initialPosition % 1000;
-      await Future.delayed(Duration(milliseconds: timeUntilPreciseSecond));
       yield* Stream.periodic(
         const Duration(seconds: 1),
-        (tick) {
-          final position =
-              (initialPosition + timeUntilPreciseSecond) + (tick + 1) * 1000;
-          return PlayerTime(
-            duration: episode.duration ~/ 1000,
-            position: position ~/ 1000,
-          );
-        },
+        (tick) => PlayerTime(
+          duration: episode.duration,
+          position: episode.initialPosition + Duration(seconds: tick + 1),
+        ),
       );
     }
   },

@@ -20,14 +20,16 @@ class _PlayerSliderState extends ConsumerState<PlayerSlider> {
     ref.read(playerSliderControllerProvider.notifier).updatesWithTime = false;
   }
 
-  void updateSlider(double time) {
-    ref.read(playerSliderControllerProvider.notifier).position = time.toInt();
+  void updateSlider(double timeInMilliseconds) {
+    ref.read(playerSliderControllerProvider.notifier).position =
+        Duration(milliseconds: timeInMilliseconds.toInt());
   }
 
-  void updatePlayerTime(double time) async {
-    ref.read(playerSliderControllerProvider.notifier).seekTo(time.toInt());
+  void updatePlayerTime(double timeInMilliseconds) async {
+    ref
+        .read(playerSliderControllerProvider.notifier)
+        .seekTo(Duration(milliseconds: timeInMilliseconds.toInt()));
     setState(() => isPressed = false);
-    //TODO find a way to wait precisely
     await Future.delayed(const Duration(seconds: 2));
     ref.read(playerSliderControllerProvider.notifier).updatesWithTime = true;
   }
@@ -42,7 +44,6 @@ class _PlayerSliderState extends ConsumerState<PlayerSlider> {
         activeTrackColor: Palette.pink,
         thumbColor: Palette.pink,
         trackShape: CustomTrackShape(),
-        //TODO make interactive area bigger
         thumbShape: RoundSliderThumbShape(
           enabledThumbRadius: isPressed ? 8 : 4,
         ),
@@ -51,9 +52,9 @@ class _PlayerSliderState extends ConsumerState<PlayerSlider> {
         ),
       ),
       child: Slider(
-        value: playerTime.position.toDouble(),
+        value: playerTime.position.inMilliseconds.toDouble(),
         min: 0,
-        max: playerTime.duration.toDouble(),
+        max: playerTime.duration.inMilliseconds.toDouble(),
         onChangeStart: enableSliderUpdates,
         onChanged: updateSlider,
         onChangeEnd: updatePlayerTime,

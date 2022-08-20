@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/src/common_widgets/users_listening_text.dart';
+import 'package:podiz/src/constants/constants.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
+import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/discussion/presentation/comment/comment_text_field.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
@@ -31,14 +32,15 @@ class QuickNoteSheet extends ConsumerWidget {
           children: [
             CommentTextField(
               autofocus: true,
-              onSend: (comment) async {
+              onSend: (text) async {
                 final time = ref.read(playerTimeStreamProvider).valueOrNull!;
-                ref.read(discussionRepositoryProvider).addComment(
-                      comment,
-                      episodeId: episode.id,
-                      time: time.position,
-                      user: ref.read(currentUserProvider),
-                    );
+                final comment = Comment(
+                  text: text,
+                  episodeId: episode.id,
+                  userId: ref.read(currentUserProvider).id,
+                  timestamp: time.position,
+                );
+                ref.read(discussionRepositoryProvider).addComment(comment);
                 Navigator.pop(context);
               },
             ),

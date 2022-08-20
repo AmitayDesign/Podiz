@@ -8,15 +8,20 @@ exports.fetchSpotifyEpisode = async (accessToken, episodeId) => {
 			"/episodes/" + episodeId, accessToken
 		);
 		if (response["status"] != 200) return false;
+
 		var episode = await response.json();
 		var show = episode.show;
 
+		// add show to firestore
 		var showExists = await helpers.checkShowExists(show.id);
 		if (!showExists) await showFunctions.fetchSpotifyShow(accessToken, show.id);
+
+		// add episode to firestore
+		await helpers.addEpisodeToFirestore(episode, show.id);
 		return true;
 
-	} catch (err) {
-		console.log(err);
+	} catch (e) {
+		console.log(e);
 		return false;
 	}
 }

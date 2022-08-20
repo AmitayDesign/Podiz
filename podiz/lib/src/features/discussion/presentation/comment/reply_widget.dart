@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 
 import 'comment_text.dart';
 import 'comment_trailing.dart';
@@ -65,10 +65,11 @@ class ReplyWidget extends ConsumerWidget {
                             onReply: onReply,
                             onShare: onShare,
                           ),
-                          if (comment.replies.isNotEmpty) ...[
-                            for (final reply in comment.replies.values)
-                              ReplyWidget(reply, episodeId: episodeId),
-                          ],
+                          //TODO expandable comment
+                          // if (comment.replies.isNotEmpty) ...[
+                          //   for (final reply in comment.replies.values)
+                          //     ReplyWidget(reply, episodeId: episodeId),
+                          // ],
                         ],
                       ),
                     ),

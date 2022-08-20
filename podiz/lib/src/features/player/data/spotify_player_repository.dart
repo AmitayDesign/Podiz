@@ -26,32 +26,32 @@ class SpotifyPlayerRepository implements PlayerRepository {
     final track = state.track;
     if (track == null || !track.isEpisode || !track.isPodcast) return null;
     if (state.playbackPosition > track.duration) return null;
-    final episode = await episodeRepository.fetchEpisode(track.uri);
+    final episodeId = idFromUri(track.uri);
+    final episode = await episodeRepository.fetchEpisode(episodeId);
     return PlayingEpisode.fromEpisode(
       episode,
-      position: state.playbackPosition,
+      position: Duration(milliseconds: state.playbackPosition),
       isPlaying: !state.isPaused,
     );
   }
 
-  //TODO add seconds to resume instead
   @override
-  Future<void> play(String episodeId, [int? seconds]) async {
-    await SpotifySdk.play(spotifyUri: episodeId);
-    if (seconds != null) {
-      await SpotifySdk.seekTo(positionedMilliseconds: seconds);
+  Future<void> play(String episodeId, [Duration? time]) async {
+    await SpotifySdk.play(spotifyUri: uriFromId(episodeId));
+    if (time != null) {
+      await SpotifySdk.seekTo(positionedMilliseconds: time.inMilliseconds);
     }
   }
 
   @override
-  Future<void> resume(String episodeId, [int? seconds]) async {
+  Future<void> resume(String episodeId, [Duration? time]) async {
     try {
-      if (seconds != null) {
-        await SpotifySdk.seekTo(positionedMilliseconds: seconds);
+      if (time != null) {
+        await SpotifySdk.seekTo(positionedMilliseconds: time.inMilliseconds);
       }
       await SpotifySdk.resume();
     } catch (_) {
-      await play(episodeId);
+      await play(episodeId, time);
     }
   }
 
@@ -59,20 +59,19 @@ class SpotifyPlayerRepository implements PlayerRepository {
   Future<void> pause() => SpotifySdk.pause();
 
   @override
-  Future<void> fastForward([int seconds = 30]) {
-    final position = Duration(seconds: seconds).inMilliseconds;
-    return SpotifySdk.seekToRelativePosition(relativeMilliseconds: position);
-  }
+  Future<void> fastForward([Duration time = const Duration(seconds: 30)]) =>
+      SpotifySdk.seekToRelativePosition(
+          relativeMilliseconds: time.inMilliseconds);
 
   @override
-  Future<void> rewind([int seconds = 30]) {
-    final position = -Duration(seconds: seconds).inMilliseconds;
-    return SpotifySdk.seekToRelativePosition(relativeMilliseconds: position);
-  }
+  Future<void> rewind([Duration time = const Duration(seconds: 30)]) =>
+      SpotifySdk.seekToRelativePosition(
+          relativeMilliseconds: -time.inMilliseconds);
 
   @override
-  Future<void> seekTo(int seconds) {
-    final position = Duration(seconds: seconds).inMilliseconds;
-    return SpotifySdk.seekTo(positionedMilliseconds: position);
-  }
+  Future<void> seekTo(Duration time) =>
+      SpotifySdk.seekTo(positionedMilliseconds: time.inMilliseconds);
+
+  String uriFromId(String id) => 'spotify:episode:$id';
+  String idFromUri(String uri) => uri.split(':').last;
 }

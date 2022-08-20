@@ -10,7 +10,7 @@ class Podcast with EquatableMixin {
   final String name;
   final String publisher;
   final String description;
-  final String imageUrl;
+  final String? imageUrl;
 
   @JsonKey(defaultValue: [])
   final List<String> followers;

@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 
 class StackedAvatars extends StatelessWidget {
   final List<String> imageUrls;
@@ -8,13 +8,14 @@ class StackedAvatars extends StatelessWidget {
   final double borderWidth;
   final Color? borderColor;
 
-  const StackedAvatars({
+  StackedAvatars({
     Key? key,
-    required this.imageUrls,
+    required List<String?> imageUrls,
     this.radius = 16,
     this.borderWidth = 2,
     this.borderColor,
-  }) : super(key: key);
+  })  : imageUrls = imageUrls.whereNotNull().toList().cast<String>(),
+        super(key: key);
 
   List<String> decideImages() {
     if (imageUrls.length <= 3) return imageUrls;

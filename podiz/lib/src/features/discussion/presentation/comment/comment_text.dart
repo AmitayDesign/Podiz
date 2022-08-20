@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:podiz/aspect/extensions.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class CommentText extends StatelessWidget {
@@ -13,7 +13,10 @@ class CommentText extends StatelessWidget {
       options: const LinkifyOptions(removeWww: true),
       onOpen: (link) async {
         if (await canLaunchUrlString(link.url)) {
-          await launchUrlString(link.url);
+          await launchUrlString(
+            link.url,
+            mode: LaunchMode.externalApplication,
+          );
         }
       },
       text: text,

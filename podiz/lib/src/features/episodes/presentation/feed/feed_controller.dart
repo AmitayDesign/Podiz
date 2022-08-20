@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/utils/global_key_box.dart';
 
 final feedControllerProvider = StateNotifierProvider<FeedController, String>(
   (ref) {
@@ -29,19 +29,19 @@ class FeedController extends StateNotifier<String> {
     final myCastsPosition = myCastsKey.offset?.dy;
     final hotLivePosition = hotLiveKey.offset?.dy;
 
-    final lastPodcastExists = user.lastListenedEpisodeId.isNotEmpty;
-    final myCastsDidNotPass = user.favPodcastIds.isEmpty ||
+    final lastPodcastExists = user.lastListened != null;
+    final myCastsDidNotPass = user.favPodcasts.isEmpty ||
         myCastsPosition == null ||
         myCastsPosition > GradientBar.height;
     final hotLiveDidNotPass =
         hotLivePosition == null || hotLivePosition > GradientBar.height;
 
     if (lastPodcastExists &&
-        user.lastListenedEpisodeId.isNotEmpty &&
+        user.lastListened != null &&
         myCastsDidNotPass &&
         hotLiveDidNotPass) {
       state = lastListenedLocaleKey;
-    } else if (user.favPodcastIds.isNotEmpty && hotLiveDidNotPass) {
+    } else if (user.favPodcasts.isNotEmpty && hotLiveDidNotPass) {
       state = myCastsLocaleKey;
     } else {
       state = hotLiveLocaleKey;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/src/common_widgets/loadingButton.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 
 import 'connect_page.dart';
 import 'intro_page.dart';

@@ -1,4 +1,3 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/utils/instances.dart';
@@ -11,39 +10,44 @@ final discussionRepositoryProvider = Provider<DiscussionRepository>(
   ),
 );
 
+//TODO make all paginated
 abstract class DiscussionRepository {
-  Stream<List<Comment>> watchEpisodeComments(String episodeId, {int? limit});
+  Stream<List<Comment>> watchComments(String episodeId);
+  Stream<Comment?> watchLastReply(String commentId);
+  Stream<List<Comment>> watchReplies(String commentId);
   Stream<List<Comment>> watchUserComments(String userId);
+  Stream<List<Comment>> watchUserReplies(String userId);
   Future<void> addComment(Comment comment);
 }
 
 //* Providers
 
-final episodeCommentsStreamProvider =
+final commentsStreamProvider =
     StreamProvider.family.autoDispose<List<Comment>, String>(
   (ref, episodeId) =>
-      ref.watch(discussionRepositoryProvider).watchEpisodeComments(episodeId),
+      ref.watch(discussionRepositoryProvider).watchComments(episodeId),
 );
-final limitedEpisodeCommentsStreamProvider =
-    StreamProvider.family.autoDispose<List<Comment>, EpisodeLimit>(
-  (ref, episodeLimit) => ref
-      .watch(discussionRepositoryProvider)
-      .watchEpisodeComments(episodeLimit.episodeId, limit: episodeLimit.limit),
+
+final lastReplyStreamProvider =
+    StreamProvider.family.autoDispose<Comment?, String>(
+  (ref, commentId) =>
+      ref.watch(discussionRepositoryProvider).watchLastReply(commentId),
 );
+
+final repliesStreamProvider =
+    StreamProvider.family.autoDispose<List<Comment>, String>(
+  (ref, commentId) =>
+      ref.watch(discussionRepositoryProvider).watchReplies(commentId),
+);
+
 final userCommentsStreamProvider =
     StreamProvider.family.autoDispose<List<Comment>, String>(
   (ref, userId) =>
       ref.watch(discussionRepositoryProvider).watchUserComments(userId),
 );
 
-//* Argument helper
-
-class EpisodeLimit extends Equatable {
-  final String episodeId;
-  final int limit;
-
-  const EpisodeLimit(this.episodeId, this.limit);
-
-  @override
-  List<Object?> get props => [episodeId, limit];
-}
+final userRepliesStreamProvider =
+    StreamProvider.family.autoDispose<List<Comment>, String>(
+  (ref, userId) =>
+      ref.watch(discussionRepositoryProvider).watchUserReplies(userId),
+);

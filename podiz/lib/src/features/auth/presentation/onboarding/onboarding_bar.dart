@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 
 class OnboardingBar extends StatelessWidget with PreferredSizeWidget {
   const OnboardingBar({Key? key}) : super(key: key);

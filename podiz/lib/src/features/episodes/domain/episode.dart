@@ -9,21 +9,21 @@ part 'episode.g.dart';
 class Episode with EquatableMixin {
   final String id;
   final String name;
-  final String description; //! not used
-  final String imageUrl;
+  final String description;
+  final String? imageUrl;
 
   @JsonKey(fromJson: durationFromMs)
   final Duration duration;
 
-  final String releaseDate; //! not used
+  final String releaseDate;
 
   final String showId;
 
   @JsonKey(defaultValue: [])
   final List<String> usersWatching;
 
-  @JsonKey(defaultValue: [])
-  final List<String> commentsCount;
+  @JsonKey(defaultValue: 0)
+  final int commentsCount;
 
   Episode({
     required this.id,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/constants.dart';
 import 'package:podiz/src/common_widgets/splash_screen.dart';
 import 'package:podiz/src/routing/app_router.dart';
 
@@ -33,10 +32,7 @@ class MyApp extends ConsumerWidget {
           return firstUserValue.when(
             error: (e, _) => const SplashScreen.error(),
             loading: () => const SplashScreen(),
-            data: (_) {
-              setScreenSize(context); //!
-              return child!;
-            },
+            data: (_) => child!,
           );
         }),
       ),

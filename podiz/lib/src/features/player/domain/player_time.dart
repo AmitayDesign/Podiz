@@ -1,14 +1,14 @@
 class PlayerTime {
   /// Player position in seconds
-  final int position;
+  final Duration position;
 
   /// Episode duration in seconds
-  final int duration;
+  final Duration duration;
 
-  const PlayerTime({
-    required this.duration,
-    required this.position,
-  });
+  const PlayerTime({required this.duration, required this.position});
 
-  static PlayerTime get zero => const PlayerTime(duration: 1, position: 0);
+  static PlayerTime get zero => const PlayerTime(
+        duration: Duration(seconds: 1),
+        position: Duration.zero,
+      );
 }

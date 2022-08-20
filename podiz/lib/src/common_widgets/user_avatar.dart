@@ -6,24 +6,35 @@ import 'package:podiz/src/routing/app_router.dart';
 class UserAvatar extends StatelessWidget {
   final UserPodiz user;
   final double radius;
-  const UserAvatar({Key? key, required this.user, this.radius = 16})
-      : super(key: key);
+  final bool enableNavigation;
+
+  const UserAvatar({
+    Key? key,
+    required this.user,
+    this.radius = 16,
+    this.enableNavigation = true,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final image = user.imageUrl == null ? null : NetworkImage(user.imageUrl!);
+    final ImageProvider image = user.imageUrl == null
+        ? const AssetImage('assets/images/loadingImage.png') as ImageProvider
+        : NetworkImage(user.imageUrl!);
+
     return CircleAvatar(
       radius: radius,
-      backgroundImage: image, //TODO null image representation
+      backgroundImage: image,
       child: Material(
         shape: const CircleBorder(),
         clipBehavior: Clip.hardEdge,
         color: Colors.transparent,
         child: InkWell(
-          onTap: () => context.pushNamed(
-            AppRoute.profile.name,
-            params: {'userId': user.id},
-          ),
+          onTap: enableNavigation
+              ? () => context.pushNamed(
+                    AppRoute.profile.name,
+                    params: {'userId': user.id},
+                  )
+              : null,
         ),
       ),
     );
@@ -39,7 +50,10 @@ class UserAvatarButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final image = user.imageUrl == null ? null : NetworkImage(user.imageUrl!);
+    final ImageProvider image = user.imageUrl == null
+        ? const AssetImage('assets/images/loadingImage.png') as ImageProvider
+        : NetworkImage(user.imageUrl!);
+
     return IconButton(
       onPressed: () => context.pushNamed(
         AppRoute.profile.name,
@@ -47,7 +61,7 @@ class UserAvatarButton extends StatelessWidget {
       ),
       icon: CircleAvatar(
         radius: radius,
-        backgroundImage: image, //TODO null image representation
+        backgroundImage: image,
       ),
     );
   }

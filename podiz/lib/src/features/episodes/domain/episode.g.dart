@@ -10,7 +10,7 @@ Episode _$EpisodeFromJson(Map<String, dynamic> json) => Episode(
       id: json['id'] as String,
       name: json['name'] as String,
       description: json['description'] as String,
-      duration: Episode.durationFromMilliseconds(json['duration'] as int),
+      duration: durationFromMs(json['duration'] as int),
       showId: json['showId'] as String,
       imageUrl: json['imageUrl'] as String,
       releaseDate: json['releaseDate'] as String,
@@ -18,6 +18,7 @@ Episode _$EpisodeFromJson(Map<String, dynamic> json) => Episode(
               ?.map((e) => e as String)
               .toList() ??
           [],
+      commentsCount: json['commentsCount'] as int? ?? 0,
     );
 
 Map<String, dynamic> _$EpisodeToJson(Episode instance) => <String, dynamic>{
@@ -29,4 +30,5 @@ Map<String, dynamic> _$EpisodeToJson(Episode instance) => <String, dynamic>{
       'releaseDate': instance.releaseDate,
       'showId': instance.showId,
       'usersWatching': instance.usersWatching,
+      'commentsCount': instance.commentsCount,
     };

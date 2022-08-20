@@ -14,17 +14,13 @@ exports.fetchSpotifyUser = functions.https.onCall(
 	(data, _) => auth.fetchSpotifyUser(data.accessToken));
 
 exports.fetchSpotifyEpisode = functions.https.onCall(
-	(data, _) => {
-		return 'randomId';
-		// episodes.fetchSpotifyEpisode(data.accessToken, data.episodeId)
-	});
+	(data, _) => episodes.fetchSpotifyEpisode(data.accessToken, data.episodeId));
 
 exports.fetchSpotifyShow = functions.https.onCall(
 	(data, _) => shows.fetchSpotifyShow(data.accessToken, data.showId));
 
 exports.fetchSpotifySearch = functions.https.onCall(
-	(data, _) => search.fetchSpotifySearch(data.accessToken, data.query)
-);
+	(data, _) => search.fetchSpotifySearch(data.accessToken, data.query));
 
 exports.updateEpisodeListening =
 	functions.database.ref('users/{userId}/lastListened')

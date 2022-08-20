@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/src/common_widgets/circle_button.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 class CommentTrailing extends StatelessWidget {

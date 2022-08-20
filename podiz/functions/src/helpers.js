@@ -5,6 +5,17 @@ const host = "https://api.spotify.com/v1";
 
 // FETCH
 
+exports.fetchFrom = (path, accessToken) =>
+	fetch(
+		path, {
+		headers: {
+			Accept: "application/json",
+			Authorization: "Bearer " + accessToken,
+			"Content-Type": "application/json",
+		},
+		method: "GET",
+	});
+
 exports.fetchFromHost = (path, accessToken) =>
 	fetch(
 		host + path, {
@@ -18,8 +29,8 @@ exports.fetchFromHost = (path, accessToken) =>
 
 // USER
 
-userRef = (userId) =>
-	admin.firestore().collection("test_users").doc(userId);
+const userRef = (userId) =>
+	admin.firestore().collection("users").doc(userId);
 
 
 exports.checkUserExists = async (userId) => {
@@ -32,13 +43,13 @@ exports.addUserToFirestore = (user) =>
 		name: user.display_name,
 		email: user.email,
 		imageUrl: user.images[0].url,
-		searchArray: helpers.buildSearchArray(user.display_name),
+		searchArray: buildSearchArray(user.display_name),
 	}, { merge: true });
 
 // EPISODE
 
-episodeRef = (episodeId) =>
-	admin.firestore().collection("test_episodes").doc(episodeId);
+const episodeRef = (episodeId) =>
+	admin.firestore().collection("episodes").doc(episodeId);
 
 
 exports.checkEpisodeExists = async (episodeId) => {
@@ -48,13 +59,24 @@ exports.checkEpisodeExists = async (episodeId) => {
 
 exports.addEpisodeToFirestore = (episode, showId) =>
 	episodeRef(episode.id).set({
-		name: spotifyEpisode.name,
-		description: spotifyEpisode.description,
-		imageUrl: spotifyEpisode.images[0]?.url,
-		duration: spotifyEpisode.duration_ms,
+		name: episode.name,
+		description: episode.description,
+		imageUrl: episode.images[0]?.url,
+		duration: episode.duration_ms,
 		showId: showId,
-		releaseDate: spotifyEpisode.release_date,
-		searchArray: buildSearchArray(spotifyEpisode.name),
+		releaseDate: episode.release_date,
+		searchArray: buildSearchArray(episode.name),
+	}, { merge: true });
+
+exports.addEpisodeToFirestoreT = (t, episode, showId) =>
+	t.set(episodeRef(episode.id), {
+		name: episode.name,
+		description: episode.description,
+		imageUrl: episode.images[0]?.url,
+		duration: episode.duration_ms,
+		showId: showId,
+		releaseDate: episode.release_date,
+		searchArray: buildSearchArray(episode.name),
 	}, { merge: true });
 
 exports.addUserToEpisodeListening = (episodeId, userId) =>
@@ -69,27 +91,40 @@ exports.removeUserFromEpisodeListening = (episodeId, userId) =>
 
 // SHOW
 
-showRef = (showId) =>
-	admin.firestore().collection("test_shows").doc(showId);
+const showRef = (showId) =>
+	admin.firestore().collection("shows").doc(showId);
 
 exports.checkShowExists = async (showId) => {
 	var showDoc = await showRef(showId).get();
 	return showDoc.exists;
 }
 
-exports.addShowToFirestore = async (show) => {
-	return showRef(show.id).set({
+exports.addShowToFirestore = (show) =>
+	showRef(show.id).set({
 		name: show.name,
 		publisher: show.publisher,
 		description: show.description,
 		imageUrl: show.images[0]?.url,
 		searchArray: buildSearchArray(show.name),
+		// for fetching purposes
+		lastKnownEpisode: show.episodes.items[0].id,
+		// lastSavedEpisode:
 	}, { merge: true });
-}
+
+exports.getShowT = async (t, showId) => {
+	var doc = await t.get(showRef(showId));
+	return doc.data();
+};
+
+exports.addLastSavedEpisodeT = (t, showId, episodeId) =>
+	t.update(showRef(showId), {
+		lastSavedEpisode: episodeId,
+	}, { merge: true });
+
 
 // HELPERS
 
-exports.buildSearchArray = (text) => {
+const buildSearchArray = (text) => {
 	var previousWord = "";
 	var searchArray = [];
 	for (letter of text) {

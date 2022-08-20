@@ -34,7 +34,7 @@ class FirestoreEpisodeRepository extends EpisodeRepository {
   }
 
   Future<String> fetchSpotifyEpisode(String episodeId) async {
-    final accessToken = spotifyApi.getAccessToken();
+    final accessToken = await spotifyApi.getAccessToken();
     final result = await functions
         .httpsCallable('fetchSpotifyEpisode')
         .call({'accessToken': accessToken, 'episodeId': episodeId});
@@ -44,6 +44,16 @@ class FirestoreEpisodeRepository extends EpisodeRepository {
 
     return episodeId;
   }
+
+  @override
+  Query<Episode> showEpisodesFirestoreQuery(String showId) =>
+      FirebaseFirestore.instance.episodesCollection
+          .where('showId', isEqualTo: showId)
+          .orderBy('releaseDate', descending: true)
+          .withConverter(
+            fromFirestore: (doc, _) => Episode.fromFirestore(doc),
+            toFirestore: (episode, _) => {},
+          );
 
   @override
   Query<Episode> episodesFirestoreQuery(String filter) =>
@@ -57,7 +67,7 @@ class FirestoreEpisodeRepository extends EpisodeRepository {
   @override
   Query<Episode> hotliveFirestoreQuery() =>
       FirebaseFirestore.instance.episodesCollection
-          .orderBy("release_date", descending: true)
+          .orderBy("releaseDate", descending: true)
           .withConverter(
             fromFirestore: (doc, _) => Episode.fromFirestore(doc),
             toFirestore: (episode, _) => {},

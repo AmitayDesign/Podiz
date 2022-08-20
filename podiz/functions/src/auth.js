@@ -8,14 +8,15 @@ exports.fetchSpotifyUser = async (accessToken) => {
 		var user = await response.json();
 
 		// if user exists, does nothing
-		var userExists = await helpers.userExists(user.id);
+		var userExists = await helpers.checkUserExists(user.id);
 		if (userExists) return user.id;
 
 		// create user in firestore
 		await helpers.addUserToFirestore(user);
 		return user.id;
 
-	} catch (err) {
+	} catch (e) {
+		console.log(e);
 		return null;
 	}
 }

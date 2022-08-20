@@ -1,7 +1,7 @@
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 
 class PlayingEpisode extends Episode {
-  final int initialPosition;
+  final Duration initialPosition;
   final bool isPlaying;
 
   PlayingEpisode({
@@ -10,9 +10,10 @@ class PlayingEpisode extends Episode {
     required String description,
     required Duration duration,
     required String showId,
-    required String imageUrl,
+    required String? imageUrl,
     required String releaseDate,
     required List<String> usersWatching,
+    required int commentsCount,
     required this.initialPosition,
     required this.isPlaying,
   }) : super(
@@ -24,11 +25,12 @@ class PlayingEpisode extends Episode {
           imageUrl: imageUrl,
           releaseDate: releaseDate,
           usersWatching: usersWatching,
+          commentsCount: commentsCount,
         );
 
   factory PlayingEpisode.fromEpisode(
     Episode episode, {
-    required int position,
+    required Duration position,
     required bool isPlaying,
   }) =>
       PlayingEpisode(
@@ -40,6 +42,7 @@ class PlayingEpisode extends Episode {
         imageUrl: episode.imageUrl,
         usersWatching: episode.usersWatching,
         releaseDate: episode.releaseDate,
+        commentsCount: episode.commentsCount,
         initialPosition: position,
         isPlaying: isPlaying,
       );

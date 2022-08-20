@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:podiz/aspect/extensions.dart';
-import 'package:podiz/aspect/widgets/appBarGradient.dart';
+import 'package:podiz/src/common_widgets/app_bar_gradient.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 
 class GradientBar extends StatelessWidget with PreferredSizeWidget {
   final bool automaticallyImplyLeading;
+  final double? titleSpacing;
   final Widget? title;
   final List<Widget>? actions;
   final bool? centerTitle;
@@ -11,6 +12,7 @@ class GradientBar extends StatelessWidget with PreferredSizeWidget {
   const GradientBar({
     Key? key,
     this.automaticallyImplyLeading = true,
+    this.titleSpacing,
     this.title,
     this.actions,
     this.centerTitle,
@@ -29,6 +31,7 @@ class GradientBar extends StatelessWidget with PreferredSizeWidget {
       backgroundColor: Colors.transparent,
       toolbarHeight: height,
       centerTitle: centerTitle,
+      titleSpacing: titleSpacing,
       title: title,
       actions: actions,
       flexibleSpace: Container(

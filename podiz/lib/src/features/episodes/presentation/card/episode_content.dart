@@ -1,29 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/aspect/formatters.dart';
-import 'package:podiz/aspect/widgets/dot.dart';
+import 'package:podiz/src/common_widgets/dot.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
+import 'package:podiz/src/features/episodes/domain/podcast.dart';
 import 'package:podiz/src/features/episodes/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/routing/app_router.dart';
-import 'package:podiz/src/utils/zwsp_string.dart';
+import 'package:podiz/src/theme/context_theme.dart';
+import 'package:podiz/src/utils/string_zwsp.dart';
 
 import 'insights_info.dart';
 
 class EpisodeContent extends StatelessWidget {
   final Episode episode;
+  final Podcast podcast;
   final bool insights;
   final Widget? bottom;
 
   /// The color to give to the stacked avatars border
   final Color? color;
+  final double avatarSize;
+  final int titleMaxLines;
+
+  final bool disableAvatarNavigation;
 
   const EpisodeContent(
     this.episode, {
     Key? key,
+    required this.podcast,
     this.insights = true,
     this.bottom,
     this.color,
+    this.avatarSize = 64,
+    this.titleMaxLines = 2,
+    this.disableAvatarNavigation = false,
   }) : super(key: key);
 
   String format(int milliseconds) {
@@ -54,8 +64,8 @@ class EpisodeContent extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               PodcastAvatar(
-                podcastId: episode.showId,
                 imageUrl: episode.imageUrl,
+                size: avatarSize,
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -68,7 +78,7 @@ class EpisodeContent extends StatelessWidget {
                         episode.name,
                         style: titleStyle,
                         overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
+                        maxLines: titleMaxLines,
                       ),
                       Row(
                         children: [
@@ -76,17 +86,17 @@ class EpisodeContent extends StatelessWidget {
                             child: GestureDetector(
                               onTap: () => context.goNamed(
                                 AppRoute.podcast.name,
-                                params: {'showId': episode.showId},
+                                params: {'podcastId': episode.showId},
                               ),
                               child: Text(
-                                episode.showName.useCorrectEllipsis(),
+                                podcast.name.useCorrectEllipsis(),
                                 style: subtitleStyle,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ),
                           Text(
-                            ' $dot ${timeFormatter(episode.duration)}',
+                            ' $dot ${timeFormatter(episode.duration.inMilliseconds)}',
                             style: subtitleStyle,
                           ),
                         ],

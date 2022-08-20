@@ -1,9 +1,9 @@
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/loadingButton.dart';
-import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/auth/data/spotify_api.dart';
+import 'package:podiz/src/utils/instances.dart';
 
 class SpotifySearchButton extends ConsumerStatefulWidget {
   final String query;
@@ -17,13 +17,14 @@ class SpotifySearchButton extends ConsumerStatefulWidget {
 class _SpotifySearchButtonState extends ConsumerState<SpotifySearchButton> {
   bool isLoading = false;
 
+  //TODO put this in a repository
   void searchInSpotify() async {
     setState(() => isLoading = true);
-    final user = ref.read(currentUserProvider);
-    await FirebaseFunctions.instance.httpsCallable("fetchSpotifySearch").call({
-      "query": widget.query,
-      "userUid": user.id,
-    }); //TODO verify arguments
+    final accessToken = await ref.read(spotifyApiProvider).getAccessToken();
+    await ref
+        .read(functionsProvider)
+        .httpsCallable("fetchSpotifySearch")
+        .call({'accessToken': accessToken, 'query': widget.query});
     if (mounted) setState(() => isLoading = false);
   }
 

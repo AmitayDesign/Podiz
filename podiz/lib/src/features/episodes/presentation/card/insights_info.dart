@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/extensions.dart';
 import 'package:podiz/src/common_widgets/stacked_avatars.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 
 class InsightsInfo extends ConsumerWidget {
   final Episode episode;
@@ -18,11 +19,15 @@ class InsightsInfo extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final liveEpisode =
         ref.watch(episodeStreamProvider(episode.id)).valueOrNull ?? episode;
+    final imageUrls = liveEpisode.usersWatching
+        .map((userId) =>
+            ref.watch(userFutureProvider(userId)).valueOrNull?.imageUrl)
+        .toList();
     return Row(
       children: [
-        liveEpisode.commentImageUrls.length > 1
+        imageUrls.length > 1
             ? StackedAvatars(
-                imageUrls: liveEpisode.commentImageUrls,
+                imageUrls: imageUrls,
                 borderColor: borderColor,
               )
             : Consumer(

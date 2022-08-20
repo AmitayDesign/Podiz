@@ -15,7 +15,6 @@ final playerSliderControllerProvider =
   );
 });
 
-//TODO remove logic from player slider and update PlayerTimeChip widget
 class PlayerSliderController extends StateNotifier<PlayerTime> {
   static PlayerTime? cachedPlayerTime;
 
@@ -37,10 +36,10 @@ class PlayerSliderController extends StateNotifier<PlayerTime> {
     });
   }
 
-  set position(int position) =>
+  set position(Duration position) =>
       state = PlayerTime(position: position, duration: state.duration);
 
-  Future<void> seekTo(int seconds) => playerRepository.seekTo(seconds);
+  Future<void> seekTo(Duration time) => playerRepository.seekTo(time);
 
   @override
   void dispose() {

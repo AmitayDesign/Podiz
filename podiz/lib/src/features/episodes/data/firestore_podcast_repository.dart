@@ -33,8 +33,9 @@ class FirestorePodcastRepository extends PodcastRepository {
     return fetchSpotifyShow(podcastId).then(fetchPodcast);
   }
 
+  //TODO save oldest episodeId in case of an error
   Future<String> fetchSpotifyShow(String showId) async {
-    final accessToken = spotifyApi.getAccessToken();
+    final accessToken = await spotifyApi.getAccessToken();
     final result = await functions
         .httpsCallable('fetchSpotifyShow')
         .call({'accessToken': accessToken, 'showId': showId});
@@ -44,6 +45,9 @@ class FirestorePodcastRepository extends PodcastRepository {
 
     return showId;
   }
+
+  @override
+  Future<void> refetchPodcast(String podcastId) => fetchSpotifyShow(podcastId);
 
   @override
   Query<Podcast> podcastsFirestoreQuery(String filter) =>

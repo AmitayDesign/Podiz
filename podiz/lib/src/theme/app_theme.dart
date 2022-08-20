@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/aspect/constants.dart';
+import 'package:podiz/src/constants/constants.dart';
 
 import 'app_text_theme.dart';
 import 'palette.dart';
@@ -57,6 +57,20 @@ final themeProvider = Provider<ThemeData>((ref) {
           borderRadius: BorderRadius.circular(kBorderRadius),
         ),
         onPrimary: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        minimumSize: const Size.fromHeight(56),
+        textStyle: textTheme.titleMedium,
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        shape: const StadiumBorder(),
+        side: const BorderSide(
+          color: Colors.white70,
+          width: 1,
+        ),
+        primary: Colors.white70,
+        alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(horizontal: 24),
         minimumSize: const Size.fromHeight(56),
         textStyle: textTheme.titleMedium,

@@ -19,6 +19,7 @@ dependencies:
   cloud_functions: ^3.3.3
   collection: ^1.16.0
   connectivity: ^3.0.6
+  custom_refresh_indicator: ^1.2.1
   equatable: ^2.0.3
   expandable: ^5.0.1
   firebase_auth: ^3.6.1

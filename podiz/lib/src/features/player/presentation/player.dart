@@ -10,7 +10,7 @@ import 'package:podiz/src/features/player/presentation/player_slider.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/palette.dart';
-import 'package:podiz/src/utils/zwsp_string.dart';
+import 'package:podiz/src/utils/string_zwsp.dart';
 
 import 'skeleton_player.dart';
 
@@ -39,7 +39,7 @@ class Player extends ConsumerWidget {
                   child: Material(
                     color: Palette.darkPurple,
                     child: InkWell(
-                      onTap: () => context.goNamed(
+                      onTap: () => context.pushNamed(
                         AppRoute.discussion.name,
                         params: {'episodeId': episode.id},
                       ),
@@ -48,7 +48,6 @@ class Player extends ConsumerWidget {
                         child: Row(
                           children: [
                             PodcastAvatar(
-                              podcastId: episode.showId,
                               imageUrl: episode.imageUrl,
                               size: 52,
                             ),

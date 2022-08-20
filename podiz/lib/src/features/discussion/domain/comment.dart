@@ -15,8 +15,10 @@ class Comment with EquatableMixin {
   @JsonKey(fromJson: durationFromMs)
   final Duration timestamp;
 
-  final String? parentId;
+  final List<String> parentIds;
   final String? parentUserId;
+
+  final int replyCount;
 
   Comment({
     this.id = '',
@@ -24,8 +26,9 @@ class Comment with EquatableMixin {
     required this.episodeId,
     required this.userId,
     required this.timestamp,
-    required this.parentId,
-    required this.parentUserId,
+    this.parentIds = const [],
+    this.parentUserId,
+    this.replyCount = 0,
   });
 
   factory Comment.fromFirestore(Doc doc) =>
@@ -41,6 +44,6 @@ class Comment with EquatableMixin {
 
   @override
   String toString() {
-    return 'Comment(id: $id, text: $text, parentId: $parentId, episodeId: $episodeId, userId: $userId, timestamp: $timestamp)';
+    return 'Comment(id: $id, text: $text, episodeId: $episodeId, userId: $userId, timestamp: $timestamp, parentIds: $parentIds, parentUserId: $parentUserId, replyCount: $replyCount)';
   }
 }
