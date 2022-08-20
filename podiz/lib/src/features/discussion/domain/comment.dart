@@ -1,42 +1,31 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:podiz/aspect/typedefs.dart';
+import 'package:podiz/src/utils/duration_from_ms.dart';
+import 'package:podiz/src/utils/firestore_refs.dart';
 
 part 'comment.g.dart';
-
-//TODO get number of replies
 
 @JsonSerializable()
 class Comment with EquatableMixin {
   final String id;
-
-  @JsonKey(name: 'episodeUid')
-  final String episodeId; //!
-
-  @JsonKey(name: 'userUid')
+  final String text;
+  final String episodeId;
   final String userId;
 
-  @JsonKey(name: 'comment')
-  final String text;
+  @JsonKey(fromJson: durationFromMs)
+  final Duration timestamp;
 
-  final int time;
-
-  final int lvl; //!
-
-  @JsonKey(name: 'parents', defaultValue: [])
-  final List<String> parentIds; //!
-
-  @JsonKey(ignore: true)
-  final Map<String, Comment> replies = {};
+  final String? parentId;
+  final String? parentUserId;
 
   Comment({
-    required this.id,
+    this.id = '',
+    required this.text,
     required this.episodeId,
     required this.userId,
-    required this.text,
-    required this.time,
-    required this.lvl,
-    this.parentIds = const [],
+    required this.timestamp,
+    required this.parentId,
+    required this.parentUserId,
   });
 
   factory Comment.fromFirestore(Doc doc) =>
@@ -47,11 +36,11 @@ class Comment with EquatableMixin {
 
   Map<String, dynamic> toJson() => _$CommentToJson(this);
 
-  factory Comment.copyFrom(Comment user) => Comment.fromJson(user.toJson());
-
-  @override
-  String toString() => " user + $episodeId : \n{(name : $text; $replies\n";
-
   @override
   List<Object?> get props => [id];
+
+  @override
+  String toString() {
+    return 'Comment(id: $id, text: $text, parentId: $parentId, episodeId: $episodeId, userId: $userId, timestamp: $timestamp)';
+  }
 }

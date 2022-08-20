@@ -12,6 +12,9 @@ class InMemoryStore<T> {
   /// The output stream that can be used to listen to the data
   Stream<T> get stream => _subject.stream;
 
+  /// A asynchronous getter for the next value
+  Future<T> get first => _subject.first;
+
   /// A synchronous getter for the current value
   T get value => _subject.value;
 

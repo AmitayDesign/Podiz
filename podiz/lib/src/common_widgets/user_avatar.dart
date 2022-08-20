@@ -11,9 +11,10 @@ class UserAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final image = user.imageUrl == null ? null : NetworkImage(user.imageUrl!);
     return CircleAvatar(
       radius: radius,
-      backgroundImage: NetworkImage(user.imageUrl),
+      backgroundImage: image, //TODO null image representation
       child: Material(
         shape: const CircleBorder(),
         clipBehavior: Clip.hardEdge,
@@ -38,6 +39,7 @@ class UserAvatarButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final image = user.imageUrl == null ? null : NetworkImage(user.imageUrl!);
     return IconButton(
       onPressed: () => context.pushNamed(
         AppRoute.profile.name,
@@ -45,7 +47,7 @@ class UserAvatarButton extends StatelessWidget {
       ),
       icon: CircleAvatar(
         radius: radius,
-        backgroundImage: NetworkImage(user.imageUrl),
+        backgroundImage: image, //TODO null image representation
       ),
     );
   }

@@ -10,11 +10,12 @@ final episodeRepositoryProvider = Provider<EpisodeRepository>(
   (ref) => FirestoreEpisodeRepository(
     spotifyApi: ref.watch(spotifyApiProvider),
     firestore: ref.watch(firestoreProvider),
+    functions: ref.watch(functionsProvider),
   ),
 );
 
 abstract class EpisodeRepository {
-  Stream<Episode?> watchEpisode(String episodeId);
+  Stream<Episode> watchEpisode(String episodeId);
   Future<Episode> fetchEpisode(String episodeId);
   Query<Episode> hotliveFirestoreQuery(); //!
   Query<Episode> episodesFirestoreQuery(String filter); //!

@@ -1,67 +1,54 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:podiz/src/features/auth/data/spotify_api.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/episodes/domain/podcast.dart';
+import 'package:podiz/src/utils/firestore_refs.dart';
 
 class FirestorePodcastRepository extends PodcastRepository {
   final FirebaseFirestore firestore;
+  final FirebaseFunctions functions;
   final SpotifyApi spotifyApi;
-  // final PodcastRepository podcastRepository;
 
   FirestorePodcastRepository({
     required this.firestore,
+    required this.functions,
     required this.spotifyApi,
   });
 
   @override
   Stream<Podcast> watchPodcast(String podcastId) {
-    return firestore
-        .collection('podcasters')
-        .doc(podcastId)
-        .snapshots()
-        .map((doc) => Podcast.fromFirestore(doc));
+    return firestore.showsCollection.doc(podcastId).snapshots().skipWhile(
+      (doc) {
+        if (!doc.exists) fetchSpotifyShow(podcastId);
+        return !doc.exists;
+      },
+    ).map((doc) => Podcast.fromFirestore(doc));
   }
 
   @override
   Future<Podcast> fetchPodcast(String podcastId) async {
-    final doc = await firestore.collection('podcasters').doc(podcastId).get();
-    // if (doc.exists)
-    return Podcast.fromFirestore(doc);
-    // return fetchPodcastFromSpotify(podcastId);
+    final doc = await firestore.showsCollection.doc(podcastId).get();
+    if (doc.exists) return Podcast.fromFirestore(doc);
+    return fetchSpotifyShow(podcastId).then(fetchPodcast);
   }
 
-  // TODO fetch podcast from spotify
-  // Future<Podcast> fetchPodcastFromSpotify(String podcastId) async {
-  //   final accessToken = spotifyApi.getAccessToken();
-  //   // final uri = Uri.https('api.spotify.com/v1/episodes', '/$podcastId');
-  //   final uri = Uri.parse('https://api.spotify.com/v1/episodes/$podcastId');
-  //   final response = await spotifyApi.client.get(uri, headers: {
-  //     'Accept': 'application/json',
-  //     'Authorization': 'Bearer $accessToken',
-  //     'Content-Type': 'application/json',
-  //   });
-  //   if (response.statusCode != 200) {
-  //     //TODO always throwing error
-  //     throw Exception('Failed to get podcast data');
-  //   }
+  Future<String> fetchSpotifyShow(String showId) async {
+    final accessToken = spotifyApi.getAccessToken();
+    final result = await functions
+        .httpsCallable('fetchSpotifyShow')
+        .call({'accessToken': accessToken, 'showId': showId});
 
-  //   final parsedJson = jsonDecode(response.body) as Map<String, dynamic>;
-  //   debugPrint(parsedJson.toString()); //TODO  get show id and name
-  //   final podcast = Podcast.fromSpotify(parsedJson);
-  //   //TODO save on firestore
-  //   // await firestore
-  //   //     .collection('podcasters')
-  //   //     .doc(podcastId)
-  //   //     .set(podcast.toFirestore());
-  //   //TODO load more episodes aswell
-  //   return podcast;
-  // }
+    final success = result.data;
+    if (!success) throw Exception('Failed to get show data');
+
+    return showId;
+  }
 
   @override
   Query<Podcast> podcastsFirestoreQuery(String filter) =>
-      FirebaseFirestore.instance
-          .collection("podcasters")
-          .where("searchArray", arrayContains: filter.toLowerCase())
+      FirebaseFirestore.instance.showsCollection
+          .where('searchArray', arrayContains: filter.toLowerCase())
           .withConverter(
             fromFirestore: (show, _) => Podcast.fromFirestore(show),
             toFirestore: (show, _) => {},
@@ -70,12 +57,12 @@ class FirestorePodcastRepository extends PodcastRepository {
   @override
   Future<void> follow(String userId, String podcastId) async {
     final batch = firestore.batch();
-    batch.update(firestore.collection("podcasters").doc(podcastId), {
-      "followers": FieldValue.arrayUnion([userId])
+    batch.update(firestore.showsCollection.doc(podcastId), {
+      'followers': FieldValue.arrayUnion([userId])
     });
-    batch.update(firestore.collection("users").doc(userId), {
-      "favPodcasts": FieldValue.arrayUnion([podcastId]),
-      "following": FieldValue.arrayUnion([podcastId])
+    batch.update(firestore.usersCollection.doc(userId), {
+      'favPodcasts': FieldValue.arrayUnion([podcastId]),
+      'following': FieldValue.arrayUnion([podcastId])
     });
     await batch.commit();
   }
@@ -83,12 +70,12 @@ class FirestorePodcastRepository extends PodcastRepository {
   @override
   Future<void> unfollow(String userId, String podcastId) async {
     final batch = firestore.batch();
-    batch.update(firestore.collection("podcasters").doc(podcastId), {
-      "followers": FieldValue.arrayRemove([userId])
+    batch.update(firestore.showsCollection.doc(podcastId), {
+      'followers': FieldValue.arrayRemove([userId])
     });
-    batch.update(firestore.collection("users").doc(userId), {
-      "favPodcasts": FieldValue.arrayRemove([podcastId]),
-      "following": FieldValue.arrayRemove([podcastId])
+    batch.update(firestore.usersCollection.doc(userId), {
+      'favPodcasts': FieldValue.arrayRemove([podcastId]),
+      'following': FieldValue.arrayRemove([podcastId])
     });
     await batch.commit();
   }
@@ -99,8 +86,8 @@ class FirestorePodcastRepository extends PodcastRepository {
 
   // Future<List<SearchResult>> searchShow(String text) async {
   //   QuerySnapshot<Map<String, dynamic>> docs = await firestore
-  //       .collection("podcasters")
-  //       .where("name", isGreaterThanOrEqualTo: text)
+  //       .showsCollection
+  //       .where('name', isGreaterThanOrEqualTo: text)
   //       .get();
   //   List<SearchResult> result = [];
   //   for (int i = 0; i < docs.docs.length; i++) {

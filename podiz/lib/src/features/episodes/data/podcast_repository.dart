@@ -8,8 +8,9 @@ import 'firestore_podcast_repository.dart';
 
 final podcastRepositoryProvider = Provider<PodcastRepository>(
   (ref) => FirestorePodcastRepository(
-    spotifyApi: ref.watch(spotifyApiProvider),
     firestore: ref.watch(firestoreProvider),
+    functions: ref.watch(functionsProvider),
+    spotifyApi: ref.watch(spotifyApiProvider),
   ),
 );
 

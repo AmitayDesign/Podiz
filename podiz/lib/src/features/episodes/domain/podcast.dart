@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:podiz/aspect/typedefs.dart';
+import 'package:podiz/src/utils/firestore_refs.dart';
 
 part 'podcast.g.dart';
 
@@ -10,15 +10,7 @@ class Podcast with EquatableMixin {
   final String name;
   final String publisher;
   final String description;
-
-  @JsonKey(name: 'image_url')
   final String imageUrl;
-
-  @JsonKey(name: 'total_episodes')
-  final int totalEpisodes;
-
-  @JsonKey(defaultValue: [], name: 'podcasts')
-  final List<String> episodeIds;
 
   @JsonKey(defaultValue: [])
   final List<String> followers;
@@ -29,8 +21,6 @@ class Podcast with EquatableMixin {
     required this.publisher,
     required this.description,
     required this.imageUrl,
-    required this.totalEpisodes,
-    required this.episodeIds,
     required this.followers,
   });
 
@@ -42,11 +32,11 @@ class Podcast with EquatableMixin {
 
   Map<String, dynamic> toJson() => _$PodcastToJson(this);
 
-  factory Podcast.copyFrom(Podcast user) => Podcast.fromJson(user.toJson());
-
-  @override
-  String toString() => " user + $id : \n{(name : $name;\n";
-
   @override
   List<Object> get props => [name];
+
+  @override
+  String toString() {
+    return 'Podcast(id: $id, name: $name, publisher: $publisher, description: $description, imageUrl: $imageUrl, followers: $followers)';
+  }
 }

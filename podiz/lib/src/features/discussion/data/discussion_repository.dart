@@ -1,5 +1,5 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/utils/instances.dart';
 
@@ -12,27 +12,38 @@ final discussionRepositoryProvider = Provider<DiscussionRepository>(
 );
 
 abstract class DiscussionRepository {
-  //TODO change how comments are saved
-  Stream<List<Comment>> watchComments(String episodeId);
+  Stream<List<Comment>> watchEpisodeComments(String episodeId, {int? limit});
   Stream<List<Comment>> watchUserComments(String userId);
-  Future<void> addComment(
-    String text, {
-    required String episodeId,
-    required int time,
-    required UserPodiz user,
-    Comment? parent,
-  });
+  Future<void> addComment(Comment comment);
 }
 
 //* Providers
 
-final commentsStreamProvider =
+final episodeCommentsStreamProvider =
     StreamProvider.family.autoDispose<List<Comment>, String>(
   (ref, episodeId) =>
-      ref.watch(discussionRepositoryProvider).watchComments(episodeId),
+      ref.watch(discussionRepositoryProvider).watchEpisodeComments(episodeId),
+);
+final limitedEpisodeCommentsStreamProvider =
+    StreamProvider.family.autoDispose<List<Comment>, EpisodeLimit>(
+  (ref, episodeLimit) => ref
+      .watch(discussionRepositoryProvider)
+      .watchEpisodeComments(episodeLimit.episodeId, limit: episodeLimit.limit),
 );
 final userCommentsStreamProvider =
     StreamProvider.family.autoDispose<List<Comment>, String>(
   (ref, userId) =>
       ref.watch(discussionRepositoryProvider).watchUserComments(userId),
 );
+
+//* Argument helper
+
+class EpisodeLimit extends Equatable {
+  final String episodeId;
+  final int limit;
+
+  const EpisodeLimit(this.episodeId, this.limit);
+
+  @override
+  List<Object?> get props => [episodeId, limit];
+}

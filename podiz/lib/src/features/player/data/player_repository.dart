@@ -24,6 +24,7 @@ abstract class PlayerRepository {
 
 //* Providers
 
+//TODO add load state while searching for episode
 final playerStateChangesProvider = StreamProvider<PlayingEpisode?>(
   (ref) => ref.watch(playerRepositoryProvider).watchPlayingEpisode(),
 );

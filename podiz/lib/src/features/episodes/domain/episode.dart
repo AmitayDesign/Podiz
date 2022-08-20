@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:podiz/aspect/typedefs.dart';
+import 'package:podiz/src/utils/duration_from_ms.dart';
+import 'package:podiz/src/utils/firestore_refs.dart';
 
 part 'episode.g.dart';
 
@@ -9,60 +10,32 @@ class Episode with EquatableMixin {
   final String id;
   final String name;
   final String description; //! not used
-
-  //TODO convert to seconds
-  @JsonKey(name: 'duration_ms')
-  final int duration;
-
-  @JsonKey(name: 'image_url')
   final String imageUrl;
 
-  //TODO remove from here to read by itself
-  @JsonKey(name: 'comments', defaultValue: 0)
-  final int commentsCount;
+  @JsonKey(fromJson: durationFromMs)
+  final Duration duration;
 
-  @JsonKey(name: 'commentsImg', defaultValue: [])
-  final List<String> commentImageUrls;
-  //!
+  final String releaseDate; //! not used
 
-  @JsonKey(name: 'release_date')
-  final String releaseDateString; //TODO make it a DateTime
-
-  //TODO remove from here to read by itself
-  @JsonKey(name: 'users_watching', defaultValue: [])
-  final List<String> userIdsWatching;
-
-  @JsonKey(name: 'show_uri')
   final String showId;
 
-  @JsonKey(name: 'show_name')
-  final String showName;
+  @JsonKey(defaultValue: [])
+  final List<String> usersWatching;
+
+  @JsonKey(defaultValue: [])
+  final List<String> commentsCount;
 
   Episode({
     required this.id,
     required this.name,
     required this.description,
     required this.duration,
-    required this.showName,
     required this.showId,
     required this.imageUrl,
+    required this.releaseDate,
+    required this.usersWatching,
     required this.commentsCount,
-    required this.commentImageUrls,
-    required this.releaseDateString,
-    required this.userIdsWatching,
   });
-
-  // TODO check if they have show data
-  factory Episode.fromSpotify(Map<String, dynamic> json) {
-    return Episode.fromJson(json
-      ..addAll({
-        'uid': json["uri"],
-        'image_url': json["images"][0]["url"],
-        'release_date': json["release_date"],
-        'show_uri': 'SHOW ID',
-        'show_name': 'SHOW NAME',
-      }));
-  }
 
   factory Episode.fromFirestore(Doc doc) =>
       Episode.fromJson(doc.data()!..['id'] = doc.id);
@@ -70,28 +43,13 @@ class Episode with EquatableMixin {
   factory Episode.fromJson(Map<String, dynamic> json) =>
       _$EpisodeFromJson(json);
 
-  factory Episode.copyFrom(Episode user) => Episode.fromJson(user.toJson());
-
   Map<String, dynamic> toJson() => _$EpisodeToJson(this);
-
-  Map<String, dynamic> toFirestore() {
-    // generate search array
-    final searchArray = [];
-    var prev = "";
-    for (final letter in name.split('')) {
-      prev += letter;
-      final word = prev.toLowerCase();
-      searchArray.add(word);
-    }
-    // return data
-    return toJson()
-      ..remove('uid')
-      ..['searchArray'] = searchArray;
-  }
-
-  @override
-  String toString() => " user + $id : \n{(name : $name;\n";
 
   @override
   List<Object> get props => [id];
+
+  @override
+  String toString() {
+    return 'Episode(id: $id, name: $name, description: $description, imageUrl: $imageUrl, duration: $duration, releaseDate: $releaseDate, showId: $showId, usersWatching: $usersWatching, commentsCount: $commentsCount)';
+  }
 }

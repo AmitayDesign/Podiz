@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
+import 'package:podiz/src/utils/firestore_refs.dart';
 
 import 'discussion_repository.dart';
 
@@ -8,127 +8,40 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
   FirebaseFirestore firestore;
   FirestoreDiscussionRepository({required this.firestore});
 
-  //TODO make this more scalable
-  //! do like a paginated list and when no more comments added, fetch more
-  //! to do so, save lvl1 comments separatedly from the other levels
+  //TODO make this more scalable with paginated list
   @override
-  Stream<List<Comment>> watchComments(String episodeId) {
-    return firestore
-        .collection('podcasts')
-        .doc(episodeId)
-        .collection('comments')
-        .orderBy('lvl')
-        .orderBy('time')
-        .snapshots()
-        .map((snapshot) {
-      final commentList =
-          snapshot.docs.map((doc) => Comment.fromFirestore(doc)).toList();
-      return groupComments(commentList);
-    });
+  Stream<List<Comment>> watchEpisodeComments(String episodeId, {int? limit}) {
+    var episodeComments = firestore.commentsCollection
+        .where('episodeId', isEqualTo: episodeId)
+        .orderBy('timestamp');
+    if (limit != null) episodeComments = episodeComments.limit(limit);
+    return episodeComments.snapshots().map((snapshot) =>
+        snapshot.docs.map((doc) => Comment.fromFirestore(doc)).toList());
   }
 
   @override
   Stream<List<Comment>> watchUserComments(String userId) {
-    return firestore
-        .collection('users')
-        .doc(userId)
-        .collection('comments')
-        .orderBy('lvl')
-        .orderBy('time')
+    return firestore.commentsCollection
+        .where('userId', isEqualTo: userId)
+        .orderBy('episodeId')
+        .orderBy('timestamp')
         .snapshots()
-        .map((snapshot) {
-      final commentList =
-          snapshot.docs.map((doc) => Comment.fromFirestore(doc)).toList();
-      return commentList;
-    });
-  }
-
-  List<Comment> groupComments(List<Comment> comments) {
-    final commentsGroup = <String, Comment>{};
-    for (final comment in comments) {
-      switch (comment.lvl) {
-        case 1:
-          commentsGroup[comment.id] = comment;
-          break;
-        case 2:
-          commentsGroup[comment.parentIds[0]]!.replies[comment.id] = comment;
-          break;
-        case 3:
-          commentsGroup[comment.parentIds[0]]!
-              .replies[comment.parentIds[1]]!
-              .replies[comment.id] = comment;
-          break;
-        case 4:
-          commentsGroup[comment.parentIds[0]]!
-              .replies[comment.parentIds[1]]!
-              .replies[comment.parentIds[2]]!
-              .replies[comment.id] = comment;
-          break;
-      }
-    }
-    return commentsGroup.values.toList();
+        .map((snapshot) =>
+            snapshot.docs.map((doc) => Comment.fromFirestore(doc)).toList());
   }
 
   @override
-  Future<void> addComment(
-    String text, {
-    required String episodeId,
-    required int time,
-    required UserPodiz user,
-    Comment? parent,
-  }) async {
+  Future<void> addComment(Comment comment) async {
     // generate comment doc to get the id
-    final commentDoc = firestore
-        .collection("podcasts")
-        .doc(episodeId)
-        .collection("comments")
-        .doc();
-
-    final comment = Comment(
-      id: commentDoc.id,
-      episodeId: episodeId,
-      userId: user.id,
-      text: text,
-      time: time * 1000,
-      lvl: parent == null ? 1 : parent.parentIds.length + 2,
-      parentIds:
-          parent == null ? <String>[] : (parent.parentIds..add(parent.id)),
-    );
+    final commentDoc = firestore.commentsCollection.doc();
 
     final batch = firestore.batch();
-    // add comment to comments list
-    batch.set(
-      commentDoc,
-      comment.toJson(),
-    );
-    // add comment to user comments collection
-    batch.set(
-      firestore
-          .collection("users")
-          .doc(user.id)
-          .collection('comments')
-          .doc(comment.id),
-      comment.toJson(),
-    );
-    // increment podcast comment counter
-    //TODO do not save img urls, save user ids
-    //! then swap user argument for userId
-    batch.update(firestore.collection("podcasts").doc(comment.episodeId), {
-      "commentsImg": FieldValue.arrayUnion([user.imageUrl]),
-      "comments": FieldValue.increment(1)
+    // save comment
+    batch.set(commentDoc, comment.toJson());
+    // increment episode comment counter
+    batch.update(firestore.episodesCollection.doc(comment.episodeId), {
+      "commentsCount": FieldValue.increment(1),
     });
-
-    // create notification
-    if (parent != null) {
-      batch.set(
-        firestore
-            .collection("users")
-            .doc(parent.userId)
-            .collection("notifications")
-            .doc(),
-        comment.toJson(),
-      );
-    }
 
     await batch.commit();
   }

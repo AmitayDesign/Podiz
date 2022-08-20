@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:podiz/aspect/typedefs.dart';
+import 'package:podiz/src/utils/firestore_refs.dart';
 
 part 'user_podiz.g.dart';
 
@@ -10,6 +10,9 @@ class UserPodiz with EquatableMixin {
   final String id;
   final String name;
   final String email;
+  final String? imageUrl;
+
+  final String? lastListened;
 
   @JsonKey(defaultValue: [])
   final List<String> followers;
@@ -17,16 +20,8 @@ class UserPodiz with EquatableMixin {
   @JsonKey(defaultValue: [])
   final List<String> following;
 
-  // TODO can imageUrl be null?
-  @JsonKey(name: 'image_url')
-  final String imageUrl;
-
-  // TODO make lastListenedEpisodeId nullable
-  @JsonKey(name: 'lastListened')
-  final String lastListenedEpisodeId;
-
-  @JsonKey(name: 'favPodcasts', defaultValue: [])
-  final List<String> favPodcastIds;
+  @JsonKey(defaultValue: [])
+  final List<String> favPodcasts;
 
   UserPodiz({
     required this.id,
@@ -35,8 +30,8 @@ class UserPodiz with EquatableMixin {
     required this.followers,
     required this.following,
     required this.imageUrl,
-    required this.lastListenedEpisodeId,
-    required this.favPodcastIds,
+    required this.lastListened,
+    required this.favPodcasts,
   });
 
   factory UserPodiz.fromFirestore(Doc doc) =>
@@ -47,13 +42,11 @@ class UserPodiz with EquatableMixin {
 
   Map<String, dynamic> toJson() => _$UserPodizToJson(this);
 
-  factory UserPodiz.copyFrom(UserPodiz user) =>
-      UserPodiz.fromJson(user.toJson());
-
-  @override
-  String toString() =>
-      'UserPodiz(id: $id, name: $name, email: $email, followers: $followers, following: $following, imageUrl: $imageUrl, lastListenedEpisodeId: $lastListenedEpisodeId, favPodcastIds: $favPodcastIds)';
-
   @override
   List<Object> get props => [id];
+
+  @override
+  String toString() {
+    return 'UserPodiz(id: $id, name: $name, email: $email, imageUrl: $imageUrl, lastListened: $lastListened, followers: $followers, following: $following, favPodcasts: $favPodcasts)';
+  }
 }

@@ -1,24 +1,24 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/data/spotify_api.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/utils/firestore_refs.dart';
 import 'package:podiz/src/utils/in_memory_store.dart';
 import 'package:podiz/src/utils/null_preferences.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
-class SpotifyAuthRepository implements AuthRepository {
-  final SpotifyApi spotifyApi;
-  final FirebaseFunctions functions;
+class SpotifyAuthRepository with AuthState implements AuthRepository {
+  @override
   final FirebaseFirestore firestore;
+  @override
   final StreamingSharedPreferences preferences;
 
-  final userKey = 'userId';
-  final authState = InMemoryStore<UserPodiz?>();
+  final SpotifyApi spotifyApi;
+  final FirebaseFunctions functions;
 
   SpotifyAuthRepository({
     required this.spotifyApi,
@@ -30,20 +30,98 @@ class SpotifyAuthRepository implements AuthRepository {
     listenToConnectionChanges();
   }
 
-  late StreamSubscription sub;
+  late StreamSubscription connectionSub;
+  void listenToConnectionChanges() {
+    connectionSub =
+        SpotifySdk.subscribeConnectionStatus().listen((status) async {
+      if (!status.connected && preferences.getStringOrNull(userKey) != null) {
+        signIn();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    connectionSub.cancel();
+    super.dispose();
+  }
+
+  @override
+  Stream<UserPodiz?> authStateChanges() => authState.stream;
+
+  @override
+  UserPodiz? get currentUser => authState.value;
+
+  @override
+  Future<void> signIn() async {
+    late final bool success;
+    try {
+      final accessToken = await spotifyApi.getAccessToken();
+      success = await SpotifySdk.connectToSpotifyRemote(
+        clientId: spotifyApi.clientId,
+        redirectUrl: spotifyApi.redirectUrl,
+        accessToken: accessToken,
+      );
+      await fetchUser(accessToken);
+    } catch (e) {
+      print(e);
+      throw Exception('Sign in error: $e');
+    }
+    if (!success) throw Exception('Error connecting to Spotify');
+  }
+
+  Future<void> fetchUser(String accessToken) async {
+    final result = await functions
+        .httpsCallable('fetchSpotifyUser')
+        .call({'accessToken': accessToken});
+
+    final userId = result.data;
+    if (userId == null) throw Exception('Failed to get user data');
+
+    await preferences.setString(userKey, userId);
+    await authState.first;
+  }
+
+  @override
+  Future<void> signOut() async {
+    late bool success;
+    try {
+      success = await preferences.remove(userKey);
+      if (success) await SpotifySdk.disconnect();
+    } catch (e) {
+      throw Exception('Sign out error: $e');
+    }
+    if (!success) throw Exception('Sign out failed');
+  }
+
+  @override
+  Future<void> updateUser(UserPodiz user) {
+    return firestore.usersCollection
+        .doc(user.id)
+        .update(user.toJson())
+        .catchError((e) => throw Exception('Error updating user'));
+  }
+}
+
+abstract class AuthState {
+  StreamingSharedPreferences get preferences;
+  FirebaseFirestore get firestore;
+
+  final userKey = 'userId';
+  final authState = InMemoryStore<UserPodiz?>();
+
+  StreamSubscription? authStateSub;
   StreamSubscription? userSub;
   void listenToAuthStateChanges() {
-    // StreamTransformer.fromBind(bind)
-    final preferencesStream = preferences.watchString(userKey);
-    sub = preferencesStream
+    authStateSub = preferences
+        .watchString(userKey)
         .transform(
           StreamTransformer<String?, UserPodiz?>.fromHandlers(
             handleData: (userId, sink) {
               userSub?.cancel();
               if (userId == null) sink.add(null);
-              userSub = firestore
-                  .collection('users')
-                  .doc(userId)
+              userSub = firestore.usersCollection
+                  .doc(userId!)
                   .snapshots()
                   .listen((doc) {
                 final user = UserPodiz.fromFirestore(doc);
@@ -60,105 +138,10 @@ class SpotifyAuthRepository implements AuthRepository {
         .listen((user) => authState.value = user);
   }
 
-  late StreamSubscription connectionSub;
-  void listenToConnectionChanges() {
-    connectionSub =
-        SpotifySdk.subscribeConnectionStatus().listen((status) async {
-      if (!status.connected && preferences.getStringOrNull(userKey) != null) {
-        signIn();
-      }
-    });
-  }
-
   void dispose() {
-    connectionSub.cancel();
     userSub?.cancel();
-    sub.cancel();
+    authStateSub?.cancel();
     authState.close();
-  }
-
-  @override
-  Stream<UserPodiz?> authStateChanges() => authState.stream;
-
-  @override
-  UserPodiz? get currentUser => authState.value;
-
-  @override
-  Future<void> signOut() async {
-    late bool success;
-    try {
-      success = await preferences.remove(userKey);
-      if (success) await SpotifySdk.disconnect();
-    } catch (e) {
-      throw Exception('Sign out error: $e');
-    }
-    if (!success) throw Exception('Sign out failed');
-  }
-
-  @override
-  Future<void> signIn() async {
-    late final bool success;
-    late final String userId;
-    try {
-      final accessToken = await spotifyApi.getAccessToken();
-      success = await SpotifySdk.connectToSpotifyRemote(
-        clientId: spotifyApi.clientId,
-        redirectUrl: spotifyApi.redirectUrl,
-        accessToken: accessToken,
-      );
-      userId = await setUserData(accessToken);
-    } catch (e) {
-      throw Exception('Sign in error: $e');
-    }
-    if (!success) throw Exception('Error connecting to Spotify');
-    await preferences.setString(userKey, userId);
-    final userDoc = await firestore.collection('users').doc(userId).get();
-    authState.value = UserPodiz.fromFirestore(userDoc);
-  }
-
-  Future<String> setUserData(String accessToken) async {
-    final uri = Uri.parse('https://api.spotify.com/v1/me');
-    var response = await spotifyApi.client.get(uri, headers: {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $accessToken',
-      'Content-Type': 'application/json',
-    });
-    if (response.statusCode != 200) throw Exception('Failed to get user data');
-    // decode response
-    final parsedJson = jsonDecode(response.body) as Map<String, dynamic>;
-    final userId = parsedJson['uri'] as String;
-    final name = parsedJson['display_name'] as String;
-    final email = parsedJson['email'] as String;
-    final imageUrl = parsedJson['images'].first['url'] as String;
-    // build search array
-    //! I think you can use greaterThenOrEquals in the query instead
-    var prev = '';
-    final searchArray = [];
-    for (final letter in name.split('')) {
-      prev += letter;
-      final word = prev.toLowerCase();
-      searchArray.add(word);
-    }
-    // save user in firestore
-    await firestore.collection('users').doc(userId).set(
-      {
-        'name': name,
-        'email': email,
-        'image_url': imageUrl,
-        'searchArray': searchArray,
-      },
-      SetOptions(merge: true),
-    );
-    return userId;
-  }
-
-  @override
-  Future<void> updateUser(UserPodiz user) {
-    return firestore
-        .collection('users')
-        .doc(user.id)
-        .update(user.toJson())
-        .catchError((e) => throw Exception('Error updating user'));
   }
 }
 
