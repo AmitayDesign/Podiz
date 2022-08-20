@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
 
 import 'spoiler_indicator.dart';
@@ -12,7 +13,8 @@ class SpoilerTest extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(
-          bottom: kBottomNavigationBarHeight + Player.height),
+        bottom: HomeScreen.bottomBarHeigh + Player.height,
+      ),
       child: SpoilerIndicator(
         onAction: (value) => print(value ? 'yes' : 'no'),
         child: ListView.separated(

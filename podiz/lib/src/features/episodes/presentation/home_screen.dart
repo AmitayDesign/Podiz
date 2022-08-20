@@ -22,7 +22,7 @@ class HomeScreen extends ConsumerStatefulWidget {
   final HomePage? destination;
   const HomeScreen({Key? key, this.destination}) : super(key: key);
 
-  static const bottomBarHeigh = 64.0;
+  static const bottomBarHeigh = 72.0;
 
   @override
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
@@ -128,23 +128,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 ClipRect(
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: BottomNavigationBar(
-                      onTap: goToDestination,
-                      currentIndex: destination.index,
-                      items: const [
-                        BottomNavigationBarItem(
-                          label: 'Home',
-                          icon: Icon(Icons.home),
-                        ),
-                        BottomNavigationBarItem(
-                          label: 'Search',
-                          icon: Icon(Icons.search),
-                        ),
-                        BottomNavigationBarItem(
-                          label: 'Notifications',
-                          icon: Icon(Icons.notifications),
-                        ),
-                      ],
+                    child: SizedBox(
+                      height: HomeScreen.bottomBarHeigh,
+                      child: BottomNavigationBar(
+                        onTap: goToDestination,
+                        currentIndex: destination.index,
+                        items: const [
+                          BottomNavigationBarItem(
+                            label: 'Home',
+                            icon: Icon(Icons.home),
+                          ),
+                          BottomNavigationBarItem(
+                            label: 'Search',
+                            icon: Icon(Icons.search),
+                          ),
+                          BottomNavigationBarItem(
+                            label: 'Notifications',
+                            icon: Icon(Icons.notifications),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
