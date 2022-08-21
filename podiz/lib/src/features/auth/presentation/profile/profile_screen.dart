@@ -52,15 +52,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final userValue = ref.watch(userStreamProvider(widget.userId));
-    const playerPadding = EdgeInsets.only(bottom: Player.height); //!
     return userValue.when(
       loading: () => EmptyScreen.loading(),
-      error: (e, _) {
-        print(e);
-        return EmptyScreen.text(
-          'There was an error opening this profile.',
-        );
-      },
+      error: (e, _) => EmptyScreen.text(
+        'There was an error opening this profile.',
+      ),
       data: (user) => Scaffold(
         extendBody: true,
         body: RefreshIndicator(
@@ -158,7 +154,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                     for (final comment in comments.where(
                                         (comment) =>
                                             comment.episodeId == episodeId))
-                                      CommentCard(comment, episodeId: episodeId)
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8),
+                                        child: CommentCard(comment,
+                                            episodeId: episodeId),
+                                      )
                                   ],
                                 ),
                               ),
