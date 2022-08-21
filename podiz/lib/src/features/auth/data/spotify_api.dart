@@ -11,7 +11,8 @@ class SpotifyApi {
     'user-follow-read',
     'user-read-private',
     'user-read-email',
-    'user-read-playback-position'
+    'user-read-playback-position',
+    'user-library-read'
   ].join(' ');
 
   http.Client client = http.Client();

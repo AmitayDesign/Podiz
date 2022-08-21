@@ -1,116 +1,50 @@
+const helpers = require("./helpers.js");
+const { fetchSpotifyShow } = require("./shows.js");
 
-// async function fetchUserSpotifyFavoritePodcasts(userId, accessToken) {
-// 	var response = await fetch(host + "/me/shows?offset=0&limit=50", {
-// 		headers: {
-// 			Accept: "application/json",
-// 			Authorization: "Bearer " + accessToken,
-// 			"Content-Type": "application/json",
-// 		},
-// 		method: "GET",
-// 	});
+exports.fetchSpotifyUserFavorites = async (accessToken, userId) => {
+	try {
+		var response = await helpers.fetchFromHost("/me/shows/" + accessToken);
+		if (response["status"] != 200) return false;
 
-// 	if (response["status"] != 200) {
-// 		return false;
-// 	}
+		var favorites = await response.json();
 
-// 	result = await response.json();
+		var lastFavorite = await helpers.getUserFavorites(userId);
+		await saveFavorites(accessToken, userId, favorites, lastFavorite);
+		return true;
 
-// 	for (item of result["items"]) {
-// 		s = item["show"];
+	} catch (e) {
+		console.log(e);
+		return false;
+	}
+}
 
-// 		searchArrayShow = [];
-// 		prev = "";
-// 		for (letter of s["name"]) {
-// 			prev += letter;
-// 			word = prev.toLowerCase();
-// 			searchArrayShow.push(word);
-// 		}
+//TODO check for already save shows to user refresh on user screen
+const saveFavorites = async (accessToken, userId, favorites, lastFavorite) => {
 
-// 		show = {
-// 			uid: s["uri"],
-// 			name: s["name"],
-// 			publisher: s["publisher"],
-// 			description: s["description"],
-// 			image_url: s["images"][0]["url"],
-// 			total_episodes: s["total_episodes"],
-// 			podcasts: [],
-// 			followers: [],
-// 			searchArray: searchArrayShow,
-// 		};
+	var fetchMore = true;
 
-// 		if (!(await checkShowExists(show["uid"]))) {
-// 			addShowToDataBase(show);
-// 			getShowEpisodes(
-// 				show["uid"],
-// 				show["total_episodes"],
-// 				show["name"],
-// 				userUid
-// 			);
-// 		}
-// 		_firestore()
-// 			.collection("users")
-// 			.doc(userUid)
-// 			.update({
-// 				favPodcasts: _firestore.FieldValue.arrayUnion(show["uid"]),
-// 				followers: _firestore.FieldValue.arrayUnion(show["uid"]),
-// 			});
-// 	}
+	//TODO do not fetch the show again, call show/showId/episodes
+	var favoriteIds = await Promise.all(
+		favorites.items.map(async (show) => {
+			var showExists = await helpers.checkShowExists(show.id);
+			if (!showExists) await fetchSpotifyShow(accessToken, show.id);
+			if (show.id == lastFavorite) fetchMore = false;
+			return show.id;
+		})
+	);
 
-// 	let total = result["total"];
-// 	if (total < 50) {
-// 		return;
-// 	}
-// 	for (let i = 50; i < total; i += 50) {
-// 		var response = await fetch(
-// 			host + "/me/shows?offset=" + i.toString() + "&limit=50",
-// 			{
-// 				headers: {
-// 					Accept: "application/json",
-// 					Authorization: "Bearer " + code,
-// 					"Content-Type": "application/json",
-// 				},
-// 				method: "GET",
-// 			}
-// 		);
-// 		for (item of result["items"]) {
-// 			s = item["show"];
+	await helpers.addUserFavorites(userId, favoriteIds);
 
-// 			searchArrayShow = [];
-// 			prev = "";
-// 			for (letter of s["name"]) {
-// 				prev += letter;
-// 				word = prev.toLowerCase();
-// 				searchArrayShow.push(word);
-// 			}
+	if (fetchMore && episodes.next != null)
+		fetchMoreFavorites(accessToken, userId, favorites.next, lastFavorite);
+}
 
-// 			show = {
-// 				uid: s["uri"],
-// 				name: s["name"],
-// 				publisher: s["publisher"],
-// 				description: s["description"],
-// 				image_url: s["images"][0]["url"],
-// 				total_episodes: s["total_episodes"],
-// 				podcasts: [],
-// 				followers: [],
-// 				searchArray: searchArrayShow,
-// 			};
+const fetchMoreFavorites =
+	async (accessToken, userId, favoritesRef, lastFavorite) => {
+		var response = await helpers.fetchFrom(favoritesRef, accessToken);
 
-// 			if (!(await checkShowExists(show["uid"]))) {
-// 				addShowToDataBase(show);
-// 				getShowEpisodes(
-// 					show["uid"],
-// 					show["total_episodes"],
-// 					show["name"],
-// 					userUid
-// 				);
-// 				_firestore()
-// 					.collection("users")
-// 					.doc(userUid)
-// 					.update({
-// 						favPodcasts: _firestore.FieldValue.arrayUnion(show["uid"]),
-// 						followers: _firestore.FieldValue.arrayUnion(show["uid"]),
-// 					});
-// 			}
-// 		}
-// 	}
-// }
+		if (response["status"] != 200) return;
+		var favorites = await response.json();
+
+		saveFavorites(accessToken, userId, favorites, lastFavorite);
+	}

@@ -3,6 +3,7 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 // functions
 const auth = require('./src/auth.js');
+const favorites = require('./src/user-favorites.js');
 const listening = require('./src/episode-listening.js');
 const episodes = require('./src/episodes.js');
 const shows = require('./src/shows.js');
@@ -12,6 +13,9 @@ admin.initializeApp(functions.config().firebase);
 
 exports.fetchSpotifyUser = functions.https.onCall(
 	(data, _) => auth.fetchSpotifyUser(data.accessToken));
+
+exports.fetchSpotifyUserFavorites = functions.https.onCall((data, _) =>
+	favorites.fetchSpotifyUserFavorites(data.accessToken, data.userId));
 
 exports.fetchSpotifyEpisode = functions.https.onCall(
 	(data, _) => episodes.fetchSpotifyEpisode(data.accessToken, data.episodeId));

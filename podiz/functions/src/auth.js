@@ -1,4 +1,5 @@
 const helpers = require("./helpers.js");
+const { fetchSpotifyUserFavorites } = require("./user-favorites.js");
 
 exports.fetchSpotifyUser = async (accessToken) => {
 	try {
@@ -7,12 +8,12 @@ exports.fetchSpotifyUser = async (accessToken) => {
 		if (response["status"] != 200) return null;
 		var user = await response.json();
 
-		// if user exists, does nothing
+		// if user does not exist, create user in firestore
 		var userExists = await helpers.checkUserExists(user.id);
-		if (userExists) return user.id;
+		if (!userExists) await helpers.addUserToFirestore(user);
 
-		// create user in firestore
-		await helpers.addUserToFirestore(user);
+		// save user favorite shows
+		await fetchSpotifyUserFavorites(accessToken, user.id);
 		return user.id;
 
 	} catch (e) {

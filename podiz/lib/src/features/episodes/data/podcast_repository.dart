@@ -18,6 +18,7 @@ abstract class PodcastRepository {
   Stream<Podcast> watchPodcast(String podcastId);
   Future<Podcast> fetchPodcast(String podcastId);
   Future<void> refetchPodcast(String podcastId);
+  Future<void> refetchFavoritePodcasts(String userId);
   Query<Podcast> podcastsFirestoreQuery(String filter); //!
   Future<void> follow(String userId, String podcastId);
   Future<void> unfollow(String userId, String podcastId);

@@ -46,6 +46,17 @@ exports.addUserToFirestore = (user) =>
 		searchArray: buildSearchArray(user.display_name),
 	}, { merge: true });
 
+exports.addUserFavorites = (userId, favoritIds) =>
+	userRef(userId).update({
+		favPodcasts: admin.firestore.FieldValue.arrayUnion(favoritIds),
+	});
+
+exports.getUserFavorites = async (userId) => {
+	var doc = await userRef(userId).get();
+	return doc.data().favPodcasts;
+}
+
+
 // EPISODE
 
 const episodeRef = (episodeId) =>
@@ -119,7 +130,7 @@ exports.getShowT = async (t, showId) => {
 exports.addLastSavedEpisodeT = (t, showId, episodeId) =>
 	t.update(showRef(showId), {
 		lastSavedEpisode: episodeId,
-	}, { merge: true });
+	});
 
 
 // HELPERS

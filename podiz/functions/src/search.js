@@ -12,6 +12,7 @@ exports.fetchSpotifySearch = async (accessToken, query) => {
 
 		var search = await response.json();
 
+		//TODO do not fetch the show again, call show/showId/episodes
 		var resultList = await Promise.all([
 			// add shows to firestore
 			...search.shows.items.map(async (show) => {

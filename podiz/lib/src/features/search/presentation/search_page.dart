@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/common_widgets/sliver_firestore_query_builder.dart';
+import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
@@ -37,6 +38,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(currentUserProvider);
     final userRepository = ref.watch(userRepositoryProvider);
     final episodeRepository = ref.watch(episodeRepositoryProvider);
     final podcastRepository = ref.watch(podcastRepositoryProvider);
@@ -53,38 +55,54 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                   child: SizedBox(height: GradientBar.backgroundHeight + 16),
                 ),
 
-                SliverFirestoreQueryBuilder<UserPodiz>(
-                  query: userRepository.usersFirestoreQuery(query),
-                  builder: (context, user) => UserCard(user),
-                ),
-                SliverFirestoreQueryBuilder<Podcast>(
-                  query: podcastRepository.podcastsFirestoreQuery(query),
-                  builder: (context, podcast) => PodcastCard(podcast),
-                ),
-                SliverFirestoreQueryBuilder<Episode>(
-                  query: episodeRepository.episodesFirestoreQuery(query),
-                  builder: (context, episode) {
-                    return Consumer(
-                      builder: (context, ref, _) {
-                        final podcastValue =
-                            ref.watch(podcastFutureProvider(episode.showId));
-                        return podcastValue.when(
-                            loading: () => const SkeletonEpisodeCard(),
-                            error: (e, _) => const SizedBox.shrink(),
-                            data: (podcast) {
-                              return EpisodeCard(
-                                episode,
-                                podcast: podcast,
-                                insights: false,
-                              );
-                            });
+                if (query.isEmpty)
+                  if (user.favPodcasts.isNotEmpty)
+                    SliverList(
+                      delegate: SliverChildListDelegate([
+                        for (final podcastId in user.favPodcasts)
+                          Consumer(builder: (context, ref, _) {
+                            final podcastValue =
+                                ref.watch(podcastFutureProvider(podcastId));
+                            return podcastValue.when(
+                                //TODO create SkeletonPodcastCard
+                                loading: () => const SkeletonEpisodeCard(),
+                                error: (e, _) => const SizedBox.shrink(),
+                                data: (podcast) => PodcastCard(podcast));
+                          }),
+                      ]),
+                    )
+                  else ...[
+                    SliverFirestoreQueryBuilder<UserPodiz>(
+                      query: userRepository.usersFirestoreQuery(query),
+                      builder: (context, user) => UserCard(user),
+                    ),
+                    SliverFirestoreQueryBuilder<Podcast>(
+                      query: podcastRepository.podcastsFirestoreQuery(query),
+                      builder: (context, podcast) => PodcastCard(podcast),
+                    ),
+                    SliverFirestoreQueryBuilder<Episode>(
+                      query: episodeRepository.episodesFirestoreQuery(query),
+                      builder: (context, episode) {
+                        return Consumer(
+                          builder: (context, ref, _) {
+                            final podcastValue = ref
+                                .watch(podcastFutureProvider(episode.showId));
+                            return podcastValue.when(
+                                loading: () => const SkeletonEpisodeCard(),
+                                error: (e, _) => const SizedBox.shrink(),
+                                data: (podcast) {
+                                  return EpisodeCard(
+                                    episode,
+                                    podcast: podcast,
+                                    insights: false,
+                                  );
+                                });
+                          },
+                        );
                       },
-                    );
-                  },
-                ),
-
-                if (query.isNotEmpty)
-                  SliverToBoxAdapter(child: SpotifySearchButton(query)),
+                    ),
+                    SliverToBoxAdapter(child: SpotifySearchButton(query)),
+                  ],
 
                 // so it doesnt end behind the bottom bar
                 const SliverToBoxAdapter(

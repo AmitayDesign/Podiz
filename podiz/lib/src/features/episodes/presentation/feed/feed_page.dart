@@ -53,92 +53,119 @@ class _FeedPageState extends ConsumerState<FeedPage>
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: const FeedBar(),
-      body: CustomScrollView(
-        controller: scrollController,
-        slivers: [
-          // so it doesnt start behind the app bar
-          const SliverToBoxAdapter(
-            child: SizedBox(height: GradientBar.backgroundHeight + 16),
-          ),
+      body: RefreshIndicator(
+        onRefresh: () => ref
+            .read(podcastRepositoryProvider)
+            .refetchFavoritePodcasts(user.id),
+        child: CustomScrollView(
+          controller: scrollController,
+          slivers: [
+            // so it doesnt start behind the app bar
+            const SliverToBoxAdapter(
+              child: SizedBox(height: GradientBar.backgroundHeight + 16),
+            ),
 
-          //* Last Listened
-          if (user.lastListened != null)
-            Consumer(
-              builder: (context, ref, _) {
-                final lastListenedValue =
-                    ref.watch(episodeFutureProvider(user.lastListened!));
-                return SliverToBoxAdapter(
-                  child: lastListenedValue.when(
-                    loading: () => const SkeletonEpisodeCard(
-                      bottomHeight: QuickNoteButton.height,
+            //* Last Listened
+            if (user.lastListened != null)
+              Consumer(
+                builder: (context, ref, _) {
+                  final lastListenedValue =
+                      ref.watch(episodeFutureProvider(user.lastListened!));
+                  return SliverToBoxAdapter(
+                    child: lastListenedValue.when(
+                      loading: () => const SkeletonEpisodeCard(
+                        bottomHeight: QuickNoteButton.height,
+                      ),
+                      error: (e, _) => null,
+                      data: (lastListened) {
+                        final podcastValue = ref
+                            .watch(podcastFutureProvider(lastListened.showId));
+                        return podcastValue.when(
+                            loading: () => const SkeletonEpisodeCard(
+                                  bottomHeight: QuickNoteButton.height,
+                                ),
+                            error: (e, _) => null,
+                            data: (podcast) {
+                              return EpisodeCard(
+                                lastListened,
+                                podcast: podcast,
+                                bottom: QuickNoteButton(episode: lastListened),
+                              );
+                            });
+                      },
                     ),
-                    error: (e, _) => null,
-                    data: (lastListened) {
+                  );
+                },
+              ),
+
+            //* My Casts
+            if (user.favPodcasts.isNotEmpty)
+              SliverList(
+                delegate: SliverChildListDelegate([
+                  if (user.lastListened != null)
+                    FeedTitle(
+                      Locales.string(context, feedController.myCastsLocaleKey),
+                      textKey: feedController.myCastsKey,
+                    ),
+                  for (final podcastId in user.favPodcasts.take(6))
+                    Consumer(builder: (context, ref, _) {
                       final podcastValue =
-                          ref.watch(podcastFutureProvider(lastListened.showId));
+                          ref.watch(podcastFutureProvider(podcastId));
+                      final lastEpisodeValue =
+                          ref.watch(lastShowEpisodeFutureProvider(podcastId));
                       return podcastValue.when(
-                          loading: () => const SkeletonEpisodeCard(
-                                bottomHeight: QuickNoteButton.height,
-                              ),
-                          error: (e, _) => null,
+                          loading: () => const SkeletonEpisodeCard(),
+                          error: (e, _) => const SizedBox.shrink(),
                           data: (podcast) {
-                            return EpisodeCard(
-                              lastListened,
-                              podcast: podcast,
-                              bottom: QuickNoteButton(episode: lastListened),
-                            );
+                            return lastEpisodeValue.when(
+                                loading: () => const SkeletonEpisodeCard(),
+                                error: (e, _) => const SizedBox.shrink(),
+                                data: (lastEpisode) {
+                                  if (lastEpisode == null) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  return EpisodeCard(
+                                    lastEpisode,
+                                    podcast: podcast,
+                                  );
+                                });
                           });
-                    },
-                  ),
+                    }),
+                ]),
+              ),
+
+            //* Hot & Live
+            if (user.lastListened != null || user.favPodcasts.isNotEmpty)
+              SliverFeedTitle(
+                Locales.string(context, feedController.hotLiveLocaleKey),
+                textKey: feedController.hotLiveKey,
+              ),
+            SliverFirestoreQueryBuilder<Episode>(
+              query: episodeRepository.hotliveFirestoreQuery(),
+              builder: (context, episode) {
+                return Consumer(
+                  builder: (context, ref, _) {
+                    final podcastValue =
+                        ref.watch(podcastFutureProvider(episode.showId));
+                    return podcastValue.when(
+                        loading: () => const SkeletonEpisodeCard(),
+                        error: (e, _) => const SizedBox.shrink(),
+                        data: (podcast) {
+                          return EpisodeCard(episode, podcast: podcast);
+                        });
+                  },
                 );
               },
             ),
 
-          //* My Casts
-          // if (user.favPodcasts.isNotEmpty)
-          //   SliverList(
-          //     delegate: SliverChildListDelegate([
-          //       if (user.lastListened.isNotEmpty)
-          //         FeedTitle(
-          //           Locales.string(context, feedController.myCastsLocaleKey),
-          //           textKey: feedController.myCastsKey,
-          //         ),
-          //       for (final episode in authManager.myCast)
-          //         EpisodeCard(episode),
-          //     ]),
-          //   ),
-
-          //* Hot & Live
-          if (user.lastListened != null || user.favPodcasts.isNotEmpty)
-            SliverFeedTitle(
-              Locales.string(context, feedController.hotLiveLocaleKey),
-              textKey: feedController.hotLiveKey,
+            // so it doesnt end behind the bottom bar
+            const SliverToBoxAdapter(
+              child: SizedBox(
+                height: HomeScreen.bottomBarHeigh + Player.height,
+              ),
             ),
-          SliverFirestoreQueryBuilder<Episode>(
-            query: episodeRepository.hotliveFirestoreQuery(),
-            builder: (context, episode) {
-              return Consumer(
-                builder: (context, ref, _) {
-                  final podcastValue =
-                      ref.watch(podcastFutureProvider(episode.showId));
-                  return podcastValue.when(
-                      loading: () => const SkeletonEpisodeCard(),
-                      error: (e, _) => const SizedBox.shrink(),
-                      data: (podcast) {
-                        return EpisodeCard(episode, podcast: podcast);
-                      });
-                },
-              );
-            },
-          ),
-
-          // so it doesnt end behind the bottom bar
-          const SliverToBoxAdapter(
-            child: SizedBox(
-              height: HomeScreen.bottomBarHeigh + Player.height,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

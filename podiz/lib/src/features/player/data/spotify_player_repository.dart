@@ -1,5 +1,6 @@
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/player/domain/playing_episode.dart';
+import 'package:podiz/src/utils/uri_from_id.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 
@@ -71,7 +72,4 @@ class SpotifyPlayerRepository implements PlayerRepository {
   @override
   Future<void> seekTo(Duration time) =>
       SpotifySdk.seekTo(positionedMilliseconds: time.inMilliseconds);
-
-  String uriFromId(String id) => 'spotify:episode:$id';
-  String idFromUri(String uri) => uri.split(':').last;
 }

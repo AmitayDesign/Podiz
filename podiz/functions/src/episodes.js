@@ -1,5 +1,5 @@
 const helpers = require("./helpers.js");
-const showFunctions = require("./shows.js");
+const { fetchSpotifyShow } = require("./shows.js");
 
 exports.fetchSpotifyEpisode = async (accessToken, episodeId) => {
 	try {
@@ -13,8 +13,9 @@ exports.fetchSpotifyEpisode = async (accessToken, episodeId) => {
 		var show = episode.show;
 
 		// add show to firestore
+		//TODO do not fetch the show again, call show/showId/episodes
 		var showExists = await helpers.checkShowExists(show.id);
-		if (!showExists) await showFunctions.fetchSpotifyShow(accessToken, show.id);
+		if (!showExists) await fetchSpotifyShow(accessToken, show.id);
 
 		// add episode to firestore
 		await helpers.addEpisodeToFirestore(episode, show.id);

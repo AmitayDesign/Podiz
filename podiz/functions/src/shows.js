@@ -27,6 +27,7 @@ const populateFirestoreWithEpisodes = async (accessToken, showId, episodes) => {
 	console.log('NEXT EPISODES:' + episodes.next);
 	if (!episodes.items.length) return;
 
+	//TODO save oldest episodeId aswell in case of an error
 	var fetchMore = await admin.firestore().runTransaction(async (t) => {
 		var show = await helpers.getShowT(t, showId);
 		for (var episode of episodes.items) {

@@ -4,6 +4,8 @@ import 'package:podiz/src/features/auth/data/spotify_api.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/episodes/domain/podcast.dart';
 import 'package:podiz/src/utils/firestore_refs.dart';
+import 'package:podiz/src/utils/uri_from_id.dart';
+import 'package:spotify_sdk/spotify_sdk.dart';
 
 class FirestorePodcastRepository extends PodcastRepository {
   final FirebaseFirestore firestore;
@@ -33,7 +35,6 @@ class FirestorePodcastRepository extends PodcastRepository {
     return fetchSpotifyShow(podcastId).then(fetchPodcast);
   }
 
-  //TODO save oldest episodeId in case of an error
   Future<String> fetchSpotifyShow(String showId) async {
     final accessToken = await spotifyApi.getAccessToken();
     final result = await functions
@@ -48,6 +49,17 @@ class FirestorePodcastRepository extends PodcastRepository {
 
   @override
   Future<void> refetchPodcast(String podcastId) => fetchSpotifyShow(podcastId);
+
+  @override
+  Future<void> refetchFavoritePodcasts(String userId) async {
+    final accessToken = await spotifyApi.getAccessToken();
+    final result = await functions
+        .httpsCallable('fetchSpotifyUserFavorites')
+        .call({'accessToken': accessToken, 'userId': userId});
+
+    final success = result.data;
+    if (!success) throw Exception('Failed to refresh favorites');
+  }
 
   @override
   Query<Podcast> podcastsFirestoreQuery(String filter) =>
@@ -65,10 +77,10 @@ class FirestorePodcastRepository extends PodcastRepository {
       'followers': FieldValue.arrayUnion([userId])
     });
     batch.update(firestore.usersCollection.doc(userId), {
-      'favPodcasts': FieldValue.arrayUnion([podcastId]),
-      'following': FieldValue.arrayUnion([podcastId])
+      'favPodcasts': FieldValue.arrayUnion([podcastId])
     });
     await batch.commit();
+    SpotifySdk.addToLibrary(spotifyUri: uriFromId(podcastId));
   }
 
   @override
@@ -78,10 +90,10 @@ class FirestorePodcastRepository extends PodcastRepository {
       'followers': FieldValue.arrayRemove([userId])
     });
     batch.update(firestore.usersCollection.doc(userId), {
-      'favPodcasts': FieldValue.arrayRemove([podcastId]),
-      'following': FieldValue.arrayRemove([podcastId])
+      'favPodcasts': FieldValue.arrayRemove([podcastId])
     });
     await batch.commit();
+    SpotifySdk.removeFromLibrary(spotifyUri: uriFromId(podcastId));
   }
 
   // List<String> getFavoritePodcasts() {
