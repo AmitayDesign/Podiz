@@ -13,6 +13,7 @@ class SpotifyApi {
     'user-read-email',
     'user-read-playback-position',
     'user-library-read'
+        'user-library-modify'
   ].join(' ');
 
   http.Client client = http.Client();

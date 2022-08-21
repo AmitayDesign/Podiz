@@ -23,8 +23,6 @@ exports.fetchSpotifyShow = async (accessToken, showId) => {
 }
 
 const populateFirestoreWithEpisodes = async (accessToken, showId, episodes) => {
-	console.log('EPISODES:' + episodes.items.length);
-	console.log('NEXT EPISODES:' + episodes.next);
 	if (!episodes.items.length) return;
 
 	//TODO save oldest episodeId aswell in case of an error
@@ -44,7 +42,6 @@ const populateFirestoreWithEpisodes = async (accessToken, showId, episodes) => {
 		return true;
 	});
 
-	console.log('FETCH MORE?' + fetchMore ? 'YES' : 'NO');
 	// fetch more
 	if (fetchMore && episodes.next != null)
 		fetchMoreEpisodes(accessToken, showId, episodes.next);

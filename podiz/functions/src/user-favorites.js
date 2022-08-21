@@ -3,7 +3,7 @@ const { fetchSpotifyShow } = require("./shows.js");
 
 exports.fetchSpotifyUserFavorites = async (accessToken, userId) => {
 	try {
-		var response = await helpers.fetchFromHost("/me/shows/" + accessToken);
+		var response = await helpers.fetchFromHost("/me/shows", accessToken);
 		if (response["status"] != 200) return false;
 
 		var favorites = await response.json();
@@ -18,6 +18,7 @@ exports.fetchSpotifyUserFavorites = async (accessToken, userId) => {
 	}
 }
 
+//TODO remove favorites
 //TODO check for already save shows to user refresh on user screen
 const saveFavorites = async (accessToken, userId, favorites, lastFavorite) => {
 
@@ -25,7 +26,8 @@ const saveFavorites = async (accessToken, userId, favorites, lastFavorite) => {
 
 	//TODO do not fetch the show again, call show/showId/episodes
 	var favoriteIds = await Promise.all(
-		favorites.items.map(async (show) => {
+		favorites.items.map(async (item) => {
+			var show = item.show;
 			var showExists = await helpers.checkShowExists(show.id);
 			if (!showExists) await fetchSpotifyShow(accessToken, show.id);
 			if (show.id == lastFavorite) fetchMore = false;
@@ -33,9 +35,10 @@ const saveFavorites = async (accessToken, userId, favorites, lastFavorite) => {
 		})
 	);
 
-	await helpers.addUserFavorites(userId, favoriteIds);
+	if (favoriteIds.length)
+		await helpers.addUserFavorites(userId, favoriteIds);
 
-	if (fetchMore && episodes.next != null)
+	if (fetchMore && favorites.next != null)
 		fetchMoreFavorites(accessToken, userId, favorites.next, lastFavorite);
 }
 

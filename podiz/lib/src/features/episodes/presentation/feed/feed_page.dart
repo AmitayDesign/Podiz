@@ -50,14 +50,13 @@ class _FeedPageState extends ConsumerState<FeedPage>
     final episodeRepository = ref.watch(episodeRepositoryProvider);
     final feedController = ref.read(feedControllerProvider.notifier);
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: const FeedBar(),
-      body: RefreshIndicator(
-        onRefresh: () => ref
-            .read(podcastRepositoryProvider)
-            .refetchFavoritePodcasts(user.id),
-        child: CustomScrollView(
+    return RefreshIndicator(
+      onRefresh: () =>
+          ref.read(podcastRepositoryProvider).refetchFavoritePodcasts(user.id),
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: const FeedBar(),
+        body: CustomScrollView(
           controller: scrollController,
           slivers: [
             // so it doesnt start behind the app bar

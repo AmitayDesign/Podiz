@@ -48,7 +48,7 @@ exports.addUserToFirestore = (user) =>
 
 exports.addUserFavorites = (userId, favoritIds) =>
 	userRef(userId).update({
-		favPodcasts: admin.firestore.FieldValue.arrayUnion(favoritIds),
+		favPodcasts: admin.firestore.FieldValue.arrayUnion(...favoritIds),
 	});
 
 exports.getUserFavorites = async (userId) => {
