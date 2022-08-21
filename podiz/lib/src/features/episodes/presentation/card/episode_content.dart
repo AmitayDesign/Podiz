@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:podiz/aspect/formatters.dart';
 import 'package:podiz/src/common_widgets/dot.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/episodes/domain/podcast.dart';
@@ -36,8 +35,7 @@ class EpisodeContent extends StatelessWidget {
     this.disableAvatarNavigation = false,
   }) : super(key: key);
 
-  String format(int milliseconds) {
-    final duration = Duration(milliseconds: milliseconds);
+  String format(Duration duration) {
     final time = duration.toString().split('.').first.split(':');
     final hours = time.first;
     final minutes = time.last;
@@ -63,10 +61,7 @@ class EpisodeContent extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              PodcastAvatar(
-                imageUrl: episode.imageUrl,
-                size: avatarSize,
-              ),
+              PodcastAvatar(imageUrl: episode.imageUrl, size: avatarSize),
               const SizedBox(width: 8),
               Expanded(
                 child: Padding(
@@ -96,7 +91,7 @@ class EpisodeContent extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            ' $dot ${timeFormatter(episode.duration.inMilliseconds)}',
+                            ' $dot ${format(episode.duration)}',
                             style: subtitleStyle,
                           ),
                         ],

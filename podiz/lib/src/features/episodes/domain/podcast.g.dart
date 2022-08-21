@@ -11,7 +11,7 @@ Podcast _$PodcastFromJson(Map<String, dynamic> json) => Podcast(
       name: json['name'] as String,
       publisher: json['publisher'] as String,
       description: json['description'] as String,
-      imageUrl: json['imageUrl'] as String,
+      imageUrl: json['imageUrl'] as String?,
       followers: (json['followers'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??

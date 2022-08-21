@@ -12,7 +12,7 @@ Episode _$EpisodeFromJson(Map<String, dynamic> json) => Episode(
       description: json['description'] as String,
       duration: durationFromMs(json['duration'] as int),
       showId: json['showId'] as String,
-      imageUrl: json['imageUrl'] as String,
+      imageUrl: json['imageUrl'] as String?,
       releaseDate: json['releaseDate'] as String,
       usersWatching: (json['usersWatching'] as List<dynamic>?)
               ?.map((e) => e as String)
@@ -26,7 +26,7 @@ Map<String, dynamic> _$EpisodeToJson(Episode instance) => <String, dynamic>{
       'name': instance.name,
       'description': instance.description,
       'imageUrl': instance.imageUrl,
-      'duration': instance.duration.inMicroseconds,
+      'duration': msFromDuration(instance.duration),
       'releaseDate': instance.releaseDate,
       'showId': instance.showId,
       'usersWatching': instance.usersWatching,

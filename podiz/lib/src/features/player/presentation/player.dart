@@ -47,10 +47,7 @@ class Player extends ConsumerWidget {
                         padding: const EdgeInsets.fromLTRB(24, 12, 16, 12),
                         child: Row(
                           children: [
-                            PodcastAvatar(
-                              imageUrl: episode.imageUrl,
-                              size: 52,
-                            ),
+                            PodcastAvatar(imageUrl: episode.imageUrl, size: 52),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Column(

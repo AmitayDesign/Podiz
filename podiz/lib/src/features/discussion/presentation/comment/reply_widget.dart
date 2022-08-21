@@ -10,16 +10,24 @@ import 'comment_trailing.dart';
 
 class ReplyWidget extends ConsumerWidget {
   final Comment comment;
+  final List<Comment> replies;
+  final bool collapsed;
   final String episodeId;
   final VoidCallback? onReply;
   final VoidCallback? onShare;
+
   const ReplyWidget(
     this.comment, {
     Key? key,
+    required this.replies,
+    this.collapsed = false,
     required this.episodeId,
     this.onReply,
     this.onShare,
   }) : super(key: key);
+
+  List<Comment> get directReplies =>
+      replies.where((reply) => reply.parentIds.last == reply.id).toList();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,7 +37,7 @@ class ReplyWidget extends ConsumerWidget {
       error: (e, _) => const SizedBox.shrink(),
       data: (user) {
         return Padding(
-          padding: const EdgeInsets.only(top: 16),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -52,8 +60,10 @@ class ReplyWidget extends ConsumerWidget {
               IntrinsicHeight(
                 child: Row(
                   children: [
-                    const VerticalDivider(width: 24),
-                    const SizedBox(width: 8),
+                    if (!collapsed) ...[
+                      const VerticalDivider(width: 24),
+                      const SizedBox(width: 8),
+                    ],
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -61,15 +71,23 @@ class ReplyWidget extends ConsumerWidget {
                           const SizedBox(height: 4),
                           CommentText(comment.text),
                           const SizedBox(height: 12),
-                          CommentTrailing(
-                            onReply: onReply,
-                            onShare: onShare,
-                          ),
-                          //TODO expandable comment
-                          // if (comment.replies.isNotEmpty) ...[
-                          //   for (final reply in comment.replies.values)
-                          //     ReplyWidget(reply, episodeId: episodeId),
-                          // ],
+                          if (!collapsed) ...[
+                            CommentTrailing(
+                              onReply: onReply,
+                              onShare: onShare,
+                            ),
+                            for (final reply in directReplies)
+                              ReplyWidget(
+                                reply,
+                                episodeId: episodeId,
+                                replies: replies
+                                    .where((reply) =>
+                                        reply.parentIds.contains(reply.id))
+                                    .toList(),
+                                onReply: onReply,
+                                onShare: onShare,
+                              ),
+                          ],
                         ],
                       ),
                     ),

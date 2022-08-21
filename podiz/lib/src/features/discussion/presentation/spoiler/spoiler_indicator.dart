@@ -23,12 +23,33 @@ class SpoilerIndicator extends StatefulWidget {
 }
 
 class _SpoilerIndicatorState extends State<SpoilerIndicator> {
+  final height = 200.0;
   final controller = IndicatorController();
+  var previousState = IndicatorState.idle;
   var completer = Completer();
 
   @override
+  void initState() {
+    super.initState();
+    controller.addListener(() {
+      if (previousState == IndicatorState.armed &&
+          controller.isLoading &&
+          mounted) setState(() {});
+      if (previousState == IndicatorState.loading &&
+          (controller.isHiding || controller.isIdle) &&
+          mounted) setState(() {});
+      previousState = controller.state;
+    });
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    const height = 200.0;
     return !widget.enabled
         ? widget.builder(false)
         : CustomRefreshIndicator(

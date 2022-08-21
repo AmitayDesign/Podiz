@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:podiz/src/utils/firestore_refs.dart';
+import 'package:podiz/src/utils/doc_typedef.dart';
 
 part 'podcast.g.dart';
 
@@ -15,7 +15,7 @@ class Podcast with EquatableMixin {
   @JsonKey(defaultValue: [])
   final List<String> followers;
 
-  Podcast({
+  const Podcast({
     required this.id,
     required this.name,
     required this.publisher,

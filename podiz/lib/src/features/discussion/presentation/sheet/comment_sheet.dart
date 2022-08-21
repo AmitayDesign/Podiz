@@ -9,6 +9,7 @@ import 'package:podiz/src/features/discussion/presentation/comment/comment_text_
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/player_button.dart';
 import 'package:podiz/src/features/player/presentation/player_controller.dart';
+import 'package:podiz/src/features/player/presentation/player_slider_controller.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/context_theme.dart';
@@ -78,15 +79,16 @@ class CommentSheet extends ConsumerWidget {
 
                   //* Comment text field
                   CommentTextField(
+                    autofocus: isReply,
                     hint: isReply ? 'Add a reply...' : 'Share your insight...',
                     onSend: (text) {
-                      final time =
-                          ref.read(playerTimeStreamProvider).valueOrNull!;
+                      final time = ref.read(playerSliderControllerProvider);
                       final comment = Comment(
                         text: text,
                         episodeId: episode.id,
                         userId: ref.read(currentUserProvider).id,
                         timestamp: time.position,
+                        parentIds: target?.parentIds?..add(target!.id),
                       );
                       ref
                           .read(discussionRepositoryProvider)

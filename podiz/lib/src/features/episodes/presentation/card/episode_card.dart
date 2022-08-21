@@ -36,7 +36,7 @@ class EpisodeCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Card(
-      margin: const EdgeInsets.all(8),
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       elevation: 0,
       clipBehavior: Clip.hardEdge,
       shape: RoundedRectangleBorder(

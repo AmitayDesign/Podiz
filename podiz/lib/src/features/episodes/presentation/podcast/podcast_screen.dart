@@ -52,41 +52,37 @@ class _PodcastScreenState extends ConsumerState<PodcastScreen> {
       ),
       data: (podcast) => Scaffold(
         extendBody: true,
-        body: NotificationListener<ScrollEndNotification>(
-          onNotification: (_) {
-            snapHeader();
-            return false;
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: RefreshIndicator(
-              onRefresh: () => ref
-                  .read(podcastRepositoryProvider)
-                  .refetchPodcast(podcast.id),
-              child: CustomScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                controller: scrollController,
-                slivers: [
-                  //* Sliver app bar
-                  PodcastSliverHeader(
-                    podcast: podcast,
-                    minHeight: minHeight,
-                    maxHeight: maxHeight,
-                  ),
+        body: RefreshIndicator(
+          onRefresh: () =>
+              ref.read(podcastRepositoryProvider).refetchPodcast(podcast.id),
+          child: NotificationListener<ScrollEndNotification>(
+            onNotification: (_) {
+              snapHeader();
+              return false;
+            },
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              controller: scrollController,
+              slivers: [
+                //* Sliver app bar
+                PodcastSliverHeader(
+                  podcast: podcast,
+                  minHeight: minHeight,
+                  maxHeight: maxHeight,
+                ),
 
-                  //* List of episodes
-                  SliverFirestoreQueryBuilder<Episode>(
-                    query: episodeRepository
-                        .showEpisodesFirestoreQuery(podcast.id),
-                    builder: (context, episode) =>
-                        EpisodeCard(episode, podcast: podcast),
-                  ),
+                //* List of episodes
+                SliverFirestoreQueryBuilder<Episode>(
+                  query:
+                      episodeRepository.showEpisodesFirestoreQuery(podcast.id),
+                  builder: (context, episode) =>
+                      EpisodeCard(episode, podcast: podcast),
+                ),
 
-                  // so it doesnt end behind the bottom bar
-                  const SliverToBoxAdapter(
-                      child: SizedBox(height: Player.height)),
-                ],
-              ),
+                // so it doesnt end behind the bottom bar
+                const SliverToBoxAdapter(
+                    child: SizedBox(height: Player.height)),
+              ],
             ),
           ),
         ),

@@ -39,6 +39,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       final page = pageController.page;
       if (page != null && page == page.toInt()) goToDestination(page.toInt());
     });
+    //navigate to discussion when entering pon the app if already listening to an episode
+    ref.listenOnce<AsyncValue<PlayingEpisode?>>(
+      playerStateChangesProvider,
+      (_, firstEpisodeValue) {
+        firstEpisodeValue.whenData((firstEpisode) {
+          if (firstEpisode != null && firstEpisode.isPlaying) {
+            context.goNamed(
+              AppRoute.discussion.name,
+              params: {'episodeId': firstEpisode.id},
+            );
+          }
+        });
+      },
+    );
   }
 
   @override

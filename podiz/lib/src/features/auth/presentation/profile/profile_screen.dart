@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:podiz/src/common_widgets/empty_screen.dart';
 import 'package:podiz/src/common_widgets/episode_subtitle.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
@@ -13,6 +14,7 @@ import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/episodes/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/features/episodes/presentation/avatar/skeleton_podcast_avatar.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
+import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -52,9 +54,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final userValue = ref.watch(userStreamProvider(widget.userId));
     return userValue.when(
       loading: () => EmptyScreen.loading(),
-      error: (e, _) => EmptyScreen.text(
-        'There was an error opening this profile.',
-      ),
+      error: (e, _) {
+        print(e);
+        return EmptyScreen.text(
+          'There was an error opening this profile.',
+        );
+      },
       data: (user) => Scaffold(
         extendBody: true,
         body: NotificationListener<ScrollEndNotification>(
@@ -118,6 +123,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                       error: (e, _) => const SizedBox.shrink(),
                                       data: (podcast) => PodcastAvatar(
                                         imageUrl: podcast.imageUrl,
+                                        onTap: () => context.pushNamed(
+                                          AppRoute.podcast.name,
+                                          params: {'podcastId': podcast.id},
+                                        ),
                                       ),
                                     );
                                   },

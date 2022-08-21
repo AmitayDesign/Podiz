@@ -5,7 +5,7 @@ import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
-class CommentTextField extends StatefulWidget {
+class CommentTextField extends ConsumerStatefulWidget {
   final bool autofocus;
   final String hint;
   final ValueSetter<String>? onSend;
@@ -18,25 +18,35 @@ class CommentTextField extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<CommentTextField> createState() => _CommentTextFieldState();
+  ConsumerState<CommentTextField> createState() => _CommentTextFieldState();
 }
 
-class _CommentTextFieldState extends State<CommentTextField> {
+class _CommentTextFieldState extends ConsumerState<CommentTextField> {
   final commentNode = FocusNode();
   final commentController = TextEditingController();
   String get comment => commentController.text;
 
   @override
   void dispose() {
+    commentNode.dispose();
     commentController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant CommentTextField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.autofocus) {
+      commentNode.requestFocus();
+    } else {
+      commentNode.unfocus();
+    }
   }
 
   void sendComment() {
     if (comment.isEmpty) return;
     widget.onSend?.call(comment);
     commentController.clear();
-    commentNode.unfocus();
   }
 
   @override

@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:podiz/src/utils/doc_typedef.dart';
 import 'package:podiz/src/utils/duration_from_ms.dart';
-import 'package:podiz/src/utils/firestore_refs.dart';
 
 part 'episode.g.dart';
 
@@ -12,7 +12,7 @@ class Episode with EquatableMixin {
   final String description;
   final String? imageUrl;
 
-  @JsonKey(fromJson: durationFromMs)
+  @JsonKey(fromJson: durationFromMs, toJson: msFromDuration)
   final Duration duration;
 
   final String releaseDate;
@@ -25,7 +25,7 @@ class Episode with EquatableMixin {
   @JsonKey(defaultValue: 0)
   final int commentsCount;
 
-  Episode({
+  const Episode({
     required this.id,
     required this.name,
     required this.description,

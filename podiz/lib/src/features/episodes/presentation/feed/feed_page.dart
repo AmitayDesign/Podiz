@@ -53,95 +53,92 @@ class _FeedPageState extends ConsumerState<FeedPage>
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: const FeedBar(),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: CustomScrollView(
-          controller: scrollController,
-          slivers: [
-            // so it doesnt start behind the app bar
-            const SliverToBoxAdapter(
-              child: SizedBox(height: GradientBar.backgroundHeight + 16),
-            ),
+      body: CustomScrollView(
+        controller: scrollController,
+        slivers: [
+          // so it doesnt start behind the app bar
+          const SliverToBoxAdapter(
+            child: SizedBox(height: GradientBar.backgroundHeight + 16),
+          ),
 
-            //* Last Listened
-            if (user.lastListened != null)
-              Consumer(
-                builder: (context, ref, _) {
-                  final lastListenedValue =
-                      ref.watch(episodeFutureProvider(user.lastListened!));
-                  return SliverToBoxAdapter(
-                    child: lastListenedValue.when(
-                      loading: () => const SkeletonEpisodeCard(
-                        bottomHeight: QuickNoteButton.height,
-                      ),
-                      error: (e, _) => null,
-                      data: (lastListened) {
-                        final podcastValue = ref
-                            .watch(podcastFutureProvider(lastListened.showId));
-                        return podcastValue.when(
-                            loading: () => const SkeletonEpisodeCard(
-                                  bottomHeight: QuickNoteButton.height,
-                                ),
-                            error: (e, _) => null,
-                            data: (podcast) {
-                              return EpisodeCard(
-                                lastListened,
-                                podcast: podcast,
-                                bottom: QuickNoteButton(episode: lastListened),
-                              );
-                            });
-                      },
+          //* Last Listened
+          if (user.lastListened != null)
+            Consumer(
+              builder: (context, ref, _) {
+                final lastListenedValue =
+                    ref.watch(episodeFutureProvider(user.lastListened!));
+                return SliverToBoxAdapter(
+                  child: lastListenedValue.when(
+                    loading: () => const SkeletonEpisodeCard(
+                      bottomHeight: QuickNoteButton.height,
                     ),
-                  );
-                },
-              ),
-
-            //* My Casts
-            // if (user.favPodcasts.isNotEmpty)
-            //   SliverList(
-            //     delegate: SliverChildListDelegate([
-            //       if (user.lastListened.isNotEmpty)
-            //         FeedTile(
-            //           Locales.string(context, feedController.myCastsLocaleKey),
-            //           textKey: feedController.myCastsKey,
-            //         ),
-            //       for (final episode in authManager.myCast)
-            //         EpisodeCard(episode),
-            //     ]),
-            //   ),
-
-            //* Hot & Live
-            if (user.lastListened != null || user.favPodcasts.isNotEmpty)
-              SliverFeedTile(
-                Locales.string(context, feedController.hotLiveLocaleKey),
-                textKey: feedController.hotLiveKey,
-              ),
-            SliverFirestoreQueryBuilder<Episode>(
-              query: episodeRepository.hotliveFirestoreQuery(),
-              builder: (context, episode) {
-                return Consumer(
-                  builder: (context, ref, _) {
-                    final podcastValue =
-                        ref.watch(podcastFutureProvider(episode.showId));
-                    return podcastValue.when(
-                        loading: () => const SkeletonEpisodeCard(),
-                        error: (e, _) => const SizedBox.shrink(),
-                        data: (podcast) {
-                          return EpisodeCard(episode, podcast: podcast);
-                        });
-                  },
+                    error: (e, _) => null,
+                    data: (lastListened) {
+                      final podcastValue =
+                          ref.watch(podcastFutureProvider(lastListened.showId));
+                      return podcastValue.when(
+                          loading: () => const SkeletonEpisodeCard(
+                                bottomHeight: QuickNoteButton.height,
+                              ),
+                          error: (e, _) => null,
+                          data: (podcast) {
+                            return EpisodeCard(
+                              lastListened,
+                              podcast: podcast,
+                              bottom: QuickNoteButton(episode: lastListened),
+                            );
+                          });
+                    },
+                  ),
                 );
               },
             ),
 
-            // so it doesnt end behind the bottom bar
-            const SliverToBoxAdapter(
-              child: SizedBox(
-                height: HomeScreen.bottomBarHeigh + Player.height,
-              ),
+          //* My Casts
+          // if (user.favPodcasts.isNotEmpty)
+          //   SliverList(
+          //     delegate: SliverChildListDelegate([
+          //       if (user.lastListened.isNotEmpty)
+          //         FeedTitle(
+          //           Locales.string(context, feedController.myCastsLocaleKey),
+          //           textKey: feedController.myCastsKey,
+          //         ),
+          //       for (final episode in authManager.myCast)
+          //         EpisodeCard(episode),
+          //     ]),
+          //   ),
+
+          //* Hot & Live
+          if (user.lastListened != null || user.favPodcasts.isNotEmpty)
+            SliverFeedTitle(
+              Locales.string(context, feedController.hotLiveLocaleKey),
+              textKey: feedController.hotLiveKey,
             ),
-          ],
-        ),
+          SliverFirestoreQueryBuilder<Episode>(
+            query: episodeRepository.hotliveFirestoreQuery(),
+            builder: (context, episode) {
+              return Consumer(
+                builder: (context, ref, _) {
+                  final podcastValue =
+                      ref.watch(podcastFutureProvider(episode.showId));
+                  return podcastValue.when(
+                      loading: () => const SkeletonEpisodeCard(),
+                      error: (e, _) => const SizedBox.shrink(),
+                      data: (podcast) {
+                        return EpisodeCard(episode, podcast: podcast);
+                      });
+                },
+              );
+            },
+          ),
+
+          // so it doesnt end behind the bottom bar
+          const SliverToBoxAdapter(
+            child: SizedBox(
+              height: HomeScreen.bottomBarHeigh + Player.height,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:podiz/src/utils/doc_typedef.dart';
 import 'package:podiz/src/utils/duration_from_ms.dart';
-import 'package:podiz/src/utils/firestore_refs.dart';
 
 part 'comment.g.dart';
 
@@ -12,24 +12,25 @@ class Comment with EquatableMixin {
   final String episodeId;
   final String userId;
 
-  @JsonKey(fromJson: durationFromMs)
+  @JsonKey(fromJson: durationFromMs, toJson: msFromDuration)
   final Duration timestamp;
 
+  @JsonKey(defaultValue: [])
   final List<String> parentIds;
   final String? parentUserId;
 
   final int replyCount;
 
-  Comment({
+  const Comment({
     this.id = '',
     required this.text,
     required this.episodeId,
     required this.userId,
     required this.timestamp,
-    this.parentIds = const [],
+    List<String>? parentIds,
     this.parentUserId,
     this.replyCount = 0,
-  });
+  }) : parentIds = parentIds ?? const [];
 
   factory Comment.fromFirestore(Doc doc) =>
       Comment.fromJson(doc.data()!..['id'] = doc.id);

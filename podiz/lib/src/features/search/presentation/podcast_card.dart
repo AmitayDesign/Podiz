@@ -25,7 +25,7 @@ class PodcastCard extends ConsumerWidget {
     final titleStyle = context.textTheme.titleMedium;
     final subtitleStyle = context.textTheme.bodyMedium;
     return Card(
-      margin: const EdgeInsets.all(8),
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       elevation: 0,
       clipBehavior: Clip.hardEdge,
       shape: RoundedRectangleBorder(
