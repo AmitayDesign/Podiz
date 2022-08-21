@@ -163,8 +163,7 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                             replyWidget(
                               reply,
                               replies
-                                  .where((reply) =>
-                                      reply.parentIds.contains(reply.id))
+                                  .where((r) => r.parentIds.contains(reply.id))
                                   .toList(),
                             ),
                           if (widget.comment.replyCount > 1) ...[
@@ -204,8 +203,5 @@ class _CommentCardState extends ConsumerState<CommentCard> {
         replies: replies,
         collapsed: collapsed,
         episodeId: widget.episodeId,
-        onReply: () =>
-            ref.read(commentSheetTargetProvider.notifier).state = reply,
-        onShare: () => share(reply),
       );
 }

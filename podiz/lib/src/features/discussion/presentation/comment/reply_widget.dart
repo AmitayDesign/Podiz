@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
+import 'package:podiz/src/features/discussion/presentation/sheet/comment_sheet.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
 import 'comment_text.dart';
@@ -13,8 +14,6 @@ class ReplyWidget extends ConsumerWidget {
   final List<Comment> replies;
   final bool collapsed;
   final String episodeId;
-  final VoidCallback? onReply;
-  final VoidCallback? onShare;
 
   const ReplyWidget(
     this.comment, {
@@ -22,12 +21,13 @@ class ReplyWidget extends ConsumerWidget {
     required this.replies,
     this.collapsed = false,
     required this.episodeId,
-    this.onReply,
-    this.onShare,
   }) : super(key: key);
 
   List<Comment> get directReplies =>
-      replies.where((reply) => reply.parentIds.last == reply.id).toList();
+      replies.where((reply) => reply.parentIds.last == comment.id).toList();
+
+  //TODO share feature
+  void share(Comment comment) {}
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -71,21 +71,21 @@ class ReplyWidget extends ConsumerWidget {
                           const SizedBox(height: 4),
                           CommentText(comment.text),
                           const SizedBox(height: 12),
-                          if (!collapsed) ...[
+                          if (!collapsed && comment.parentIds.length < 3) ...[
                             CommentTrailing(
-                              onReply: onReply,
-                              onShare: onShare,
+                              onReply: () => ref
+                                  .read(commentSheetTargetProvider.notifier)
+                                  .state = comment,
+                              onShare: () => share(comment),
                             ),
                             for (final reply in directReplies)
                               ReplyWidget(
                                 reply,
                                 episodeId: episodeId,
                                 replies: replies
-                                    .where((reply) =>
-                                        reply.parentIds.contains(reply.id))
+                                    .where(
+                                        (r) => r.parentIds.contains(reply.id))
                                     .toList(),
-                                onReply: onReply,
-                                onShare: onShare,
                               ),
                           ],
                         ],

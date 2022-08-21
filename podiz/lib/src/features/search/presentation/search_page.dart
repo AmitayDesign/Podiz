@@ -14,6 +14,7 @@ import 'package:podiz/src/features/episodes/presentation/card/skeleton_episode_c
 import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
 import 'package:podiz/src/features/search/presentation/search_bar.dart';
+import 'package:podiz/src/features/search/presentation/skeleton_podcast_card.dart';
 
 import 'podcast_card.dart';
 import 'spotify_search_button.dart';
@@ -64,8 +65,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                             final podcastValue =
                                 ref.watch(podcastFutureProvider(podcastId));
                             return podcastValue.when(
-                                //TODO create SkeletonPodcastCard
-                                loading: () => const SkeletonEpisodeCard(),
+                                loading: () => const SkeletonPodcastCard(),
                                 error: (e, _) => const SizedBox.shrink(),
                                 data: (podcast) => PodcastCard(podcast));
                           }),
