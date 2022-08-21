@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/src/common_widgets/loadingButton.dart';
+import 'package:podiz/src/common_widgets/loading_button.dart';
 import 'package:podiz/src/features/auth/data/spotify_api.dart';
 import 'package:podiz/src/utils/instances.dart';
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/back_text_button.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
-import 'package:podiz/src/common_widgets/loadingButton.dart';
+import 'package:podiz/src/common_widgets/loading_button.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 

@@ -79,8 +79,8 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                       ),
                       data: (comments) {
                         if (comments.isEmpty) {
-                          EmptyScreen.text(
-                            'Comments will be displayed at their respective timestamp...'
+                          return EmptyScreen.text(
+                            'Be the first to comment on this podcast!'
                                 .hardcoded,
                             padding: bodyPadding,
                           );
@@ -104,6 +104,13 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                               ));
                         }
                         commentsCount = filteredComments.length;
+                        if (commentsCount == 0) {
+                          return EmptyScreen.text(
+                            'Comments will be displayed at their respective timestamp...'
+                                .hardcoded,
+                            padding: bodyPadding,
+                          );
+                        }
 
                         //* List of comments
                         return Padding(

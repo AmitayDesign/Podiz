@@ -80,17 +80,18 @@ class _FeedPageState extends ConsumerState<FeedPage>
                         final podcastValue = ref
                             .watch(podcastFutureProvider(lastListened.showId));
                         return podcastValue.when(
-                            loading: () => const SkeletonEpisodeCard(
-                                  bottomHeight: QuickNoteButton.height,
-                                ),
-                            error: (e, _) => null,
-                            data: (podcast) {
-                              return EpisodeCard(
-                                lastListened,
-                                podcast: podcast,
-                                bottom: QuickNoteButton(episode: lastListened),
-                              );
-                            });
+                          loading: () => const SkeletonEpisodeCard(
+                            bottomHeight: QuickNoteButton.height,
+                          ),
+                          error: (e, _) => null,
+                          data: (podcast) {
+                            return EpisodeCard(
+                              lastListened,
+                              podcast: podcast,
+                              bottom: QuickNoteButton(episode: lastListened),
+                            );
+                          },
+                        );
                       },
                     ),
                   );
