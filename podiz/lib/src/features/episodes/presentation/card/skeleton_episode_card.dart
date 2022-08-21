@@ -11,7 +11,7 @@ class SkeletonEpisodeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: context.theme.cardColor.withOpacity(0.5),
-      margin: const EdgeInsets.all(8),
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(kBorderRadius),

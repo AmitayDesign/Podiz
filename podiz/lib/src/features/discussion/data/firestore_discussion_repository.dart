@@ -21,7 +21,7 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
   @override
   Stream<Comment?> watchLastReply(String commentId) =>
       firestore.commentsCollection
-          .where('parentIds', arrayContains: commentId)
+          .where('parentIds', isEqualTo: [commentId])
           .orderBy('timestamp')
           .limit(1)
           .snapshots()
