@@ -28,6 +28,10 @@ final playerStateChangesProvider = StreamProvider<PlayingEpisode?>(
   (ref) => ref.watch(playerRepositoryProvider).watchPlayingEpisode(),
 );
 
+final firstPlayerFutureProvider = FutureProvider<PlayingEpisode?>(
+  (ref) => ref.read(playerStateChangesProvider.future),
+);
+
 final playerTimeStreamProvider = StreamProvider.autoDispose<PlayerTime>(
   (ref) async* {
     final episode = ref.watch(playerStateChangesProvider).valueOrNull;
