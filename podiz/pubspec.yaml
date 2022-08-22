@@ -61,34 +61,19 @@ dev_dependencies:
 
 flutter_icons:
   android: true
-  ios: true
-  image_path: "assets/brand/logo.png"
-  adaptive_icon_foreground: "assets/brand/logo.png"
+  image_path: "assets/app_icon/ios_app_icon.png"
+  adaptive_icon_foreground: "assets/app_icon/ic_launcher_foreground.png"
   adaptive_icon_background: "#ffffff"
+  ios: true
+  remove_alpha_ios: true
+  image_path_ios: "assets/app_icon/ios_app_icon.png"
 
 flutter:
   uses-material-design: true
   assets:
-    - assets/locales/
-    - assets/images/
+    - assets/
+    - assets/app_icon/
+    - assets/google_fonts/
     - assets/icons/
-
-  # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
-  # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/assets-and-images/#resolution-aware.
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/assets-and-images/#from-packages
-  # To add custom fonts to your application, add a fonts section here,
-  # in this "flutter" section. Each entry in this list should have a
-  # "family" key with the font family name, and a "fonts" key with a
-  # list giving the asset and other descriptors for the font. For
-  # example:
-  # fonts:
-  #   - family: Montserrat
-  #     fonts:
-  #       - asset: assets/fonts/Montserrat-VariableFont_wght.ttf
-  # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/custom-fonts/#from-packages
+    - assets/images/
+    - assets/locales/
