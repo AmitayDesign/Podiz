@@ -70,6 +70,7 @@ class SpotifyAuthRepository with AuthState implements AuthRepository {
   }
 
   Future<void> fetchUser(String accessToken) async {
+    // https://github.com/firebase/functions-samples/blob/main/spotify-auth/functions/index.js
     final result = await functions
         .httpsCallable('fetchSpotifyUser')
         .call({'accessToken': accessToken});

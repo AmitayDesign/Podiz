@@ -38,7 +38,7 @@ class EpisodeContent extends StatelessWidget {
   String format(Duration duration) {
     final time = duration.toString().split('.').first.split(':');
     final hours = time.first;
-    final minutes = time.last;
+    final minutes = time[1];
     if (hours == '0') return '${minutes}m';
     return '${hours}h ${minutes}m';
   }
