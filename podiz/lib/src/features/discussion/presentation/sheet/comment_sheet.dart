@@ -23,6 +23,23 @@ class CommentSheet extends ConsumerWidget {
   static const height = 116.0; //! hardcoded
   const CommentSheet({Key? key}) : super(key: key);
 
+  void sendComment(
+    Reader read,
+    String episodeId,
+    Comment? target,
+    String text,
+  ) {
+    final comment = Comment(
+      text: text,
+      episodeId: episodeId,
+      userId: read(currentUserProvider).id,
+      timestamp: read(playerSliderControllerProvider).position,
+      parentIds: target?.parentIds?..add(target!.id),
+    );
+    read(discussionRepositoryProvider).addComment(comment);
+    read(commentSheetTargetProvider.notifier).state = null;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final episodeValue = ref.watch(playerStateChangesProvider);
@@ -81,22 +98,8 @@ class CommentSheet extends ConsumerWidget {
                   CommentTextField(
                     autofocus: isReply,
                     hint: isReply ? 'Add a reply...' : 'Share your insight...',
-                    onSend: (text) {
-                      final time = ref.read(playerSliderControllerProvider);
-                      final comment = Comment(
-                        text: text,
-                        episodeId: episode.id,
-                        userId: ref.read(currentUserProvider).id,
-                        timestamp: time.position,
-                        parentIds: target?.parentIds?..add(target!.id),
-                      );
-                      ref
-                          .read(discussionRepositoryProvider)
-                          .addComment(comment);
-
-                      ref.read(commentSheetTargetProvider.notifier).state =
-                          null;
-                    },
+                    onSend: (text) =>
+                        sendComment(ref.read, episode.id, target, text),
                   ),
                   const SizedBox(height: 4),
                   Padding(

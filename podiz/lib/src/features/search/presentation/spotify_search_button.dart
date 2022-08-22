@@ -44,7 +44,7 @@ class _SpotifySearchButtonState extends ConsumerState<SpotifySearchButton> {
           LoadingTextButton(
             loading: isLoading,
             onPressed: searchInSpotify,
-            child: Text(Locales.string(context, "searchSpotify")),
+            child: const LocaleText('searchSpotify'),
           ),
         ],
       ),
