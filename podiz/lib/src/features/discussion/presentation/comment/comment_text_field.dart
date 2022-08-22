@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/circle_button.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
+import 'package:podiz/src/features/player/presentation/player_controller.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
 class CommentTextField extends ConsumerStatefulWidget {
@@ -27,6 +29,18 @@ class _CommentTextFieldState extends ConsumerState<CommentTextField> {
   String get comment => commentController.text;
 
   @override
+  void initState() {
+    super.initState();
+    commentNode.addListener(() {
+      final episode = ref.watch(playerStateChangesProvider).valueOrNull;
+      final player = ref.read(playerControllerProvider.notifier);
+      episode != null && commentNode.hasFocus
+          ? player.pause()
+          : player.play(episode!.id);
+    });
+  }
+
+  @override
   void dispose() {
     commentNode.dispose();
     commentController.dispose();
@@ -36,11 +50,7 @@ class _CommentTextFieldState extends ConsumerState<CommentTextField> {
   @override
   void didUpdateWidget(covariant CommentTextField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.autofocus) {
-      commentNode.requestFocus();
-    } else {
-      commentNode.unfocus();
-    }
+    if (widget.autofocus) commentNode.requestFocus();
   }
 
   void sendComment() {

@@ -103,8 +103,6 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                                 curve: Curves.ease,
                               ));
                         }
-
-                        //* List of comments
                         return Padding(
                           padding: bodyPadding,
                           child: SpoilerIndicator(
@@ -115,43 +113,50 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                               }
                             },
                             builder: (showingAlert) {
-                              return ListView(
-                                controller: scrollController,
-                                physics: showingAlert
-                                    ? const NeverScrollableScrollPhysics()
-                                    : const AlwaysScrollableScrollPhysics(),
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8),
-                                children: [
-                                  if (filteredComments.isEmpty)
-                                    EmptyScreen.text(
-                                      'Comments will be displayed at their respective timestamp...'
-                                          .hardcoded,
-                                      padding: bodyPadding,
-                                    ),
-                                  for (final comment in filteredComments)
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8),
-                                      child: CommentCard(
-                                        comment,
-                                        episodeId: episodeId,
-                                        navigate: false,
-                                      ),
-                                    ),
-                                  if (isShowingAllComments)
-                                    Padding(
-                                      padding: const EdgeInsets.all(8),
-                                      child: TextButton(
-                                        onPressed: () => setState(
-                                            () => isShowingAllComments = false),
-                                        child: Text(
-                                          'Stop showing all comments'.hardcoded,
+                              return LayoutBuilder(
+                                  builder: (context, constraints) {
+                                return ListView(
+                                  controller: scrollController,
+                                  physics: showingAlert
+                                      ? const NeverScrollableScrollPhysics()
+                                      : const AlwaysScrollableScrollPhysics(),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8),
+                                  children: [
+                                    if (filteredComments.isEmpty)
+                                      EmptyScreen.text(
+                                        'Comments will be displayed at their respective timestamp...'
+                                            .hardcoded,
+                                        padding: EdgeInsets.only(
+                                          //! hardcoded
+                                          top: constraints.maxHeight / 2 - 25,
                                         ),
                                       ),
-                                    ),
-                                ],
-                              );
+                                    for (final comment in filteredComments)
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8),
+                                        child: CommentCard(
+                                          comment,
+                                          episodeId: episodeId,
+                                          navigate: false,
+                                        ),
+                                      ),
+                                    if (isShowingAllComments)
+                                      Padding(
+                                        padding: const EdgeInsets.all(8),
+                                        child: TextButton(
+                                          onPressed: () => setState(() =>
+                                              isShowingAllComments = false),
+                                          child: Text(
+                                            'Stop showing all comments'
+                                                .hardcoded,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                );
+                              });
                             },
                           ),
                         );
