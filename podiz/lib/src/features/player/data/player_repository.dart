@@ -44,12 +44,16 @@ final playerTimeStreamProvider = StreamProvider.autoDispose<PlayerTime>(
       yield PlayerTime(
           duration: episode.duration, position: episode.initialPosition);
     } else {
+      final refreshRate = 1 / episode.playbackSpeed;
+      final refreshRateInMs = (refreshRate * 1000).toInt();
       yield* Stream.periodic(
-        const Duration(seconds: 1),
-        (tick) => PlayerTime(
-          duration: episode.duration,
-          position: episode.initialPosition + Duration(seconds: tick + 1),
-        ),
+        Duration(milliseconds: refreshRateInMs),
+        (tick) {
+          return PlayerTime(
+            duration: episode.duration,
+            position: episode.initialPosition + Duration(seconds: tick + 1),
+          );
+        },
       );
     }
   },
