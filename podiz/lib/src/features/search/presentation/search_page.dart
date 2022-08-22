@@ -56,7 +56,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                   child: SizedBox(height: GradientBar.backgroundHeight + 16),
                 ),
 
-                if (query.isEmpty)
+                if (query.isEmpty) ...[
                   if (user.favPodcasts.isNotEmpty)
                     SliverList(
                       delegate: SliverChildListDelegate([
@@ -71,38 +71,38 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                           }),
                       ]),
                     )
-                  else ...[
-                    SliverFirestoreQueryBuilder<UserPodiz>(
-                      query: userRepository.usersFirestoreQuery(query),
-                      builder: (context, user) => UserCard(user),
-                    ),
-                    SliverFirestoreQueryBuilder<Podcast>(
-                      query: podcastRepository.podcastsFirestoreQuery(query),
-                      builder: (context, podcast) => PodcastCard(podcast),
-                    ),
-                    SliverFirestoreQueryBuilder<Episode>(
-                      query: episodeRepository.episodesFirestoreQuery(query),
-                      builder: (context, episode) {
-                        return Consumer(
-                          builder: (context, ref, _) {
-                            final podcastValue = ref
-                                .watch(podcastFutureProvider(episode.showId));
-                            return podcastValue.when(
-                                loading: () => const SkeletonEpisodeCard(),
-                                error: (e, _) => const SizedBox.shrink(),
-                                data: (podcast) {
-                                  return EpisodeCard(
-                                    episode,
-                                    podcast: podcast,
-                                    insights: false,
-                                  );
-                                });
-                          },
-                        );
-                      },
-                    ),
-                    SliverToBoxAdapter(child: SpotifySearchButton(query)),
-                  ],
+                ] else ...[
+                  SliverFirestoreQueryBuilder<UserPodiz>(
+                    query: userRepository.usersFirestoreQuery(query),
+                    builder: (context, user) => UserCard(user),
+                  ),
+                  SliverFirestoreQueryBuilder<Podcast>(
+                    query: podcastRepository.podcastsFirestoreQuery(query),
+                    builder: (context, podcast) => PodcastCard(podcast),
+                  ),
+                  SliverFirestoreQueryBuilder<Episode>(
+                    query: episodeRepository.episodesFirestoreQuery(query),
+                    builder: (context, episode) {
+                      return Consumer(
+                        builder: (context, ref, _) {
+                          final podcastValue =
+                              ref.watch(podcastFutureProvider(episode.showId));
+                          return podcastValue.when(
+                              loading: () => const SkeletonEpisodeCard(),
+                              error: (e, _) => const SizedBox.shrink(),
+                              data: (podcast) {
+                                return EpisodeCard(
+                                  episode,
+                                  podcast: podcast,
+                                  insights: false,
+                                );
+                              });
+                        },
+                      );
+                    },
+                  ),
+                  SliverToBoxAdapter(child: SpotifySearchButton(query)),
+                ],
 
                 // so it doesnt end behind the bottom bar
                 const SliverToBoxAdapter(

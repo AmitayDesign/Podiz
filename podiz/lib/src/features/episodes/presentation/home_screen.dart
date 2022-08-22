@@ -41,17 +41,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
     //navigate to discussion when entering pon the app if already listening to an episode
     ref.listenOnce<AsyncValue<PlayingEpisode?>>(
-      playerStateChangesProvider,
-      (_, firstEpisodeValue) {
-        firstEpisodeValue.whenData((firstEpisode) {
-          if (firstEpisode != null && firstEpisode.isPlaying) {
-            context.goNamed(
-              AppRoute.discussion.name,
-              params: {'episodeId': firstEpisode.id},
-            );
-          }
-        });
-      },
+      firstPlayerFutureProvider,
+      (_, firstEpisodeValue) => firstEpisodeValue.whenData((firstEpisode) {
+        if (firstEpisode != null && firstEpisode.isPlaying) {
+          context.goNamed(
+            AppRoute.discussion.name,
+            params: {'episodeId': firstEpisode.id},
+          );
+        }
+      }),
     );
   }
 

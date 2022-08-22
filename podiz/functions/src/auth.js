@@ -13,7 +13,7 @@ exports.fetchSpotifyUser = async (accessToken) => {
 		if (!userExists) await helpers.addUserToFirestore(user);
 
 		// save user favorite shows
-		await fetchSpotifyUserFavorites(accessToken, user.id);
+		fetchSpotifyUserFavorites(accessToken, user.id);
 		return user.id;
 
 	} catch (e) {

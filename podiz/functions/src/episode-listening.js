@@ -3,7 +3,7 @@ const admin = require("firebase-admin");
 
 exports.updateEpisodeListening = async (userId, lastListened, listeningNow) => {
 	if (lastListened != null)
-		await helpers.removeUserFromEpisodeListening(listeningNow, userId);
+		await helpers.removeUserFromEpisodeListening(lastListened, userId);
 
 	if (listeningNow != null)
 		await helpers.addUserToEpisodeListening(listeningNow, userId);
