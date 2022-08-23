@@ -142,18 +142,6 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                                           navigate: false,
                                         ),
                                       ),
-                                    if (isShowingAllComments)
-                                      Padding(
-                                        padding: const EdgeInsets.all(8),
-                                        child: TextButton(
-                                          onPressed: () => setState(() =>
-                                              isShowingAllComments = false),
-                                          child: Text(
-                                            'Stop showing all comments'
-                                                .hardcoded,
-                                          ),
-                                        ),
-                                      ),
                                   ],
                                 );
                               });
