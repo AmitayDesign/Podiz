@@ -56,8 +56,6 @@ class _CommentCardState extends ConsumerState<CommentCard> {
     }
   }
 
-  //TODO enable deep linking on iOS
-  //https://docs.flutter.dev/development/ui/navigation/deep-linking#enable-deep-linking-on-ios
   void share(Comment comment) {
     final episodeId = comment.episodeId;
     final timestamp = comment.timestamp.inSeconds - 10;
