@@ -54,9 +54,12 @@ class SpotifyAuthRepository with AuthState implements AuthRepository {
 
   @override
   Future<void> signIn() async {
+    print("signing in");
     late final bool success;
     try {
+      print("access token");
       final accessToken = await spotifyApi.getAccessToken();
+      print("denguye");
       success = await SpotifySdk.connectToSpotifyRemote(
         clientId: spotifyApi.clientId,
         redirectUrl: spotifyApi.redirectUrl,
@@ -70,6 +73,7 @@ class SpotifyAuthRepository with AuthState implements AuthRepository {
   }
 
   Future<void> fetchUser(String accessToken) async {
+    print("fecth in");
     final result = await functions
         .httpsCallable('fetchSpotifyUser')
         .call({'accessToken': accessToken});
