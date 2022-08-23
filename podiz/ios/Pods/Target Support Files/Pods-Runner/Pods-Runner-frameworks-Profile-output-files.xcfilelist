@@ -36,6 +36,7 @@ ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpc.framework
 ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework
 ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework
 ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/path_provider_ios.framework
+${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/share_plus.framework
 ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/shared_preferences_ios.framework
 ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/sign_in_with_apple.framework
 ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/spotify_sdk.framework

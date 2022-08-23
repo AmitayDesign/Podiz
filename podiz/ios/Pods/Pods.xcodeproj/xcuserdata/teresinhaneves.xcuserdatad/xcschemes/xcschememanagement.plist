@@ -294,6 +294,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>share_plus.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>shared_preferences_ios.xcscheme</key>
 		<dict>
 			<key>isShown</key>

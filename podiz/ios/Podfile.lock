@@ -898,6 +898,8 @@ PODS:
     - Flutter
   - PromisesObjC (2.1.1)
   - Reachability (3.2)
+  - share_plus (0.0.1):
+    - Flutter
   - shared_preferences_ios (0.0.1):
     - Flutter
   - sign_in_with_apple (0.0.1):
@@ -930,6 +932,7 @@ DEPENDENCIES:
   - flutter_web_auth (from `.symlinks/plugins/flutter_web_auth/ios`)
   - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
+  - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
   - sign_in_with_apple (from `.symlinks/plugins/sign_in_with_apple/ios`)
   - spotify_sdk (from `.symlinks/plugins/spotify_sdk/ios`)
@@ -1011,6 +1014,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/google_sign_in_ios/ios"
   path_provider_ios:
     :path: ".symlinks/plugins/path_provider_ios/ios"
+  share_plus:
+    :path: ".symlinks/plugins/share_plus/ios"
   shared_preferences_ios:
     :path: ".symlinks/plugins/shared_preferences_ios/ios"
   sign_in_with_apple:
@@ -1080,6 +1085,7 @@ SPEC CHECKSUMS:
   path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
+  share_plus: 056a1e8ac890df3e33cb503afffaf1e9b4fbae68
   shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
   sign_in_with_apple: f3bf75217ea4c2c8b91823f225d70230119b8440
   spotify_sdk: 63cc13896c9ff93c4d023e03bb4b9b516602f355

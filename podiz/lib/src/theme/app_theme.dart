@@ -19,6 +19,7 @@ final themeProvider = Provider<ThemeData>((ref) {
     textTheme: textTheme,
     primaryTextTheme: textTheme,
     appBarTheme: AppBarTheme(
+      centerTitle: false,
       elevation: 0,
       backgroundColor: colorScheme.background,
       foregroundColor: colorScheme.onBackground,
