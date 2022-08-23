@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/player/domain/playing_episode.dart';
 import 'package:podiz/src/utils/uri_from_id.dart';
@@ -62,13 +64,24 @@ class SpotifyPlayerRepository implements PlayerRepository {
 
   @override
   Future<void> fastForward([Duration time = const Duration(seconds: 30)]) =>
-      SpotifySdk.seekToRelativePosition(
-          relativeMilliseconds: time.inMilliseconds);
+      seekToRelativePosition(time);
 
   @override
   Future<void> rewind([Duration time = const Duration(seconds: 30)]) =>
-      SpotifySdk.seekToRelativePosition(
-          relativeMilliseconds: -time.inMilliseconds);
+      seekToRelativePosition(-time);
+
+  Future<void> seekToRelativePosition(Duration time) async {
+    if (Platform.isIOS) {
+      final state = await SpotifySdk.getPlayerState();
+      final position = state?.playbackPosition ?? 0;
+      return SpotifySdk.seekTo(
+        positionedMilliseconds: position + time.inMilliseconds,
+      );
+    }
+    return SpotifySdk.seekToRelativePosition(
+      relativeMilliseconds: time.inMilliseconds,
+    );
+  }
 
   @override
   Future<void> seekTo(Duration time) =>
