@@ -61,6 +61,9 @@ class SpotifyAuthRepository with AuthState implements AuthRepository {
       final accessToken = await spotifyApi.getAccessToken();
       print("denguye");
       success = await SpotifySdk.connectToSpotifyRemote(
+        //! ios autoplay workarroud
+        // this uri does not exist and so the player wont start automatically
+        spotifyUri: 'null',
         clientId: spotifyApi.clientId,
         redirectUrl: spotifyApi.redirectUrl,
         accessToken: accessToken,
