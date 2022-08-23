@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:podiz/src/common_widgets/dot.dart';
+import 'package:podiz/src/common_widgets/symbols.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/episodes/domain/podcast.dart';
 import 'package:podiz/src/features/episodes/presentation/avatar/podcast_avatar.dart';
@@ -38,7 +38,7 @@ class EpisodeContent extends StatelessWidget {
   String format(Duration duration) {
     final time = duration.toString().split('.').first.split(':');
     final hours = time.first;
-    final minutes = time.last;
+    final minutes = time[1];
     if (hours == '0') return '${minutes}m';
     return '${hours}h ${minutes}m';
   }

@@ -1,0 +1,2 @@
+const dot = '•';
+const dash = '—';

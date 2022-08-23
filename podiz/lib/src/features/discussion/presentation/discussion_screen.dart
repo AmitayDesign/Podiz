@@ -18,7 +18,9 @@ import 'sheet/comment_sheet.dart';
 
 class DiscussionScreen extends ConsumerStatefulWidget {
   final String episodeId;
-  const DiscussionScreen(this.episodeId, {Key? key}) : super(key: key);
+  final Duration? time;
+  const DiscussionScreen(this.episodeId, {Key? key, this.time})
+      : super(key: key);
 
   @override
   ConsumerState<DiscussionScreen> createState() => _DiscussionScreenState();
@@ -26,11 +28,18 @@ class DiscussionScreen extends ConsumerStatefulWidget {
 
 class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
   late String episodeId = widget.episodeId;
-
   final scrollController = ScrollController();
   int commentsCount = 0;
-
   var isShowingAllComments = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.time != null) {
+      final player = ref.read(playerSliderControllerProvider.notifier);
+      player.seekTo(widget.time!);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,16 +112,6 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                                 curve: Curves.ease,
                               ));
                         }
-                        commentsCount = filteredComments.length;
-                        if (commentsCount == 0) {
-                          return EmptyScreen.text(
-                            'Comments will be displayed at their respective timestamp...'
-                                .hardcoded,
-                            padding: bodyPadding,
-                          );
-                        }
-
-                        //* List of comments
                         return Padding(
                           padding: bodyPadding,
                           child: SpoilerIndicator(
@@ -123,24 +122,38 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                               }
                             },
                             builder: (showingAlert) {
-                              return ListView.builder(
-                                controller: scrollController,
-                                physics: showingAlert
-                                    ? const NeverScrollableScrollPhysics()
-                                    : const AlwaysScrollableScrollPhysics(),
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8),
-                                itemCount: commentsCount,
-                                itemBuilder: (context, i) => Padding(
+                              return LayoutBuilder(
+                                  builder: (context, constraints) {
+                                return ListView(
+                                  controller: scrollController,
+                                  physics: showingAlert
+                                      ? const NeverScrollableScrollPhysics()
+                                      : const AlwaysScrollableScrollPhysics(),
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 8),
-                                  child: CommentCard(
-                                    filteredComments[i],
-                                    episodeId: episodeId,
-                                    navigate: false,
-                                  ),
-                                ),
-                              );
+                                  children: [
+                                    if (filteredComments.isEmpty)
+                                      EmptyScreen.text(
+                                        'Comments will be displayed at their respective timestamp...'
+                                            .hardcoded,
+                                        padding: EdgeInsets.only(
+                                          //! hardcoded
+                                          top: constraints.maxHeight / 2 - 25,
+                                        ),
+                                      ),
+                                    for (final comment in filteredComments)
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8),
+                                        child: CommentCard(
+                                          comment,
+                                          episodeId: episodeId,
+                                          navigate: false,
+                                        ),
+                                      ),
+                                  ],
+                                );
+                              });
                             },
                           ),
                         );

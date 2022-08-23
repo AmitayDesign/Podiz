@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:podiz/src/common_widgets/symbols.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
@@ -11,6 +12,7 @@ import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/context_theme.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'comment_text.dart';
 import 'comment_trailing.dart';
@@ -54,8 +56,15 @@ class _CommentCardState extends ConsumerState<CommentCard> {
     }
   }
 
-  //TODO share feature
-  void share(Comment comment) {}
+  void share(Comment comment) {
+    final episodeId = comment.episodeId;
+    final timestamp = comment.timestamp.inSeconds - 10;
+    final link = 'podiz.io/discussion/$episodeId?t=$timestamp';
+    Share.share(
+      '${comment.text}\n$link',
+      subject: 'Podiz $dash Check this comment!',
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -198,10 +207,9 @@ class _CommentCardState extends ConsumerState<CommentCard> {
     Comment reply, [
     List<Comment> replies = const [],
   ]) =>
-      ReplyWidget(
-        reply,
-        replies: replies,
-        collapsed: collapsed,
-        episodeId: widget.episodeId,
-      );
+      ReplyWidget(reply,
+          replies: replies,
+          collapsed: collapsed,
+          episodeId: widget.episodeId,
+          onShare: (comment) => share(comment));
 }

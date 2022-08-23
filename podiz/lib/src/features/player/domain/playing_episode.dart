@@ -3,20 +3,22 @@ import 'package:podiz/src/features/episodes/domain/episode.dart';
 class PlayingEpisode extends Episode {
   final Duration initialPosition;
   final bool isPlaying;
+  final double playbackSpeed;
 
-  PlayingEpisode({
-    required String id,
-    required String name,
-    required String description,
-    required Duration duration,
-    required String showId,
-    required String? imageUrl,
-    required String releaseDate,
-    required List<String> usersWatching,
-    required int commentsCount,
-    required this.initialPosition,
-    required this.isPlaying,
-  }) : super(
+  PlayingEpisode(
+      {required String id,
+      required String name,
+      required String description,
+      required Duration duration,
+      required String showId,
+      required String? imageUrl,
+      required String releaseDate,
+      required List<String> usersWatching,
+      required int commentsCount,
+      required this.initialPosition,
+      required this.isPlaying,
+      required this.playbackSpeed})
+      : super(
           id: id,
           name: name,
           description: description,
@@ -32,6 +34,7 @@ class PlayingEpisode extends Episode {
     Episode episode, {
     required Duration position,
     required bool isPlaying,
+    required double playbackSpeed,
   }) =>
       PlayingEpisode(
         id: episode.id,
@@ -45,5 +48,6 @@ class PlayingEpisode extends Episode {
         commentsCount: episode.commentsCount,
         initialPosition: position,
         isPlaying: isPlaying,
+        playbackSpeed: playbackSpeed,
       );
 }
