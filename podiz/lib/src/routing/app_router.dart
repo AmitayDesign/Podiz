@@ -87,7 +87,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             name: AppRoute.discussion.name,
             builder: (_, state) {
               final episodeId = state.params['episodeId']!;
-              return DiscussionScreen(episodeId);
+              Duration? time;
+              final secondsString = state.queryParams['t'];
+              if (secondsString != null) {
+                final seconds = int.tryParse(secondsString);
+                if (seconds != null) time = Duration(seconds: seconds);
+              }
+              return DiscussionScreen(episodeId, time: time);
             },
           ),
         ],

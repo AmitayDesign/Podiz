@@ -14,6 +14,7 @@ class ReplyWidget extends ConsumerWidget {
   final List<Comment> replies;
   final bool collapsed;
   final String episodeId;
+  final void Function(Comment comment)? onShare;
 
   const ReplyWidget(
     this.comment, {
@@ -21,13 +22,11 @@ class ReplyWidget extends ConsumerWidget {
     required this.replies,
     this.collapsed = false,
     required this.episodeId,
+    required this.onShare,
   }) : super(key: key);
 
   List<Comment> get directReplies =>
       replies.where((reply) => reply.parentIds.last == comment.id).toList();
-
-  //TODO share feature
-  void share(Comment comment) {}
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -76,12 +75,13 @@ class ReplyWidget extends ConsumerWidget {
                               onReply: () => ref
                                   .read(commentSheetTargetProvider.notifier)
                                   .state = comment,
-                              onShare: () => share(comment),
+                              onShare: () => onShare?.call(comment),
                             ),
                             for (final reply in directReplies)
                               ReplyWidget(
                                 reply,
                                 episodeId: episodeId,
+                                onShare: onShare,
                                 replies: replies
                                     .where(
                                         (r) => r.parentIds.contains(reply.id))

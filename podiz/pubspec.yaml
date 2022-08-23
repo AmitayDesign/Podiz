@@ -46,6 +46,7 @@ dependencies:
   path_provider: ^2.0.9
   percent_indicator: ^4.2.2
   rxdart: ^0.27.4
+  share_plus: ^4.0.10+1
   shimmer_animation: ^2.1.0
   skeletons: ^0.0.3
   spotify_sdk: ^2.3.0

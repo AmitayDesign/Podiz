@@ -18,7 +18,9 @@ import 'sheet/comment_sheet.dart';
 
 class DiscussionScreen extends ConsumerStatefulWidget {
   final String episodeId;
-  const DiscussionScreen(this.episodeId, {Key? key}) : super(key: key);
+  final Duration? time;
+  const DiscussionScreen(this.episodeId, {Key? key, this.time})
+      : super(key: key);
 
   @override
   ConsumerState<DiscussionScreen> createState() => _DiscussionScreenState();
@@ -26,11 +28,18 @@ class DiscussionScreen extends ConsumerStatefulWidget {
 
 class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
   late String episodeId = widget.episodeId;
-
   final scrollController = ScrollController();
   int commentsCount = 0;
-
   var isShowingAllComments = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.time != null) {
+      final player = ref.read(playerSliderControllerProvider.notifier);
+      player.seekTo(widget.time!);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

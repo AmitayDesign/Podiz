@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:podiz/src/common_widgets/dot.dart';
+import 'package:podiz/src/common_widgets/symbols.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/episodes/domain/podcast.dart';
 import 'package:podiz/src/features/episodes/presentation/avatar/podcast_avatar.dart';
