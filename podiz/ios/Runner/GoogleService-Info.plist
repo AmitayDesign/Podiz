@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>426283659703-699jol0mq2bi9a97opes1jo4ktos20pa.apps.googleusercontent.com</string>
+	<string>426283659703-fvdi3d3rvfjhmv13gfnkd24dcu0irstg.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.426283659703-699jol0mq2bi9a97opes1jo4ktos20pa</string>
+	<string>com.googleusercontent.apps.426283659703-fvdi3d3rvfjhmv13gfnkd24dcu0irstg</string>
 	<key>API_KEY</key>
 	<string>AIzaSyA8T1d8Y3pVmN9_b4kckXXYyI_9dY7GTmU</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,22 +13,24 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.podiz</string>
+	<string>com.amitay.podiz</string>
 	<key>PROJECT_ID</key>
 	<string>podiz-130ca</string>
 	<key>STORAGE_BUCKET</key>
 	<string>podiz-130ca.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_APPINVITE_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_GCM_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_SIGNIN_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:426283659703:ios:608d8bafd8f25184b5b832</string>
+	<string>1:426283659703:ios:0b97ff41cf636357b5b832</string>
+	<key>DATABASE_URL</key>
+	<string>https://podiz-130ca-default-rtdb.firebaseio.com</string>
 </dict>
 </plist>
