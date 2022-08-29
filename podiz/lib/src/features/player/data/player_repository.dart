@@ -40,19 +40,18 @@ final playerTimeStreamProvider = StreamProvider.autoDispose<PlayerTime>(
       return;
     }
     // player has an episode
+    final duration = episode.duration;
     if (!episode.isPlaying) {
-      yield PlayerTime(
-          duration: episode.duration, position: episode.initialPosition);
+      yield PlayerTime(duration: duration, position: episode.initialPosition);
     } else {
       final refreshRate = 1 / episode.playbackSpeed;
       final refreshRateInMs = (refreshRate * 1000).toInt();
       yield* Stream.periodic(
         Duration(milliseconds: refreshRateInMs),
         (tick) {
-          return PlayerTime(
-            duration: episode.duration,
-            position: episode.initialPosition + Duration(seconds: tick + 1),
-          );
+          var position = episode.initialPosition + Duration(seconds: tick + 1);
+          if (position > duration) position = duration;
+          return PlayerTime(duration: duration, position: position);
         },
       );
     }
