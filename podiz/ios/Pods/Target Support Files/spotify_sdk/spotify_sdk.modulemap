@@ -1,0 +1,6 @@
+framework module spotify_sdk {
+  umbrella header "spotify_sdk-umbrella.h"
+
+  export *
+  module * { export * }
+}

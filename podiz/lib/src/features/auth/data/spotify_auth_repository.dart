@@ -54,9 +54,12 @@ class SpotifyAuthRepository with AuthState implements AuthRepository {
 
   @override
   Future<void> signIn() async {
+    print("signing in");
     late final bool success;
     try {
+      print("access token");
       final accessToken = await spotifyApi.getAccessToken();
+      print("denguye");
       success = await SpotifySdk.connectToSpotifyRemote(
         //! ios autoplay workarroud
         // this uri does not exist and so the player wont start automatically
