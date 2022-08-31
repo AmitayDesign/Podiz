@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:podiz/src/common_widgets/symbols.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/discussion/presentation/sheet/comment_sheet.dart';
+import 'package:podiz/src/features/episodes/data/episode_repository.dart';
+import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
@@ -58,11 +59,16 @@ class _CommentCardState extends ConsumerState<CommentCard> {
 
   void share(Comment comment) {
     final episodeId = comment.episodeId;
-    final timestamp = comment.timestamp.inSeconds - 10;
+    final episode = ref.read(episodeFutureProvider(episodeId)).valueOrNull!;
+    final podcast =
+        ref.read(podcastFutureProvider(episode.showId)).valueOrNull!;
+    final timestamp = comment.timestamp.inSeconds;
     final link = 'podiz.io/discussion/$episodeId?t=$timestamp';
     Share.share(
-      '${comment.text}\n$link',
-      subject: 'Podiz $dash Check this comment!',
+      'Check out this comment I found on Podiz about ${podcast.name}!\n\n'
+      '${comment.text}\n'
+      '$link',
+      subject: 'Insight I found on Podiz about ${podcast.name}',
     );
   }
 
