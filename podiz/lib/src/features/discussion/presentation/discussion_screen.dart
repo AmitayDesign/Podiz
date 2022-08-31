@@ -63,8 +63,6 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
           builder: (context, isKeyBoardOpen) {
             return Stack(
               children: [
-                //TODO too much set states
-                //! make a controller for this to only expose comments when needed
                 Consumer(
                   builder: (context, ref, _) {
                     // watch player time
@@ -95,8 +93,8 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                           );
                         }
                         final filteredComments = isShowingAllComments
-                            ? comments
-                            : comments
+                            ? comments.reversed
+                            : comments.reversed
                                 .where((comment) =>
                                     comment.timestamp <= playerTime.position)
                                 .toList();
@@ -115,6 +113,7 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                         return Padding(
                           padding: bodyPadding,
                           child: SpoilerIndicator(
+                            reverse: false,
                             enabled: !isShowingAllComments,
                             onAction: (showAll) {
                               if (showAll) {
@@ -125,6 +124,7 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                               return LayoutBuilder(
                                   builder: (context, constraints) {
                                 return ListView(
+                                  reverse: true,
                                   controller: scrollController,
                                   physics: showingAlert
                                       ? const NeverScrollableScrollPhysics()
@@ -138,7 +138,8 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                                             .hardcoded,
                                         padding: EdgeInsets.only(
                                           //! hardcoded
-                                          top: constraints.maxHeight / 2 - 25,
+                                          bottom:
+                                              constraints.maxHeight / 2 - 25,
                                         ),
                                       ),
                                     for (final comment in filteredComments)

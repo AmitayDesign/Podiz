@@ -22,7 +22,7 @@ class HomeScreen extends ConsumerStatefulWidget {
   final HomePage? destination;
   const HomeScreen({Key? key, this.destination}) : super(key: key);
 
-  static const bottomBarHeigh = 96.0;
+  static const bottomBarHeigh = 89.0;
 
   @override
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
