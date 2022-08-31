@@ -35,7 +35,7 @@ class PrivacyScreen extends ConsumerWidget {
           Text.rich(
             TextSpan(
               text:
-                  'We are doing everything we can to keep your information yours while using the app, feel frre to reach out if you have any questions'
+                  'We are doing everything we can to keep your information yours while using the app, feel free to reach out if you have any questions'
                       .hardcoded,
               children: const [
                 TextSpan(text: '\n'),
