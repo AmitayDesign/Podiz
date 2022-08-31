@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/presentation/onboarding/onboarding_screen.dart';
 import 'package:podiz/src/features/auth/presentation/profile/profile_screen.dart';
+import 'package:podiz/src/features/auth/presentation/sign_in_screen.dart';
 import 'package:podiz/src/features/discussion/presentation/discussion_screen.dart';
 import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
 import 'package:podiz/src/features/episodes/presentation/podcast/podcast_screen.dart';
@@ -12,6 +13,7 @@ import 'package:podiz/src/features/settings/presentation/settings_screen.dart';
 
 enum AppRoute {
   onboarding,
+  signIn,
   home,
   profile,
   settings,
@@ -19,8 +21,6 @@ enum AppRoute {
   podcast,
   discussion,
 }
-
-//TODO test login in no premium account
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authRepository = ref.watch(authRepositoryProvider);
@@ -42,6 +42,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/onboarding',
         name: AppRoute.onboarding.name,
         builder: (_, state) => const OnboardingScreen(),
+        routes: [
+          GoRoute(
+            path: 'signIn',
+            name: AppRoute.signIn.name,
+            builder: (_, state) => const SignInScreen(),
+          ),
+        ],
       ),
       GoRoute(
         path: '/',

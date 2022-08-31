@@ -52,6 +52,7 @@ dependencies:
   spotify_sdk: ^2.3.0
   streaming_shared_preferences: ^2.0.0
   url_launcher: ^6.1.5
+  webview_flutter: ^3.0.4
 
 dev_dependencies:
   build_runner: ^2.1.8

@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:podiz/src/common_widgets/tap_to_unfocus.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/domain/mutable_user_podiz.dart';
+import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/discussion/data/presence_repository.dart';
 import 'package:podiz/src/features/episodes/presentation/feed/feed_page.dart';
 import 'package:podiz/src/features/notifications/presentation/notifications_page.dart';
@@ -15,6 +16,7 @@ import 'package:podiz/src/features/player/domain/playing_episode.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
 import 'package:podiz/src/features/search/presentation/search_page.dart';
 import 'package:podiz/src/routing/app_router.dart';
+import 'package:spotify_sdk/spotify_sdk.dart';
 
 enum HomePage { feed, search, notifications }
 
@@ -51,6 +53,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         }
       }),
     );
+    ref.listenOnce<AsyncValue<UserPodiz?>>(firstUserFutureProvider,
+        (previousUserValue, userValue) {
+      if (previousUserValue == null) return;
+      if (userValue.valueOrNull != null) {
+        context.pushNamed(AppRoute.signIn.name);
+      }
+    });
   }
 
   @override
@@ -124,6 +133,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 SearchPage(),
                 NotificationsPage(),
               ],
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () => SpotifySdk.disconnect(),
             ),
             bottomNavigationBar: Column(
               mainAxisSize: MainAxisSize.min,

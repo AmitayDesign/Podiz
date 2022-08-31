@@ -21,20 +21,30 @@ final authRepositoryProvider = Provider<AuthRepository>(
 
 abstract class AuthRepository {
   Stream<UserPodiz?> authStateChanges();
+  Stream<bool> connectionChanges();
   UserPodiz? get currentUser;
-  Future<void> signIn();
+  Future<void> signIn(String code);
   Future<void> signOut();
   Future<void> updateUser(UserPodiz user);
 }
 
 //* Providers
 
+/// awaits for the first connection state
+final firstConnectionFutureProvider = FutureProvider<bool>(
+  (ref) => ref
+      .read(connectionStateChangesProvider.stream)
+      .skipWhile((status) => !status)
+      .first,
+);
+
+final connectionStateChangesProvider = StreamProvider<bool>(
+  (ref) => ref.watch(authRepositoryProvider).connectionChanges(),
+);
+
 /// awaits for the first authentication state
-final firstUserFutureProvider = FutureProvider<void>(
-  (ref) async {
-    final user = await ref.read(authStateChangesProvider.future);
-    if (user != null) await ref.read(authRepositoryProvider).signIn();
-  },
+final firstUserFutureProvider = FutureProvider<UserPodiz?>(
+  (ref) => ref.read(authStateChangesProvider.future),
 );
 
 final authStateChangesProvider = StreamProvider<UserPodiz?>(

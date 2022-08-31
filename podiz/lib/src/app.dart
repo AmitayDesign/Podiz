@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/src/features/auth/presentation/sign_in_screen.dart';
 import 'package:podiz/src/routing/app_router.dart';
 
 import 'features/auth/data/auth_repository.dart';
@@ -30,9 +31,22 @@ class MyApp extends ConsumerWidget {
         builder: (context, child) => Consumer(builder: (context, ref, _) {
           final firstUserValue = ref.watch(firstUserFutureProvider);
           return firstUserValue.when(
-            error: (e, _) =>  const SplashScreen.error(),
+            error: (e, _) => const SplashScreen.error(),
             loading: () => const SplashScreen(),
-            data: (_) => child!,
+            data: (user) {
+              print('user: $user');
+              if (user == null) return child!;
+              final firstConnectionValue =
+                  ref.watch(firstConnectionFutureProvider);
+              return firstConnectionValue.when(
+                error: (e, _) => const SplashScreen.error(),
+                loading: () => const SignInScreen(),
+                data: (connection) {
+                  print('connection: $connection');
+                  return child!;
+                },
+              );
+            },
           );
         }),
       ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:podiz/src/common_widgets/loading_button.dart';
+import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
 import 'connect_page.dart';
@@ -101,9 +103,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     loading: state.isLoading,
                     onPressed: () => isStartView
                         ? goToView(OnboardingPage.connect)
-                        : ref
-                            .read(onboardingControllerProvider.notifier)
-                            .signIn(),
+                        : context.pushNamed(AppRoute.signIn.name),
                     child: Text(
                       isStartView
                           ? Locales.string(context, "intro2")
