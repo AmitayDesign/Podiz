@@ -5,6 +5,8 @@ import 'package:podiz/src/theme/context_theme.dart';
 import 'package:podiz/src/theme/palette.dart';
 import 'package:showcaseview/showcaseview.dart';
 
+//TODO organize this file
+
 final showcaseKeys = List.generate(2, (_) => GlobalKey());
 
 class ShowcaseStep extends StatelessWidget {
@@ -84,20 +86,20 @@ class ShowcaseOverlay extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      GestureDetector(
-                        onTap: ShowCaseWidget.of(context).dismiss, //!
-                        child: const Text('Skip'),
-                      ),
+                      // GestureDetector(
+                      //   onTap: ShowCaseWidget.of(context).dismiss, //!
+                      //   child: const Text('Skip'),
+                      // ),
                       Expanded(
                         child: Text(
                           '$step of ${showcaseKeys.length}',
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      const Text(
-                        'Skip',
-                        style: TextStyle(color: Palette.pink),
-                      ),
+                      // const Text(
+                      //   'Skip',
+                      //   style: TextStyle(color: Palette.pink),
+                      // ),
                     ],
                   ),
                   Expanded(
