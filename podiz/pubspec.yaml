@@ -42,6 +42,7 @@ dependencies:
   json_annotation: ^4.4.0
   json_serializable: ^6.1.5
   loading_indicator: ^3.0.3
+  lottie: ^1.4.2
   lucide_icons: ^0.83.0
   path_provider: ^2.0.9
   percent_indicator: ^4.2.2
@@ -79,3 +80,4 @@ flutter:
     - assets/icons/
     - assets/images/
     - assets/locales/
+    - assets/lottie/
