@@ -78,14 +78,11 @@ class SpotifyAuthRepository
     if (result.data == '0') throw Exception('Failed to get user data');
 
     final accessToken = result.data['access_token'];
-    print('accessToken: $accessToken');
     final timeout = result.data['timeout']; // in seconds
-    print('timeout: $timeout');
     spotifyApi.accessToken = accessToken;
     spotifyApi.timeout = now.add(Duration(seconds: timeout));
 
     final userId = result.data['userId'];
-    print('userId: $userId');
     await preferences.setString(userKey, userId);
 
     return accessToken;

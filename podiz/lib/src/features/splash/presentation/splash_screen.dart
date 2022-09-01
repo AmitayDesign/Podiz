@@ -18,7 +18,6 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Material(
       child: Container(
         alignment: Alignment.center,
