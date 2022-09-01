@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import 'package:podiz/src/common_widgets/tap_to_unfocus.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/domain/mutable_user_podiz.dart';
-import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/discussion/data/presence_repository.dart';
 import 'package:podiz/src/features/episodes/presentation/feed/feed_page.dart';
 import 'package:podiz/src/features/notifications/presentation/notifications_page.dart';
@@ -16,7 +15,9 @@ import 'package:podiz/src/features/player/domain/playing_episode.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
 import 'package:podiz/src/features/search/presentation/search_page.dart';
 import 'package:podiz/src/routing/app_router.dart';
-import 'package:spotify_sdk/spotify_sdk.dart';
+import 'package:podiz/src/showcase/showcase_keys.dart';
+import 'package:podiz/src/utils/instances.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 enum HomePage { feed, search, notifications }
 
@@ -41,25 +42,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       final page = pageController.page;
       if (page != null && page == page.toInt()) goToDestination(page.toInt());
     });
-    //navigate to discussion when entering pon the app if already listening to an episode
-    ref.listenOnce<AsyncValue<PlayingEpisode?>>(
-      firstPlayerFutureProvider,
-      (_, firstEpisodeValue) => firstEpisodeValue.whenData((firstEpisode) {
-        if (firstEpisode != null && firstEpisode.isPlaying) {
-          context.goNamed(
-            AppRoute.discussion.name,
-            params: {'episodeId': firstEpisode.id},
-          );
-        }
-      }),
-    );
-    ref.listenOnce<AsyncValue<UserPodiz?>>(firstUserFutureProvider,
-        (previousUserValue, userValue) {
-      if (previousUserValue == null) return;
-      if (userValue.valueOrNull != null) {
-        context.pushNamed(AppRoute.signIn.name);
-      }
-    });
+
+    final firstTime = ref
+        .read(preferencesProvider)
+        .getBool('first-time', defaultValue: true)
+        .getValue();
+    // start the showcase
+    if (firstTime) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) {
+          ShowCaseWidget.of(context).startShowCase(showcaseKeys);
+          setState(() {});
+        },
+      );
+    }
+    // navigate to discussion when entering pon the app if already listening to an episode
+    else {
+      ref.listenOnce<AsyncValue<PlayingEpisode?>>(
+        firstPlayerFutureProvider,
+        (_, firstEpisodeValue) => firstEpisodeValue.whenData((firstEpisode) {
+          if (firstEpisode != null && firstEpisode.isPlaying) {
+            context.goNamed(
+              AppRoute.discussion.name,
+              params: {'episodeId': firstEpisode.id},
+            );
+          }
+        }),
+      );
+    }
   }
 
   @override
@@ -121,57 +131,58 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       },
     );
 
-    return KeyboardVisibilityBuilder(
-      builder: (context, isKeyBoardOpen) {
-        return TapToUnfocus(
-          child: Scaffold(
-            extendBody: true,
-            body: PageView(
-              controller: pageController,
-              children: const [
-                FeedPage(),
-                SearchPage(),
-                NotificationsPage(),
-              ],
-            ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () => SpotifySdk.disconnect(),
-            ),
-            bottomNavigationBar: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Player(),
-                ClipRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: SizedBox(
-                      height: HomeScreen.bottomBarHeigh,
-                      child: BottomNavigationBar(
-                        onTap: goToDestination,
-                        currentIndex: destination.index,
-                        items: const [
-                          BottomNavigationBarItem(
-                            label: 'Home',
-                            icon: Icon(Icons.home),
-                          ),
-                          BottomNavigationBarItem(
-                            label: 'Search',
-                            icon: Icon(Icons.search),
-                          ),
-                          BottomNavigationBarItem(
-                            label: 'Notifications',
-                            icon: Icon(Icons.notifications),
-                          ),
-                        ],
+    return ShowcaseOverlay(
+      step: 1,
+      text: 'Open a podcast you like',
+      child: KeyboardVisibilityBuilder(
+        builder: (context, isKeyBoardOpen) {
+          return TapToUnfocus(
+            child: Scaffold(
+              extendBody: true,
+              body: PageView(
+                controller: pageController,
+                children: const [
+                  FeedPage(),
+                  SearchPage(),
+                  NotificationsPage(),
+                ],
+              ),
+              bottomNavigationBar: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Player(),
+                  ClipRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: SizedBox(
+                        height: HomeScreen.bottomBarHeigh,
+                        child: BottomNavigationBar(
+                          onTap: goToDestination,
+                          currentIndex: destination.index,
+                          items: const [
+                            BottomNavigationBarItem(
+                              label: 'Home',
+                              icon: Icon(Icons.home),
+                            ),
+                            BottomNavigationBarItem(
+                              label: 'Search',
+                              icon: Icon(Icons.search),
+                            ),
+                            BottomNavigationBarItem(
+                              label: 'Notifications',
+                              icon: Icon(Icons.notifications),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

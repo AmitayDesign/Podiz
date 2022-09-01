@@ -42,12 +42,14 @@ dependencies:
   json_annotation: ^4.4.0
   json_serializable: ^6.1.5
   loading_indicator: ^3.0.3
+  lottie: ^1.4.2
   lucide_icons: ^0.83.0
   path_provider: ^2.0.9
   percent_indicator: ^4.2.2
   rxdart: ^0.27.4
   share_plus: ^4.0.10+1
   shimmer_animation: ^2.1.0
+  showcaseview: ^1.1.8
   skeletons: ^0.0.3
   spotify_sdk: ^2.3.0
   streaming_shared_preferences: ^2.0.0
@@ -79,3 +81,4 @@ flutter:
     - assets/icons/
     - assets/images/
     - assets/locales/
+    - assets/lottie/

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/player/domain/player_time.dart';
 import 'package:podiz/src/features/player/domain/playing_episode.dart';
@@ -25,7 +26,15 @@ abstract class PlayerRepository {
 //* Providers
 
 final playerStateChangesProvider = StreamProvider<PlayingEpisode?>(
-  (ref) => ref.watch(playerRepositoryProvider).watchPlayingEpisode(),
+  (ref) async* {
+    final connected =
+        ref.watch(connectionStateChangesProvider).valueOrNull ?? false;
+    if (!connected) {
+      yield null;
+    } else {
+      yield* ref.watch(playerRepositoryProvider).watchPlayingEpisode();
+    }
+  },
 );
 
 final firstPlayerFutureProvider = FutureProvider<PlayingEpisode?>(

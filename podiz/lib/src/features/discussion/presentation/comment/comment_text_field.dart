@@ -6,6 +6,11 @@ import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/player_controller.dart';
 import 'package:podiz/src/theme/context_theme.dart';
+import 'package:showcaseview/showcaseview.dart';
+
+final commentNodeProvider = Provider.autoDispose<FocusNode>(
+  (ref) => FocusNode(),
+);
 
 class CommentTextField extends ConsumerStatefulWidget {
   final bool autofocus;
@@ -24,9 +29,9 @@ class CommentTextField extends ConsumerStatefulWidget {
 }
 
 class _CommentTextFieldState extends ConsumerState<CommentTextField> {
-  final commentNode = FocusNode();
   final commentController = TextEditingController();
   String get comment => commentController.text;
+  FocusNode get commentNode => ref.read(commentNodeProvider);
 
   @override
   void initState() {
@@ -57,10 +62,12 @@ class _CommentTextFieldState extends ConsumerState<CommentTextField> {
     if (comment.isEmpty) return;
     widget.onSend?.call(comment);
     commentController.clear();
+    ShowCaseWidget.of(context).next();
   }
 
   @override
   Widget build(BuildContext context) {
+    final commentNode = ref.watch(commentNodeProvider);
     return Row(
       children: [
         Consumer(
