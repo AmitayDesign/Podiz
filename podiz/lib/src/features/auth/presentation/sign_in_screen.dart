@@ -33,6 +33,18 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue>(onboardingControllerProvider, (_, state) {
+      if (!state.isRefreshing && state.hasError) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Error'),
+            content: Text(state.error.toString()),
+          ),
+        );
+      }
+    });
+    final state = ref.watch(onboardingControllerProvider);
     final spotifyApi = ref.watch(spotifyApiProvider);
     return Scaffold(
       appBar: const OnboardingBar(),
