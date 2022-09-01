@@ -45,7 +45,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           ),
         ),
         child: WebView(
-          backgroundColor: Colors.transparent,
+          // backgroundColor: Colors.transparent,
           initialUrl: spotifyApi.authenticationUrl,
           javascriptMode: JavascriptMode.unrestricted,
           navigationDelegate: handleNavigation,
