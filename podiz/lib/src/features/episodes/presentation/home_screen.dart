@@ -16,7 +16,6 @@ import 'package:podiz/src/features/player/presentation/player.dart';
 import 'package:podiz/src/features/search/presentation/search_page.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/showcase/showcase_keys.dart';
-import 'package:podiz/src/utils/instances.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 enum HomePage { feed, search, notifications }
@@ -43,10 +42,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       if (page != null && page == page.toInt()) goToDestination(page.toInt());
     });
 
-    final firstTime = ref
-        .read(preferencesProvider)
-        .getBool('first-time', defaultValue: true)
-        .getValue();
+    // TODO don't remove this code
+    const firstTime = false;
+    //  ref
+    //     .read(preferencesProvider)
+    //     .getBool('first-time', defaultValue: true)
+    //     .getValue();
     // start the showcase
     if (firstTime) {
       WidgetsBinding.instance.addPostFrameCallback(
