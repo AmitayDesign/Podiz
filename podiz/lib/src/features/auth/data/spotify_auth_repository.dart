@@ -11,14 +11,21 @@ import 'package:podiz/src/utils/null_preferences.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
-class SpotifyAuthRepository with AuthState implements AuthRepository {
+class SpotifyAuthRepository
+    with AuthState, ConnectionState
+    implements AuthRepository {
+  //
   @override
   final FirebaseFirestore firestore;
   @override
   final StreamingSharedPreferences preferences;
 
+  @override
   final SpotifyApi spotifyApi;
   final FirebaseFunctions functions;
+
+  @override
+  final userKey = 'userId';
 
   SpotifyAuthRepository({
     required this.spotifyApi,
@@ -30,21 +37,13 @@ class SpotifyAuthRepository with AuthState implements AuthRepository {
     listenToConnectionChanges();
   }
 
-  late StreamSubscription connectionSub;
-  void listenToConnectionChanges() {
-    connectionSub =
-        SpotifySdk.subscribeConnectionStatus().listen((status) async {
-      if (!status.connected && preferences.getStringOrNull(userKey) != null) {
-        signIn();
-      }
-    });
+  void dispose() {
+    disposeAuthState();
+    disposeConnectionState();
   }
 
   @override
-  void dispose() {
-    connectionSub.cancel();
-    super.dispose();
-  }
+  Stream<bool> connectionChanges() => connectionState.stream;
 
   @override
   Stream<UserPodiz?> authStateChanges() => authState.stream;
@@ -53,37 +52,40 @@ class SpotifyAuthRepository with AuthState implements AuthRepository {
   UserPodiz? get currentUser => authState.value;
 
   @override
-  Future<void> signIn() async {
+  Future<void> signIn(String code) async {
     late final bool success;
     try {
-      final accessToken = await spotifyApi.getAccessToken();
-
-      success = await SpotifySdk.connectToSpotifyRemote(
-        //! ios autoplay workarroud
-        // this uri does not exist and so the player wont start automatically
-        // spotifyUri: 'null',
-        clientId: spotifyApi.clientId,
-        redirectUrl: spotifyApi.redirectUrl,
-        accessToken: accessToken,
-      );
-      await fetchUser(accessToken);
+      final accessToken = await getAccessTokenWithCode(code);
+      success = await spotifyApi.connectToSdk(accessToken);
     } catch (e) {
       throw Exception('Sign in error: $e');
     }
     if (!success) throw Exception('Error connecting to Spotify');
+    // wait for the user to be fetched before ending the login
+    // so it doesnt display a wrong frame
+    await authState.first;
   }
 
-  Future<void> fetchUser(String accessToken) async {
-    // https://github.com/firebase/functions-samples/blob/main/spotify-auth/functions/index.js
+  Future<String> getAccessTokenWithCode(String code) async {
+    //TODO connnect spotify to firebaseAuth
+    //* https://github.com/firebase/functions-samples/blob/main/spotify-auth/functions/index.js
+
+    final now = DateTime.now();
     final result = await functions
-        .httpsCallable('fetchSpotifyUser')
-        .call({'accessToken': accessToken});
+        .httpsCallable('getAccessTokenWithCode')
+        .call({'code': code});
 
-    final userId = result.data;
-    if (userId == null) throw Exception('Failed to get user data');
+    if (result.data == '0') throw Exception('Failed to get user data');
 
+    final accessToken = result.data['access_token'];
+    final timeout = result.data['timeout']; // in seconds
+    spotifyApi.accessToken = accessToken;
+    spotifyApi.timeout = now.add(Duration(seconds: timeout));
+
+    final userId = result.data['userId'];
     await preferences.setString(userKey, userId);
-    await authState.first;
+
+    return accessToken;
   }
 
   @override
@@ -107,11 +109,11 @@ class SpotifyAuthRepository with AuthState implements AuthRepository {
   }
 }
 
-abstract class AuthState {
+mixin AuthState {
   StreamingSharedPreferences get preferences;
   FirebaseFirestore get firestore;
 
-  final userKey = 'userId';
+  String get userKey;
   final authState = InMemoryStore<UserPodiz?>();
 
   StreamSubscription? authStateSub;
@@ -142,9 +144,33 @@ abstract class AuthState {
         .listen((user) => authState.value = user);
   }
 
-  void dispose() {
+  void disposeAuthState() {
     userSub?.cancel();
     authStateSub?.cancel();
     authState.close();
+  }
+}
+
+mixin ConnectionState {
+  SpotifyApi get spotifyApi;
+  StreamingSharedPreferences get preferences;
+  FirebaseFirestore get firestore;
+
+  String get userKey;
+  final connectionState = InMemoryStore<bool>();
+
+  StreamSubscription? connectionSub;
+  void listenToConnectionChanges() {
+    connectionSub =
+        SpotifySdk.subscribeConnectionStatus().listen((status) async {
+      connectionState.value = status.connected;
+      if (!status.connected && preferences.getStringOrNull(userKey) != null) {
+        spotifyApi.getAccessToken();
+      }
+    });
+  }
+
+  void disposeConnectionState() {
+    connectionSub?.cancel();
   }
 }

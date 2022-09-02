@@ -14,8 +14,8 @@ class OnboardingController extends StateNotifier<AsyncValue> {
   OnboardingController({required this.repository})
       : super(const AsyncValue.data(null));
 
-  Future<void> signIn() async {
+  Future<void> signIn(String code) async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() => repository.signIn());
+    state = await AsyncValue.guard(() => repository.signIn(code));
   }
 }

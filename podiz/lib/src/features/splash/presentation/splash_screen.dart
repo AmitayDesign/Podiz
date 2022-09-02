@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
-import 'package:loading_indicator/loading_indicator.dart';
+import 'package:lottie/lottie.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
 enum SplashType { loading, error }
@@ -18,38 +18,38 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Material(
       child: Container(
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: context.colorScheme.background,
           image: const DecorationImage(
-            image: AssetImage("assets/images/backgroundImage.png"),
+            image: AssetImage('assets/images/backgroundImage.png'),
             fit: BoxFit.cover,
           ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(
-              "assets/images/brandIcon.png",
-              width: 72,
-              height: 72,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(height: 8),
-            Text("Podiz", style: context.textTheme.headlineLarge),
-            const SizedBox(height: 8),
             if (type == SplashType.loading)
-              SizedBox(
-                height: 24,
-                child: LoadingIndicator(
-                  colors: [theme.primaryColor],
-                  indicatorType: Indicator.ballBeat,
-                ),
+              Lottie.asset(
+                'assets/lottie/loading_podiz.json',
+                repeat: true,
+                width: 72,
+                height: 72,
+                fit: BoxFit.contain,
               )
             else if (type == SplashType.error)
+              Image.asset(
+                'assets/images/brandIcon.png',
+                width: 72,
+                height: 72,
+                fit: BoxFit.contain,
+              ),
+            const SizedBox(height: 8),
+            Text('Podiz', style: context.textTheme.headlineLarge),
+            if (type == SplashType.error) ...[
+              const SizedBox(height: 8),
               Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: LocaleText(
@@ -58,6 +58,7 @@ class SplashScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
+            ],
           ],
         ),
       ),

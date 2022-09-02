@@ -12,6 +12,8 @@ import 'package:podiz/src/features/episodes/presentation/card/quick_note_button.
 import 'package:podiz/src/features/episodes/presentation/card/skeleton_episode_card.dart';
 import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
+import 'package:podiz/src/showcase/showcase_keys.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 import 'feed_bar.dart';
 import 'feed_controller.dart';
@@ -124,10 +126,23 @@ class _FeedPageState extends ConsumerState<FeedPage>
                                   if (lastEpisode == null) {
                                     return const SizedBox.shrink();
                                   }
-                                  return EpisodeCard(
+                                  final card = EpisodeCard(
                                     lastEpisode,
                                     podcast: podcast,
                                   );
+                                  //! check which card to set this
+                                  return podcastId == user.favPodcasts.first
+                                      ? ShowcaseStep(
+                                          step: 1,
+                                          onTap: () {
+                                            card.openEpisode(context, ref.read);
+                                            ShowCaseWidget.of(context).next();
+                                          },
+                                          description:
+                                              '${podcast.name} could be a great option to start with',
+                                          child: card,
+                                        )
+                                      : card;
                                 });
                           });
                     }),
