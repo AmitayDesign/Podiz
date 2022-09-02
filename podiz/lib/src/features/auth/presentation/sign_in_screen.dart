@@ -19,11 +19,11 @@ class SignInScreen extends ConsumerStatefulWidget {
 class _SignInScreenState extends ConsumerState<SignInScreen> {
   Future<NavigationDecision> handleNavigation(NavigationRequest req) async {
     final response = req.url;
-    final error = Uri.parse(response).queryParameters['error'];
-    if (error == null) {
-      final code = Uri.parse(response).queryParameters['code']!;
-      await ref.read(onboardingControllerProvider.notifier).signIn(code);
-    }
+
+    final redirectUrl = ref.watch(spotifyApiProvider).redirectUrl;
+    if (!response.contains(redirectUrl)) return NavigationDecision.navigate;
+
+    await ref.read(onboardingControllerProvider.notifier).signIn(response);
 
     var popped = false;
     if (mounted) popped = await Navigator.maybePop(context);
@@ -44,7 +44,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         );
       }
     });
-    final state = ref.watch(onboardingControllerProvider);
+    ref.watch(onboardingControllerProvider);
     final spotifyApi = ref.watch(spotifyApiProvider);
     return Scaffold(
       appBar: const OnboardingBar(),
