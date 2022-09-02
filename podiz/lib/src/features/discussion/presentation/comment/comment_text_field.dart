@@ -9,7 +9,11 @@ import 'package:podiz/src/theme/context_theme.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 final commentNodeProvider = Provider.autoDispose<FocusNode>(
-  (ref) => FocusNode(),
+  (ref) {
+    final node = FocusNode();
+    ref.onDispose(node.dispose);
+    return node;
+  },
 );
 
 class CommentTextField extends ConsumerStatefulWidget {
@@ -47,7 +51,6 @@ class _CommentTextFieldState extends ConsumerState<CommentTextField> {
 
   @override
   void dispose() {
-    commentNode.dispose();
     commentController.dispose();
     super.dispose();
   }

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/common_widgets/sliver_firestore_query_builder.dart';
+import 'package:podiz/src/constants/constants.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/auth/data/spotify_api.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
@@ -15,9 +17,9 @@ import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
 import 'package:podiz/src/features/search/presentation/search_bar.dart';
 import 'package:podiz/src/features/search/presentation/skeleton_podcast_card.dart';
+import 'package:podiz/src/utils/instances.dart';
 
 import 'podcast_card.dart';
-import 'spotify_search_button.dart';
 import 'user_card.dart';
 
 class SearchPage extends ConsumerStatefulWidget {
@@ -30,6 +32,32 @@ class SearchPage extends ConsumerStatefulWidget {
 class _SearchPageState extends ConsumerState<SearchPage> {
   late final searchController = TextEditingController();
   String get query => searchController.text;
+
+  @override
+  void initState() {
+    super.initState();
+    searchController.addListener(() {
+      final q = query;
+      if (!queries.contains(q)) {
+        queries.add(q);
+        searchInSpotify(q);
+      }
+    });
+  }
+
+  //TODO put this in a repository
+  bool isLoading = false;
+  final queries = <String>{};
+  Future<void> searchInSpotify(String query) async {
+    setState(() => isLoading = true);
+    final accessToken = await ref.read(spotifyApiProvider).getAccessToken();
+    await ref
+        .read(functionsProvider)
+        .httpsCallable("fetchSpotifySearch")
+        .call({'accessToken': accessToken, 'query': query}).whenComplete(() {
+      if (mounted) setState(() => isLoading = false);
+    });
+  }
 
   @override
   void dispose() {
@@ -101,7 +129,18 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                       );
                     },
                   ),
-                  SliverToBoxAdapter(child: SpotifySearchButton(query)),
+                  if (isLoading)
+                    SliverToBoxAdapter(
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        alignment: Alignment.center,
+                        child: const SizedBox.square(
+                          dimension: kSmallIconSize,
+                          child: CircularProgressIndicator(strokeWidth: 3),
+                        ),
+                      ),
+                    ),
+                  // SliverToBoxAdapter(child: SpotifySearchButton(query)),
                 ],
 
                 // so it doesnt end behind the bottom bar
