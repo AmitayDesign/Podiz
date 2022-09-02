@@ -1,8 +1,13 @@
 const helpers = require("./helpers.js");
 const { fetchSpotifyUserFavorites } = require("./user-favorites.js");
 
+const admin = require("firebase-admin");
+const fetch = require("node-fetch");
+
 var client_id = "9a8daaf39e784f1c90770da4a252087f";
 var client_secret = "10de465afd164e8e9196988aa738a127";
+
+var authenticationHost = "https://accounts.spotify.com/";
 
 exports.getAccessTokenWithCode = async (code) => {
   try {
@@ -23,7 +28,7 @@ exports.getAccessTokenWithCode = async (code) => {
 
     var result = await response.json();
 
-    let userId = await fetchSpotifyUser(result.accessToken);
+    let userId = await fetchSpotifyUser(result.access_token);
 
     admin.firestore().collection("spotifyAuth").doc(userId).set({
       access_token: result.access_token,
@@ -35,7 +40,7 @@ exports.getAccessTokenWithCode = async (code) => {
 
     return {
       userId: userId,
-      acces_token: result.acces_token,
+      access_token: result.access_token,
       timeout: result.expires_in,
     };
   } catch (err) {
@@ -68,7 +73,7 @@ exports.getAccessTokenWithRefreshToken = async (userId) => {
         .collection("spotifyAuth")
         .doc(userId)
         .update({ access_token: result.access_token });
-      return { result: result.acces_token };
+      return { result: result.access_token };
     } else if (response["status"] == 401) {
       return { result: "unauthorized" };
     }
