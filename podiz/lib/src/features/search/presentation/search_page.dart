@@ -46,16 +46,17 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   }
 
   //TODO put this in a repository
-  bool isLoading = false;
+  int loadingCount = 0;
+  bool get isLoading => loadingCount > 0;
   final queries = <String>{};
   Future<void> searchInSpotify(String query) async {
-    setState(() => isLoading = true);
+    setState(() => ++loadingCount);
     final accessToken = await ref.read(spotifyApiProvider).getAccessToken();
     await ref
         .read(functionsProvider)
         .httpsCallable("fetchSpotifySearch")
         .call({'accessToken': accessToken, 'query': query}).whenComplete(() {
-      if (mounted) setState(() => isLoading = false);
+      if (mounted) setState(() => --loadingCount);
     });
   }
 
