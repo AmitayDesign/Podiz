@@ -1,21 +1,23 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import 'package:podiz/src/features/auth/data/auth_repository.dart';
-import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/utils/instances.dart';
+import 'package:podiz/src/utils/null_preferences.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
+import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 final spotifyApiProvider = Provider<SpotifyApi>(
-  (ref) => SpotifyApi(ref.read),
+  (ref) => SpotifyApi(
+    functions: ref.watch(functionsProvider),
+    preferences: ref.watch(preferencesProvider),
+  ),
 );
 
 class SpotifyApi {
-  final Reader _read;
-  FirebaseFunctions get functions => _read(functionsProvider);
-  UserPodiz get user => _read(currentUserProvider);
+  final FirebaseFunctions functions;
+  final StreamingSharedPreferences preferences;
 
-  SpotifyApi(this._read);
+  SpotifyApi({required this.functions, required this.preferences});
 
   final clientId = '9a8daaf39e784f1c90770da4a252087f';
   final redirectUrl = 'podiz:/';
@@ -44,9 +46,10 @@ class SpotifyApi {
   Future<String> getAccessToken() async {
     if (!tokenExpired && accessToken != null) return accessToken!;
 
+    final userId = preferences.getStringOrNull('userId'); //! hardcoded
     final response = await functions
         .httpsCallable('getAccessTokenWithRefreshToken')
-        .call({'userId': user.id});
+        .call({'userId': userId});
 
     final result = response.data['result'];
     // if (result == 'unauthorized') //TODO sign in screen;

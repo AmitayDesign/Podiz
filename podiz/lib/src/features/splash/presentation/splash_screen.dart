@@ -24,7 +24,7 @@ class SplashScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: context.colorScheme.background,
           image: const DecorationImage(
-            image: AssetImage("assets/images/backgroundImage.png"),
+            image: AssetImage('assets/images/backgroundImage.png'),
             fit: BoxFit.cover,
           ),
         ),
@@ -41,13 +41,13 @@ class SplashScreen extends StatelessWidget {
               )
             else if (type == SplashType.error)
               Image.asset(
-                "assets/images/brandIcon.png",
+                'assets/images/brandIcon.png',
                 width: 72,
                 height: 72,
                 fit: BoxFit.contain,
               ),
             const SizedBox(height: 8),
-            Text("Podiz", style: context.textTheme.headlineLarge),
+            Text('Podiz', style: context.textTheme.headlineLarge),
             if (type == SplashType.error) ...[
               const SizedBox(height: 8),
               Padding(

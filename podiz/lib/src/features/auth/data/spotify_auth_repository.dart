@@ -164,7 +164,8 @@ mixin ConnectionState {
     connectionSub =
         SpotifySdk.subscribeConnectionStatus().listen((status) async {
       connectionState.value = status.connected;
-      if (!status.connected && preferences.getStringOrNull(userKey) != null) {
+      final userId = preferences.getStringOrNull(userKey);
+      if (!status.connected && userId != null) {
         spotifyApi.getAccessToken();
       }
     });
