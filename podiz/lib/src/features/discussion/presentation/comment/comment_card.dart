@@ -10,6 +10,8 @@ import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
+import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
+import 'package:podiz/src/features/showcase/presentation/showcase_step.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/context_theme.dart';
@@ -23,12 +25,14 @@ class CommentCard extends ConsumerStatefulWidget {
   final Comment comment;
   final String episodeId;
   final bool navigate;
+  final bool showcase;
 
   const CommentCard(
     this.comment, {
     Key? key,
     required this.episodeId,
     this.navigate = true,
+    this.showcase = false,
   }) : super(key: key);
 
   @override
@@ -79,6 +83,7 @@ class _CommentCardState extends ConsumerState<CommentCard> {
       loading: () => SizedBox.fromSize(),
       error: (e, _) => const SizedBox.shrink(),
       data: (user) {
+        print(widget.showcase);
         return Material(
           color: context.colorScheme.surface,
           child: Padding(
@@ -92,10 +97,30 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                     children: [
                       Row(
                         children: [
-                          UserAvatar(
-                            user: user,
-                            radius: kMinInteractiveDimension * 5 / 12,
-                          ),
+                          if (widget.showcase)
+                            ShowcaseStep(
+                              step: 3,
+                              skipOnTop: true,
+                              onTap: () {
+                                context.goNamed(
+                                  AppRoute.profile.name,
+                                  params: {'userId': user.id},
+                                );
+                                ShowCaseWidget.of(context).next();
+                              },
+                              title: 'Find interesting people',
+                              description:
+                                  '${user.name} could be a great start with',
+                              child: UserAvatar(
+                                user: user,
+                                radius: kMinInteractiveDimension * 5 / 12,
+                              ),
+                            )
+                          else
+                            UserAvatar(
+                              user: user,
+                              radius: kMinInteractiveDimension * 5 / 12,
+                            ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Column(

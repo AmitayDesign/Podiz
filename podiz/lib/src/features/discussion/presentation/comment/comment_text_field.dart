@@ -5,14 +5,22 @@ import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/player_controller.dart';
+import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
 import 'package:podiz/src/theme/context_theme.dart';
-import 'package:showcaseview/showcaseview.dart';
 
 final commentNodeProvider = Provider.autoDispose<FocusNode>(
   (ref) {
     final node = FocusNode();
     ref.onDispose(node.dispose);
     return node;
+  },
+);
+
+final commentControllerProvider = Provider<TextEditingController>(
+  (ref) {
+    final controller = TextEditingController();
+    // ref.onDispose(controller.dispose);
+    return controller;
   },
 );
 
@@ -33,9 +41,10 @@ class CommentTextField extends ConsumerStatefulWidget {
 }
 
 class _CommentTextFieldState extends ConsumerState<CommentTextField> {
-  final commentController = TextEditingController();
-  String get comment => commentController.text;
   FocusNode get commentNode => ref.read(commentNodeProvider);
+  TextEditingController get commentController =>
+      ref.read(commentControllerProvider);
+  String get comment => commentController.text;
 
   @override
   void initState() {
@@ -50,12 +59,6 @@ class _CommentTextFieldState extends ConsumerState<CommentTextField> {
   }
 
   @override
-  void dispose() {
-    commentController.dispose();
-    super.dispose();
-  }
-
-  @override
   void didUpdateWidget(covariant CommentTextField oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.autofocus) commentNode.requestFocus();
@@ -65,6 +68,7 @@ class _CommentTextFieldState extends ConsumerState<CommentTextField> {
     if (comment.isEmpty) return;
     widget.onSend?.call(comment);
     commentController.clear();
+    commentNode.unfocus();
     ShowCaseWidget.of(context).next();
   }
 

@@ -12,8 +12,8 @@ import 'package:podiz/src/features/episodes/presentation/card/quick_note_button.
 import 'package:podiz/src/features/episodes/presentation/card/skeleton_episode_card.dart';
 import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
-import 'package:podiz/src/showcase/showcase_keys.dart';
-import 'package:showcaseview/showcaseview.dart';
+import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
+import 'package:podiz/src/features/showcase/presentation/showcase_step.dart';
 
 import 'feed_bar.dart';
 import 'feed_controller.dart';
@@ -42,6 +42,18 @@ class _FeedPageState extends ConsumerState<FeedPage>
     scrollController.dispose();
     super.dispose();
   }
+
+  Widget showcase({required String podcastTitle, required EpisodeCard child}) =>
+      ShowcaseStep(
+        step: 1,
+        onTap: () {
+          child.openEpisode(context, ref.read);
+          ShowCaseWidget.of(context).next();
+        },
+        title: 'Open a podcast you like',
+        description: '$podcastTitle could be a great option to start with',
+        child: child,
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -130,16 +142,9 @@ class _FeedPageState extends ConsumerState<FeedPage>
                                     lastEpisode,
                                     podcast: podcast,
                                   );
-                                  //! check which card to set this
                                   return podcastId == user.favPodcasts.first
-                                      ? ShowcaseStep(
-                                          step: 1,
-                                          onTap: () {
-                                            card.openEpisode(context, ref.read);
-                                            ShowCaseWidget.of(context).next();
-                                          },
-                                          description:
-                                              '${podcast.name} could be a great option to start with',
+                                      ? showcase(
+                                          podcastTitle: podcast.name,
                                           child: card,
                                         )
                                       : card;
@@ -157,7 +162,7 @@ class _FeedPageState extends ConsumerState<FeedPage>
               ),
             SliverFirestoreQueryBuilder<Episode>(
               query: episodeRepository.hotliveFirestoreQuery(),
-              builder: (context, episode) {
+              indexedBuilder: (context, episode, i) {
                 return Consumer(
                   builder: (context, ref, _) {
                     final podcastValue =
@@ -166,7 +171,13 @@ class _FeedPageState extends ConsumerState<FeedPage>
                         loading: () => const SkeletonEpisodeCard(),
                         error: (e, _) => const SizedBox.shrink(),
                         data: (podcast) {
-                          return EpisodeCard(episode, podcast: podcast);
+                          final card = EpisodeCard(episode, podcast: podcast);
+                          return i == 0 && user.favPodcasts.isEmpty
+                              ? showcase(
+                                  podcastTitle: podcast.name,
+                                  child: card,
+                                )
+                              : card;
                         });
                   },
                 );

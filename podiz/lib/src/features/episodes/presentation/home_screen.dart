@@ -14,9 +14,9 @@ import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/domain/playing_episode.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
 import 'package:podiz/src/features/search/presentation/search_page.dart';
+import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
+import 'package:podiz/src/features/showcase/presentation/showcase_keys.dart';
 import 'package:podiz/src/routing/app_router.dart';
-import 'package:podiz/src/showcase/showcase_keys.dart';
-import 'package:showcaseview/showcaseview.dart';
 
 enum HomePage { feed, search, notifications }
 
@@ -42,8 +42,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       if (page != null && page == page.toInt()) goToDestination(page.toInt());
     });
 
-    // TODO don't remove this code
-    const firstTime = false;
+    const firstTime = true;
     //  ref
     //     .read(preferencesProvider)
     //     .getBool('first-time', defaultValue: true)
@@ -57,7 +56,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         },
       );
     }
-    // navigate to discussion when entering pon the app if already listening to an episode
+    // navigate to discussion when entering the app if already listening to an episode
     else {
       ref.listenOnce<AsyncValue<PlayingEpisode?>>(
         firstPlayerFutureProvider,
@@ -132,58 +131,54 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       },
     );
 
-    return ShowcaseOverlay(
-      step: 1,
-      text: 'Open a podcast you like',
-      child: KeyboardVisibilityBuilder(
-        builder: (context, isKeyBoardOpen) {
-          return TapToUnfocus(
-            child: Scaffold(
-              extendBody: true,
-              body: PageView(
-                controller: pageController,
-                children: const [
-                  FeedPage(),
-                  SearchPage(),
-                  NotificationsPage(),
-                ],
-              ),
-              bottomNavigationBar: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Player(),
-                  ClipRect(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                      child: SizedBox(
-                        height: HomeScreen.bottomBarHeigh,
-                        child: BottomNavigationBar(
-                          onTap: goToDestination,
-                          currentIndex: destination.index,
-                          items: const [
-                            BottomNavigationBarItem(
-                              label: 'Home',
-                              icon: Icon(Icons.home),
-                            ),
-                            BottomNavigationBarItem(
-                              label: 'Search',
-                              icon: Icon(Icons.search),
-                            ),
-                            BottomNavigationBarItem(
-                              label: 'Notifications',
-                              icon: Icon(Icons.notifications),
-                            ),
-                          ],
-                        ),
+    return KeyboardVisibilityBuilder(
+      builder: (context, isKeyBoardOpen) {
+        return TapToUnfocus(
+          child: Scaffold(
+            extendBody: true,
+            body: PageView(
+              controller: pageController,
+              children: const [
+                FeedPage(),
+                SearchPage(),
+                NotificationsPage(),
+              ],
+            ),
+            bottomNavigationBar: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Player(),
+                ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: SizedBox(
+                      height: HomeScreen.bottomBarHeigh,
+                      child: BottomNavigationBar(
+                        onTap: goToDestination,
+                        currentIndex: destination.index,
+                        items: const [
+                          BottomNavigationBarItem(
+                            label: 'Home',
+                            icon: Icon(Icons.home),
+                          ),
+                          BottomNavigationBarItem(
+                            label: 'Search',
+                            icon: Icon(Icons.search),
+                          ),
+                          BottomNavigationBarItem(
+                            label: 'Notifications',
+                            icon: Icon(Icons.notifications),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }
