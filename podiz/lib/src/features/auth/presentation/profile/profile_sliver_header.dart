@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:podiz/src/common_widgets/app_bar_gradient.dart';
 import 'package:podiz/src/common_widgets/back_text_button.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
+import 'package:podiz/src/features/showcase/presentation/showcase_step.dart';
+import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
 class ProfileSliverHeader extends StatelessWidget {
@@ -26,7 +30,16 @@ class ProfileSliverHeader extends StatelessWidget {
       automaticallyImplyLeading: false,
       backgroundColor: Colors.transparent,
       toolbarHeight: GradientBar.height,
-      title: const BackTextButton(),
+      title: ShowcaseStep(
+        step: 5,
+        onTap: () {
+          context.goNamed(AppRoute.home.name);
+          ShowCaseWidget.of(context).next();
+        },
+        title: 'Done! Let\'s go back home',
+        description: 'That\'s right here',
+        child: const BackTextButton(),
+      ),
       flexibleSpace: Container(
         decoration: BoxDecoration(
           gradient: extendedAppBarGradient(context.colorScheme.background),

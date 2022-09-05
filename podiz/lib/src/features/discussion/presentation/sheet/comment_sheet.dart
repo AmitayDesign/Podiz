@@ -11,6 +11,8 @@ import 'package:podiz/src/features/player/presentation/player_button.dart';
 import 'package:podiz/src/features/player/presentation/player_controller.dart';
 import 'package:podiz/src/features/player/presentation/player_slider_controller.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
+import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
+import 'package:podiz/src/features/showcase/presentation/showcase_step.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 import 'package:podiz/src/theme/palette.dart';
@@ -56,98 +58,118 @@ class CommentSheet extends ConsumerWidget {
         error: (e, _) => const SizedBox.shrink(),
         data: (episode) {
           if (episode == null) return const SizedBox.shrink();
-          return Material(
-            color: Palette.grey900,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(kBorderRadius),
+          return ShowcaseStep(
+            step: 2,
+            skipOnTop: true,
+            onTap: () {
+              if (ref.read(commentControllerProvider).text.isEmpty) {
+                ref.read(commentNodeProvider).requestFocus();
+              } else {
+                sendComment(ref.read, episode.id, target,
+                    ref.read(commentControllerProvider).text);
+                ref.read(commentControllerProvider).clear();
+                ref.read(commentNodeProvider).unfocus();
+                ShowCaseWidget.of(context).next();
+              }
+            },
+            title: 'Comment what you think',
+            description: '"I love that example, it made think about..."',
+            child: Material(
+              color: Palette.grey900,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(kBorderRadius),
+                ),
               ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  //* Parent comment (if is a reply)
-                  if (isReply) ...[
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'Replying to...'.hardcoded,
-                            style: context.textTheme.bodySmall,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    //* Parent comment (if is a reply)
+                    if (isReply) ...[
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'Replying to...'.hardcoded,
+                              style: context.textTheme.bodySmall,
+                            ),
                           ),
-                        ),
-                        TextButton(
-                          onPressed: () => ref
-                              .read(commentSheetTargetProvider.notifier)
-                              .state = null,
-                          child: Text(
-                            'Cancel'.hardcoded,
-                            style: context.textTheme.bodySmall,
+                          TextButton(
+                            onPressed: () => ref
+                                .read(commentSheetTargetProvider.notifier)
+                                .state = null,
+                            child: Text(
+                              'Cancel'.hardcoded,
+                              style: context.textTheme.bodySmall,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
+                      TargetComment(target),
+                      const SizedBox(height: 16),
+                    ],
+
+                    //* Comment text field
+                    CommentTextField(
+                      autofocus: isReply,
+                      hint:
+                          isReply ? 'Add a reply...' : 'Share your insight...',
+                      onSend: (text) =>
+                          sendComment(ref.read, episode.id, target, text),
                     ),
-                    TargetComment(target),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 4),
+                    Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Row(
+                        children: [
+                          //* Listening with you
+                          Expanded(
+                            child: UsersListeningText(
+                              (others) =>
+                                  '$others listening with you'.hardcoded,
+                              episode: episode,
+                            ),
+                          ),
+
+                          //* Player controls
+                          PlayerButton(
+                            loading: state.isLoading,
+                            onPressed: ref
+                                .read(playerControllerProvider.notifier)
+                                .rewind,
+                            icon: const Icon(Icons.replay_30),
+                          ),
+                          episode.isPlaying
+                              ? PlayerTimeChip(
+                                  loading: state.isLoading,
+                                  onTap: ref
+                                      .read(playerControllerProvider.notifier)
+                                      .pause,
+                                  icon: Icons.pause,
+                                )
+                              : PlayerTimeChip(
+                                  loading: state.isLoading,
+                                  onTap: () => ref
+                                      .read(playerControllerProvider.notifier)
+                                      .play(episode.id),
+                                  icon: Icons.play_arrow,
+                                ),
+                          PlayerButton(
+                            loading: state.isLoading,
+                            onPressed: ref
+                                .read(playerControllerProvider.notifier)
+                                .fastForward,
+                            icon: const Icon(Icons.forward_30),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
-
-                  //* Comment text field
-                  CommentTextField(
-                    autofocus: isReply,
-                    hint: isReply ? 'Add a reply...' : 'Share your insight...',
-                    onSend: (text) =>
-                        sendComment(ref.read, episode.id, target, text),
-                  ),
-                  const SizedBox(height: 4),
-                  Padding(
-                    padding: const EdgeInsets.all(4),
-                    child: Row(
-                      children: [
-                        //* Listening with you
-                        Expanded(
-                          child: UsersListeningText(
-                            (others) => '$others listening with you'.hardcoded,
-                            episode: episode,
-                          ),
-                        ),
-
-                        //* Player controls
-                        PlayerButton(
-                          loading: state.isLoading,
-                          onPressed: ref
-                              .read(playerControllerProvider.notifier)
-                              .rewind,
-                          icon: const Icon(Icons.replay_30),
-                        ),
-                        episode.isPlaying
-                            ? PlayerTimeChip(
-                                loading: state.isLoading,
-                                onTap: ref
-                                    .read(playerControllerProvider.notifier)
-                                    .pause,
-                                icon: Icons.pause,
-                              )
-                            : PlayerTimeChip(
-                                loading: state.isLoading,
-                                onTap: () => ref
-                                    .read(playerControllerProvider.notifier)
-                                    .play(episode.id),
-                                icon: Icons.play_arrow,
-                              ),
-                        PlayerButton(
-                          loading: state.isLoading,
-                          onPressed: ref
-                              .read(playerControllerProvider.notifier)
-                              .fastForward,
-                          icon: const Icon(Icons.forward_30),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           );

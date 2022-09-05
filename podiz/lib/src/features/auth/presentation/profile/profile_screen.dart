@@ -156,9 +156,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                             comment.episodeId == episodeId))
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
-                                            vertical: 8),
-                                        child: CommentCard(comment,
-                                            episodeId: episodeId),
+                                          vertical: 8,
+                                        ),
+                                        child: CommentCard(
+                                          comment,
+                                          episodeId: episodeId,
+                                        ),
                                       )
                                   ],
                                 ),

@@ -5,13 +5,16 @@ import 'package:flutterfire_ui/firestore.dart';
 //TODO stop using this
 class SliverFirestoreQueryBuilder<T> extends StatelessWidget {
   final Query<T> query;
-  final Widget Function(BuildContext context, T data) builder;
+  final Widget Function(BuildContext context, T data)? builder;
+  final Widget Function(BuildContext context, T data, int i)? indexedBuilder;
 
   const SliverFirestoreQueryBuilder({
     Key? key,
     required this.query,
-    required this.builder,
-  }) : super(key: key);
+    this.builder,
+    this.indexedBuilder,
+  })  : assert(builder != null || indexedBuilder != null),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +28,8 @@ class SliverFirestoreQueryBuilder<T> extends StatelessWidget {
               if (snapshot.hasMore && length == i + 1) {
                 snapshot.fetchMore();
               }
-              return builder(context, snapshot.docs[i].data());
+              return builder?.call(context, snapshot.docs[i].data()) ??
+                  indexedBuilder!(context, snapshot.docs[i].data(), i);
             },
             childCount: snapshot.docs.length,
           ),
