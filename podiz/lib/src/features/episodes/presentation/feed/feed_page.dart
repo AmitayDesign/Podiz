@@ -50,6 +50,8 @@ class _FeedPageState extends ConsumerState<FeedPage>
           child.openEpisode(context, ref.read);
           ShowCaseWidget.of(context).next();
         },
+        onNext: () => 
+          child.openEpisode(context, ref.read),
         title: 'Open a podcast you like',
         description: '$podcastTitle could be a great option to start with',
         child: child,

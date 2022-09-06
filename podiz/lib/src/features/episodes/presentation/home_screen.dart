@@ -42,7 +42,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       if (page != null && page == page.toInt()) goToDestination(page.toInt());
     });
 
-    const firstTime = true;
+    const firstTime = false;
     //  ref
     //     .read(preferencesProvider)
     //     .getBool('first-time', defaultValue: true)

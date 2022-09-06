@@ -27,13 +27,9 @@ abstract class PlayerRepository {
 
 final playerStateChangesProvider = StreamProvider<PlayingEpisode?>(
   (ref) async* {
-    final connected =
-        ref.watch(connectionStateChangesProvider).valueOrNull ?? false;
-    if (!connected) {
-      yield null;
-    } else {
-      yield* ref.watch(playerRepositoryProvider).watchPlayingEpisode();
-    }
+    final connected = ref.watch(connectionChangesProvider).valueOrNull;
+    if (connected != true) yield null;
+    yield* ref.watch(playerRepositoryProvider).watchPlayingEpisode();
   },
 );
 

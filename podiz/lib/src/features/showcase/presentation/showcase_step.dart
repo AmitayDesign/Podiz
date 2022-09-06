@@ -9,6 +9,7 @@ import 'showcase_keys.dart';
 class ShowcaseStep extends StatelessWidget {
   final int step;
   final VoidCallback? onTap;
+  final VoidCallback? onNext;
   final String title;
   final String description;
   final bool skipOnTop;
@@ -18,6 +19,7 @@ class ShowcaseStep extends StatelessWidget {
     Key? key,
     required this.step,
     this.onTap,
+    this.onNext,
     required this.title,
     required this.description,
     this.skipOnTop = false,
@@ -29,12 +31,15 @@ class ShowcaseStep extends StatelessWidget {
     final skip = ShowcaseSkip(
       step: step,
       text: title,
-      next: onTap,
+      next: () {
+        onNext?.call();
+        ShowCaseWidget.of(context).next();
+      },
       top: skipOnTop,
     );
     return Showcase(
       globalKey: showcaseKeys[step - 1],
-      onTargetClick: onTap ?? ShowCaseWidget.of(context).next,
+      onTargetClick: onTap,
       disposeOnTap: false,
       description: description,
       descTextStyle: context.textTheme.bodyMedium,

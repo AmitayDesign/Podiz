@@ -83,7 +83,6 @@ class _CommentCardState extends ConsumerState<CommentCard> {
       loading: () => SizedBox.fromSize(),
       error: (e, _) => const SizedBox.shrink(),
       data: (user) {
-        print(widget.showcase);
         return Material(
           color: context.colorScheme.surface,
           child: Padding(
@@ -108,6 +107,10 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                                 );
                                 ShowCaseWidget.of(context).next();
                               },
+                              onNext: () => context.goNamed(
+                                AppRoute.profile.name,
+                                params: {'userId': user.id},
+                              ),
                               title: 'Find interesting people',
                               description:
                                   '${user.name} could be a great start with',
