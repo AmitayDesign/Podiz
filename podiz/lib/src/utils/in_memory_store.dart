@@ -18,6 +18,9 @@ class InMemoryStore<T> {
   /// A synchronous getter for the current value
   T get value => _subject.value;
 
+  /// A safe getter for when the current value can be uninitialized
+  T valueOr(T other) => _subject.hasValue ? value : other;
+
   // A setter for updating the value
   set value(T value) => _subject.add(value);
 

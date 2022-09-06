@@ -83,7 +83,6 @@ class _CommentCardState extends ConsumerState<CommentCard> {
       loading: () => SizedBox.fromSize(),
       error: (e, _) => const SizedBox.shrink(),
       data: (user) {
-        print(widget.showcase);
         return Material(
           color: context.colorScheme.surface,
           child: Padding(

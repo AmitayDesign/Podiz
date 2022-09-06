@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 
 class IntroPage extends StatelessWidget {
-  const IntroPage({Key? key}) : super(key: key);
+  final VoidCallback? onSuccess;
+  const IntroPage({Key? key, this.onSuccess}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return ConstrainedBox(
+    return Container(
+      padding: const EdgeInsets.all(16),
       constraints: const BoxConstraints(maxWidth: 360),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -33,6 +35,11 @@ class IntroPage extends StatelessWidget {
                 fit: BoxFit.contain,
               ),
             ),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: onSuccess,
+            child: const LocaleText('intro2'),
           ),
         ],
       ),
