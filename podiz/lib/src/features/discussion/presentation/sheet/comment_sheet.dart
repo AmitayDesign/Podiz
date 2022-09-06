@@ -63,6 +63,7 @@ class CommentSheet extends ConsumerWidget {
             skipOnTop: true,
             onTap: () {
               if (ref.read(commentControllerProvider).text.isEmpty) {
+                // ref.read(commentNodeProvider).unfocus();
                 ref.read(commentNodeProvider).requestFocus();
               } else {
                 sendComment(ref.read, episode.id, target,
@@ -71,6 +72,11 @@ class CommentSheet extends ConsumerWidget {
                 ref.read(commentNodeProvider).unfocus();
                 ShowCaseWidget.of(context).next();
               }
+            },
+            onNext: () {
+              ref.read(commentControllerProvider).clear();
+              ref.read(commentNodeProvider).unfocus();
+              ShowCaseWidget.of(context).next();
             },
             title: 'Comment what you think',
             description: '"I love that example, it made think about..."',

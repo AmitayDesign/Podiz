@@ -8,7 +8,7 @@ import 'package:podiz/src/features/player/presentation/player_controller.dart';
 import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
-final commentNodeProvider = Provider.autoDispose<FocusNode>(
+final commentNodeProvider = Provider<FocusNode>(
   (ref) {
     final node = FocusNode();
     ref.onDispose(node.dispose);
@@ -19,7 +19,7 @@ final commentNodeProvider = Provider.autoDispose<FocusNode>(
 final commentControllerProvider = Provider<TextEditingController>(
   (ref) {
     final controller = TextEditingController();
-    // ref.onDispose(controller.dispose);
+    ref.onDispose(controller.dispose);
     return controller;
   },
 );

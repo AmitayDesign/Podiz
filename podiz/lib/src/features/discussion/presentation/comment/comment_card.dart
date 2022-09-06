@@ -108,6 +108,10 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                                 );
                                 ShowCaseWidget.of(context).next();
                               },
+                              onNext: () => context.goNamed(
+                                AppRoute.profile.name,
+                                params: {'userId': user.id},
+                              ),
                               title: 'Find interesting people',
                               description:
                                   '${user.name} could be a great start with',

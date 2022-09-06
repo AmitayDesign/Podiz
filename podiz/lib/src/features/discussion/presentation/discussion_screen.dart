@@ -4,11 +4,13 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/back_text_button.dart';
 import 'package:podiz/src/common_widgets/tap_to_unfocus.dart';
+import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
-import 'package:podiz/src/features/discussion/presentation/spoiler/spoiler_indicator.dart';
+import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/domain/playing_episode.dart';
 import 'package:podiz/src/features/player/presentation/player_slider_controller.dart';
+import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/palette.dart';
 
@@ -16,6 +18,9 @@ import '../../../common_widgets/empty_screen.dart';
 import 'comment/comment_card.dart';
 import 'discussion_header.dart';
 import 'sheet/comment_sheet.dart';
+import 'spoiler/spoiler_indicator.dart';
+
+Comment? showcaseComment;
 
 class DiscussionScreen extends ConsumerStatefulWidget {
   final String episodeId;
@@ -53,6 +58,7 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
         }
       }),
     );
+    final currentUser = ref.watch(currentUserProvider);
     return TapToUnfocus(
       child: Scaffold(
         appBar: AppBar(
@@ -93,12 +99,38 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                             padding: bodyPadding,
                           );
                         }
-                        final filteredComments = isShowingAllComments
-                            ? comments.reversed
-                            : comments.reversed
-                                .where((comment) =>
-                                    comment.timestamp <= playerTime.position)
-                                .toList();
+
+                        //? Showcasing
+                        final exampleComment = Comment(
+                          id: 'example',
+                          text: 'Great episode!',
+                          episodeId: episodeId,
+                          userId: '', //!
+                          timestamp:
+                              showcaseComment?.timestamp ?? Duration.zero,
+                        );
+                        final step =
+                            (ShowCaseWidget.of(context).activeWidgetId ?? -1) +
+                                1;
+                        late final List<Comment> filteredComments;
+                        if (step == 0) {
+                          filteredComments = isShowingAllComments
+                              ? comments.reversed.toList()
+                              : comments.reversed
+                                  .where((comment) =>
+                                      comment.timestamp <= playerTime.position)
+                                  .toList();
+                        } else {
+                          filteredComments = [
+                            exampleComment,
+                            if (step == 3 && showcaseComment != null)
+                              showcaseComment!,
+                          ];
+                        }
+
+                        // if (showcasing && step == 2) []
+                        // if (sjowcasing && step == 3)
+                        // filteredComments = new Comment(Ami) + comments.firstWhere(fromUser)
                         if (commentsCount != 0 &&
                             commentsCount != filteredComments.length &&
                             scrollController.hasClients &&
@@ -154,7 +186,7 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                                           comment,
                                           episodeId: episodeId,
                                           navigate: false,
-                                          showcase: i == 0,
+                                          showcase: comment == exampleComment,
                                         ),
                                       ),
                                     ),
