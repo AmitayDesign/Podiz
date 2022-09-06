@@ -54,7 +54,7 @@ class SpotifyApi {
     final result = response.data['result'];
     // if (result == 'unauthorized') //TODO sign in screen;
     if (result == 'error') throw Exception('access token error');
-
+    print(result);
     accessToken = result;
     await connectToSdk(accessToken!);
     return accessToken!;
