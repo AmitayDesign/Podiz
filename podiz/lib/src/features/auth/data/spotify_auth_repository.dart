@@ -81,8 +81,10 @@ class SpotifyAuthRepository
     final timeout = result.data['timeout']; // in seconds
     final userId = result.data['userId'];
     // set token data
+    spotifyApi.userId = userId;
     spotifyApi.accessToken = accessToken;
     spotifyApi.timeout = now.add(Duration(seconds: timeout));
+    spotifyApi.disconnect = signOut;
     // connect to sdk
     final success = await spotifyApi.connectToSdk(accessToken);
     if (!success) throw Exception('Error connecting to Spotify');

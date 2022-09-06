@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/back_text_button.dart';
+import 'package:podiz/src/common_widgets/empty_screen.dart';
 import 'package:podiz/src/common_widgets/tap_to_unfocus.dart';
-import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
@@ -14,9 +14,9 @@ import 'package:podiz/src/features/showcase/presentation/package_files/showcase_
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/palette.dart';
 
-import '../../../common_widgets/empty_screen.dart';
 import 'comment/comment_card.dart';
-import 'discussion_header.dart';
+import 'discussion_controller.dart';
+import 'header/discussion_header.dart';
 import 'sheet/comment_sheet.dart';
 import 'spoiler/spoiler_indicator.dart';
 
@@ -58,7 +58,9 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
         }
       }),
     );
-    final currentUser = ref.watch(currentUserProvider);
+    final comments = ref.watch(filteredCommentsProvider(episodeId));
+    print(comments.length);
+    return Container();
     return TapToUnfocus(
       child: Scaffold(
         appBar: AppBar(

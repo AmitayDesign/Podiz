@@ -1,27 +1,23 @@
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:flutter/animation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/utils/instances.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 final spotifyApiProvider = Provider<SpotifyApi>(
   (ref) => SpotifyApi(
-    ref.read,
     functions: ref.watch(functionsProvider),
     preferences: ref.watch(preferencesProvider),
   ),
 );
 
 class SpotifyApi {
-  final Reader _read;
   final FirebaseFunctions functions;
   final StreamingSharedPreferences preferences;
-  AuthRepository get authRepository =>
-      _read(authRepositoryProvider); //!hardcoded
 
-  SpotifyApi(this._read, {required this.functions, required this.preferences});
+  SpotifyApi({required this.functions, required this.preferences});
 
   final clientId = '9a8daaf39e784f1c90770da4a252087f';
   final redirectUrl = 'podiz:/';
@@ -42,22 +38,23 @@ class SpotifyApi {
 
   http.Client client = http.Client();
 
+  late String userId;
   String? accessToken;
   DateTime? timeout;
+  VoidCallback? disconnect;
 
   bool get tokenExpired => timeout?.isAfter(DateTime.now()) ?? true;
 
   Future<String> getAccessToken() async {
     if (!tokenExpired && accessToken != null) return accessToken!;
 
-    final userId = authRepository.currentUser!.id;
     final response = await functions
         .httpsCallable('getAccessTokenWithRefreshToken')
         .call({'userId': userId});
 
     final result = response.data['result'];
     if (result == 'unauthorized') {
-      authRepository.signOut();
+      disconnect?.call();
       throw Exception('session timed out');
     }
     if (result == 'error') throw Exception('access token error');

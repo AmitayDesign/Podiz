@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/src/features/discussion/presentation/skeleton_discussion_header.dart';
+import 'package:podiz/src/features/discussion/presentation/header/skeleton_discussion_header.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/episodes/presentation/card/episode_content.dart';
