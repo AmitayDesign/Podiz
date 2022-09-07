@@ -57,7 +57,7 @@ final themeProvider = Provider<ThemeData>((ref) {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(kBorderRadius),
         ),
-        onPrimary: Colors.white,
+        backgroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 24),
         minimumSize: const Size.fromHeight(56),
         textStyle: textTheme.titleMedium,
@@ -70,7 +70,7 @@ final themeProvider = Provider<ThemeData>((ref) {
           color: Colors.white70,
           width: 1,
         ),
-        primary: Colors.white70,
+        backgroundColor: Colors.white70,
         alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(horizontal: 24),
         minimumSize: const Size.fromHeight(56),

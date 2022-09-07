@@ -60,7 +60,7 @@ class LoadingOutlinedButton extends StatelessWidget {
           ? null
           : OutlinedButton.styleFrom(
               side: BorderSide(color: color!, width: 1),
-              primary: color,
+              backgroundColor: color,
             ),
       onPressed: loading ? null : onPressed,
       child: loading
