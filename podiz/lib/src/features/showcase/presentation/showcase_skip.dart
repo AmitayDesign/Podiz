@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:podiz/src/constants/constants.dart';
-import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 import 'package:podiz/src/theme/palette.dart';
 
@@ -21,6 +20,8 @@ class ShowcaseSkip extends StatelessWidget {
     required this.next,
   }) : super(key: key);
 
+  bool get isLast => step == showcaseKeys.length;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -34,16 +35,20 @@ class ShowcaseSkip extends StatelessWidget {
             : const BorderRadius.vertical(
                 top: Radius.circular(kBorderRadius),
               ),
-        child: Container(
-          height: HomeScreen.bottomBarHeigh,
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8)
+              .add(const EdgeInsets.only(bottom: 12)),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Row(
                 children: [
                   TextButton(
-                    onPressed: ShowCaseWidget.of(context).dismiss,
+                    onPressed: () {
+                      ShowCaseWidget.of(context).dismiss();
+                      ShowCaseWidget.of(context).widget.onFinish?.call();
+                    },
                     child: Text(
                       'Skip',
                       style: context.textTheme.bodyMedium,
@@ -58,7 +63,7 @@ class ShowcaseSkip extends StatelessWidget {
                   TextButton(
                     onPressed: next,
                     child: Text(
-                      'Next',
+                      isLast ? 'Done' : 'Next',
                       style: next == null
                           ? const TextStyle(color: Palette.pink)
                           : context.textTheme.bodyMedium,
@@ -66,10 +71,12 @@ class ShowcaseSkip extends StatelessWidget {
                   ),
                 ],
               ),
-              Center(
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   text,
                   style: context.textTheme.titleLarge,
+                  textAlign: TextAlign.center,
                 ),
               ),
             ],

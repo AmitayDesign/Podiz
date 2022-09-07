@@ -10,26 +10,6 @@ import 'onboarding_bar.dart';
 /// The sub-routes that are presented as part of the on boarding page.
 enum OnboardingPage { intro, budz, connect }
 
-extension OnboardingPageX on OnboardingPage {
-  T when<T>({
-    T Function()? intro,
-    T Function()? budz,
-    T Function()? connect,
-  }) {
-    switch (this) {
-      case OnboardingPage.intro:
-        if (intro != null) return intro();
-        throw Exception('Missing intro implementation');
-      case OnboardingPage.budz:
-        if (budz != null) return budz();
-        throw Exception('Missing budz implementation');
-      case OnboardingPage.connect:
-        if (connect != null) return connect();
-        throw Exception('Missing connect implementation');
-    }
-  }
-}
-
 /// This is the root widget of the on boarding page, which is composed of 2 views
 ///
 /// UI updates are handled by a [PageController].
@@ -66,17 +46,18 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     // This allows for a nice scroll animation when switching between pages.
     // Note: only the currently active view will be visible.
     return WillPopScope(
-      onWillPop: () async => view.when(
-        intro: () => true,
-        budz: () {
-          goToView(OnboardingPage.intro);
-          return false;
-        },
-        connect: () {
-          goToView(OnboardingPage.budz);
-          return false;
-        },
-      ),
+      onWillPop: () async {
+        switch (view) {
+          case OnboardingPage.intro:
+            return true;
+          case OnboardingPage.budz:
+            goToView(OnboardingPage.intro);
+            return false;
+          case OnboardingPage.connect:
+            goToView(OnboardingPage.budz);
+            return false;
+        }
+      },
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: context.colorScheme.background,

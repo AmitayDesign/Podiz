@@ -28,12 +28,13 @@ class ProfileFollowFab extends ConsumerWidget {
     return ShowcaseStep(
       step: 4,
       skipOnTop: true,
+      shapeBorder: const CircleBorder(),
       onTap: () {
         follow(ref.read, user, isFollowing);
         ShowCaseWidget.of(context).next();
       },
       title: 'Follow people to see what they are talking about',
-      description: 'Just hit follow',
+      description: 'Just hit follow  ',
       child: FloatingActionButton.extended(
         backgroundColor: context.colorScheme.primary,
         onPressed: () => follow(ref.read, currentUser, isFollowing),

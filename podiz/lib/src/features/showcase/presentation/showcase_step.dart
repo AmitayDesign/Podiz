@@ -13,6 +13,7 @@ class ShowcaseStep extends StatelessWidget {
   final String title;
   final String description;
   final bool skipOnTop;
+  final ShapeBorder? shapeBorder;
   final Widget child;
 
   const ShowcaseStep({
@@ -23,6 +24,7 @@ class ShowcaseStep extends StatelessWidget {
     required this.title,
     required this.description,
     this.skipOnTop = false,
+    this.shapeBorder,
     required this.child,
   }) : super(key: key);
 
@@ -46,6 +48,7 @@ class ShowcaseStep extends StatelessWidget {
       showcaseBackgroundColor: context.colorScheme.primary,
       contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       // overlayOpacity: 0,
+      shapeBorder: shapeBorder,
       leading: skipOnTop ? skip : null,
       trailing: skipOnTop ? null : skip,
       child: child,

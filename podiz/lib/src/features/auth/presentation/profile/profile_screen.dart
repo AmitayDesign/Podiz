@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/src/common_widgets/empty_screen.dart';
-import 'package:podiz/src/common_widgets/episode_subtitle.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
+import 'package:podiz/src/common_widgets/grouped_comments.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/auth/presentation/profile/profile_follow_fab.dart';
 import 'package:podiz/src/features/auth/presentation/profile/profile_sliver_header.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
-import 'package:podiz/src/features/discussion/presentation/comment/comment_card.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/episodes/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/features/episodes/presentation/avatar/skeleton_podcast_avatar.dart';
@@ -145,27 +144,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         return SliverList(
                           delegate: SliverChildListDelegate([
                             for (final episodeId in episodeIds)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 16),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    EpisodeSubtitle(episodeId),
-                                    for (final comment in comments.where(
-                                        (comment) =>
-                                            comment.episodeId == episodeId))
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 8,
-                                        ),
-                                        child: CommentCard(
-                                          comment,
-                                          episodeId: episodeId,
-                                        ),
-                                      )
-                                  ],
-                                ),
-                              ),
+                              GroupedComments(
+                                episodeId,
+                                comments
+                                    .where((c) => c.episodeId == episodeId)
+                                    .toList(),
+                              )
                           ]),
                         );
                       },
