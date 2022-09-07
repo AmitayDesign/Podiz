@@ -29,8 +29,9 @@ class ErrorPlayer extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'There was an error playing this episode.',
-                    style:
-                        TextStyle(color: context.colorScheme.onErrorContainer),
+                    style: TextStyle(
+                      color: context.colorScheme.onErrorContainer,
+                    ),
                   ),
                 ),
               ],
