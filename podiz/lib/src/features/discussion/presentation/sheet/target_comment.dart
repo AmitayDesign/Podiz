@@ -13,8 +13,10 @@ class TargetComment extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userValue = ref.watch(userFutureProvider(comment.userId));
+    // return const SizedBox.shrink();
     return userValue.when(
-      loading: () => SizedBox.fromSize(),
+      //TODO target comment error and loading
+      loading: () => const SizedBox.shrink(),
       error: (e, _) => const SizedBox.shrink(),
       data: (user) {
         return Column(

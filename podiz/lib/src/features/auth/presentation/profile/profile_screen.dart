@@ -51,6 +51,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final userValue = ref.watch(userStreamProvider(widget.userId));
+    //TODO profile empty screen
+    // return EmptyScreen.loading();
+    // return EmptyScreen.text(
+    //   'There was an error opening this profile.',
+    // );
     return userValue.when(
       loading: () => EmptyScreen.loading(),
       error: (e, _) => EmptyScreen.text(
@@ -94,27 +99,32 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         const SizedBox(height: 8),
                         SizedBox(
                           height: 64,
-                          child: ListView.separated(
+                          child: ListView.builder(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             scrollDirection: Axis.horizontal,
                             itemCount: user.favPodcasts.length,
-                            separatorBuilder: (context, i) =>
-                                const SizedBox(width: 16),
                             itemBuilder: (context, i) {
                               return Consumer(
                                 builder: (context, ref, _) {
                                   final podcastId = user.favPodcasts[i];
                                   final podcastValue = ref
                                       .watch(podcastFutureProvider(podcastId));
+                                  const padding = EdgeInsets.only(right: 16);
+
                                   return podcastValue.when(
-                                    loading: () =>
-                                        const SkeletonPodcastAvatar(),
+                                    loading: () => const Padding(
+                                      padding: padding,
+                                      child: SkeletonPodcastAvatar(),
+                                    ),
                                     error: (e, _) => const SizedBox.shrink(),
-                                    data: (podcast) => PodcastAvatar(
-                                      imageUrl: podcast.imageUrl,
-                                      onTap: () => context.pushNamed(
-                                        AppRoute.podcast.name,
-                                        params: {'podcastId': podcast.id},
+                                    data: (podcast) => Padding(
+                                      padding: padding,
+                                      child: PodcastAvatar(
+                                        imageUrl: podcast.imageUrl,
+                                        onTap: () => context.pushNamed(
+                                          AppRoute.podcast.name,
+                                          params: {'podcastId': podcast.id},
+                                        ),
                                       ),
                                     ),
                                   );
@@ -134,9 +144,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     final commentsValue =
                         ref.watch(userCommentsStreamProvider(user.id));
                     return commentsValue.when(
-                      loading: () => SliverEmptyScreen.loading(),
+                      loading: () =>
+                          SliverEmptyScreen.loading(), //TODO sliver loading
                       error: (e, _) => SliverEmptyScreen.text(
-                          'There was an error loading the comments.'),
+                        'There was an error loading the comments.',
+                      ), //TODO sliver empty
                       data: (comments) {
                         final episodeIds = comments
                             .map((comment) => comment.episodeId)

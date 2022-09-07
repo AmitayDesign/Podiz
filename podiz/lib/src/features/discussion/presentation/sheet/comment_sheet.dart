@@ -57,8 +57,8 @@ class CommentSheet extends ConsumerWidget {
         return true;
       },
       child: episodeValue.when(
-        loading: () => const SizedBox.shrink(),
-        error: (e, _) => const SizedBox.shrink(),
+        loading: () => const SizedBox.shrink(), //TODO loading
+        error: (e, _) => const SizedBox.shrink(), //TODO error
         data: (episode) {
           if (episode == null) return const SizedBox.shrink();
           return showcase(

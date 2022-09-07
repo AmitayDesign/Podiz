@@ -50,8 +50,7 @@ class _FeedPageState extends ConsumerState<FeedPage>
           child.openEpisode(context, ref.read);
           ShowCaseWidget.of(context).next();
         },
-        onNext: () => 
-          child.openEpisode(context, ref.read),
+        onNext: () => child.openEpisode(context, ref.read),
         title: 'Open a podcast you like',
         description: '$podcastTitle could be a great option to start with',
         child: child,
@@ -127,12 +126,12 @@ class _FeedPageState extends ConsumerState<FeedPage>
                     Consumer(builder: (context, ref, _) {
                       final podcastValue =
                           ref.watch(podcastFutureProvider(podcastId));
-                      final lastEpisodeValue =
-                          ref.watch(lastShowEpisodeFutureProvider(podcastId));
                       return podcastValue.when(
                           loading: () => const SkeletonEpisodeCard(),
                           error: (e, _) => const SizedBox.shrink(),
                           data: (podcast) {
+                            final lastEpisodeValue = ref.watch(
+                                lastShowEpisodeFutureProvider(podcastId));
                             return lastEpisodeValue.when(
                                 loading: () => const SkeletonEpisodeCard(),
                                 error: (e, _) => const SizedBox.shrink(),
