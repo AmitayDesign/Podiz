@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:podiz/src/common_widgets/back_text_button.dart';
 import 'package:podiz/src/common_widgets/empty_screen.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/common_widgets/grouped_comments.dart';
@@ -51,15 +52,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final userValue = ref.watch(userStreamProvider(widget.userId));
-    //TODO profile empty screen
-    // return EmptyScreen.loading();
-    // return EmptyScreen.text(
-    //   'There was an error opening this profile.',
-    // );
     return userValue.when(
-      loading: () => EmptyScreen.loading(),
-      error: (e, _) => EmptyScreen.text(
-        'There was an error opening this profile.',
+      loading: () => Scaffold(
+        appBar: const GradientBar(
+          automaticallyImplyLeading: false,
+          title: BackTextButton(),
+        ),
+        body: EmptyScreen.loading(),
+      ),
+      error: (e, _) => Scaffold(
+        appBar: const GradientBar(
+          automaticallyImplyLeading: false,
+          title: BackTextButton(),
+        ),
+        body: EmptyScreen.text(
+          'There was an error opening this profile.',
+        ),
       ),
       data: (user) => Scaffold(
         extendBody: true,
