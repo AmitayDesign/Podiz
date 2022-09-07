@@ -15,7 +15,7 @@ class SkeletonCommentCard extends StatelessWidget {
         subtitleStyle.fontSize! * (subtitleStyle.height ?? 1);
 
     return Material(
-      color: context.colorScheme.surface,
+      color: context.colorScheme.surface.withOpacity(0.5),
       child: SkeletonItem(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 12),
@@ -67,19 +67,27 @@ class SkeletonCommentCard extends StatelessWidget {
                     SkeletonLine(
                       style: SkeletonLineStyle(height: subtitleHeight),
                     ),
+                    const SizedBox(height: 4),
+                    SkeletonLine(
+                      style: SkeletonLineStyle(height: subtitleHeight),
+                    ),
+                    const SizedBox(height: 4),
+                    SkeletonLine(
+                      style: SkeletonLineStyle(height: subtitleHeight),
+                    ),
                     const SizedBox(height: 16),
                     Row(
-                      children: const [
+                      children: [
                         Expanded(
-                          child: SkeletonAvatar(
-                            style: SkeletonAvatarStyle(
+                          child: SkeletonLine(
+                            style: SkeletonLineStyle(
                               height: 32,
-                              shape: BoxShape.circle,
+                              borderRadius: BorderRadius.circular(16),
                             ),
                           ),
                         ),
-                        SizedBox(width: 8),
-                        SkeletonAvatar(
+                        const SizedBox(width: 8),
+                        const SkeletonAvatar(
                           style: SkeletonAvatarStyle(
                             width: 32,
                             height: 32,

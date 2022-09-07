@@ -15,13 +15,13 @@ class SkeletonGroupedComments extends StatelessWidget {
     final subtitleHeight =
         subtitleStyle.fontSize! * (subtitleStyle.height ?? 1);
 
-    return SkeletonItem(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SkeletonItem(
+            child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16)
                   .add(const EdgeInsets.only(top: 8, bottom: 12)),
               child: Row(
@@ -45,10 +45,10 @@ class SkeletonGroupedComments extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 8),
-            const SkeletonCommentCard(),
-          ],
-        ),
+          ),
+          const SizedBox(height: 8),
+          const SkeletonCommentCard(),
+        ],
       ),
     );
   }
