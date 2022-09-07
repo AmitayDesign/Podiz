@@ -45,6 +45,8 @@ class _PodcastScreenState extends ConsumerState<PodcastScreen> {
   Widget build(BuildContext context) {
     final episodeRepository = ref.watch(episodeRepositoryProvider);
     final podcastValue = ref.watch(podcastStreamProvider(widget.podcastId));
+
+    //TODO podcast empty screen
     return podcastValue.when(
       loading: () => EmptyScreen.loading(),
       error: (e, _) => EmptyScreen.text(
