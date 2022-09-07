@@ -161,6 +161,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                         child: CommentCard(
                                           comment,
                                           episodeId: episodeId,
+                                          navigate: true,
                                         ),
                                       )
                                   ],

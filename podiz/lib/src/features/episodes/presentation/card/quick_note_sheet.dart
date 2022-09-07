@@ -32,7 +32,7 @@ class QuickNoteSheet extends ConsumerWidget {
           children: [
             CommentTextField(
               autofocus: true,
-              onSend: (text) async {
+              onSend: (text) {
                 final time = ref.read(playerTimeStreamProvider).valueOrNull!;
                 final comment = Comment(
                   text: text,

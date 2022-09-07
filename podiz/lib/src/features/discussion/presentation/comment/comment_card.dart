@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
+import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
+import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/discussion/presentation/sheet/comment_sheet.dart';
@@ -31,7 +33,7 @@ class CommentCard extends ConsumerStatefulWidget {
     this.comment, {
     Key? key,
     required this.episodeId,
-    this.navigate = true,
+    this.navigate = false,
     this.showcase = false,
   }) : super(key: key);
 
@@ -97,23 +99,8 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                       Row(
                         children: [
                           if (widget.showcase)
-                            ShowcaseStep(
-                              step: 3,
-                              skipOnTop: true,
-                              onTap: () {
-                                context.goNamed(
-                                  AppRoute.profile.name,
-                                  params: {'userId': user.id},
-                                );
-                                ShowCaseWidget.of(context).next();
-                              },
-                              onNext: () => context.goNamed(
-                                AppRoute.profile.name,
-                                params: {'userId': user.id},
-                              ),
-                              title: 'Find interesting people',
-                              description:
-                                  '${user.name} could be a great start with',
+                            showcase(
+                              user: user,
                               child: UserAvatar(
                                 user: user,
                                 radius: kMinInteractiveDimension * 5 / 12,
@@ -246,4 +233,32 @@ class _CommentCardState extends ConsumerState<CommentCard> {
           collapsed: collapsed,
           episodeId: widget.episodeId,
           onShare: (comment) => share(comment));
+
+  Widget showcase({required UserPodiz user, required Widget child}) {
+    next() {
+      context.goNamed(
+        AppRoute.profile.name,
+        params: {'userId': user.id},
+      );
+      final isFollowing =
+          ref.read(currentUserProvider).following.contains(user.id);
+      if (isFollowing) {
+        ShowCaseWidget.of(context).next();
+      }
+    }
+
+    return ShowcaseStep(
+      step: 3,
+      skipOnTop: true,
+      shapeBorder: const CircleBorder(),
+      onTap: () {
+        next();
+        ShowCaseWidget.of(context).next();
+      },
+      onNext: next,
+      title: 'Find interesting people',
+      description: '${user.name} could be a great start with',
+      child: child,
+    );
+  }
 }

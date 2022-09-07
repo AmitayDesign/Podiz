@@ -64,7 +64,7 @@ class SpotifyAuthRepository
     }
     // wait for the user to be fetched before ending the login
     // so it doesnt display a wrong frame
-    await Future.wait([authState.first, connectionState.first]);
+    await authState.first;
   }
 
   Future<String> connectWithCode(String code) async {

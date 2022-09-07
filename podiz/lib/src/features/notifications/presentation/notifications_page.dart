@@ -50,7 +50,11 @@ class NotificationsPage extends ConsumerWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             EpisodeSubtitle(episodeId),
-                            CommentCard(comment, episodeId: episodeId)
+                            CommentCard(
+                              comment,
+                              episodeId: episodeId,
+                              navigate: true,
+                            ),
                           ],
                         ),
                       );
