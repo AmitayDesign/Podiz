@@ -7,6 +7,8 @@ import 'package:podiz/src/features/episodes/presentation/card/episode_content.da
 import 'package:podiz/src/features/player/presentation/player_slider.dart';
 import 'package:podiz/src/theme/palette.dart';
 
+import 'error_discussion_header.dart';
+
 class DiscussionHeader extends ConsumerWidget {
   static const height = 120.0; //! hardcoded
   final String episodeId;
@@ -19,12 +21,12 @@ class DiscussionHeader extends ConsumerWidget {
     final episodeValue = ref.watch(episodeFutureProvider(episodeId));
     return episodeValue.when(
       loading: () => const SkeletonDiscussionHeader(),
-      error: (e, _) => const SizedBox.shrink(),
+      error: (e, _) => const ErrorDiscussionHeader(),
       data: (episode) {
         final podcastValue = ref.watch(podcastFutureProvider(episode.showId));
         return podcastValue.when(
             loading: () => const SkeletonDiscussionHeader(),
-            error: (e, _) => const SizedBox.shrink(),
+            error: (e, _) => const ErrorDiscussionHeader(),
             data: (podcast) => Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
