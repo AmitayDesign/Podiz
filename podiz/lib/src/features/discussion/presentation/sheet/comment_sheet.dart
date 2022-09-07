@@ -40,7 +40,8 @@ class CommentSheet extends ConsumerWidget {
       episodeId: episodeId,
       userId: read(currentUserProvider).id,
       timestamp: read(playerSliderControllerProvider).position,
-      parentIds: target?.parentIds?..add(target!.id),
+      parentIds: (target?.parentIds ?? [])..add(target!.id),
+      parentUserId: target.userId,
     );
     read(discussionRepositoryProvider).addComment(comment);
     read(commentSheetTargetProvider.notifier).state = null;
