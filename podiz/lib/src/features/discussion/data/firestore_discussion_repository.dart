@@ -56,8 +56,14 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
           .orderBy('episodeId')
           .orderBy('timestamp')
           .snapshots()
-          .map((snapshot) =>
-              snapshot.docs.map((doc) => Comment.fromFirestore(doc)).toList());
+          .map((snapshot) => snapshot.docs
+              .where((doc) {
+                //! for some reason i cannot do this in the query
+                final commentUserId = doc.get('userId');
+                return commentUserId != userId;
+              })
+              .map((doc) => Comment.fromFirestore(doc))
+              .toList());
 
   @override
   Future<void> addComment(Comment comment) async {
