@@ -142,7 +142,7 @@ class CommentSheet extends ConsumerWidget {
                             onPressed: ref
                                 .read(playerControllerProvider.notifier)
                                 .rewind,
-                            icon: const Icon(Icons.replay_30),
+                            icon: const Icon(Icons.replay_30_rounded),
                           ),
                           episode.isPlaying
                               ? PlayerTimeChip(
@@ -150,21 +150,21 @@ class CommentSheet extends ConsumerWidget {
                                   onTap: ref
                                       .read(playerControllerProvider.notifier)
                                       .pause,
-                                  icon: Icons.pause,
+                                  icon: Icons.pause_rounded,
                                 )
                               : PlayerTimeChip(
                                   loading: state.isLoading,
                                   onTap: () => ref
                                       .read(playerControllerProvider.notifier)
                                       .play(episode.id),
-                                  icon: Icons.play_arrow,
+                                  icon: Icons.play_arrow_rounded,
                                 ),
                           PlayerButton(
                             loading: state.isLoading,
                             onPressed: ref
                                 .read(playerControllerProvider.notifier)
                                 .fastForward,
-                            icon: const Icon(Icons.forward_30),
+                            icon: const Icon(Icons.forward_30_rounded),
                           ),
                         ],
                       ),

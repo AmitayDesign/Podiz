@@ -75,7 +75,7 @@ class Player extends ConsumerWidget {
                               onPressed: ref
                                   .read(playerControllerProvider.notifier)
                                   .rewind,
-                              icon: const Icon(Icons.replay_30),
+                              icon: const Icon(Icons.replay_30_rounded),
                             ),
                             episode.isPlaying
                                 ? PlayerButton(
@@ -83,21 +83,21 @@ class Player extends ConsumerWidget {
                                     onPressed: ref
                                         .read(playerControllerProvider.notifier)
                                         .pause,
-                                    icon: const Icon(Icons.pause),
+                                    icon: const Icon(Icons.pause_rounded),
                                   )
                                 : PlayerButton(
                                     loading: state.isLoading,
                                     onPressed: () => ref
                                         .read(playerControllerProvider.notifier)
                                         .play(episode.id),
-                                    icon: const Icon(Icons.play_arrow),
+                                    icon: const Icon(Icons.play_arrow_rounded),
                                   ),
                             PlayerButton(
                               loading: state.isLoading,
                               onPressed: ref
                                   .read(playerControllerProvider.notifier)
                                   .fastForward,
-                              icon: const Icon(Icons.forward_30),
+                              icon: const Icon(Icons.forward_30_rounded),
                             ),
                           ],
                         ),

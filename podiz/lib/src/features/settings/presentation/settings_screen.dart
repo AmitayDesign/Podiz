@@ -49,7 +49,8 @@ class SettingsScreen extends ConsumerWidget {
               //TODO enable/disable notifications
             },
             tileColor: context.colorScheme.surface,
-            secondary: const Icon(Icons.notifications, color: Colors.white70),
+            secondary:
+                const Icon(Icons.notifications_rounded, color: Colors.white70),
             title: Text(
               'Notifications',
               style: context.textTheme.titleMedium!
@@ -61,7 +62,7 @@ class SettingsScreen extends ConsumerWidget {
           ListTile(
             onTap: () => context.goNamed(AppRoute.privacy.name),
             tileColor: context.colorScheme.surface,
-            leading: const Icon(Icons.lock, color: Colors.white70),
+            leading: const Icon(Icons.lock_rounded, color: Colors.white70),
             title: Text(
               'Privacy',
               style: context.textTheme.titleMedium!

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/common_widgets/suffix_icon.dart';
 import 'package:podiz/src/theme/context_theme.dart';
@@ -28,10 +27,10 @@ class SearchBar extends StatelessWidget with PreferredSizeWidget {
               ),
               decoration: InputDecoration(
                 hintText: Locales.string(context, "search1"),
-                prefixIcon: const Icon(LucideIcons.search),
+                prefixIcon: const Icon(Icons.search_rounded),
                 suffixIcon: query.isEmpty
                     ? const SizedBox.shrink()
-                    : SuffixIcon(LucideIcons.x, onTap: controller.clear),
+                    : SuffixIcon(Icons.close_rounded, onTap: controller.clear),
               ),
             );
           }),

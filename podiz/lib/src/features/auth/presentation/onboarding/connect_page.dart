@@ -65,7 +65,7 @@ class ConnectPage extends ConsumerWidget {
                     'Retry',
                     style: TextStyle(fontWeight: FontWeight.w700),
                   ),
-                  icon: const Icon(Icons.refresh),
+                  icon: const Icon(Icons.refresh_rounded),
                 ),
               ),
             ],
