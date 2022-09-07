@@ -65,8 +65,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           automaticallyImplyLeading: false,
           title: BackTextButton(),
         ),
-        body: EmptyScreen.text(
-          'There was an error opening this profile.',
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: EmptyScreen.text(
+            'There was an error opening this profile.',
+          ),
         ),
       ),
       data: (user) => Scaffold(
@@ -152,11 +155,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     final commentsValue =
                         ref.watch(userCommentsStreamProvider(user.id));
                     return commentsValue.when(
-                      loading: () =>
-                          SliverEmptyScreen.loading(), //TODO sliver loading
-                      error: (e, _) => SliverEmptyScreen.text(
-                        'There was an error loading the comments.',
-                      ), //TODO sliver empty
+                      loading: () => SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: EmptyScreen.loading(),
+                        ),
+                      ),
+                      error: (e, _) => SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: EmptyScreen.text(
+                            'There was an error loading the comments.',
+                          ),
+                        ),
+                      ),
                       data: (comments) {
                         final episodeIds = comments
                             .map((comment) => comment.episodeId)

@@ -7,6 +7,8 @@ import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/discussion/presentation/comment/comment_text_field.dart';
 import 'package:podiz/src/features/discussion/presentation/discussion_controller.dart';
+import 'package:podiz/src/features/discussion/presentation/sheet/error_comment_sheet.dart';
+import 'package:podiz/src/features/discussion/presentation/sheet/skeleton_comment_sheet.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/player_button.dart';
 import 'package:podiz/src/features/player/presentation/player_controller.dart';
@@ -57,8 +59,8 @@ class CommentSheet extends ConsumerWidget {
         return true;
       },
       child: episodeValue.when(
-        loading: () => const SizedBox.shrink(), //TODO loading
-        error: (e, _) => const SizedBox.shrink(), //TODO error
+        loading: () => const SkeletonCommentSheet(),
+        error: (e, _) => const ErrorCommentSheet(),
         data: (episode) {
           if (episode == null) return const SizedBox.shrink();
           return showcase(
