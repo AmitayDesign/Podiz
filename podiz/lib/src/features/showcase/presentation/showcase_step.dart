@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/src/features/showcase/presentation/showcase_controller.dart';
 import 'package:podiz/src/features/showcase/presentation/showcase_skip.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
@@ -6,7 +8,7 @@ import 'package_files/showcase.dart';
 import 'package_files/showcase_widget.dart';
 import 'showcase_keys.dart';
 
-class ShowcaseStep extends StatelessWidget {
+class ShowcaseStep extends ConsumerWidget {
   final int step;
   final VoidCallback? onTap;
   final VoidCallback? onNext;
@@ -29,7 +31,9 @@ class ShowcaseStep extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isShowcasing = ref.watch(showcaseRunningProvider);
+    if (!isShowcasing) return child;
     final skip = ShowcaseSkip(
       step: step,
       text: title,

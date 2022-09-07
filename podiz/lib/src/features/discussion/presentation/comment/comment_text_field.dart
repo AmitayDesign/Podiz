@@ -49,7 +49,7 @@ class _CommentTextFieldState extends ConsumerState<CommentTextField> {
   void initState() {
     super.initState();
     commentNode.addListener(() {
-      final episode = ref.watch(playerStateChangesProvider).valueOrNull;
+      final episode = ref.read(playerStateChangesProvider).valueOrNull;
       final player = ref.read(playerControllerProvider.notifier);
       episode != null && commentNode.hasFocus
           ? player.pause()
