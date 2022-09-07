@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lottie/lottie.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
@@ -70,8 +71,8 @@ class SplashError extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (onRetry != null) const Spacer(flex: 5),
-        Image.asset(
-          'assets/images/brandIcon.png',
+        SvgPicture.asset(
+          'assets/icons/podiz.svg',
           width: 72,
           height: 72,
           fit: BoxFit.contain,
@@ -95,7 +96,7 @@ class SplashError extends StatelessWidget {
               'Retry',
               style: TextStyle(fontWeight: FontWeight.w700),
             ),
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh_rounded),
           ),
         ],
         if (onRetry != null) const Spacer(flex: 4),

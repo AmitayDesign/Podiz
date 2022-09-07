@@ -156,15 +156,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         items: const [
                           BottomNavigationBarItem(
                             label: 'Home',
-                            icon: Icon(Icons.home),
+                            icon: Icon(Icons.home_rounded),
                           ),
                           BottomNavigationBarItem(
                             label: 'Search',
-                            icon: Icon(Icons.search),
+                            icon: Icon(Icons.search_rounded),
                           ),
                           BottomNavigationBarItem(
                             label: 'Notifications',
-                            icon: Icon(Icons.notifications),
+                            icon: Icon(Icons.notifications_rounded),
                           ),
                         ],
                       ),

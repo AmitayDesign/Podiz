@@ -28,7 +28,7 @@ class FeedBar extends ConsumerWidget with PreferredSizeWidget {
       actions: [
         UserAvatarButton(user: user),
         IconButton(
-          icon: const Icon(Icons.settings),
+          icon: const Icon(Icons.settings_rounded),
           onPressed: () => context.goNamed(AppRoute.settings.name),
         ),
       ],

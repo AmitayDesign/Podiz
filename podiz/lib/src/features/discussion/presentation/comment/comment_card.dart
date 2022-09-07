@@ -125,7 +125,7 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                       ),
                       const SizedBox(width: 8),
                       TimeChip(
-                        icon: Icons.play_arrow,
+                        icon: Icons.play_arrow_rounded,
                         position: widget.comment.timestamp,
                         onTap: openEpisode,
                       ),

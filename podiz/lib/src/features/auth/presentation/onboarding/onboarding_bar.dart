@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
@@ -15,8 +16,8 @@ class OnboardingBar extends StatelessWidget with PreferredSizeWidget {
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Image.asset(
-            'assets/images/brandIcon.png',
+          SvgPicture.asset(
+            'assets/icons/podiz.svg',
             height: 36,
             fit: BoxFit.contain,
           ),

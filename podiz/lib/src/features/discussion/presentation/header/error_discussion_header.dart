@@ -23,7 +23,7 @@ class ErrorDiscussionHeader extends ConsumerWidget {
                   const SizedBox.square(
                     dimension: 64,
                     child: Center(
-                      child: Icon(Icons.error_outline),
+                      child: Icon(Icons.error_outline_rounded),
                     ),
                   ),
                   const SizedBox(width: 8),

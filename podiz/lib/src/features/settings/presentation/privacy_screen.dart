@@ -22,7 +22,7 @@ class PrivacyScreen extends ConsumerWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.lock, color: Colors.white70),
+              const Icon(Icons.lock_rounded, color: Colors.white70),
               const SizedBox(width: 8),
               Text(
                 'Privacy',

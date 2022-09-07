@@ -45,7 +45,7 @@ class CommentTrailing extends StatelessWidget {
           color: Colors.black87,
           size: size,
           onPressed: onShare,
-          icon: Icons.share,
+          icon: Icons.share_rounded,
         ),
       ],
     );

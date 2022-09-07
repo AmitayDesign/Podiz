@@ -13,7 +13,7 @@ class BackTextButton extends StatelessWidget {
         style: const TextStyle(color: Colors.white70),
       ),
       icon: const Icon(
-        Icons.arrow_back_ios_new,
+        Icons.arrow_back_ios_new_rounded,
         size: 12,
         color: Color(0xB2FFFFFF),
       ),

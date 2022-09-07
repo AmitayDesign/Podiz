@@ -114,7 +114,7 @@ class _CommentTextFieldState extends ConsumerState<CommentTextField> {
         const SizedBox(width: 8),
         CircleButton(
           onPressed: sendComment,
-          icon: Icons.send,
+          icon: Icons.send_rounded,
         ),
       ],
     );

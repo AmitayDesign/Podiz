@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:podiz/src/constants/constants.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
@@ -44,11 +45,11 @@ class BudzPage extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
-                        BudzImage('assets/images/brandIcon.png'),
+                        BudzImage('assets/icons/podiz.svg'),
                         BudzSign("+"),
-                        BudzImage('assets/images/spotifyLogo.png'),
+                        BudzImage('assets/icons/spotify.svg'),
                         BudzSign("="),
-                        BudzImage('assets/images/heart.png'),
+                        BudzImage('assets/icons/heart.svg'),
                       ],
                     ),
                   ],
@@ -73,7 +74,7 @@ class BudzImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset(asset, width: 48, height: 48, fit: BoxFit.contain);
+    return SvgPicture.asset(asset, width: 48, height: 48, fit: BoxFit.contain);
   }
 }
 
