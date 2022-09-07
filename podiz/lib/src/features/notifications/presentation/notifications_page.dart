@@ -17,6 +17,7 @@ class NotificationsPage extends ConsumerWidget {
     final filter = ref.watch(notificationsFilterProvider);
     final user = ref.watch(currentUserProvider);
     final commentsValue = ref.watch(userRepliesStreamProvider(user.id));
+    //TODO empty screen
     return commentsValue.when(
         loading: () => EmptyScreen.loading(),
         error: (e, _) => Padding(
