@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/routing/app_router.dart';
@@ -18,7 +19,7 @@ class UserAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ImageProvider image = user.imageUrl == null
-        ? const AssetImage('assets/images/loadingImage.png') as ImageProvider
+        ? const Svg('assets/icons/placeholder.svg') as ImageProvider
         : NetworkImage(user.imageUrl!);
 
     return CircleAvatar(
@@ -51,7 +52,7 @@ class UserAvatarButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ImageProvider image = user.imageUrl == null
-        ? const AssetImage('assets/images/loadingImage.png') as ImageProvider
+        ? const Svg('assets/icons/placeholder.svg') as ImageProvider
         : NetworkImage(user.imageUrl!);
 
     return IconButton(
