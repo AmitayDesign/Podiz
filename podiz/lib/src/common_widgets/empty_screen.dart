@@ -26,26 +26,3 @@ class EmptyScreen extends StatelessWidget {
     );
   }
 }
-
-class SliverEmptyScreen extends StatelessWidget {
-  final Widget child;
-  const SliverEmptyScreen({Key? key, required this.child}) : super(key: key);
-
-  factory SliverEmptyScreen.text(String text) => SliverEmptyScreen(
-        child: Text(text, textAlign: TextAlign.center),
-      );
-
-  factory SliverEmptyScreen.loading() => const SliverEmptyScreen(
-        child: SizedBox.square(
-          dimension: 24,
-          child: CircularProgressIndicator(strokeWidth: 3),
-        ),
-      );
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: EmptyScreen(child: child),
-    );
-  }
-}

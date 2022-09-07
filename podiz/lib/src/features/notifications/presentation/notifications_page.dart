@@ -19,10 +19,21 @@ class NotificationsPage extends ConsumerWidget {
     final commentsValue = ref.watch(userRepliesStreamProvider(user.id));
     return commentsValue.when(
         loading: () => EmptyScreen.loading(),
-        error: (e, _) => EmptyScreen.text(
-              'There was an error displaying the notifications.',
+        error: (e, _) => Padding(
+              padding: const EdgeInsets.all(16),
+              child: EmptyScreen.text(
+                'There was an error displaying the notifications.',
+              ),
             ),
         data: (comments) {
+          if (comments.isEmpty) {
+            return Padding(
+              padding: const EdgeInsets.all(16),
+              child: EmptyScreen.text(
+                'Notifications will appear when someone replies to your comments',
+              ),
+            );
+          }
           if (filter != null) {
             comments = comments
                 .where((comment) => comment.episodeId == filter)
