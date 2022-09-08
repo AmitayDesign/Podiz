@@ -14,6 +14,7 @@ import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/domain/playing_episode.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
 import 'package:podiz/src/features/search/presentation/search_page.dart';
+import 'package:podiz/src/features/showcase/data/showcase_repository.dart';
 import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
 import 'package:podiz/src/features/showcase/presentation/showcase_keys.dart';
 import 'package:podiz/src/routing/app_router.dart';
@@ -42,11 +43,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       if (page != null && page == page.toInt()) goToDestination(page.toInt());
     });
 
-    const firstTime = true;
-    //  ref
-    //     .read(preferencesProvider)
-    //     .getBool('first-time', defaultValue: true)
-    //     .getValue();
+    final firstTime = ref.read(showcaseRepositoryProvider).isFirstTime;
     // start the showcase
     if (firstTime) {
       WidgetsBinding.instance.addPostFrameCallback(
@@ -159,15 +156,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         items: const [
                           BottomNavigationBarItem(
                             label: 'Home',
-                            icon: Icon(Icons.home),
+                            icon: Icon(Icons.home_rounded),
                           ),
                           BottomNavigationBarItem(
                             label: 'Search',
-                            icon: Icon(Icons.search),
+                            icon: Icon(Icons.search_rounded),
                           ),
                           BottomNavigationBarItem(
                             label: 'Notifications',
-                            icon: Icon(Icons.notifications),
+                            icon: Icon(Icons.notifications_rounded),
                           ),
                         ],
                       ),

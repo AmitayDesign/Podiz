@@ -43,49 +43,53 @@ class SpotifyAuthRepository
   }
 
   @override
-  Stream<bool> connectionChanges() => connectionState.stream;
-
-  @override
   Stream<UserPodiz?> authStateChanges() => authState.stream;
 
   @override
-  UserPodiz? get currentUser => authState.value;
+  UserPodiz? get currentUser => authState.valueOr(null);
+
+  @override
+  Stream<bool> connectionChanges() => connectionState.stream;
+
+  @override
+  bool get isConnected => connectionState.value;
 
   @override
   Future<void> signIn(String code) async {
-    late final bool success;
     try {
-      final accessToken = await getAccessTokenWithCode(code);
-      success = await spotifyApi.connectToSdk(accessToken);
+      final userId = await connectWithCode(code);
+      await preferences.setString(userKey, userId);
     } catch (e) {
       throw Exception('Sign in error: $e');
     }
-    if (!success) throw Exception('Error connecting to Spotify');
     // wait for the user to be fetched before ending the login
     // so it doesnt display a wrong frame
     await authState.first;
   }
 
-  Future<String> getAccessTokenWithCode(String code) async {
+  Future<String> connectWithCode(String code) async {
     //TODO connnect spotify to firebaseAuth
     //* https://github.com/firebase/functions-samples/blob/main/spotify-auth/functions/index.js
-
+    // get access token
     final now = DateTime.now();
     final result = await functions
         .httpsCallable('getAccessTokenWithCode')
         .call({'code': code});
-
+    // decode result
     if (result.data == '0') throw Exception('Failed to get user data');
-
     final accessToken = result.data['access_token'];
     final timeout = result.data['timeout']; // in seconds
+    final userId = result.data['userId'];
+    // set token data
+    spotifyApi.userId = userId;
     spotifyApi.accessToken = accessToken;
     spotifyApi.timeout = now.add(Duration(seconds: timeout));
-
-    final userId = result.data['userId'];
-    await preferences.setString(userKey, userId);
-
-    return accessToken;
+    spotifyApi.disconnect = signOut;
+    // connect to sdk
+    final success = await spotifyApi.connectToSdk(accessToken);
+    if (!success) throw Exception('Error connecting to Spotify');
+    //
+    return userId;
   }
 
   @override
@@ -157,7 +161,7 @@ mixin ConnectionState {
   FirebaseFirestore get firestore;
 
   String get userKey;
-  final connectionState = InMemoryStore<bool>();
+  final connectionState = InMemoryStore<bool>(false);
 
   StreamSubscription? connectionSub;
   void listenToConnectionChanges() {

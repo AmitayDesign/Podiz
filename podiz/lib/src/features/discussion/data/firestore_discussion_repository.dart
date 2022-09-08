@@ -59,27 +59,25 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
           .orderBy('episodeId')
           .orderBy('timestamp')
           .snapshots()
-          .map((snapshot) =>
-              snapshot.docs.map((doc) => Comment.fromFirestore(doc)).toList());
+          .map((snapshot) => snapshot.docs
+              .where((doc) {
+                //! for some reason i cannot do this in the query
+                final commentUserId = doc.get('userId');
+                return commentUserId != userId;
+              })
+              .map((doc) => Comment.fromFirestore(doc))
+              .toList());
 
   @override
   Future<void> addComment(Comment comment) async {
     // generate comment doc to get the id
     final commentDoc = firestore.commentsCollection.doc();
 
-    final batch = firestore.batch();
-    // save comment
-    batch.set(commentDoc, comment.toJson());
-    // increment episode comment counter
-    batch.update(firestore.episodesCollection.doc(comment.episodeId), {
-      "commentsCount": FieldValue.increment(1),
-    });
-    // increment parent comments reply counter
-    for (final parentId in comment.parentIds) {
-      batch.update(firestore.commentsCollection.doc(parentId), {
-        "replyCount": FieldValue.increment(1),
-      });
-    }
+    await firestore.runTransaction((t) async {
+      // get episode counters
+      final episodeCountersRef =
+          firestore.episodeCountersCollection.doc(comment.episodeId);
+      final episodeCountersDoc = await t.get(episodeCountersRef);
 
     await batch.commit();
     if (comment.parentIds == []) {
@@ -87,43 +85,38 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
     } else {
       mixPanelRepository.userReply();
     }
+      // save comment
+      t.set(commentDoc, comment.toJson());
+
+      // increment episode comment counter
+      final episodeRef = firestore.episodesCollection.doc(comment.episodeId);
+      t.update(episodeRef, {
+        'commentsCount': FieldValue.increment(1),
+        'weeklyCounter': FieldValue.increment(1),
+      });
+
+      // increment episode counters
+      final countersData = episodeCountersDoc.data() ?? {};
+      final counters =
+          (countersData['counters'] as Map?)?.cast<String, int>() ?? {};
+      final now = DateTime.now();
+      counters.update(
+        '${now.year}-${now.month}-${now.day}',
+        (count) => ++count,
+        ifAbsent: () => 1,
+      );
+      t.set(
+        episodeCountersRef,
+        {'counters': counters},
+        SetOptions(merge: true),
+      );
+
+      // increment parent comments reply counter
+      for (final parentId in comment.parentIds) {
+        t.update(firestore.commentsCollection.doc(parentId), {
+          'replyCount': FieldValue.increment(1),
+        });
+      }
+    });
   }
 }
-
-// await firestore.runTransaction((t) async {
-//   // save comment
-//   t.set(commentDoc, comment.toJson());
-
-//   // increment episode comment counter
-//   final episodeRef = firestore.episodesCollection.doc(comment.episodeId);
-//   final episodeDoc = await t.get(episodeRef);
-//   final episodeData = episodeDoc.data()!;
-
-//   var weeklyCounter = episodeData['weeklyCounter'];
-//   final weekCounters = episodeData['weekCounters'] as Map<String, int>;
-//   final now = DateTime.now();
-
-//   // increment todays comments
-//   weeklyCounter++;
-//   weekCounters.update(formatDate(now), (count) => ++count,
-//       ifAbsent: () => 1);
-
-//   // remove comments with more than 7 days
-//   if (weekCounters.length > 7) {
-//     final dateToRemove = now.subtract(const Duration(days: 7));
-//     final count = weekCounters.remove(formatDate(dateToRemove));
-//     weeklyCounter -= count;
-//   }
-
-//   t.update(episodeRef, {
-//     'commentsCount': FieldValue.increment(1),
-//     'weeklyCounter': FieldValue.increment(1),
-//     'weekCounters': '',
-//   });
-//   // increment parent comments reply counter
-//   for (final parentId in comment.parentIds) {
-//     t.update(firestore.commentsCollection.doc(parentId), {
-//       'replyCount': FieldValue.increment(1),
-//     });
-//   }
-// });

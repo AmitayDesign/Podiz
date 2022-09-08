@@ -30,19 +30,23 @@ class NotificationsBar extends ConsumerWidget with PreferredSizeWidget {
       titleSpacing: 0,
       title: SizedBox(
         height: EpisodeChip.height,
-        child: ListView.separated(
+        child: ListView.builder(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           scrollDirection: Axis.horizontal,
           itemCount: 1 + episodeCounters.length, // All + ...episodeNames
-          separatorBuilder: (context, i) => const SizedBox(width: 8),
           itemBuilder: (context, i) {
+            const padding = EdgeInsets.only(right: 8);
             if (i == 0) {
-              return EpisodeChip(
-                null,
-                counter: total,
-                color: filter == null ? context.colorScheme.primary : null,
-                onTap: () =>
-                    ref.read(notificationsFilterProvider.notifier).state = null,
+              return Padding(
+                padding: padding,
+                child: EpisodeChip(
+                  null,
+                  counter: total,
+                  color: filter == null ? context.colorScheme.primary : null,
+                  onTap: () => ref
+                      .read(notificationsFilterProvider.notifier)
+                      .state = null,
+                ),
               );
             }
             final episodeId = episodeCounters.keys.elementAt(i - 1);
@@ -50,14 +54,17 @@ class NotificationsBar extends ConsumerWidget with PreferredSizeWidget {
             return episodeValue.when(
               loading: () => const SizedBox.shrink(),
               error: (e, _) => const SizedBox.shrink(),
-              data: (episode) => EpisodeChip(
-                episode,
-                counter: episodeCounters[episodeId]!,
-                color:
-                    filter == episode.id ? context.colorScheme.primary : null,
-                onTap: () => ref
-                    .read(notificationsFilterProvider.notifier)
-                    .state = episode.id,
+              data: (episode) => Padding(
+                padding: padding,
+                child: EpisodeChip(
+                  episode,
+                  counter: episodeCounters[episodeId]!,
+                  color:
+                      filter == episode.id ? context.colorScheme.primary : null,
+                  onTap: () => ref
+                      .read(notificationsFilterProvider.notifier)
+                      .state = episode.id,
+                ),
               ),
             );
           },

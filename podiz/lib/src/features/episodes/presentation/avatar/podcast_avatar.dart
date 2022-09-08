@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:podiz/src/constants/constants.dart';
 
 class PodcastAvatar extends StatelessWidget {
@@ -16,7 +17,7 @@ class PodcastAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ImageProvider image = imageUrl == null
-        ? const AssetImage('assets/images/loadingImage.png') as ImageProvider
+        ? const Svg('assets/icons/placeholder.svg') as ImageProvider
         : NetworkImage(imageUrl!);
 
     return Container(

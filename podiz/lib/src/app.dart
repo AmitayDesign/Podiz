@@ -6,10 +6,12 @@ import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/statistics/mix_panel_repository.dart';
 
 import 'features/auth/data/auth_repository.dart';
+import 'features/showcase/data/showcase_repository.dart';
 import 'features/showcase/presentation/package_files/showcase_widget.dart';
+import 'features/showcase/presentation/showcase_controller.dart';
 import 'features/splash/presentation/splash_screen.dart';
+import 'routing/app_router.dart';
 import 'theme/app_theme.dart';
-import 'utils/instances.dart';
 
 class MyApp extends ConsumerWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -37,26 +39,22 @@ class MyApp extends ConsumerWidget {
           return ShowCaseWidget(
             disableAnimation: true,
             disableBarrierInteraction: true,
-            onFinish: () =>
-                ref.read(preferencesProvider).setBool('first-time', false),
-            builder: Builder(builder: (context) {
-              return Consumer(builder: (context, ref, _) {
-                final firstUserValue = ref.watch(firstUserFutureProvider);
-                return firstUserValue.when(
-                  error: (e, _) => const SplashScreen.error(),
-                  loading: () => const SplashScreen(),
-                  data: (user) {
-                    if (user == null) return child!;
-                    final firstConnectionValue =
-                        ref.watch(firstConnectionFutureProvider);
-                    return firstConnectionValue.when(
-                      error: (e, _) => const SplashScreen.error(),
-                      loading: () => const SignInScreen(),
-                      data: (connection) => child!,
-                    );
-                  },
-                );
-              });
+            onStart: (_, __) {
+              return ref.read(showcaseRunningProvider.notifier).state = true;
+            },
+            onFinish: () {
+              ref.read(showcaseRunningProvider.notifier).state = false;
+              ref.read(showcaseRepositoryProvider).disable();
+            },
+            child: Consumer(builder: (context, ref, _) {
+              final firstConnectionValue = ref.watch(firstUserFutureProvider);
+              return firstConnectionValue.when(
+                error: (e, _) => SplashScreen.error(
+                  onRetry: () => ref.refresh(firstUserFutureProvider),
+                ),
+                loading: () => const SplashScreen(),
+                data: (_) => child!,
+              );
             }),
           );
         },

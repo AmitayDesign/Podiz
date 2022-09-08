@@ -23,7 +23,7 @@
 import 'package:flutter/material.dart';
 
 class ShowCaseWidget extends StatefulWidget {
-  final Builder builder;
+  final Widget child;
   final VoidCallback? onFinish;
   final Function(int?, GlobalKey)? onStart;
   final Function(int?, GlobalKey)? onComplete;
@@ -43,7 +43,7 @@ class ShowCaseWidget extends StatefulWidget {
 
   const ShowCaseWidget({
     Key? key,
-    required this.builder,
+    required this.child,
     this.onFinish,
     this.onStart,
     this.onComplete,
@@ -195,7 +195,7 @@ class ShowCaseWidgetState extends State<ShowCaseWidget> {
   Widget build(BuildContext context) {
     return _InheritedShowCaseView(
       activeWidgetIds: ids?.elementAt(activeWidgetId!),
-      child: widget.builder,
+      child: Builder(builder: (context) => widget.child),
     );
   }
 }

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
+import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
+import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/discussion/presentation/sheet/comment_sheet.dart';
@@ -32,7 +34,7 @@ class CommentCard extends ConsumerStatefulWidget {
     this.comment, {
     Key? key,
     required this.episodeId,
-    this.navigate = true,
+    this.navigate = false,
     this.showcase = false,
   }) : super(key: key);
 
@@ -80,159 +82,143 @@ class _CommentCardState extends ConsumerState<CommentCard> {
 
   @override
   Widget build(BuildContext context) {
-    final userValue = ref.watch(userFutureProvider(widget.comment.userId));
-    return userValue.when(
-      loading: () => SizedBox.fromSize(),
-      error: (e, _) => const SizedBox.shrink(),
-      data: (user) {
-        print(widget.showcase);
-        return Material(
-          color: context.colorScheme.surface,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+    final user =
+        ref.watch(userFutureProvider(widget.comment.userId)).valueOrNull;
+    if (user == null) return const SizedBox.shrink();
+    return Material(
+      color: context.colorScheme.surface,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      if (widget.showcase)
+                        showcase(
+                          user: user,
+                          child: UserAvatar(
+                            user: user,
+                            radius: kMinInteractiveDimension * 5 / 12,
+                          ),
+                        )
+                      else
+                        UserAvatar(
+                          user: user,
+                          radius: kMinInteractiveDimension * 5 / 12,
+                        ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              user.name,
+                              style: context.textTheme.titleSmall,
+                            ),
+                            Text('${user.followers.length} followers'),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      TimeChip(
+                        icon: Icons.play_arrow_rounded,
+                        position: widget.comment.timestamp,
+                        onTap: openEpisode,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  CommentText(widget.comment.text),
+                  const SizedBox(height: 16),
+                  CommentTrailing(
+                    onReply: () => ref
+                        .read(commentSheetTargetProvider.notifier)
+                        .state = widget.comment,
+                    onShare: () => share(widget.comment),
+                  ),
+                  if (widget.comment.replyCount > 0) ...[
+                    const SizedBox(height: 16),
+                    const Divider(),
+                  ],
+                ],
+              ),
+            ),
+            if (collapsed)
+              Consumer(builder: (context, ref, _) {
+                final lastReply = ref
+                    .watch(lastReplyStreamProvider(widget.comment.id))
+                    .valueOrNull;
+                if (lastReply == null) return const SizedBox.shrink();
+                return InkWell(
+                  onTap: () => setState(() => collapsed = false),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Row(
-                        children: [
-                          if (widget.showcase)
-                            ShowcaseStep(
-                              step: 3,
-                              skipOnTop: true,
-                              onTap: () {
-                                context.goNamed(
-                                  AppRoute.profile.name,
-                                  params: {'userId': user.id},
-                                );
-                                ShowCaseWidget.of(context).next();
-                              },
-                              title: 'Find interesting people',
-                              description:
-                                  '${user.name} could be a great start with',
-                              child: UserAvatar(
-                                user: user,
-                                radius: kMinInteractiveDimension * 5 / 12,
-                              ),
-                            )
-                          else
-                            UserAvatar(
-                              user: user,
-                              radius: kMinInteractiveDimension * 5 / 12,
-                            ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  user.name,
-                                  style: context.textTheme.titleSmall,
-                                ),
-                                Text('${user.followers.length} followers'),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          TimeChip(
-                            icon: Icons.play_arrow,
-                            position: widget.comment.timestamp,
-                            onTap: openEpisode,
-                          ),
-                        ],
+                      replyWidget(lastReply),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          widget.comment.replyCount == 2
+                              ? '1 more reply...'.hardcoded
+                              : '${widget.comment.replyCount - 1} more replies...'
+                                  .hardcoded,
+                          style: context.textTheme.bodyMedium,
+                        ),
                       ),
                       const SizedBox(height: 16),
-                      CommentText(widget.comment.text),
-                      const SizedBox(height: 16),
-                      CommentTrailing(
-                        onReply: () => ref
-                            .read(commentSheetTargetProvider.notifier)
-                            .state = widget.comment,
-                        onShare: () => share(widget.comment),
-                      ),
-                      if (widget.comment.replyCount > 0) ...[
-                        const SizedBox(height: 16),
-                        const Divider(),
-                      ],
                     ],
                   ),
-                ),
-                if (collapsed)
-                  Consumer(builder: (context, ref, _) {
-                    final lastReply = ref
-                        .watch(lastReplyStreamProvider(widget.comment.id))
-                        .valueOrNull;
-                    if (lastReply == null) return const SizedBox.shrink();
-                    return InkWell(
-                      onTap: () => setState(() => collapsed = false),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          replyWidget(lastReply),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                );
+              })
+            else
+              Consumer(
+                builder: (context, ref, _) {
+                  final replies = ref
+                      .watch(repliesStreamProvider(widget.comment.id))
+                      .valueOrNull;
+                  if (replies == null) return const SizedBox.shrink();
+                  final directReplies = replies.where(
+                    (reply) => reply.parentIds.last == widget.comment.id,
+                  );
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (final reply in directReplies)
+                        replyWidget(
+                          reply,
+                          replies
+                              .where((r) => r.parentIds.contains(reply.id))
+                              .toList(),
+                        ),
+                      if (widget.comment.replyCount > 1) ...[
+                        const SizedBox(height: 8),
+                        InkWell(
+                          onTap: () => setState(() => collapsed = true),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
                             child: Text(
-                              widget.comment.replyCount == 2
-                                  ? '1 more reply...'.hardcoded
-                                  : '${widget.comment.replyCount - 1} more replies...'
-                                      .hardcoded,
+                              'Collapse comments'.hardcoded,
                               style: context.textTheme.bodyMedium,
                             ),
                           ),
-                          const SizedBox(height: 16),
-                        ],
-                      ),
-                    );
-                  })
-                else
-                  Consumer(
-                    builder: (context, ref, _) {
-                      final replies = ref
-                          .watch(repliesStreamProvider(widget.comment.id))
-                          .valueOrNull;
-                      if (replies == null) return const SizedBox.shrink();
-                      final directReplies = replies.where(
-                        (reply) => reply.parentIds.last == widget.comment.id,
-                      );
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          for (final reply in directReplies)
-                            replyWidget(
-                              reply,
-                              replies
-                                  .where((r) => r.parentIds.contains(reply.id))
-                                  .toList(),
-                            ),
-                          if (widget.comment.replyCount > 1) ...[
-                            const SizedBox(height: 8),
-                            InkWell(
-                              onTap: () => setState(() => collapsed = true),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
-                                child: Text(
-                                  'Collapse comments'.hardcoded,
-                                  style: context.textTheme.bodyMedium,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ],
-                      );
-                    },
-                  ),
-              ],
-            ),
-          ),
-        );
-      },
+                        ),
+                      ],
+                    ],
+                  );
+                },
+              ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -245,4 +231,32 @@ class _CommentCardState extends ConsumerState<CommentCard> {
           collapsed: collapsed,
           episodeId: widget.episodeId,
           onShare: (comment) => share(comment));
+
+  Widget showcase({required UserPodiz user, required Widget child}) {
+    next() {
+      context.goNamed(
+        AppRoute.profile.name,
+        params: {'userId': user.id},
+      );
+      final isFollowing =
+          ref.read(currentUserProvider).following.contains(user.id);
+      if (isFollowing) {
+        ShowCaseWidget.of(context).next();
+      }
+    }
+
+    return ShowcaseStep(
+      step: 3,
+      skipOnTop: true,
+      shapeBorder: const CircleBorder(),
+      onTap: () {
+        next();
+        ShowCaseWidget.of(context).next();
+      },
+      onNext: next,
+      title: 'Find interesting people',
+      description: '${user.name} could be a great start with',
+      child: child,
+    );
+  }
 }

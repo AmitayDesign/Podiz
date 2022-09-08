@@ -22,15 +22,16 @@ class ErrorPlayer extends StatelessWidget {
                 const SizedBox.square(
                   dimension: 52,
                   child: Center(
-                    child: Icon(Icons.error_outline),
+                    child: Icon(Icons.error_outline_rounded),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'There was an error playing this episode.',
-                    style:
-                        TextStyle(color: context.colorScheme.onErrorContainer),
+                    style: TextStyle(
+                      color: context.colorScheme.onErrorContainer,
+                    ),
                   ),
                 ),
               ],

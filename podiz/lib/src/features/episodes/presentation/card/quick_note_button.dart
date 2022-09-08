@@ -20,7 +20,7 @@ class QuickNoteButton extends StatelessWidget {
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
           elevation: 0,
-          primary: Colors.white10,
+          backgroundColor: Colors.white10,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(height / 2),
           ),
@@ -34,7 +34,7 @@ class QuickNoteButton extends StatelessWidget {
           ),
         ),
         icon: Icon(
-          Icons.edit,
+          Icons.edit_rounded,
           size: kSmallIconSize,
           color: textStyle!.color,
         ),

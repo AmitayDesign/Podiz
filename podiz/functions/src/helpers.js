@@ -70,6 +70,7 @@ exports.addEpisodeToFirestore = (episode, showId) =>
     {
       name: episode.name,
       commentsCount: 0,
+      weeklyCounter: 0,
       description: episode.description,
       imageUrl: episode.images[0]?.url,
       duration: episode.duration_ms,
@@ -86,6 +87,7 @@ exports.addEpisodeToFirestoreT = (t, episode, showId) =>
     {
       name: episode.name,
       commentsCount: 0,
+      weeklyCounter: 0,
       description: episode.description,
       imageUrl: episode.images[0]?.url,
       duration: episode.duration_ms,
