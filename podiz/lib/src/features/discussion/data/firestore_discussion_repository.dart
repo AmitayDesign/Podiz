@@ -1,12 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
+import 'package:podiz/src/statistics/mix_panel_repository.dart';
 import 'package:podiz/src/utils/firestore_refs.dart';
 
 import 'discussion_repository.dart';
 
 class FirestoreDiscussionRepository implements DiscussionRepository {
   FirebaseFirestore firestore;
-  FirestoreDiscussionRepository({required this.firestore});
+  MixPanelRepository mixPanelRepository;
+  FirestoreDiscussionRepository(
+      {required this.firestore, required this.mixPanelRepository});
 
   @override
   Stream<List<Comment>> watchComments(String episodeId) =>
@@ -79,6 +82,11 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
     }
 
     await batch.commit();
+    if (comment.parentIds == []) {
+      mixPanelRepository.userComment();
+    } else {
+      mixPanelRepository.userReply();
+    }
   }
 }
 

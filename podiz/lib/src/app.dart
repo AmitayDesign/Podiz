@@ -3,6 +3,7 @@ import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/features/auth/presentation/sign_in_screen.dart';
 import 'package:podiz/src/routing/app_router.dart';
+import 'package:podiz/src/statistics/mix_panel_repository.dart';
 
 import 'features/auth/data/auth_repository.dart';
 import 'features/showcase/presentation/package_files/showcase_widget.dart';
@@ -17,6 +18,8 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final goRouter = ref.watch(goRouterProvider);
     final theme = ref.watch(themeProvider);
+    //TODO see if this in the right place
+    ref.watch(mixPanelRepository).init();
     return LocaleBuilder(
       builder: (locale) => MaterialApp.router(
         debugShowCheckedModeBanner: false,

@@ -3,6 +3,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:podiz/src/features/auth/data/spotify_api.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/episodes/domain/podcast.dart';
+import 'package:podiz/src/statistics/mix_panel_repository.dart';
 import 'package:podiz/src/utils/firestore_refs.dart';
 import 'package:podiz/src/utils/uri_from_id.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
@@ -11,12 +12,13 @@ class FirestorePodcastRepository extends PodcastRepository {
   final FirebaseFirestore firestore;
   final FirebaseFunctions functions;
   final SpotifyApi spotifyApi;
+  final MixPanelRepository mixPanelRepository;
 
-  FirestorePodcastRepository({
-    required this.firestore,
-    required this.functions,
-    required this.spotifyApi,
-  });
+  FirestorePodcastRepository(
+      {required this.firestore,
+      required this.functions,
+      required this.spotifyApi,
+      required this.mixPanelRepository});
 
   @override
   Stream<Podcast> watchPodcast(String podcastId) {
@@ -80,6 +82,7 @@ class FirestorePodcastRepository extends PodcastRepository {
       'favPodcasts': FieldValue.arrayUnion([podcastId])
     });
     await batch.commit();
+    mixPanelRepository.userFollowPodcast();
     SpotifySdk.addToLibrary(spotifyUri: uriFromId(podcastId));
   }
 

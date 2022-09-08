@@ -1,13 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
+import 'package:podiz/src/statistics/mix_panel_repository.dart';
 import 'package:podiz/src/utils/instances.dart';
 
 import 'firestore_discussion_repository.dart';
 
 final discussionRepositoryProvider = Provider<DiscussionRepository>(
   (ref) => FirestoreDiscussionRepository(
-    firestore: ref.watch(firestoreProvider),
-  ),
+      firestore: ref.watch(firestoreProvider),
+      mixPanelRepository: ref.watch(mixPanelRepository)),
 );
 
 //TODO make all paginated
