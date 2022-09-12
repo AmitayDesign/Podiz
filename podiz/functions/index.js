@@ -8,6 +8,7 @@ const listening = require("./src/episode-listening.js");
 const episodes = require("./src/episodes.js");
 const shows = require("./src/shows.js");
 const search = require("./src/search.js");
+// const notifications = require("./src/notifications.js");
 
 admin.initializeApp(functions.config().firebase);
 
@@ -55,3 +56,10 @@ exports.getAccessTokenWithCode = functions.https.onCall((data, _) =>
 exports.getAccessTokenWithRefreshToken = functions.https.onCall((data, _) =>
   auth.getAccessTokenWithRefreshToken(data.userId)
 );
+
+// exports.replyNotificationTrigger = functions.firestore
+//   .document('/comments/{commentId}')
+//   .onCreate(async (snapshot, context) =>
+//     notifications.replyNotificationTrigger(context.params.commentId)
+
+//   );
