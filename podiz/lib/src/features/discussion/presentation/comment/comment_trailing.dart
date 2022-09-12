@@ -26,7 +26,7 @@ class CommentTrailing extends StatelessWidget {
             size: Size.fromHeight(size),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: Palette.grey900,
+                backgroundColor: Palette.grey900,
                 elevation: 0,
                 shape: const StadiumBorder(),
                 alignment: Alignment.centerLeft,

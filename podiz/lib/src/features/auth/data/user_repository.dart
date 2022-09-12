@@ -1,14 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/statistics/mix_panel_repository.dart';
 import 'package:podiz/src/utils/instances.dart';
 
 import 'firestore_user_repository.dart';
 
 final userRepositoryProvider = Provider<UserRepository>(
   (ref) => FirestoreUserRepository(
-    firestore: ref.watch(firestoreProvider),
-  ),
+      firestore: ref.watch(firestoreProvider),
+      mixPanelRepository: ref.watch(mixPanelRepository)),
 );
 
 abstract class UserRepository {

@@ -16,6 +16,7 @@ import 'package:podiz/src/features/showcase/presentation/package_files/showcase_
 import 'package:podiz/src/features/showcase/presentation/showcase_step.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/routing/app_router.dart';
+import 'package:podiz/src/statistics/mix_panel_repository.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -76,6 +77,7 @@ class _CommentCardState extends ConsumerState<CommentCard> {
       '$link',
       subject: 'Insight I found on Podiz about ${podcast.name}',
     );
+    ref.read(mixPanelRepository).userShare();
   }
 
   @override

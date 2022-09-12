@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/player/domain/playing_episode.dart';
+import 'package:podiz/src/statistics/mix_panel_repository.dart';
 import 'package:podiz/src/utils/uri_from_id.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
@@ -10,8 +11,10 @@ import 'player_repository.dart';
 
 class SpotifyPlayerRepository implements PlayerRepository {
   final EpisodeRepository episodeRepository;
+  final MixPanelRepository mixPanelRepository;
 
-  SpotifyPlayerRepository({required this.episodeRepository});
+  SpotifyPlayerRepository(
+      {required this.episodeRepository, required this.mixPanelRepository});
 
   @override
   Stream<PlayingEpisode?> watchPlayingEpisode() =>
@@ -45,6 +48,7 @@ class SpotifyPlayerRepository implements PlayerRepository {
     if (time != null) {
       await SpotifySdk.seekTo(positionedMilliseconds: time.inMilliseconds);
     }
+    mixPanelRepository.userOpenPodcast();
   }
 
   @override

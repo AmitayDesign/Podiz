@@ -9,6 +9,7 @@ const episodes = require("./src/episodes.js");
 const shows = require("./src/shows.js");
 const search = require("./src/search.js");
 // const notifications = require("./src/notifications.js");
+const comments = require("./src/comments.js");
 
 admin.initializeApp(functions.config().firebase);
 
@@ -63,3 +64,7 @@ exports.getAccessTokenWithRefreshToken = functions.https.onCall((data, _) =>
 //     notifications.replyNotificationTrigger(context.params.commentId)
 
 //   );
+exports.scheduleWeeklyComments = functions.pubsub
+  .schedule("35 11 * * *")
+  .timeZone("Europe/Lisbon")
+  .onRun((_) => comments.updateWeeklyComments());

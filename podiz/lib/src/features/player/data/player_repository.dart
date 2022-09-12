@@ -3,13 +3,14 @@ import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/player/domain/player_time.dart';
 import 'package:podiz/src/features/player/domain/playing_episode.dart';
+import 'package:podiz/src/statistics/mix_panel_repository.dart';
 
 import 'spotify_player_repository.dart';
 
 final playerRepositoryProvider = Provider<PlayerRepository>(
   (ref) => SpotifyPlayerRepository(
-    episodeRepository: ref.watch(episodeRepositoryProvider),
-  ),
+      episodeRepository: ref.watch(episodeRepositoryProvider),
+      mixPanelRepository: ref.watch(mixPanelRepository)),
 );
 
 abstract class PlayerRepository {
