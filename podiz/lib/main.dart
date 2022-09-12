@@ -8,6 +8,7 @@ import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:podiz/src/app.dart';
+import 'package:podiz/src/features/notifications/data/push_notifications_repository.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/utils/instances.dart';
 
@@ -33,8 +34,9 @@ void main() async {
         yield LicenseEntryWithLineBreaks(['google_fonts'], license);
       });
 
-      await providerContainer.read(preferencesFutureProvider.future);
       await Firebase.initializeApp();
+      await providerContainer.read(preferencesFutureProvider.future);
+      await providerContainer.read(pushNotificationsRepositoryProvider).init();
 
       //* Entry point of the app
       runApp(UncontrolledProviderScope(

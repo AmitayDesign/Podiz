@@ -7,4 +7,5 @@ extension FirestoreRefs on FirebaseFirestore {
   Ref get episodeCountersCollection => collection('episodeCounters');
   Ref get showsCollection => collection('shows');
   Ref get commentsCollection => collection('comments');
+  Ref get usersPrivateCollection => collection('usersPrivate');
 }

@@ -9,6 +9,12 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
   FirestoreDiscussionRepository({required this.firestore});
 
   @override
+  Future<Comment> fetchComment(String commentId) async {
+    final doc = await firestore.commentsCollection.doc(commentId).get();
+    return Comment.fromFirestore(doc);
+  }
+
+  @override
   Stream<List<Comment>> watchComments(String episodeId) =>
       firestore.commentsCollection
           .where('episodeId', isEqualTo: episodeId)

@@ -55,7 +55,7 @@ class SpotifyAuthRepository
   bool get isConnected => connectionState.value;
 
   @override
-  Future<void> signIn(String code) async {
+  Future<String> signIn(String code) async {
     try {
       final userId = await connectWithCode(code);
       await preferences.setString(userKey, userId);
@@ -64,7 +64,9 @@ class SpotifyAuthRepository
     }
     // wait for the user to be fetched before ending the login
     // so it doesnt display a wrong frame
-    await authState.first;
+    return await authState.stream
+        .firstWhere((user) => user != null)
+        .then((user) => user!.id);
   }
 
   Future<String> connectWithCode(String code) async {

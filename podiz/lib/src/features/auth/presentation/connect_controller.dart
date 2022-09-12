@@ -1,23 +1,27 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/data/spotify_api.dart';
+import 'package:podiz/src/features/notifications/data/push_notifications_repository.dart';
 
 final connectionControllerProvider =
     StateNotifierProvider.autoDispose<ConnectionController, AsyncValue>(
   (ref) => ConnectionController(
     spotifyApi: ref.watch(spotifyApiProvider),
-    repository: ref.watch(authRepositoryProvider),
+    authRepository: ref.watch(authRepositoryProvider),
+    pushNotificationsRepository: ref.watch(pushNotificationsRepositoryProvider),
   ),
 );
 
 class ConnectionController extends StateNotifier<AsyncValue> {
-  final AuthRepository repository;
+  final AuthRepository authRepository;
+  final PushNotificationsRepository pushNotificationsRepository;
   final SpotifyApi spotifyApi;
 
   String? lastUsedUrl;
 
   ConnectionController({
-    required this.repository,
+    required this.authRepository,
+    required this.pushNotificationsRepository,
     required this.spotifyApi,
   }) : super(const AsyncValue.loading());
 
@@ -39,7 +43,8 @@ class ConnectionController extends StateNotifier<AsyncValue> {
       final error = Uri.parse(url).queryParameters['error'];
       if (error != null) throw Exception('Error: $error');
       final code = Uri.parse(url).queryParameters['code']!;
-      await repository.signIn(code);
+      final userId = await authRepository.signIn(code);
+      pushNotificationsRepository.requestPermission(userId);
     } catch (err, stack) {
       state = AsyncValue.error(err, stackTrace: stack);
     }
