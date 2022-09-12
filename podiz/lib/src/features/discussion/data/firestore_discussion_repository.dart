@@ -79,12 +79,12 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
           firestore.episodeCountersCollection.doc(comment.episodeId);
       final episodeCountersDoc = await t.get(episodeCountersRef);
 
-    await batch.commit();
-    if (comment.parentIds == []) {
-      mixPanelRepository.userComment();
-    } else {
-      mixPanelRepository.userReply();
-    }
+      // await batch.commit();
+      if (comment.parentIds == []) {
+        mixPanelRepository.userComment();
+      } else {
+        mixPanelRepository.userReply();
+      }
       // save comment
       t.set(commentDoc, comment.toJson());
 

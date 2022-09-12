@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/src/features/auth/presentation/sign_in_screen.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/statistics/mix_panel_repository.dart';
 
