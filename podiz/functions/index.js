@@ -63,14 +63,27 @@ exports.replyNotificationTrigger = functions.firestore
   .onCreate(async (snapshot, context) => {
     var commentId = context.params.commentId
     var data = snapshot.data();
+    var episodeId = data.episodeId;
     var targetUserId = data.parentUserId;
     var userId = data.userId;
     var text = data.text;
     if (targetUserId != null && targetUserId != userId)
       return notifications.replyNotificationTrigger(
-        targetUserId, commentId, userId, text);
-  }
-  );
+        targetUserId, commentId, episodeId, userId, text
+      );
+  });
+
+exports.followNotificationTrigger = functions.firestore
+  .document('/users/{userId}')
+  .onUpdate(async (snapshot, context) => {
+    var targetUserId = context.params.userId
+    var followersBefore = snapshot.before.data().followers;
+    var followersAfter = snapshot.after.data().followers;
+    if (followersBefore.length < followersAfter.length) {
+      var userId = followersAfter[followersAfter.length - 1];
+      return notifications.followNotificationTrigger(targetUserId, userId);
+    }
+  });
 
 exports.scheduleWeeklyComments = functions.pubsub
   .schedule("35 11 * * *")

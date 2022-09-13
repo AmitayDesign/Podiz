@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:podiz/src/features/notifications/domain/notification_podiz.dart';
 import 'package:podiz/src/theme/palette.dart';
 import 'package:podiz/src/utils/firestore_refs.dart';
 import 'package:podiz/src/utils/in_memory_store.dart';
@@ -12,6 +13,7 @@ import 'push_notifications_repository.dart';
 extension RemoteMessageNotificationId on RemoteMessage {
   String get notificationId => data['id'];
   String get channelId => data['channel'];
+  String get payload => '$channelId:$notificationId';
 }
 
 class FirebasePushNotificationsRepository
@@ -42,7 +44,7 @@ class FirebasePushNotificationsRepository
     ),
     'follows': const AndroidNotificationChannel(
       'follows',
-      'Follow',
+      'Follows',
       // description: 'Replies to your comments',
       ledColor: Palette.purple,
       importance: Importance.max,
@@ -64,7 +66,7 @@ class FirebasePushNotificationsRepository
     );
   }
 
-  final selectedNotifications = InMemoryStore<String>();
+  final selectedNotifications = InMemoryStore<NotificationPodiz>();
 
   @override
   Future<void> init() async {
@@ -135,12 +137,12 @@ class FirebasePushNotificationsRepository
     //* background
     backgroundSub?.cancel();
     backgroundSub = FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      selectNotification(message.notificationId);
+      selectNotification(message.payload);
     });
 
     //* terminated
     await messaging.getInitialMessage().then((message) {
-      if (message != null) selectNotification(message.notificationId);
+      if (message != null) selectNotification(message.payload);
     });
   }
 
@@ -150,14 +152,18 @@ class FirebasePushNotificationsRepository
       message.notification!.title,
       message.notification!.body,
       details(channels[message.channelId]!),
-      payload: message.notificationId,
+      payload: message.payload,
     );
   }
 
-  void selectNotification(String? notificationId) {
-    if (notificationId != null) selectedNotifications.value = notificationId;
+  //TODO select different for each channel
+  void selectNotification(String? payload) {
+    if (payload != null) {
+      selectedNotifications.value = NotificationPodiz.fromPayload(payload);
+    }
   }
 
   @override
-  Stream<String> selectedNotificationChanges() => selectedNotifications.stream;
+  Stream<NotificationPodiz> selectedNotificationChanges() =>
+      selectedNotifications.stream;
 }

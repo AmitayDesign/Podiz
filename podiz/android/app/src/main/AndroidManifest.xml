@@ -62,8 +62,8 @@
             android:name="com.dexterous.flutterlocalnotifications.ForegroundService"        
             android:exported="false"
             android:stopWithTask="false"/>
-        <meta-data
+        <!-- <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="replies" />
+            android:value="replies" /> -->
     </application>
 </manifest>

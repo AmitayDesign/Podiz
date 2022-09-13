@@ -1,7 +1,29 @@
 const admin = require("firebase-admin");
 
 exports.replyNotificationTrigger = async (
-	targetUserId, commentId, userId, text
+	targetUserId, commentId, episodeId, userId, text
+) => {
+	// Get the users details
+	var user = await admin.firestore()
+		.collection("users").doc(userId).get()
+		.then((user) => user.data());
+
+	// Get the episode details
+	var episode = await admin.firestore()
+		.collection("episodes").doc(episodeId).get()
+		.then((episode) => episode.data());
+
+	return sendNotification(
+		targetUserId,
+		commentId,
+		'replies',
+		`${user.name} replied to your comment`,
+		`${text} - ${episode.name}`
+	);
+}
+
+exports.followNotificationTrigger = async (
+	targetUserId, userId
 ) => {
 	// Get the users details
 	var user = await admin.firestore()
@@ -10,10 +32,10 @@ exports.replyNotificationTrigger = async (
 
 	return sendNotification(
 		targetUserId,
-		commentId,
-		'replies',
-		'Podiz',
-		`${user.name} commented: "${text}"`
+		userId,
+		'follows',
+		`${user.name} started following you`,
+		`Check out ${user.name} profile`
 	);
 }
 
