@@ -60,12 +60,11 @@ class SpotifyApi {
     if (result == 'error') throw Exception('access token error');
 
     accessToken = result;
-    await connectToSdk(accessToken!);
+    await connectToSdk();
     return accessToken!;
   }
 
-  Future<bool> connectToSdk(String accessToken) =>
-      SpotifySdk.connectToSpotifyRemote(
+  Future<bool> connectToSdk() => SpotifySdk.connectToSpotifyRemote(
         clientId: clientId,
         redirectUrl: redirectUrl,
         accessToken: accessToken,
