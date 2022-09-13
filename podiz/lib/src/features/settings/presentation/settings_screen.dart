@@ -7,6 +7,7 @@ import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/common_widgets/loading_button.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/notifications/data/push_notifications_repository.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/context_theme.dart';
@@ -77,7 +78,13 @@ class SettingsScreen extends ConsumerWidget {
             child: Column(
               children: [
                 LoadingOutlinedButton(
-                  onPressed: () => ref.read(authRepositoryProvider).signOut(),
+                  onPressed: () {
+                    final user = ref.read(currentUserProvider);
+                    ref
+                        .read(pushNotificationsRepositoryProvider)
+                        .revokePermission(user.id);
+                    ref.read(authRepositoryProvider).signOut();
+                  },
                   child: Text('LOG OUT'.hardcoded),
                 ),
                 const SizedBox(height: 16),

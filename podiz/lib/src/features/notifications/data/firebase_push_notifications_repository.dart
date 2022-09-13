@@ -9,11 +9,9 @@ import 'package:podiz/src/utils/in_memory_store.dart';
 
 import 'push_notifications_repository.dart';
 
-//TODO read flutterfire documentation
-//TODO send notification
-
 extension RemoteMessageNotificationId on RemoteMessage {
-  String? get notificationId => data['id'] ?? 'noId';
+  String get notificationId => data['id'];
+  String get channelId => data['channel'];
 }
 
 class FirebasePushNotificationsRepository
@@ -34,16 +32,24 @@ class FirebasePushNotificationsRepository
     foregroundSub?.cancel();
   }
 
-  final AndroidNotificationChannel channel = const AndroidNotificationChannel(
-    'replies',
-    'Replies',
-    description: 'Replies to your comments',
-    ledColor: Palette.purple,
-    importance: Importance.max,
-  );
+  final channels = {
+    'replies': const AndroidNotificationChannel(
+      'replies',
+      'Replies',
+      // description: 'Replies to your comments',
+      ledColor: Palette.purple,
+      importance: Importance.max,
+    ),
+    'follows': const AndroidNotificationChannel(
+      'follows',
+      'Follow',
+      // description: 'Replies to your comments',
+      ledColor: Palette.purple,
+      importance: Importance.max,
+    ),
+  };
 
-  @override
-  NotificationDetails get details {
+  NotificationDetails details(AndroidNotificationChannel channel) {
     const iosDetails = IOSNotificationDetails();
     final androidDetails = AndroidNotificationDetails(
       channel.id,
@@ -74,10 +80,11 @@ class FirebasePushNotificationsRepository
     );
 
     await plugin.initialize(settings, onSelectNotification: selectNotification);
-    await plugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
+    final androidPlugin = plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
+    for (final channel in channels.values) {
+      androidPlugin?.createNotificationChannel(channel);
+    }
   }
 
   StreamSubscription? tokenSub;
@@ -142,7 +149,7 @@ class FirebasePushNotificationsRepository
       DateTime.now().millisecondsSinceEpoch ~/ 1000,
       message.notification!.title,
       message.notification!.body,
-      details,
+      details(channels[message.channelId]!),
       payload: message.notificationId,
     );
   }

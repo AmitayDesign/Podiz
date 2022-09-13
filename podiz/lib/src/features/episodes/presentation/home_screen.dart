@@ -9,6 +9,7 @@ import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/domain/mutable_user_podiz.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/data/presence_repository.dart';
+import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/episodes/presentation/feed/feed_page.dart';
 import 'package:podiz/src/features/notifications/data/push_notifications_repository.dart';
 import 'package:podiz/src/features/notifications/presentation/notifications_page.dart';
@@ -167,6 +168,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             //     payload: '00v2hKcAroaQ6ZRMTti0',
             //   );
             // }),
+            floatingActionButton: FloatingActionButton(onPressed: () async {
+              final repo = ref.read(discussionRepositoryProvider);
+              const comment = Comment(
+                episodeId: '4HuFbACVWnSi7FJWJ5LrKA',
+                parentIds: ['00v2hKcAroaQ6ZRMTti0'],
+                parentUserId: 'ymptclhffc47qgt80vq0qkutb',
+                text: 'test',
+                timestamp: Duration(milliseconds: 571478),
+                userId: 'hmrs28xr9apw0mlac2dfjwm2v',
+              );
+              await repo.addComment(comment);
+              print('commented');
+            }),
             body: PageView(
               controller: pageController,
               children: const [

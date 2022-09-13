@@ -60,6 +60,8 @@ class SpotifyAuthRepository
       final userId = await connectWithCode(code);
       await preferences.setString(userKey, userId);
     } catch (e) {
+      //TODO throw specific exceptions
+      // eg when a user doesnt have premium
       throw Exception('Sign in error: $e');
     }
     // wait for the user to be fetched before ending the login

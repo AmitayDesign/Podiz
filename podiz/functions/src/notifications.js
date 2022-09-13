@@ -1,49 +1,70 @@
+const admin = require("firebase-admin");
 
-// exports.replyNotificationTrigger = async (commentId) => {
+exports.replyNotificationTrigger = async (
+	targetUserId, commentId, userId, text
+) => {
+	// Get the users details
+	var user = await admin.firestore()
+		.collection("users").doc(userId).get()
+		.then((user) => user.data());
+
+	return sendNotification(
+		targetUserId,
+		commentId,
+		'replies',
+		'Podiz',
+		`${user.name} commented: "${text}"`
+	);
+}
+
+const sendNotification = async (
+	targetUserId, id, channel, title, body
+) => {
+	// Get the notification target user details
+	var targetUser = await admin.firestore()
+		.collection("usersPrivate").doc(targetUserId).get();
+	var tokens = targetUser.data().notificationTokens;
+
+	if (tokens.length)
+		await admin.messaging().sendToDevice(
+			tokens,
+			{
+				notification: {
+					title: title,
+					body: body,
+					android_channel_id: channel,
+				},
+				data: {
+					id: id,
+					channel: channel
+				},
+			},
+			{
+				// Required for background/quit data-only messages on iOS
+				contentAvailable: true,
+				// Required for background/quit data-only messages on Android
+				priority: "high",
+			}
+		).then((response) => {
+			print(`success: ${response.successCount}`);
+			print(`failure: ${response.failureCount}`);
+			return removedUnusedTokens(targetUserId, tokens, response);
+		});
+}
 
 
-// 	let notification = snapshot.data();
-// 	let type = notification.type;
-// 	if (type == "follower") {
-// 		data = {
-// 			type: notification.type,
-// 			timestamp: notification.timestamp,
-// 			user: notification.user,
-// 		};
-// 	} else {
-// 		data = {
-// 			type: notification.type,
-// 			timestamp: notification.timestamp,
-// 			user: notification.user,
-// 			podcast: notification.podcast,
-// 			comment: notification.comment,
-// 		};
-// 	}
-// 	let token = await getDeviceToken(uid);
-// 	messaging().sendToDevice(
-// 		token,
-// 		{
-// 			data: data,
-// 		},
-// 		{
-// 			contentAvailable: true,
-// 			priority: "high",
-// 		}
-// 	);
-// 	await admin.messaging().sendToDevice(
-// 		owner.tokens, // ['token_1', 'token_2', ...]
-// 		{
-// 			data: {
-// 				owner: JSON.stringify(owner),
-// 				user: JSON.stringify(user),
-// 				picture: JSON.stringify(picture),
-// 			},
-// 		},
-// 		{
-// 			// Required for background/quit data-only messages on iOS
-// 			contentAvailable: true,
-// 			// Required for background/quit data-only messages on Android
-// 			priority: "high",
-// 		}
-// 	);
-// }
+const removedUnusedTokens = async (uid, tokens, response) => {
+	var tokensToRemove = [];
+	response.results.forEach((result, i) => {
+		var error = result.error;
+		if (error)
+			if (error.code === 'messaging/invalid-registration-token' ||
+				error.code === 'messaging/registration-token-not-registered')
+				tokensToRemove.push(tokens[i]);
+	});
+	if (tokensToRemove.length)
+		await admin.firestore().collection("usersPrivate")
+			.doc(targetUserId).set({
+				notificationTokens: db.FieldValue.arrayRemove(...tokensToRemove)
+			});
+};
