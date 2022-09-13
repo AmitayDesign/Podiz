@@ -68,5 +68,6 @@ class SpotifyApi {
         clientId: clientId,
         redirectUrl: redirectUrl,
         accessToken: accessToken,
+        playerName: 'Podiz',
       );
 }
