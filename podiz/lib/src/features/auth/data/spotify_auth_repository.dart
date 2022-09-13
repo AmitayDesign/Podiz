@@ -127,6 +127,7 @@ mixin AuthState {
   StreamSubscription? authStateSub;
   StreamSubscription? userSub;
   void listenToAuthStateChanges() {
+    authStateSub?.cancel();
     authStateSub = preferences
         .watchString(userKey)
         .transform(
@@ -169,6 +170,7 @@ mixin ConnectionState {
 
   StreamSubscription? connectionSub;
   void listenToConnectionChanges() {
+    connectionSub?.cancel();
     connectionSub =
         SpotifySdk.subscribeConnectionStatus().listen((status) async {
       connectionState.value = status.connected;
