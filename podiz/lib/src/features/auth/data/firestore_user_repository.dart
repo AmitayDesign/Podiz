@@ -1,11 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/statistics/mix_panel_repository.dart';
 import 'package:podiz/src/utils/firestore_refs.dart';
 
 class FirestoreUserRepository implements UserRepository {
   final FirebaseFirestore firestore;
-  const FirestoreUserRepository({required this.firestore});
+  final MixPanelRepository mixPanelRepository;
+  const FirestoreUserRepository(
+      {required this.firestore, required this.mixPanelRepository});
 
   @override
   Stream<UserPodiz> watchUser(String userId) {
@@ -40,6 +43,7 @@ class FirestoreUserRepository implements UserRepository {
       "following": FieldValue.arrayUnion([userToFollowId])
     });
     await batch.commit();
+    mixPanelRepository.userFollowUser();
   }
 
   @override

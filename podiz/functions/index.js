@@ -8,6 +8,8 @@ const listening = require("./src/episode-listening.js");
 const episodes = require("./src/episodes.js");
 const shows = require("./src/shows.js");
 const search = require("./src/search.js");
+// const notifications = require("./src/notifications.js");
+const comments = require("./src/comments.js");
 
 admin.initializeApp(functions.config().firebase);
 
@@ -55,3 +57,14 @@ exports.getAccessTokenWithCode = functions.https.onCall((data, _) =>
 exports.getAccessTokenWithRefreshToken = functions.https.onCall((data, _) =>
   auth.getAccessTokenWithRefreshToken(data.userId)
 );
+
+// exports.replyNotificationTrigger = functions.firestore
+//   .document('/comments/{commentId}')
+//   .onCreate(async (snapshot, context) =>
+//     notifications.replyNotificationTrigger(context.params.commentId)
+
+//   );
+exports.scheduleWeeklyComments = functions.pubsub
+  .schedule("35 11 * * *")
+  .timeZone("Europe/Lisbon")
+  .onRun((_) => comments.updateWeeklyComments());

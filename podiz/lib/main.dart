@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:podiz/src/app.dart';
+import 'package:podiz/src/features/notifications/data/push_notifications_repository.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/utils/instances.dart';
 
@@ -17,10 +17,6 @@ void main() async {
       WidgetsFlutterBinding.ensureInitialized();
       final providerContainer = ProviderContainer();
 
-      Mixpanel mixpanel = await Mixpanel.init(
-          "d293ecfa9c2739d850381d9e245b7437",
-          optOutTrackingDefault: false);
-      mixpanel.track("openApp");
       await Locales.init(['en']);
       await SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
@@ -33,8 +29,9 @@ void main() async {
         yield LicenseEntryWithLineBreaks(['google_fonts'], license);
       });
 
-      await providerContainer.read(preferencesFutureProvider.future);
       await Firebase.initializeApp();
+      await providerContainer.read(preferencesFutureProvider.future);
+      await providerContainer.read(pushNotificationsRepositoryProvider).init();
 
       //* Entry point of the app
       runApp(UncontrolledProviderScope(

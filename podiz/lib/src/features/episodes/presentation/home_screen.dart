@@ -7,13 +7,16 @@ import 'package:go_router/go_router.dart';
 import 'package:podiz/src/common_widgets/tap_to_unfocus.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/domain/mutable_user_podiz.dart';
+import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/data/presence_repository.dart';
 import 'package:podiz/src/features/episodes/presentation/feed/feed_page.dart';
+import 'package:podiz/src/features/notifications/data/push_notifications_repository.dart';
 import 'package:podiz/src/features/notifications/presentation/notifications_page.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/domain/playing_episode.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
 import 'package:podiz/src/features/search/presentation/search_page.dart';
+import 'package:podiz/src/features/showcase/data/showcase_repository.dart';
 import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
 import 'package:podiz/src/features/showcase/presentation/showcase_keys.dart';
 import 'package:podiz/src/routing/app_router.dart';
@@ -42,11 +45,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       if (page != null && page == page.toInt()) goToDestination(page.toInt());
     });
 
-    const firstTime = false;
-    //  ref
-    //     .read(preferencesProvider)
-    //     .getBool('first-time', defaultValue: true)
-    //     .getValue();
+    final firstTime = ref.read(showcaseRepositoryProvider).isFirstTime;
     // start the showcase
     if (firstTime) {
       WidgetsBinding.instance.addPostFrameCallback(
@@ -104,6 +103,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // open discussion if a notification was selected
+    ref.listen<AsyncValue<String>>(
+      selectedNotificationStreamProvider,
+      (_, notificationValue) => notificationValue.whenData((id) async {
+        final discussionRepository = ref.read(discussionRepositoryProvider);
+        final comment = await discussionRepository.fetchComment(id);
+        final playerRepository = ref.read(playerRepositoryProvider);
+        if (!mounted) return;
+        context.pushNamed(
+          AppRoute.discussion.name,
+          params: {'episodeId': comment.episodeId},
+        );
+        // just call play() if the episode is NOT playing
+        final playingEpisode = await playerRepository.fetchPlayingEpisode();
+        if (playingEpisode?.id != comment.episodeId) {
+          playerRepository.play(comment.episodeId, comment.timestamp);
+        } else {
+          playerRepository.resume(comment.episodeId, comment.timestamp);
+        }
+      }),
+    );
     // update last listened on player changes
     ref.listen<AsyncValue<PlayingEpisode?>>(
       playerStateChangesProvider,
@@ -136,6 +156,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         return TapToUnfocus(
           child: Scaffold(
             extendBody: true,
+            // floatingActionButton: FloatingActionButton(onPressed: () {
+            //   final push = ref.read(pushNotificationsRepositoryProvider);
+            //   final plugin = ref.read(localNotificationsProvider);
+            //   plugin.show(
+            //     DateTime.now().millisecondsSinceEpoch ~/ 1000,
+            //     'title',
+            //     'body',
+            //     push.details,
+            //     payload: '00v2hKcAroaQ6ZRMTti0',
+            //   );
+            // }),
             body: PageView(
               controller: pageController,
               children: const [
@@ -159,15 +190,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         items: const [
                           BottomNavigationBarItem(
                             label: 'Home',
-                            icon: Icon(Icons.home),
+                            icon: Icon(Icons.home_rounded),
                           ),
                           BottomNavigationBarItem(
                             label: 'Search',
-                            icon: Icon(Icons.search),
+                            icon: Icon(Icons.search_rounded),
                           ),
                           BottomNavigationBarItem(
                             label: 'Notifications',
-                            icon: Icon(Icons.notifications),
+                            icon: Icon(Icons.notifications_rounded),
                           ),
                         ],
                       ),

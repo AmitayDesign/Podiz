@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:podiz/src/common_widgets/back_text_button.dart';
 import 'package:podiz/src/common_widgets/empty_screen.dart';
-import 'package:podiz/src/common_widgets/episode_subtitle.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
+import 'package:podiz/src/common_widgets/grouped_comments.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/auth/presentation/profile/profile_follow_fab.dart';
 import 'package:podiz/src/features/auth/presentation/profile/profile_sliver_header.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
-import 'package:podiz/src/features/discussion/presentation/comment/comment_card.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/episodes/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/features/episodes/presentation/avatar/skeleton_podcast_avatar.dart';
@@ -53,9 +53,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     final userValue = ref.watch(userStreamProvider(widget.userId));
     return userValue.when(
-      loading: () => EmptyScreen.loading(),
-      error: (e, _) => EmptyScreen.text(
-        'There was an error opening this profile.',
+      loading: () => Scaffold(
+        appBar: const GradientBar(
+          automaticallyImplyLeading: false,
+          title: BackTextButton(),
+        ),
+        body: EmptyScreen.loading(),
+      ),
+      error: (e, _) => Scaffold(
+        appBar: const GradientBar(
+          automaticallyImplyLeading: false,
+          title: BackTextButton(),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: EmptyScreen.text(
+            'There was an error opening this profile.',
+          ),
+        ),
       ),
       data: (user) => Scaffold(
         extendBody: true,
@@ -95,27 +110,32 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         const SizedBox(height: 8),
                         SizedBox(
                           height: 64,
-                          child: ListView.separated(
+                          child: ListView.builder(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             scrollDirection: Axis.horizontal,
                             itemCount: user.favPodcasts.length,
-                            separatorBuilder: (context, i) =>
-                                const SizedBox(width: 16),
                             itemBuilder: (context, i) {
                               return Consumer(
                                 builder: (context, ref, _) {
                                   final podcastId = user.favPodcasts[i];
                                   final podcastValue = ref
                                       .watch(podcastFutureProvider(podcastId));
+                                  const padding = EdgeInsets.only(right: 16);
+
                                   return podcastValue.when(
-                                    loading: () =>
-                                        const SkeletonPodcastAvatar(),
+                                    loading: () => const Padding(
+                                      padding: padding,
+                                      child: SkeletonPodcastAvatar(),
+                                    ),
                                     error: (e, _) => const SizedBox.shrink(),
-                                    data: (podcast) => PodcastAvatar(
-                                      imageUrl: podcast.imageUrl,
-                                      onTap: () => context.pushNamed(
-                                        AppRoute.podcast.name,
-                                        params: {'podcastId': podcast.id},
+                                    data: (podcast) => Padding(
+                                      padding: padding,
+                                      child: PodcastAvatar(
+                                        imageUrl: podcast.imageUrl,
+                                        onTap: () => context.pushNamed(
+                                          AppRoute.podcast.name,
+                                          params: {'podcastId': podcast.id},
+                                        ),
                                       ),
                                     ),
                                   );
@@ -135,9 +155,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     final commentsValue =
                         ref.watch(userCommentsStreamProvider(user.id));
                     return commentsValue.when(
-                      loading: () => SliverEmptyScreen.loading(),
-                      error: (e, _) => SliverEmptyScreen.text(
-                          'There was an error loading the comments.'),
+                      loading: () => SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: EmptyScreen.loading(),
+                        ),
+                      ),
+                      error: (e, _) => SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: EmptyScreen.text(
+                            'There was an error loading the comments.',
+                          ),
+                        ),
+                      ),
                       data: (comments) {
                         final episodeIds = comments
                             .map((comment) => comment.episodeId)
@@ -145,27 +176,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         return SliverList(
                           delegate: SliverChildListDelegate([
                             for (final episodeId in episodeIds)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 16),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    EpisodeSubtitle(episodeId),
-                                    for (final comment in comments.where(
-                                        (comment) =>
-                                            comment.episodeId == episodeId))
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 8,
-                                        ),
-                                        child: CommentCard(
-                                          comment,
-                                          episodeId: episodeId,
-                                        ),
-                                      )
-                                  ],
-                                ),
-                              ),
+                              GroupedComments(
+                                episodeId,
+                                comments
+                                    .where((c) => c.episodeId == episodeId)
+                                    .toList(),
+                              )
                           ]),
                         );
                       },

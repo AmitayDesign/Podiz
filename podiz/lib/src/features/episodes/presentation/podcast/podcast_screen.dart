@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/src/common_widgets/back_text_button.dart';
 import 'package:podiz/src/common_widgets/empty_screen.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/common_widgets/sliver_firestore_query_builder.dart';
@@ -45,10 +46,27 @@ class _PodcastScreenState extends ConsumerState<PodcastScreen> {
   Widget build(BuildContext context) {
     final episodeRepository = ref.watch(episodeRepositoryProvider);
     final podcastValue = ref.watch(podcastStreamProvider(widget.podcastId));
+
+    //TODO podcast empty screen
     return podcastValue.when(
-      loading: () => EmptyScreen.loading(),
-      error: (e, _) => EmptyScreen.text(
-        'There was an error opening this podcast.',
+      loading: () => Scaffold(
+        appBar: const GradientBar(
+          automaticallyImplyLeading: false,
+          title: BackTextButton(),
+        ),
+        body: EmptyScreen.loading(),
+      ),
+      error: (e, _) => Scaffold(
+        appBar: const GradientBar(
+          automaticallyImplyLeading: false,
+          title: BackTextButton(),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: EmptyScreen.text(
+            'There was an error opening this podcast.',
+          ),
+        ),
       ),
       data: (podcast) => Scaffold(
         extendBody: true,

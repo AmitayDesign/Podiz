@@ -12,17 +12,17 @@ class SkeletonDiscussionHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Material(
-      color: Palette.darkPurple,
+      color: backgroundColor,
       child: SkeletonTheme(
         shimmerGradient: LinearGradient(colors: [
           Color.alphaBlend(
             Palette.purple.withOpacity(0.5),
-            Palette.darkPurple,
+            backgroundColor,
           ),
           Palette.purple,
           Color.alphaBlend(
             Palette.purple.withOpacity(0.5),
-            Palette.darkPurple,
+            backgroundColor,
           ),
         ]),
         themeMode: ThemeMode.light,

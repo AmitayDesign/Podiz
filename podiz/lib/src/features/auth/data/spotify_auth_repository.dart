@@ -55,7 +55,7 @@ class SpotifyAuthRepository
   bool get isConnected => connectionState.value;
 
   @override
-  Future<void> signIn(String code) async {
+  Future<String> signIn(String code) async {
     try {
       final userId = await connectWithCode(code);
       await preferences.setString(userKey, userId);
@@ -64,7 +64,9 @@ class SpotifyAuthRepository
     }
     // wait for the user to be fetched before ending the login
     // so it doesnt display a wrong frame
-    await Future.wait([authState.first, connectionState.first]);
+    return await authState.stream
+        .firstWhere((user) => user != null)
+        .then((user) => user!.id);
   }
 
   Future<String> connectWithCode(String code) async {
@@ -81,8 +83,10 @@ class SpotifyAuthRepository
     final timeout = result.data['timeout']; // in seconds
     final userId = result.data['userId'];
     // set token data
+    spotifyApi.userId = userId;
     spotifyApi.accessToken = accessToken;
     spotifyApi.timeout = now.add(Duration(seconds: timeout));
+    spotifyApi.disconnect = signOut;
     // connect to sdk
     final success = await spotifyApi.connectToSdk(accessToken);
     if (!success) throw Exception('Error connecting to Spotify');

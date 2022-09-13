@@ -6,12 +6,16 @@ import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/discussion/presentation/comment/comment_text_field.dart';
+import 'package:podiz/src/features/discussion/presentation/discussion_controller.dart';
+import 'package:podiz/src/features/discussion/presentation/sheet/error_comment_sheet.dart';
+import 'package:podiz/src/features/discussion/presentation/sheet/skeleton_comment_sheet.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/player_button.dart';
 import 'package:podiz/src/features/player/presentation/player_controller.dart';
 import 'package:podiz/src/features/player/presentation/player_slider_controller.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
+import 'package:podiz/src/features/showcase/presentation/showcase_controller.dart';
 import 'package:podiz/src/features/showcase/presentation/showcase_step.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/context_theme.dart';
@@ -25,7 +29,7 @@ class CommentSheet extends ConsumerWidget {
   static const height = 116.0; //! hardcoded
   const CommentSheet({Key? key}) : super(key: key);
 
-  void sendComment(
+  Comment sendComment(
     Reader read,
     String episodeId,
     Comment? target,
@@ -36,10 +40,12 @@ class CommentSheet extends ConsumerWidget {
       episodeId: episodeId,
       userId: read(currentUserProvider).id,
       timestamp: read(playerSliderControllerProvider).position,
-      parentIds: target?.parentIds?..add(target!.id),
+      parentIds: target == null ? null : [...target.parentIds, target.id],
+      parentUserId: target?.userId,
     );
     read(discussionRepositoryProvider).addComment(comment);
     read(commentSheetTargetProvider.notifier).state = null;
+    return comment;
   }
 
   @override
@@ -54,32 +60,14 @@ class CommentSheet extends ConsumerWidget {
         return true;
       },
       child: episodeValue.when(
-        loading: () => const SizedBox.shrink(),
-        error: (e, _) => const SizedBox.shrink(),
+        loading: () => const SkeletonCommentSheet(),
+        error: (e, _) => const ErrorCommentSheet(),
         data: (episode) {
           if (episode == null) return const SizedBox.shrink();
-          return ShowcaseStep(
-            step: 2,
-            skipOnTop: true,
-            onTap: () {
-              if (ref.read(commentControllerProvider).text.isEmpty) {
-                // ref.read(commentNodeProvider).unfocus();
-                ref.read(commentNodeProvider).requestFocus();
-              } else {
-                sendComment(ref.read, episode.id, target,
-                    ref.read(commentControllerProvider).text);
-                ref.read(commentControllerProvider).clear();
-                ref.read(commentNodeProvider).unfocus();
-                ShowCaseWidget.of(context).next();
-              }
-            },
-            onNext: () {
-              ref.read(commentControllerProvider).clear();
-              ref.read(commentNodeProvider).unfocus();
-              ShowCaseWidget.of(context).next();
-            },
-            title: 'Comment what you think',
-            description: '"I love that example, it made think about..."',
+          return showcase(
+            context,
+            ref.read,
+            episodeId: episode.id,
             child: Material(
               color: Palette.grey900,
               shape: const RoundedRectangleBorder(
@@ -124,8 +112,16 @@ class CommentSheet extends ConsumerWidget {
                       autofocus: isReply,
                       hint:
                           isReply ? 'Add a reply...' : 'Share your insight...',
-                      onSend: (text) =>
-                          sendComment(ref.read, episode.id, target, text),
+                      onSend: (text) {
+                        final comment =
+                            sendComment(ref.read, episode.id, target, text);
+                        final isShowcasing = ref.read(showcaseRunningProvider);
+                        if (isShowcasing) {
+                          addCommentToShowcase(ref.read, episode.id, comment);
+                          addExampleToShowcase(ref.read, episode.id);
+                          ShowCaseWidget.of(context).next();
+                        }
+                      },
                     ),
                     const SizedBox(height: 4),
                     Padding(
@@ -147,7 +143,7 @@ class CommentSheet extends ConsumerWidget {
                             onPressed: ref
                                 .read(playerControllerProvider.notifier)
                                 .rewind,
-                            icon: const Icon(Icons.replay_30),
+                            icon: const Icon(Icons.replay_30_rounded),
                           ),
                           episode.isPlaying
                               ? PlayerTimeChip(
@@ -155,21 +151,21 @@ class CommentSheet extends ConsumerWidget {
                                   onTap: ref
                                       .read(playerControllerProvider.notifier)
                                       .pause,
-                                  icon: Icons.pause,
+                                  icon: Icons.pause_rounded,
                                 )
                               : PlayerTimeChip(
                                   loading: state.isLoading,
                                   onTap: () => ref
                                       .read(playerControllerProvider.notifier)
                                       .play(episode.id),
-                                  icon: Icons.play_arrow,
+                                  icon: Icons.play_arrow_rounded,
                                 ),
                           PlayerButton(
                             loading: state.isLoading,
                             onPressed: ref
                                 .read(playerControllerProvider.notifier)
                                 .fastForward,
-                            icon: const Icon(Icons.forward_30),
+                            icon: const Icon(Icons.forward_30_rounded),
                           ),
                         ],
                       ),
@@ -181,6 +177,57 @@ class CommentSheet extends ConsumerWidget {
           );
         },
       ),
+    );
+  }
+
+  void addCommentToShowcase(Reader read, String episodeId, Comment comment) {
+    final discussionController =
+        read(filteredCommentsProvider(episodeId).notifier);
+    discussionController.addComment(comment);
+  }
+
+  void addExampleToShowcase(Reader read, String episodeId) {
+    final example = Comment(
+      id: 'showcase',
+      text: 'Looking forward to this episode!',
+      episodeId: episodeId,
+      userId: 'hmrs28xr9apw0mlac2dfjwm2v', //! ami id hardcoded
+      timestamp: read(playerSliderControllerProvider).position,
+    );
+    addCommentToShowcase(read, episodeId, example);
+  }
+
+  Widget showcase(
+    BuildContext context,
+    Reader read, {
+    required String episodeId,
+    required Widget child,
+  }) {
+    return ShowcaseStep(
+      step: 2,
+      skipOnTop: true,
+      onTap: () {
+        final text = read(commentControllerProvider).text;
+        if (text.isEmpty) {
+          final node = read(commentNodeProvider)..unfocus();
+          Future.microtask(node.requestFocus);
+        } else {
+          final comment = sendComment(read, episodeId, null, text);
+          addCommentToShowcase(read, episodeId, comment);
+          addExampleToShowcase(read, episodeId);
+          read(commentControllerProvider).clear();
+          read(commentNodeProvider).unfocus();
+          ShowCaseWidget.of(context).next();
+        }
+      },
+      onNext: () {
+        addExampleToShowcase(read, episodeId);
+        read(commentControllerProvider).clear();
+        read(commentNodeProvider).unfocus();
+      },
+      title: 'Comment what you think',
+      description: '"I love that example, it made think about..."',
+      child: child,
     );
   }
 }

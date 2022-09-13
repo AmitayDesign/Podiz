@@ -6,7 +6,7 @@ import 'showcase_view_repository.dart';
 final showcaseRepositoryProvider = Provider<ShowcaseRepository>(
   (ref) {
     final repository = ShowcaseViewRepository(
-      firestore: ref.watch(firestoreProvider),
+      preferences: ref.watch(preferencesProvider),
     );
     // ref.onDispose(repository.dispose);
     return repository;
@@ -14,5 +14,6 @@ final showcaseRepositoryProvider = Provider<ShowcaseRepository>(
 );
 
 abstract class ShowcaseRepository {
-  Future<void> disable(String userId);
+  bool get isFirstTime;
+  Future<void> disable();
 }

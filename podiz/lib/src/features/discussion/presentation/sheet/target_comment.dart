@@ -13,14 +13,14 @@ class TargetComment extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userValue = ref.watch(userFutureProvider(comment.userId));
-    return userValue.when(
-      loading: () => SizedBox.fromSize(),
-      error: (e, _) => const SizedBox.shrink(),
-      data: (user) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        userValue.when(
+          loading: () => const SizedBox.shrink(),
+          error: (e, _) => const SizedBox.shrink(),
+          data: (user) {
+            return Row(
               children: [
                 UserAvatar(user: user, radius: 12),
                 const SizedBox(width: 8),
@@ -34,12 +34,12 @@ class TargetComment extends ConsumerWidget {
                 const SizedBox(width: 8),
                 Text('${user.followers.length} followers'),
               ],
-            ),
-            const SizedBox(height: 8),
-            CommentText(comment.text),
-          ],
-        );
-      },
+            );
+          },
+        ),
+        const SizedBox(height: 8),
+        CommentText(comment.text),
+      ],
     );
   }
 }

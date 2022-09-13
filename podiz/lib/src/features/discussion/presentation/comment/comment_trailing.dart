@@ -26,7 +26,7 @@ class CommentTrailing extends StatelessWidget {
             size: Size.fromHeight(size),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: Palette.grey900,
+                backgroundColor: Palette.grey900,
                 elevation: 0,
                 shape: const StadiumBorder(),
                 alignment: Alignment.centerLeft,
@@ -45,7 +45,7 @@ class CommentTrailing extends StatelessWidget {
           color: Colors.black87,
           size: size,
           onPressed: onShare,
-          icon: Icons.share,
+          icon: Icons.share_rounded,
         ),
       ],
     );

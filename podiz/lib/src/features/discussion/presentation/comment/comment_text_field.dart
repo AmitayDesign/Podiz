@@ -5,7 +5,6 @@ import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/player_controller.dart';
-import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
 final commentNodeProvider = Provider<FocusNode>(
@@ -50,7 +49,8 @@ class _CommentTextFieldState extends ConsumerState<CommentTextField> {
   void initState() {
     super.initState();
     commentNode.addListener(() {
-      final episode = ref.watch(playerStateChangesProvider).valueOrNull;
+      if (!mounted) return;
+      final episode = ref.read(playerStateChangesProvider).valueOrNull;
       final player = ref.read(playerControllerProvider.notifier);
       episode != null && commentNode.hasFocus
           ? player.pause()
@@ -69,7 +69,6 @@ class _CommentTextFieldState extends ConsumerState<CommentTextField> {
     widget.onSend?.call(comment);
     commentController.clear();
     commentNode.unfocus();
-    ShowCaseWidget.of(context).next();
   }
 
   @override
@@ -116,7 +115,7 @@ class _CommentTextFieldState extends ConsumerState<CommentTextField> {
         const SizedBox(width: 8),
         CircleButton(
           onPressed: sendComment,
-          icon: Icons.send,
+          icon: Icons.send_rounded,
         ),
       ],
     );

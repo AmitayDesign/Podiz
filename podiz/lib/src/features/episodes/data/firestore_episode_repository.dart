@@ -69,7 +69,7 @@ class FirestoreEpisodeRepository extends EpisodeRepository {
   @override
   Query<Episode> episodesFirestoreQuery(String filter) =>
       FirebaseFirestore.instance.episodesCollection
-          .where("searchArray", arrayContains: filter.toLowerCase())
+          .where('searchArray', arrayContains: filter.toLowerCase())
           .withConverter(
             fromFirestore: (doc, _) => Episode.fromFirestore(doc),
             toFirestore: (episode, _) => {},
@@ -78,7 +78,8 @@ class FirestoreEpisodeRepository extends EpisodeRepository {
   @override
   Query<Episode> hotliveFirestoreQuery() =>
       FirebaseFirestore.instance.episodesCollection
-          .orderBy("releaseDate", descending: true)
+          .orderBy('weeklyCounter', descending: true)
+          .orderBy('releaseDate', descending: true)
           .withConverter(
             fromFirestore: (doc, _) => Episode.fromFirestore(doc),
             toFirestore: (episode, _) => {},

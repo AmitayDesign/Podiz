@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
+import 'package:podiz/src/theme/context_theme.dart';
 
 class IntroPage extends StatelessWidget {
   final VoidCallback? onSuccess;
@@ -7,7 +8,6 @@ class IntroPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
       constraints: const BoxConstraints(maxWidth: 360),
@@ -17,13 +17,13 @@ class IntroPage extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             Locales.string(context, 'intro1_1'),
-            style: theme.textTheme.headlineSmall,
+            style: context.textTheme.headlineSmall,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
           Text(
             Locales.string(context, 'intro1_2'),
-            style: theme.textTheme.headlineLarge,
+            style: context.textTheme.headlineLarge,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
