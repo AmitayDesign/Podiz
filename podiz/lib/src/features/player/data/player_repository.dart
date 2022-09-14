@@ -1,16 +1,21 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/auth/data/spotify_api.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/player/domain/player_time.dart';
 import 'package:podiz/src/features/player/domain/playing_episode.dart';
 import 'package:podiz/src/statistics/mix_panel_repository.dart';
+import 'package:podiz/src/utils/instances.dart';
 
 import 'spotify_player_repository.dart';
 
 final playerRepositoryProvider = Provider<PlayerRepository>(
   (ref) => SpotifyPlayerRepository(
-      episodeRepository: ref.watch(episodeRepositoryProvider),
-      mixPanelRepository: ref.watch(mixPanelRepository)),
+    spotifyApi: ref.watch(spotifyApiProvider),
+    functions: ref.watch(functionsProvider),
+    episodeRepository: ref.watch(episodeRepositoryProvider),
+    mixPanelRepository: ref.watch(mixPanelRepository),
+  ),
 );
 
 abstract class PlayerRepository {

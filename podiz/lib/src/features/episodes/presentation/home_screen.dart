@@ -162,6 +162,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         return TapToUnfocus(
           child: Scaffold(
             extendBody: true,
+            //! buttons to force notifications
             // floatingActionButton: Column(
             //   mainAxisSize: MainAxisSize.min,
             //   children: [
