@@ -45,18 +45,14 @@ class SpotifyPlayerRepository implements PlayerRepository {
   @override
   Future<void> play(String episodeId, [Duration? time]) async {
     await SpotifySdk.play(spotifyUri: uriFromId(episodeId));
-    if (time != null) {
-      await SpotifySdk.seekTo(positionedMilliseconds: time.inMilliseconds);
-    }
+    if (time != null) await seekTo(time);
     mixPanelRepository.userOpenPodcast();
   }
 
   @override
   Future<void> resume(String episodeId, [Duration? time]) async {
     try {
-      if (time != null) {
-        await SpotifySdk.seekTo(positionedMilliseconds: time.inMilliseconds);
-      }
+      if (time != null) await seekTo(time);
       await SpotifySdk.resume();
     } catch (_) {
       await play(episodeId, time);

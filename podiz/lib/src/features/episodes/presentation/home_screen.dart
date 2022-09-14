@@ -6,11 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/src/common_widgets/tap_to_unfocus.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
-import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/auth/domain/mutable_user_podiz.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/data/presence_repository.dart';
-import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/episodes/presentation/feed/feed_page.dart';
 import 'package:podiz/src/features/notifications/data/push_notifications_repository.dart';
 import 'package:podiz/src/features/notifications/domain/notification_podiz.dart';
@@ -116,19 +114,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             final commentId = notification.id;
             final discussionRepository = ref.read(discussionRepositoryProvider);
             final comment = await discussionRepository.fetchComment(commentId);
-            final playerRepository = ref.read(playerRepositoryProvider);
             if (!mounted) return;
             context.pushNamed(
               AppRoute.discussion.name,
               params: {'episodeId': comment.episodeId},
             );
-            // just call play() if the episode is NOT playing
-            final playingEpisode = await playerRepository.fetchPlayingEpisode();
-            if (playingEpisode?.id != comment.episodeId) {
-              playerRepository.play(comment.episodeId, comment.timestamp);
-            } else {
-              playerRepository.resume(comment.episodeId, comment.timestamp);
-            }
             break;
           case Channel.follows:
             final userId = notification.id;
@@ -172,42 +162,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         return TapToUnfocus(
           child: Scaffold(
             extendBody: true,
-            floatingActionButton: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                FloatingActionButton(
-                  child: const Icon(Icons.person_add),
-                  onPressed: () async {
-                    final repo = ref.read(userRepositoryProvider);
-                    await repo.unfollow(
-                      'hmrs28xr9apw0mlac2dfjwm2v',
-                      'ymptclhffc47qgt80vq0qkutb',
-                    );
-                    await repo.follow(
-                      'hmrs28xr9apw0mlac2dfjwm2v',
-                      'ymptclhffc47qgt80vq0qkutb',
-                    );
-                    print('followed');
-                  },
-                ),
-                FloatingActionButton(
-                  child: const Icon(Icons.comment),
-                  onPressed: () async {
-                    final repo = ref.read(discussionRepositoryProvider);
-                    const comment = Comment(
-                      episodeId: '4HuFbACVWnSi7FJWJ5LrKA',
-                      parentIds: ['00v2hKcAroaQ6ZRMTti0'],
-                      parentUserId: 'ymptclhffc47qgt80vq0qkutb',
-                      text: 'test',
-                      timestamp: Duration(milliseconds: 571478),
-                      userId: 'hmrs28xr9apw0mlac2dfjwm2v',
-                    );
-                    await repo.addComment(comment);
-                    print('commented');
-                  },
-                ),
-              ],
-            ),
+            // floatingActionButton: Column(
+            //   mainAxisSize: MainAxisSize.min,
+            //   children: [
+            //     FloatingActionButton(
+            //       child: const Icon(Icons.person_add),
+            //       onPressed: () async {
+            //         final repo = ref.read(userRepositoryProvider);
+            //         await repo.unfollow(
+            //           'hmrs28xr9apw0mlac2dfjwm2v',
+            //           'ymptclhffc47qgt80vq0qkutb',
+            //         );
+            //         await repo.follow(
+            //           'hmrs28xr9apw0mlac2dfjwm2v',
+            //           'ymptclhffc47qgt80vq0qkutb',
+            //         );
+            //         print('followed');
+            //       },
+            //     ),
+            //     FloatingActionButton(
+            //       child: const Icon(Icons.comment),
+            //       onPressed: () async {
+            //         final repo = ref.read(discussionRepositoryProvider);
+            //         const comment = Comment(
+            //           episodeId: '4HuFbACVWnSi7FJWJ5LrKA',
+            //           parentIds: ['00v2hKcAroaQ6ZRMTti0'],
+            //           parentUserId: 'ymptclhffc47qgt80vq0qkutb',
+            //           text: 'test',
+            //           timestamp: Duration(milliseconds: 571478),
+            //           userId: 'hmrs28xr9apw0mlac2dfjwm2v',
+            //         );
+            //         await repo.addComment(comment);
+            //         print('commented');
+            //       },
+            //     ),
+            //   ],
+            // ),
             body: PageView(
               controller: pageController,
               children: const [

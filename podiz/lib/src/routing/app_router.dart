@@ -23,6 +23,8 @@ enum AppRoute {
   discussion,
 }
 
+String? initialRedirect;
+
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authRepository = ref.watch(authRepositoryProvider);
   return GoRouter(
@@ -35,9 +37,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       final isConnectLocation = state.location.contains('/connect');
 
       if (isLoggedIn && isConnected) {
-        if (isOnboardingLocation || isConnectLocation) return '/';
+        if (isOnboardingLocation || isConnectLocation) {
+          final redirect = initialRedirect ?? '/';
+          initialRedirect = null;
+          return redirect;
+        }
       } else if (isLoggedIn && !isConnected) {
-        if (!isConnectLocation) return '/connect';
+        if (!isConnectLocation) {
+          initialRedirect = state.location;
+          return '/connect';
+        }
       } else /* not logged in */ {
         if (!isOnboardingLocation && !isConnectLocation) return '/onboarding';
       }
