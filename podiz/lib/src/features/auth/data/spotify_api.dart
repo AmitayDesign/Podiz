@@ -63,6 +63,7 @@ class SpotifyApi {
     }
     if (result == 'error') throw Exception('access token error');
     accessToken = result;
+
     if (Platform.isIOS)
       await connectToSdkIOS();
     else
@@ -78,8 +79,9 @@ class SpotifyApi {
       );
 
   Future<bool> connectToSdk() => SpotifySdk.connectToSpotifyRemote(
-      clientId: clientId,
-      redirectUrl: redirectUrl,
-      scope: scope,
-      accessToken: accessToken);
+        clientId: clientId,
+        redirectUrl: redirectUrl,
+        accessToken: accessToken,
+        playerName: 'Podiz',
+      );
 }

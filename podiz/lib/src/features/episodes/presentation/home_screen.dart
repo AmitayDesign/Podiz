@@ -11,6 +11,7 @@ import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/data/presence_repository.dart';
 import 'package:podiz/src/features/episodes/presentation/feed/feed_page.dart';
 import 'package:podiz/src/features/notifications/data/push_notifications_repository.dart';
+import 'package:podiz/src/features/notifications/domain/notification_podiz.dart';
 import 'package:podiz/src/features/notifications/presentation/notifications_page.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/domain/playing_episode.dart';
@@ -104,23 +105,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     // open discussion if a notification was selected
-    ref.listen<AsyncValue<String>>(
+    ref.listen<AsyncValue<NotificationPodiz>>(
       selectedNotificationStreamProvider,
-      (_, notificationValue) => notificationValue.whenData((id) async {
-        final discussionRepository = ref.read(discussionRepositoryProvider);
-        final comment = await discussionRepository.fetchComment(id);
-        final playerRepository = ref.read(playerRepositoryProvider);
-        if (!mounted) return;
-        context.pushNamed(
-          AppRoute.discussion.name,
-          params: {'episodeId': comment.episodeId},
-        );
-        // just call play() if the episode is NOT playing
-        final playingEpisode = await playerRepository.fetchPlayingEpisode();
-        if (playingEpisode?.id != comment.episodeId) {
-          playerRepository.play(comment.episodeId, comment.timestamp);
-        } else {
-          playerRepository.resume(comment.episodeId, comment.timestamp);
+      (_, notificationValue) =>
+          notificationValue.whenData((notification) async {
+        switch (notification.channel) {
+          case Channel.replies:
+            final commentId = notification.id;
+            final discussionRepository = ref.read(discussionRepositoryProvider);
+            final comment = await discussionRepository.fetchComment(commentId);
+            if (!mounted) return;
+            context.pushNamed(
+              AppRoute.discussion.name,
+              params: {'episodeId': comment.episodeId},
+            );
+            break;
+          case Channel.follows:
+            final userId = notification.id;
+            context.pushNamed(
+              AppRoute.profile.name,
+              params: {'userId': userId},
+            );
+            break;
         }
       }),
     );
@@ -156,17 +162,43 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         return TapToUnfocus(
           child: Scaffold(
             extendBody: true,
-            // floatingActionButton: FloatingActionButton(onPressed: () {
-            //   final push = ref.read(pushNotificationsRepositoryProvider);
-            //   final plugin = ref.read(localNotificationsProvider);
-            //   plugin.show(
-            //     DateTime.now().millisecondsSinceEpoch ~/ 1000,
-            //     'title',
-            //     'body',
-            //     push.details,
-            //     payload: '00v2hKcAroaQ6ZRMTti0',
-            //   );
-            // }),
+            //! buttons to force notifications
+            // floatingActionButton: Column(
+            //   mainAxisSize: MainAxisSize.min,
+            //   children: [
+            //     FloatingActionButton(
+            //       child: const Icon(Icons.person_add),
+            //       onPressed: () async {
+            //         final repo = ref.read(userRepositoryProvider);
+            //         await repo.unfollow(
+            //           'hmrs28xr9apw0mlac2dfjwm2v',
+            //           'ymptclhffc47qgt80vq0qkutb',
+            //         );
+            //         await repo.follow(
+            //           'hmrs28xr9apw0mlac2dfjwm2v',
+            //           'ymptclhffc47qgt80vq0qkutb',
+            //         );
+            //         print('followed');
+            //       },
+            //     ),
+            //     FloatingActionButton(
+            //       child: const Icon(Icons.comment),
+            //       onPressed: () async {
+            //         final repo = ref.read(discussionRepositoryProvider);
+            //         const comment = Comment(
+            //           episodeId: '4HuFbACVWnSi7FJWJ5LrKA',
+            //           parentIds: ['00v2hKcAroaQ6ZRMTti0'],
+            //           parentUserId: 'ymptclhffc47qgt80vq0qkutb',
+            //           text: 'test',
+            //           timestamp: Duration(milliseconds: 571478),
+            //           userId: 'hmrs28xr9apw0mlac2dfjwm2v',
+            //         );
+            //         await repo.addComment(comment);
+            //         print('commented');
+            //       },
+            //     ),
+            //   ],
+            // ),
             body: PageView(
               controller: pageController,
               children: const [

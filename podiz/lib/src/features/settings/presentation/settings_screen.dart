@@ -1,3 +1,4 @@
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,17 +8,10 @@ import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/common_widgets/loading_button.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/notifications/data/push_notifications_repository.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/context_theme.dart';
-import 'package:podiz/src/utils/instances.dart';
-
-//TODO put on the correct file
-const notificationsKey = 'notifications-setting';
-final notificationsValueStreamProvider = StreamProvider<bool>((ref) {
-  final preferences = ref.watch(preferencesProvider);
-  return preferences.getBool(notificationsKey, defaultValue: true);
-});
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -25,9 +19,6 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserProvider);
-    final preferences = ref.watch(preferencesProvider);
-    final notificationsValue =
-        ref.watch(notificationsValueStreamProvider).valueOrNull ?? true;
     return Scaffold(
       appBar: const GradientBar(
         automaticallyImplyLeading: false,
@@ -42,21 +33,16 @@ class SettingsScreen extends ConsumerWidget {
           const SizedBox(height: 32),
 
           //* Settings
-          SwitchListTile(
-            value: notificationsValue,
-            onChanged: (value) {
-              preferences.setBool(notificationsKey, value);
-              //TODO enable/disable notifications
-            },
+          ListTile(
+            onTap: AppSettings.openNotificationSettings,
             tileColor: context.colorScheme.surface,
-            secondary:
+            leading:
                 const Icon(Icons.notifications_rounded, color: Colors.white70),
             title: Text(
               'Notifications',
               style: context.textTheme.titleMedium!
                   .copyWith(color: Colors.white70),
             ),
-            controlAffinity: ListTileControlAffinity.trailing,
           ),
           const SizedBox(height: 8),
           ListTile(
@@ -77,7 +63,13 @@ class SettingsScreen extends ConsumerWidget {
             child: Column(
               children: [
                 LoadingOutlinedButton(
-                  onPressed: () => ref.read(authRepositoryProvider).signOut(),
+                  onPressed: () {
+                    final user = ref.read(currentUserProvider);
+                    ref
+                        .read(pushNotificationsRepositoryProvider)
+                        .revokePermission(user.id);
+                    ref.read(authRepositoryProvider).signOut();
+                  },
                   child: Text('LOG OUT'.hardcoded),
                 ),
                 const SizedBox(height: 16),

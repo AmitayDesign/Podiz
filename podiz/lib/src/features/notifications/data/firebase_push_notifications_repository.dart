@@ -3,17 +3,17 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:podiz/src/features/notifications/domain/notification_podiz.dart';
 import 'package:podiz/src/theme/palette.dart';
 import 'package:podiz/src/utils/firestore_refs.dart';
 import 'package:podiz/src/utils/in_memory_store.dart';
 
 import 'push_notifications_repository.dart';
 
-//TODO read flutterfire documentation
-//TODO send notification
-
 extension RemoteMessageNotificationId on RemoteMessage {
-  String? get notificationId => data['id'] ?? 'noId';
+  String get notificationId => data['id'];
+  String get channelId => data['channel'];
+  String get payload => '$channelId:$notificationId';
 }
 
 class FirebasePushNotificationsRepository
@@ -34,16 +34,24 @@ class FirebasePushNotificationsRepository
     foregroundSub?.cancel();
   }
 
-  final AndroidNotificationChannel channel = const AndroidNotificationChannel(
-    'replies',
-    'Replies',
-    description: 'Replies to your comments',
-    ledColor: Palette.purple,
-    importance: Importance.max,
-  );
+  final channels = {
+    'replies': const AndroidNotificationChannel(
+      'replies',
+      'Replies',
+      // description: 'Replies to your comments',
+      ledColor: Palette.purple,
+      importance: Importance.max,
+    ),
+    'follows': const AndroidNotificationChannel(
+      'follows',
+      'Follows',
+      // description: 'Replies to your comments',
+      ledColor: Palette.purple,
+      importance: Importance.max,
+    ),
+  };
 
-  @override
-  NotificationDetails get details {
+  NotificationDetails details(AndroidNotificationChannel channel) {
     const iosDetails = IOSNotificationDetails();
     final androidDetails = AndroidNotificationDetails(
       channel.id,
@@ -58,7 +66,7 @@ class FirebasePushNotificationsRepository
     );
   }
 
-  final selectedNotifications = InMemoryStore<String>();
+  final selectedNotifications = InMemoryStore<NotificationPodiz>();
 
   @override
   Future<void> init() async {
@@ -74,10 +82,11 @@ class FirebasePushNotificationsRepository
     );
 
     await plugin.initialize(settings, onSelectNotification: selectNotification);
-    await plugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
+    final androidPlugin = plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
+    for (final channel in channels.values) {
+      androidPlugin?.createNotificationChannel(channel);
+    }
   }
 
   StreamSubscription? tokenSub;
@@ -128,12 +137,12 @@ class FirebasePushNotificationsRepository
     //* background
     backgroundSub?.cancel();
     backgroundSub = FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      selectNotification(message.notificationId);
+      selectNotification(message.payload);
     });
 
     //* terminated
     await messaging.getInitialMessage().then((message) {
-      if (message != null) selectNotification(message.notificationId);
+      if (message != null) selectNotification(message.payload);
     });
   }
 
@@ -142,15 +151,19 @@ class FirebasePushNotificationsRepository
       DateTime.now().millisecondsSinceEpoch ~/ 1000,
       message.notification!.title,
       message.notification!.body,
-      details,
-      payload: message.notificationId,
+      details(channels[message.channelId]!),
+      payload: message.payload,
     );
   }
 
-  void selectNotification(String? notificationId) {
-    if (notificationId != null) selectedNotifications.value = notificationId;
+  //TODO select different for each channel
+  void selectNotification(String? payload) {
+    if (payload != null) {
+      selectedNotifications.value = NotificationPodiz.fromPayload(payload);
+    }
   }
 
   @override
-  Stream<String> selectedNotificationChanges() => selectedNotifications.stream;
+  Stream<NotificationPodiz> selectedNotificationChanges() =>
+      selectedNotifications.stream;
 }

@@ -1,5 +1,5 @@
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/src/features/notifications/domain/notification_podiz.dart';
 import 'package:podiz/src/utils/instances.dart';
 
 import 'firebase_push_notifications_repository.dart';
@@ -18,15 +18,14 @@ final pushNotificationsRepositoryProvider =
 );
 
 abstract class PushNotificationsRepository {
-  NotificationDetails get details;
   Future<void> init();
   Future<void> requestPermission(String userId);
   Future<void> revokePermission(String userId);
   Future<void> handleNotifications();
-  Stream<String> selectedNotificationChanges();
+  Stream<NotificationPodiz> selectedNotificationChanges();
 }
 
-final selectedNotificationStreamProvider = StreamProvider<String>(
+final selectedNotificationStreamProvider = StreamProvider<NotificationPodiz>(
   (ref) => ref
       .watch(pushNotificationsRepositoryProvider)
       .selectedNotificationChanges(),

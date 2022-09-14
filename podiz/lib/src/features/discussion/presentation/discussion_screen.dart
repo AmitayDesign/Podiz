@@ -33,9 +33,18 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.time != null) {
-      final player = ref.read(playerSliderControllerProvider.notifier);
-      player.seekTo(widget.time!);
+    initEpisode();
+  }
+
+  Future<void> initEpisode() async {
+    final playerRepository = ref.read(playerRepositoryProvider);
+    final playingEpisode = await playerRepository.fetchPlayingEpisode();
+    final episodeIsPlaying = playingEpisode?.id == widget.episodeId;
+
+    if (!episodeIsPlaying) {
+      playerRepository.play(widget.episodeId, widget.time);
+    } else if (widget.time != null) {
+      playerRepository.resume(widget.episodeId, widget.time);
     }
   }
 

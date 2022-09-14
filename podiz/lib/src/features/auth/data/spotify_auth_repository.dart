@@ -60,6 +60,8 @@ class SpotifyAuthRepository
       final userId = await connectWithCode(code);
       await preferences.setString(userKey, userId);
     } catch (e) {
+      //TODO throw specific exceptions
+      // eg when a user doesnt have premium
       throw Exception('Sign in error: $e');
     }
     // wait for the user to be fetched before ending the login
@@ -125,6 +127,7 @@ mixin AuthState {
   StreamSubscription? authStateSub;
   StreamSubscription? userSub;
   void listenToAuthStateChanges() {
+    authStateSub?.cancel();
     authStateSub = preferences
         .watchString(userKey)
         .transform(
@@ -167,6 +170,7 @@ mixin ConnectionState {
 
   StreamSubscription? connectionSub;
   void listenToConnectionChanges() {
+    connectionSub?.cancel();
     connectionSub =
         SpotifySdk.subscribeConnectionStatus().listen((status) async {
       connectionState.value = status.connected;

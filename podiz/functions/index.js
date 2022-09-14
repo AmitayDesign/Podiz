@@ -8,7 +8,7 @@ const listening = require("./src/episode-listening.js");
 const episodes = require("./src/episodes.js");
 const shows = require("./src/shows.js");
 const search = require("./src/search.js");
-// const notifications = require("./src/notifications.js");
+const notifications = require("./src/notifications.js");
 const comments = require("./src/comments.js");
 
 admin.initializeApp(functions.config().firebase);
@@ -58,12 +58,33 @@ exports.getAccessTokenWithRefreshToken = functions.https.onCall((data, _) =>
   auth.getAccessTokenWithRefreshToken(data.userId)
 );
 
-// exports.replyNotificationTrigger = functions.firestore
-//   .document('/comments/{commentId}')
-//   .onCreate(async (snapshot, context) =>
-//     notifications.replyNotificationTrigger(context.params.commentId)
+exports.replyNotificationTrigger = functions.firestore
+  .document('/comments/{commentId}')
+  .onCreate(async (snapshot, context) => {
+    var commentId = context.params.commentId
+    var data = snapshot.data();
+    var episodeId = data.episodeId;
+    var targetUserId = data.parentUserId;
+    var userId = data.userId;
+    var text = data.text;
+    if (targetUserId != null && targetUserId != userId)
+      return notifications.replyNotificationTrigger(
+        targetUserId, commentId, episodeId, userId, text
+      );
+  });
 
-//   );
+exports.followNotificationTrigger = functions.firestore
+  .document('/users/{userId}')
+  .onUpdate(async (snapshot, context) => {
+    var targetUserId = context.params.userId
+    var followersBefore = snapshot.before.data().followers;
+    var followersAfter = snapshot.after.data().followers;
+    if (followersBefore.length < followersAfter.length) {
+      var userId = followersAfter[followersAfter.length - 1];
+      return notifications.followNotificationTrigger(targetUserId, userId);
+    }
+  });
+
 exports.scheduleWeeklyComments = functions.pubsub
   .schedule("35 11 * * *")
   .timeZone("Europe/Lisbon")
