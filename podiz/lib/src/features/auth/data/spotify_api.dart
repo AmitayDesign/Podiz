@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,12 +27,14 @@ class SpotifyApi {
   final state = "34fFs29kd09";
   final baseUrl = "https://accounts.spotify.com/authorize";
   final scope = [
+    'app-remote-control',
     'user-follow-read',
     'user-read-private',
     'user-read-email',
     'user-read-playback-position',
     'user-library-read',
     'user-library-modify',
+    'user-modify-playback-state'
   ].join(' ');
 
   String get authenticationUrl =>
@@ -58,16 +62,24 @@ class SpotifyApi {
       throw Exception('session timed out');
     }
     if (result == 'error') throw Exception('access token error');
-    print(result);
     accessToken = result;
-    await connectToSdk(accessToken!);
+    if (Platform.isIOS)
+      await connectToSdkIOS();
+    else
+      await connectToSdk();
+
     return accessToken!;
   }
 
-  Future<bool> connectToSdk(String accessToken) =>
-      SpotifySdk.connectToSpotifyRemote(
+  Future<bool> connectToSdkIOS() => SpotifySdk.connectToSpotifyRemote(
         clientId: clientId,
         redirectUrl: redirectUrl,
-        accessToken: accessToken,
+        scope: scope,
       );
+
+  Future<bool> connectToSdk() => SpotifySdk.connectToSpotifyRemote(
+      clientId: clientId,
+      redirectUrl: redirectUrl,
+      scope: scope,
+      accessToken: accessToken);
 }

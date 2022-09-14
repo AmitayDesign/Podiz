@@ -29,7 +29,12 @@ class ConnectionController extends StateNotifier<AsyncValue> {
 
   String get connectionUrl => spotifyApi.authenticationUrl;
 
-  bool isValidUrl(String url) => url.contains(spotifyApi.redirectUrl);
+  bool isValidUrl(String url) {
+    if (Uri.parse(url).queryParameters['code'] != null) {
+      return true;
+    }
+    return false;
+  }
 
   Future<void> retrySignIn() {
     assert(lastUsedUrl != null);
@@ -44,9 +49,10 @@ class ConnectionController extends StateNotifier<AsyncValue> {
       if (error != null) throw Exception('Error: $error');
       final code = Uri.parse(url).queryParameters['code']!;
       final userId = await authRepository.signIn(code);
-      pushNotificationsRepository.requestPermission(userId);
+      //pushNotificationsRepository.requestPermission(userId);
     } catch (err, stack) {
       state = AsyncValue.error(err, stackTrace: stack);
+      print(err);
     }
   }
 }

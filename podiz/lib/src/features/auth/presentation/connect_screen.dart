@@ -19,10 +19,11 @@ class ConnectScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.watch(connectionControllerProvider.notifier);
     final state = ref.watch(connectionControllerProvider);
+    if (state.hasError) print(state.error);
     return Stack(
       children: [
         WebView(
-          initialUrl: controller.connectionUrl,
+          initialUrl: Uri.parse(controller.connectionUrl).toString(),
           javascriptMode: JavascriptMode.unrestricted,
           navigationDelegate: (req) => handleNavigation(ref, req.url),
           onPageStarted: (_) => controller.init(),

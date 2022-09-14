@@ -23,7 +23,7 @@ class ConnectPage extends ConsumerWidget {
     return Stack(
       children: [
         WebView(
-          initialUrl: controller.connectionUrl,
+          initialUrl: Uri.parse(controller.connectionUrl).toString(),
           javascriptMode: JavascriptMode.unrestricted,
           navigationDelegate: (req) => handleNavigation(ref, req.url),
           onPageStarted: (_) => controller.init(),
