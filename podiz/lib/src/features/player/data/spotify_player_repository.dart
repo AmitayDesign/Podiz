@@ -62,8 +62,8 @@ class SpotifyPlayerRepository implements PlayerRepository {
     } else /* android */ {
       await SpotifySdk.play(spotifyUri: uriFromId(episodeId));
       if (time != null) await seekTo(time);
-      mixPanelRepository.userOpenPodcast();
     }
+    mixPanelRepository.userOpenPodcast();
   }
 
   @override

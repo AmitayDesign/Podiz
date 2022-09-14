@@ -43,7 +43,7 @@ class SpotifyApi {
   DateTime? timeout;
   VoidCallback? disconnect;
 
-  bool get tokenExpired => timeout?.isAfter(DateTime.now()) ?? true;
+  bool get tokenExpired => timeout?.isBefore(DateTime.now()) ?? true;
 
   Future<String> getAccessToken() async {
     if (!tokenExpired && accessToken != null) return accessToken!;
