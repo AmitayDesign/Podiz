@@ -11,7 +11,7 @@ function formatDate(date) {
     date.getDate().toString()
   );
 }
-async function updateWeeklyComments() {
+exports.updateWeeklyComments = async () => {
   var snapshot = await admin.firestore().collection("episodeCounters").get();
 
   var date = new Date();
@@ -43,4 +43,4 @@ async function updateWeeklyComments() {
       .doc(doc.id)
       .set({ counters: counters });
   });
-}
+};
