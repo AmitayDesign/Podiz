@@ -52,49 +52,42 @@ class SpotifyPlayerRepository implements PlayerRepository {
 
   @override
   Future<void> play(String episodeId, [Duration? time]) async {
-    if (Platform.isIOS) {
-      final accessToken = await spotifyApi.getAccessToken();
-      await functions.httpsCallable('playEpisode').call({
-        'accessToken': accessToken,
-        'time': time?.inMilliseconds,
-        'episodeId': episodeId,
-      });
-    } else /* android */ {
-      await SpotifySdk.play(spotifyUri: uriFromId(episodeId));
-      if (time != null) await seekTo(time);
+    try {
+      await _play(episodeId, time);
+    } catch (e) {
+      await spotifyApi.connectToSdk();
+      await _play(episodeId, time);
     }
+  }
+
+  Future<void> _play(String episodeId, Duration? time) async {
+    await SpotifySdk.play(spotifyUri: uriFromId(episodeId));
+    if (time != null) await seekTo(time);
     mixPanelRepository.userOpenPodcast();
   }
 
   @override
   Future<void> resume(String episodeId, [Duration? time]) async {
-    if (Platform.isIOS) {
-      final accessToken = await spotifyApi.getAccessToken();
-      functions.httpsCallable('playEpisode').call({
-        'accessToken': accessToken,
-        'time': time?.inMilliseconds,
-        'episodeId': episodeId,
-      });
-    } else /* android */ {
-      try {
-        if (time != null) await seekTo(time);
-        await SpotifySdk.resume();
-      } catch (_) {
-        await play(episodeId, time);
-      }
+    try {
+      if (time != null) await seekTo(time);
+      await SpotifySdk.resume();
+    } catch (_) {
+      await play(episodeId, time);
     }
   }
 
   @override
   Future<void> pause() async {
-    if (Platform.isIOS) {
-      final accessToken = await spotifyApi.getAccessToken();
-      functions.httpsCallable('pauseEpisode').call({
-        'accessToken': accessToken,
-      });
-    } else /* android */ {
-      return SpotifySdk.pause();
+    try {
+      await _pause();
+    } catch (_) {
+      await spotifyApi.connectToSdk();
+      await _pause();
     }
+  }
+
+  Future<void> _pause() async {
+    await SpotifySdk.pause();
   }
 
   @override
