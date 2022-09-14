@@ -12,14 +12,11 @@ class InMemoryStore<T> {
   /// The output stream that can be used to listen to the data
   Stream<T> get stream => _subject.stream;
 
-  /// A asynchronous getter for the next value
-  Future<T> get first => _subject.first;
+  /// A safe getter for when the current value can be uninitialized
+  T valueOr(T other) => _subject.hasValue ? value : other;
 
   /// A synchronous getter for the current value
   T get value => _subject.value;
-
-  /// A safe getter for when the current value can be uninitialized
-  T valueOr(T other) => _subject.hasValue ? value : other;
 
   // A setter for updating the value
   set value(T value) => _subject.add(value);

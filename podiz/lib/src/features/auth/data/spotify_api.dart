@@ -43,7 +43,7 @@ class SpotifyApi {
   DateTime? timeout;
   VoidCallback? disconnect;
 
-  bool get tokenExpired => timeout?.isAfter(DateTime.now()) ?? true;
+  bool get tokenExpired => timeout?.isBefore(DateTime.now()) ?? true;
 
   Future<String> getAccessToken() async {
     if (!tokenExpired && accessToken != null) return accessToken!;
@@ -60,14 +60,14 @@ class SpotifyApi {
     if (result == 'error') throw Exception('access token error');
 
     accessToken = result;
-    await connectToSdk(accessToken!);
+    await connectToSdk();
     return accessToken!;
   }
 
-  Future<bool> connectToSdk(String accessToken) =>
-      SpotifySdk.connectToSpotifyRemote(
+  Future<bool> connectToSdk() => SpotifySdk.connectToSpotifyRemote(
         clientId: clientId,
         redirectUrl: redirectUrl,
         accessToken: accessToken,
+        playerName: 'Podiz',
       );
 }

@@ -13,6 +13,7 @@ final discussionRepositoryProvider = Provider<DiscussionRepository>(
 
 //TODO make all paginated
 abstract class DiscussionRepository {
+  Future<Comment> fetchComment(String commentId);
   Stream<List<Comment>> watchComments(String episodeId);
   Stream<Comment?> watchLastReply(String commentId);
   Stream<List<Comment>> watchReplies(String commentId);

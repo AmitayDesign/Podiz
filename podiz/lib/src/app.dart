@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/src/routing/app_router.dart';
-import 'package:podiz/src/statistics/mix_panel_repository.dart';
+import 'package:podiz/src/features/notifications/data/push_notifications_repository.dart';
 
 import 'features/auth/data/auth_repository.dart';
 import 'features/showcase/data/showcase_repository.dart';
@@ -10,13 +9,25 @@ import 'features/showcase/presentation/package_files/showcase_widget.dart';
 import 'features/showcase/presentation/showcase_controller.dart';
 import 'features/splash/presentation/splash_screen.dart';
 import 'routing/app_router.dart';
+import 'statistics/mix_panel_repository.dart';
 import 'theme/app_theme.dart';
 
-class MyApp extends ConsumerWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    ref.read(pushNotificationsRepositoryProvider).handleNotifications();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final goRouter = ref.watch(goRouterProvider);
     final theme = ref.watch(themeProvider);
     //TODO see if this in the right place

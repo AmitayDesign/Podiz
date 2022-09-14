@@ -5,7 +5,6 @@ import 'package:podiz/src/constants/constants.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/episodes/domain/podcast.dart';
 import 'package:podiz/src/features/episodes/presentation/card/episode_content.dart';
-import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/routing/app_router.dart';
 
 class EpisodeCard extends ConsumerWidget {
@@ -22,15 +21,11 @@ class EpisodeCard extends ConsumerWidget {
     this.bottom,
   }) : super(key: key);
 
-  void openEpisode(BuildContext context, Reader read) async {
-    final playerRepository = read(playerRepositoryProvider);
+  void openEpisode(BuildContext context, Reader read) {
     context.pushNamed(
       AppRoute.discussion.name,
       params: {'episodeId': episode.id},
     );
-    // just call play() if the episode is NOT playing
-    final playingEpisode = await playerRepository.fetchPlayingEpisode();
-    if (playingEpisode?.id != episode.id) playerRepository.play(episode.id);
   }
 
   @override

@@ -26,7 +26,7 @@ abstract class AuthRepository {
   Stream<bool> connectionChanges();
   bool get isConnected;
   //
-  Future<void> signIn(String code);
+  Future<String> signIn(String code);
   Future<void> signOut();
   Future<void> updateUser(UserPodiz user);
 }

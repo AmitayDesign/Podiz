@@ -1,6 +1,14 @@
 name: podiz
 description: A new Flutter project.
 
+#* before release build
+# https://pub.dev/packages/flutter_local_notifications#release-build-configuration
+
+#* iOS setup
+# https://pub.dev/packages/flutter_local_notifications#-ios-setup
+
+
+
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
@@ -13,6 +21,7 @@ environment:
 dependencies:
   after_layout: ^1.2.0
   another_flushbar: ^1.10.28
+  app_settings: ^4.1.8
   auto_size_text: ^3.0.0
   cached_network_image: ^3.2.0
   cloud_firestore: ^3.4.2
@@ -31,6 +40,7 @@ dependencies:
     sdk: flutter
   flutter_keyboard_visibility: ^5.3.0
   flutter_linkify: ^5.0.2
+  flutter_local_notifications: ^9.9.1
   flutter_locales: ^2.0.1
   flutter_riverpod: ^2.0.0-dev.9
   flutter_svg: ^1.1.1+1

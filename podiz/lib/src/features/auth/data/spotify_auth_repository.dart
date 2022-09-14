@@ -55,16 +55,20 @@ class SpotifyAuthRepository
   bool get isConnected => connectionState.value;
 
   @override
-  Future<void> signIn(String code) async {
+  Future<String> signIn(String code) async {
     try {
       final userId = await connectWithCode(code);
       await preferences.setString(userKey, userId);
     } catch (e) {
+      //TODO throw specific exceptions
+      // eg when a user doesnt have premium
       throw Exception('Sign in error: $e');
     }
     // wait for the user to be fetched before ending the login
     // so it doesnt display a wrong frame
-    await authState.first;
+    return await authState.stream
+        .firstWhere((user) => user != null)
+        .then((user) => user!.id);
   }
 
   Future<String> connectWithCode(String code) async {
@@ -86,7 +90,7 @@ class SpotifyAuthRepository
     spotifyApi.timeout = now.add(Duration(seconds: timeout));
     spotifyApi.disconnect = signOut;
     // connect to sdk
-    final success = await spotifyApi.connectToSdk(accessToken);
+    final success = await spotifyApi.connectToSdk();
     if (!success) throw Exception('Error connecting to Spotify');
     //
     return userId;
@@ -123,6 +127,7 @@ mixin AuthState {
   StreamSubscription? authStateSub;
   StreamSubscription? userSub;
   void listenToAuthStateChanges() {
+    authStateSub?.cancel();
     authStateSub = preferences
         .watchString(userKey)
         .transform(
@@ -165,6 +170,7 @@ mixin ConnectionState {
 
   StreamSubscription? connectionSub;
   void listenToConnectionChanges() {
+    connectionSub?.cancel();
     connectionSub =
         SpotifySdk.subscribeConnectionStatus().listen((status) async {
       connectionState.value = status.connected;

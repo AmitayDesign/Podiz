@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:podiz/src/features/auth/data/spotify_api.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/player/domain/playing_episode.dart';
 import 'package:podiz/src/statistics/mix_panel_repository.dart';
@@ -10,11 +12,17 @@ import 'package:spotify_sdk/spotify_sdk.dart';
 import 'player_repository.dart';
 
 class SpotifyPlayerRepository implements PlayerRepository {
+  final SpotifyApi spotifyApi;
+  final FirebaseFunctions functions;
   final EpisodeRepository episodeRepository;
   final MixPanelRepository mixPanelRepository;
 
-  SpotifyPlayerRepository(
-      {required this.episodeRepository, required this.mixPanelRepository});
+  SpotifyPlayerRepository({
+    required this.spotifyApi,
+    required this.functions,
+    required this.episodeRepository,
+    required this.mixPanelRepository,
+  });
 
   @override
   Stream<PlayingEpisode?> watchPlayingEpisode() =>
@@ -44,27 +52,50 @@ class SpotifyPlayerRepository implements PlayerRepository {
 
   @override
   Future<void> play(String episodeId, [Duration? time]) async {
-    await SpotifySdk.play(spotifyUri: uriFromId(episodeId));
-    if (time != null) {
-      await SpotifySdk.seekTo(positionedMilliseconds: time.inMilliseconds);
+    if (Platform.isIOS) {
+      final accessToken = await spotifyApi.getAccessToken();
+      await functions.httpsCallable('playEpisode').call({
+        'accessToken': accessToken,
+        'time': time?.inMilliseconds,
+        'episodeId': episodeId,
+      });
+    } else /* android */ {
+      await SpotifySdk.play(spotifyUri: uriFromId(episodeId));
+      if (time != null) await seekTo(time);
     }
     mixPanelRepository.userOpenPodcast();
   }
 
   @override
   Future<void> resume(String episodeId, [Duration? time]) async {
-    try {
-      if (time != null) {
-        await SpotifySdk.seekTo(positionedMilliseconds: time.inMilliseconds);
+    if (Platform.isIOS) {
+      final accessToken = await spotifyApi.getAccessToken();
+      functions.httpsCallable('playEpisode').call({
+        'accessToken': accessToken,
+        'time': time?.inMilliseconds,
+        'episodeId': episodeId,
+      });
+    } else /* android */ {
+      try {
+        if (time != null) await seekTo(time);
+        await SpotifySdk.resume();
+      } catch (_) {
+        await play(episodeId, time);
       }
-      await SpotifySdk.resume();
-    } catch (_) {
-      await play(episodeId, time);
     }
   }
 
   @override
-  Future<void> pause() => SpotifySdk.pause();
+  Future<void> pause() async {
+    if (Platform.isIOS) {
+      final accessToken = await spotifyApi.getAccessToken();
+      functions.httpsCallable('pauseEpisode').call({
+        'accessToken': accessToken,
+      });
+    } else /* android */ {
+      return SpotifySdk.pause();
+    }
+  }
 
   @override
   Future<void> fastForward([Duration time = const Duration(seconds: 30)]) =>
