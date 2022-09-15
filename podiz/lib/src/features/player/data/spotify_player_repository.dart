@@ -30,6 +30,8 @@ class SpotifyPlayerRepository implements PlayerRepository {
 
   @override
   Future<PlayingEpisode?> fetchPlayingEpisode() async {
+    final isSpotifyActive = await SpotifySdk.isSpotifyAppActive;
+    if (!isSpotifyActive) await spotifyApi.connectToSdk();
     final state = await SpotifySdk.getPlayerState();
     if (state == null) return null;
     return playingEpisodeFromPlayerState(state);
@@ -52,15 +54,8 @@ class SpotifyPlayerRepository implements PlayerRepository {
 
   @override
   Future<void> play(String episodeId, [Duration? time]) async {
-    try {
-      await _play(episodeId, time);
-    } catch (e) {
-      await spotifyApi.connectToSdk();
-      await _play(episodeId, time);
-    }
-  }
-
-  Future<void> _play(String episodeId, Duration? time) async {
+    final isSpotifyActive = await SpotifySdk.isSpotifyAppActive;
+    if (!isSpotifyActive) await spotifyApi.connectToSdk();
     await SpotifySdk.play(spotifyUri: uriFromId(episodeId));
     if (time != null) await seekTo(time);
     mixPanelRepository.userOpenPodcast();
@@ -68,6 +63,8 @@ class SpotifyPlayerRepository implements PlayerRepository {
 
   @override
   Future<void> resume(String episodeId, [Duration? time]) async {
+    final isSpotifyActive = await SpotifySdk.isSpotifyAppActive;
+    if (!isSpotifyActive) await spotifyApi.connectToSdk();
     try {
       if (time != null) await seekTo(time);
       await SpotifySdk.resume();
@@ -78,15 +75,8 @@ class SpotifyPlayerRepository implements PlayerRepository {
 
   @override
   Future<void> pause() async {
-    try {
-      await _pause();
-    } catch (_) {
-      await spotifyApi.connectToSdk();
-      await _pause();
-    }
-  }
-
-  Future<void> _pause() async {
+    final isSpotifyActive = await SpotifySdk.isSpotifyAppActive;
+    if (!isSpotifyActive) await spotifyApi.connectToSdk();
     await SpotifySdk.pause();
   }
 
@@ -99,6 +89,8 @@ class SpotifyPlayerRepository implements PlayerRepository {
       seekToRelativePosition(-time);
 
   Future<void> seekToRelativePosition(Duration time) async {
+    final isSpotifyActive = await SpotifySdk.isSpotifyAppActive;
+    if (!isSpotifyActive) await spotifyApi.connectToSdk();
     if (Platform.isIOS) {
       final state = await SpotifySdk.getPlayerState();
       final position = state?.playbackPosition ?? 0;
@@ -112,6 +104,9 @@ class SpotifyPlayerRepository implements PlayerRepository {
   }
 
   @override
-  Future<void> seekTo(Duration time) =>
-      SpotifySdk.seekTo(positionedMilliseconds: time.inMilliseconds);
+  Future<void> seekTo(Duration time) async {
+    final isSpotifyActive = await SpotifySdk.isSpotifyAppActive;
+    if (!isSpotifyActive) await spotifyApi.connectToSdk();
+    return SpotifySdk.seekTo(positionedMilliseconds: time.inMilliseconds);
+  }
 }
