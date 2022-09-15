@@ -1,3 +1,4 @@
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -55,19 +56,40 @@ class _CommentCardState extends ConsumerState<CommentCard> {
     );
   }
 
-  void share(Comment comment) {
+  Future<bool> isIpad() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    IosDeviceInfo info = await deviceInfo.iosInfo;
+    if (info.model != null && info.model!.toLowerCase().contains("ipad")) {
+      return true;
+    }
+    return false;
+  }
+
+  void share(Comment comment) async {
     final episodeId = comment.episodeId;
     final episode = ref.read(episodeFutureProvider(episodeId)).valueOrNull!;
     final podcast =
         ref.read(podcastFutureProvider(episode.showId)).valueOrNull!;
     final timestamp = comment.timestamp.inSeconds;
     final link = 'podiz.io/discussion/$episodeId?t=$timestamp';
-    Share.share(
-      'Check out this comment I found on Podiz about ${podcast.name}!\n\n'
-      '${comment.text}\n'
-      '$link',
-      subject: 'Insight I found on Podiz about ${podcast.name}',
-    );
+    final ipad = await isIpad();
+    if (ipad) {
+      final box = context.findRenderObject() as RenderBox?;
+      Share.share(
+          'Check out this comment I found on Podiz about ${podcast.name}!\n\n'
+          '${comment.text}\n'
+          '$link',
+          subject: 'Insight I found on Podiz about ${podcast.name}',
+          sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+    } else {
+      Share.share(
+        'Check out this comment I found on Podiz about ${podcast.name}!\n\n'
+        '${comment.text}\n'
+        '$link',
+        subject: 'Insight I found on Podiz about ${podcast.name}',
+      );
+    }
+
     ref.read(mixPanelRepository).userShare();
   }
 

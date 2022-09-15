@@ -204,6 +204,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>app_settings.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>cloud_firestore.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -215,6 +220,11 @@
 			<false/>
 		</dict>
 		<key>connectivity.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>device_info_plus.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

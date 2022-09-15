@@ -51,7 +51,7 @@ class ConnectPage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               LocaleText(
-                'error1',
+                state.error.toString(),
                 style: context.textTheme.bodyLarge!
                     .copyWith(color: Colors.black87),
                 textAlign: TextAlign.center,

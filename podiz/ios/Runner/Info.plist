@@ -30,8 +30,10 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleTypeRole</key>
+    		<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>com.amitay.podiz</string>
+			<string>podiz.io</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>Podiz</string>
@@ -72,5 +74,8 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>FlutterDeepLinkingEnabled</key>
+	<true/>
+	
 </dict>
 </plist>
