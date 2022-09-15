@@ -67,11 +67,7 @@ const sendNotification = async (
 				// Required for background/quit data-only messages on Android
 				priority: "high",
 			}
-		).then((response) => {
-			print(`success: ${response.successCount}`);
-			print(`failure: ${response.failureCount}`);
-			return removedUnusedTokens(targetUserId, tokens, response);
-		});
+		).then((response) => removedUnusedTokens(targetUserId, tokens, response));
 }
 
 
