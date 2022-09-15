@@ -10,6 +10,7 @@ const shows = require("./src/shows.js");
 const search = require("./src/search.js");
 const notifications = require("./src/notifications.js");
 const comments = require("./src/comments.js");
+const player = require("./src/player.js");
 
 admin.initializeApp(functions.config().firebase);
 
@@ -86,6 +87,14 @@ exports.followNotificationTrigger = functions.firestore
   });
 
 exports.scheduleWeeklyComments = functions.pubsub
-  .schedule("35 11 * * *")
+  .schedule("0 0 * * *")
   .timeZone("Europe/Lisbon")
   .onRun((_) => comments.updateWeeklyComments());
+
+exports.playEpisode = functions.https.onCall((data, _) =>
+  player.playEpisode(data.accessToken, data.episodeId, data.time)
+);
+
+exports.pauseEpisode = functions.https.onCall((data, _) =>
+  player.pauseEpisode(data.accessToken)
+);

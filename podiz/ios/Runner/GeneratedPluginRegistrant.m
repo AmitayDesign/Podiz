@@ -72,6 +72,12 @@
 @import firebase_storage;
 #endif
 
+#if __has_include(<flutter_custom_tabs/GDBCustomTabsPlugin.h>)
+#import <flutter_custom_tabs/GDBCustomTabsPlugin.h>
+#else
+@import flutter_custom_tabs;
+#endif
+
 #if __has_include(<flutter_facebook_auth/FlutterFacebookAuthPlugin.h>)
 #import <flutter_facebook_auth/FlutterFacebookAuthPlugin.h>
 #else
@@ -138,12 +144,6 @@
 @import spotify_sdk;
 #endif
 
-#if __has_include(<sqflite/SqflitePlugin.h>)
-#import <sqflite/SqflitePlugin.h>
-#else
-@import sqflite;
-#endif
-
 #if __has_include(<twitter_login/TwitterLoginPlugin.h>)
 #import <twitter_login/TwitterLoginPlugin.h>
 #else
@@ -176,6 +176,7 @@
   [FLTFirebaseDynamicLinksPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseDynamicLinksPlugin"]];
   [FLTFirebaseMessagingPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseMessagingPlugin"]];
   [FLTFirebaseStoragePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseStoragePlugin"]];
+  [GDBCustomTabsPlugin registerWithRegistrar:[registry registrarForPlugin:@"GDBCustomTabsPlugin"]];
   [FlutterFacebookAuthPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterFacebookAuthPlugin"]];
   [FlutterKeyboardVisibilityPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterKeyboardVisibilityPlugin"]];
   [FlutterLocalNotificationsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterLocalNotificationsPlugin"]];
@@ -187,7 +188,6 @@
   [FLTSharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTSharedPreferencesPlugin"]];
   [SignInWithApplePlugin registerWithRegistrar:[registry registrarForPlugin:@"SignInWithApplePlugin"]];
   [SpotifySdkPlugin registerWithRegistrar:[registry registrarForPlugin:@"SpotifySdkPlugin"]];
-  [SqflitePlugin registerWithRegistrar:[registry registrarForPlugin:@"SqflitePlugin"]];
   [TwitterLoginPlugin registerWithRegistrar:[registry registrarForPlugin:@"TwitterLoginPlugin"]];
   [FLTURLLauncherPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTURLLauncherPlugin"]];
   [FLTWebViewFlutterPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTWebViewFlutterPlugin"]];
