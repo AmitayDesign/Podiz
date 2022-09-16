@@ -42,7 +42,7 @@ dependencies:
   flutter_riverpod: ^2.0.0-dev.9
   flutter_svg: ^1.1.1+1
   flutter_svg_provider: ^1.0.3
-  flutter_web_auth: ^0.4.1 #needs to check
+  flutter_web_auth_2: 1.0.0
   flutterfire_ui: ^0.4.3+4
   go_router: ^4.2.7
   google_fonts: ^3.0.1

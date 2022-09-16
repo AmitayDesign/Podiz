@@ -29,6 +29,7 @@ class DiscussionScreen extends ConsumerStatefulWidget {
 
 class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
   late String episodeId = widget.episodeId;
+  bool blockNewEpisode = true;
 
   @override
   void initState() {
@@ -55,7 +56,11 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
       playerStateChangesProvider,
       (_, episodeValue) => episodeValue.whenData((episode) {
         if (episode != null) {
-          Future.microtask(() => setState(() => episodeId = episode.id));
+          if (blockNewEpisode) {
+            if (episodeId == episode.id) blockNewEpisode = false;
+          } else {
+            Future.microtask(() => setState(() => episodeId = episode.id));
+          }
         }
       }),
     );

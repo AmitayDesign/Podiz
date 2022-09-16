@@ -9,7 +9,6 @@ class IntroPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
       constraints: const BoxConstraints(maxWidth: 360),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -35,11 +34,6 @@ class IntroPage extends StatelessWidget {
                 fit: BoxFit.contain,
               ),
             ),
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: onSuccess,
-            child: const LocaleText('intro2'),
           ),
         ],
       ),

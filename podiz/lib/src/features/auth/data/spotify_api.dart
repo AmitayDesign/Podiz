@@ -23,9 +23,9 @@ class SpotifyApi {
 
   final clientId = '9a8daaf39e784f1c90770da4a252087f';
   final redirectUrl = 'podiz:/';
-  final responseType = "code";
-  final state = "34fFs29kd09";
-  final baseUrl = "https://accounts.spotify.com/authorize";
+  final responseType = 'code';
+  final state = '34fFs29kd09';
+  final baseUrl = 'https://accounts.spotify.com/authorize';
   final scope = [
     'app-remote-control',
     'user-follow-read',
@@ -38,7 +38,7 @@ class SpotifyApi {
   ].join(' ');
 
   String get authenticationUrl =>
-      "$baseUrl?client_id=$clientId&response_type=$responseType&redirect_uri=$redirectUrl&scope=$scope&state=$state";
+      '$baseUrl?client_id=$clientId&response_type=$responseType&redirect_uri=$redirectUrl&scope=$scope&state=$state';
 
   http.Client client = http.Client();
 

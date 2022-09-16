@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/data/spotify_api.dart';
 import 'package:podiz/src/features/notifications/data/push_notifications_repository.dart';
@@ -29,25 +30,17 @@ class ConnectionController extends StateNotifier<AsyncValue> {
 
   String get connectionUrl => spotifyApi.authenticationUrl;
 
-  bool isValidUrl(String url) {
-    if (Uri.parse(url).queryParameters['code'] != null) {
-      return true;
-    }
-    return false;
-  }
-
-  Future<void> retrySignIn() {
-    assert(lastUsedUrl != null);
-    return signIn(lastUsedUrl!);
-  }
-
-  Future<void> signIn(String url) async {
-    lastUsedUrl = url;
+  Future<void> signIn() async {
     state = const AsyncValue.loading();
     try {
-      final error = Uri.parse(url).queryParameters['error'];
+      final response = await FlutterWebAuth2.authenticate(
+        url: spotifyApi.authenticationUrl,
+        callbackUrlScheme: 'podiz',
+      );
+      final data = Uri.parse(response).queryParameters;
+      final error = data['error'];
       if (error != null) throw Exception('Error: $error');
-      final code = Uri.parse(url).queryParameters['code']!;
+      final code = data['code']!;
       final userId = await authRepository.signIn(code);
       //pushNotificationsRepository.requestPermission(userId);
     } catch (err, stack) {

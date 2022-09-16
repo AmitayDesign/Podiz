@@ -1,37 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/features/splash/presentation/splash_screen.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 import 'connect_controller.dart';
 
-class ConnectScreen extends ConsumerWidget {
+class ConnectScreen extends ConsumerStatefulWidget {
   const ConnectScreen({Key? key}) : super(key: key);
 
-  Future<NavigationDecision> handleNavigation(WidgetRef ref, String url) async {
-    final controller = ref.read(connectionControllerProvider.notifier);
-    if (!controller.isValidUrl(url)) return NavigationDecision.navigate;
-    await controller.signIn(url);
-    return NavigationDecision.prevent;
+  @override
+  ConsumerState<ConnectScreen> createState() => _ConnectScreenState();
+}
+
+class _ConnectScreenState extends ConsumerState<ConnectScreen> {
+  @override
+  void initState() {
+    super.initState();
+    signIn();
   }
 
+  Future<void> signIn() =>
+      ref.read(connectionControllerProvider.notifier).signIn();
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final controller = ref.watch(connectionControllerProvider.notifier);
+  Widget build(BuildContext context) {
     final state = ref.watch(connectionControllerProvider);
-    if (state.hasError) print(state.error);
-    return Stack(
-      children: [
-        WebView(
-          initialUrl: Uri.parse(controller.connectionUrl).toString(),
-          javascriptMode: JavascriptMode.unrestricted,
-          navigationDelegate: (req) => handleNavigation(ref, req.url),
-          onPageStarted: (_) => controller.init(),
-        ),
-        if (state.isLoading) const SplashScreen(),
-        if (!state.isRefreshing && state.hasError)
-          SplashScreen.error(onRetry: controller.retrySignIn),
-      ],
-    );
+    return !state.isRefreshing && state.hasError
+        ? SplashScreen.error(onRetry: signIn)
+        : const SplashScreen();
   }
 }
