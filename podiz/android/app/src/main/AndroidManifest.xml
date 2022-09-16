@@ -68,8 +68,8 @@
         <meta-data
           android:name="com.google.firebase.messaging.default_notification_icon"
           android:resource="@mipmap/tray" />
-        <!-- <meta-data
+        <meta-data
           android:name="com.google.firebase.messaging.default_notification_color"
-          android:resource="@color/tray" /> -->
+          android:resource="@color/tray" />
     </application>
 </manifest>
