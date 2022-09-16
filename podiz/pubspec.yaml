@@ -55,6 +55,7 @@ dependencies:
   skeletons: ^0.0.3
   spotify_sdk: ^2.3.0
   streaming_shared_preferences: ^2.0.0
+  uni_links: ^0.5.1
   url_launcher: ^6.1.5
   webview_flutter: ^3.0.4
 
