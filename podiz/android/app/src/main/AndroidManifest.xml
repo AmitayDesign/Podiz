@@ -65,5 +65,11 @@
         <!-- <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="replies" /> -->
+        <meta-data
+          android:name="com.google.firebase.messaging.default_notification_icon"
+          android:resource="@mipmap/tray" />
+        <!-- <meta-data
+          android:name="com.google.firebase.messaging.default_notification_color"
+          android:resource="@color/tray" /> -->
     </application>
 </manifest>
