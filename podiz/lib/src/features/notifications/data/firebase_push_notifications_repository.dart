@@ -59,6 +59,8 @@ class FirebasePushNotificationsRepository
       channelDescription: channel.description,
       importance: channel.importance,
       priority: Priority.high,
+      styleInformation: const BigTextStyleInformation(''),
+      color: Palette.purple,
     );
     return NotificationDetails(
       iOS: iosDetails,
@@ -72,7 +74,7 @@ class FirebasePushNotificationsRepository
   Future<void> init() async {
     // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
     const AndroidInitializationSettings androidSettings =
-        AndroidInitializationSettings('ic_launcher_foreground');
+        AndroidInitializationSettings('@mipmap/tray');
 
     const IOSInitializationSettings iosSettings = IOSInitializationSettings();
 

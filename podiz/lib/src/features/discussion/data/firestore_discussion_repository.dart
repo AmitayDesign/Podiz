@@ -75,7 +75,7 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
               .toList());
 
   @override
-  Future<void> addComment(Comment comment) async {
+  Future<String> addComment(Comment comment) async {
     // generate comment doc to get the id
     final commentDoc = firestore.commentsCollection.doc();
 
@@ -124,5 +124,7 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
         });
       }
     });
+
+    return commentDoc.id;
   }
 }

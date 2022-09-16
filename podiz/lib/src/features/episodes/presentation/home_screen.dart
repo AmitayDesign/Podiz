@@ -6,9 +6,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/src/common_widgets/tap_to_unfocus.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/auth/domain/mutable_user_podiz.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/data/presence_repository.dart';
+import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/episodes/presentation/feed/feed_page.dart';
 import 'package:podiz/src/features/notifications/data/push_notifications_repository.dart';
 import 'package:podiz/src/features/notifications/domain/notification_podiz.dart';
@@ -162,43 +164,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         return TapToUnfocus(
           child: Scaffold(
             extendBody: true,
-            //! buttons to force notifications
-            // floatingActionButton: Column(
-            //   mainAxisSize: MainAxisSize.min,
-            //   children: [
-            //     FloatingActionButton(
-            //       child: const Icon(Icons.person_add),
-            //       onPressed: () async {
-            //         final repo = ref.read(userRepositoryProvider);
-            //         await repo.unfollow(
-            //           'hmrs28xr9apw0mlac2dfjwm2v',
-            //           'ymptclhffc47qgt80vq0qkutb',
-            //         );
-            //         await repo.follow(
-            //           'hmrs28xr9apw0mlac2dfjwm2v',
-            //           'ymptclhffc47qgt80vq0qkutb',
-            //         );
-            //         print('followed');
-            //       },
-            //     ),
-            //     FloatingActionButton(
-            //       child: const Icon(Icons.comment),
-            //       onPressed: () async {
-            //         final repo = ref.read(discussionRepositoryProvider);
-            //         const comment = Comment(
-            //           episodeId: '4HuFbACVWnSi7FJWJ5LrKA',
-            //           parentIds: ['00v2hKcAroaQ6ZRMTti0'],
-            //           parentUserId: 'ymptclhffc47qgt80vq0qkutb',
-            //           text: 'test',
-            //           timestamp: Duration(milliseconds: 571478),
-            //           userId: 'hmrs28xr9apw0mlac2dfjwm2v',
-            //         );
-            //         await repo.addComment(comment);
-            //         print('commented');
-            //       },
-            //     ),
-            //   ],
-            // ),
+            floatingActionButton: notificationDebugFAB(),
             body: PageView(
               controller: pageController,
               children: const [
@@ -242,6 +208,48 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget notificationDebugFAB() {
+    final userId = ref.read(currentUserProvider).id;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        FloatingActionButton(
+          child: const Icon(Icons.person_add),
+          onPressed: () async {
+            final repo = ref.read(userRepositoryProvider);
+            await repo.unfollow('hmrs28xr9apw0mlac2dfjwm2v', userId);
+            await repo.follow('hmrs28xr9apw0mlac2dfjwm2v', userId);
+            print('followed');
+          },
+        ),
+        const SizedBox(height: 8),
+        FloatingActionButton(
+          child: const Icon(Icons.comment),
+          onPressed: () async {
+            final repo = ref.read(discussionRepositoryProvider);
+            final comment = Comment(
+              episodeId: '4HuFbACVWnSi7FJWJ5LrKA',
+              text: 'That\'s awesome',
+              timestamp: const Duration(milliseconds: 571478),
+              userId: userId,
+            );
+            final commentId = await repo.addComment(comment);
+            final reply = Comment(
+              episodeId: '4HuFbACVWnSi7FJWJ5LrKA',
+              parentIds: [commentId],
+              parentUserId: userId,
+              text: 'I agree, what a tip. This will help me so much',
+              timestamp: const Duration(milliseconds: 571478),
+              userId: 'hmrs28xr9apw0mlac2dfjwm2v',
+            );
+            await repo.addComment(reply);
+            print('commented');
+          },
+        ),
+      ],
     );
   }
 }
