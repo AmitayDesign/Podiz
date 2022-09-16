@@ -59,6 +59,7 @@ class FirebasePushNotificationsRepository
       channelDescription: channel.description,
       importance: channel.importance,
       priority: Priority.high,
+      styleInformation: const BigTextStyleInformation(''),
     );
     return NotificationDetails(
       iOS: iosDetails,

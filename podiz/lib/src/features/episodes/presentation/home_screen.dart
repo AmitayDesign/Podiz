@@ -164,7 +164,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         return TapToUnfocus(
           child: Scaffold(
             extendBody: true,
-            // floatingActionButton: notificationDebugFAB(),
+            floatingActionButton: notificationDebugFAB(),
             body: PageView(
               controller: pageController,
               children: const [
@@ -225,19 +225,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             print('followed');
           },
         ),
+        const SizedBox(height: 8),
         FloatingActionButton(
           child: const Icon(Icons.comment),
           onPressed: () async {
             final repo = ref.read(discussionRepositoryProvider);
             final comment = Comment(
               episodeId: '4HuFbACVWnSi7FJWJ5LrKA',
-              parentIds: ['00v2hKcAroaQ6ZRMTti0'],
+              text: 'That\'s awesome',
+              timestamp: const Duration(milliseconds: 571478),
+              userId: userId,
+            );
+            final commentId = await repo.addComment(comment);
+            final reply = Comment(
+              episodeId: '4HuFbACVWnSi7FJWJ5LrKA',
+              parentIds: [commentId],
               parentUserId: userId,
-              text: 'test',
+              text: 'I agree, what a tip. This will help me so much',
               timestamp: const Duration(milliseconds: 571478),
               userId: 'hmrs28xr9apw0mlac2dfjwm2v',
             );
-            await repo.addComment(comment);
+            await repo.addComment(reply);
             print('commented');
           },
         ),
