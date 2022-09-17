@@ -15,7 +15,7 @@ exports.getAccessTokenWithCode = async (code) => {
       body: encodeFormData({
         grant_type: "authorization_code",
         code: code,
-        redirect_uri: "podiz:/",
+        redirect_uri: "podiz:/connect",
         client_id: client_id,
         client_secret: client_secret,
       }),

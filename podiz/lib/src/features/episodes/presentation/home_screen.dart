@@ -164,7 +164,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         return TapToUnfocus(
           child: Scaffold(
             extendBody: true,
-            floatingActionButton: notificationDebugFAB(),
+            // floatingActionButton: notificationDebugFAB(),
             body: PageView(
               controller: pageController,
               children: const [

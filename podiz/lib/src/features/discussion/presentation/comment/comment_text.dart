@@ -11,7 +11,7 @@ class CommentText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Linkify(
       options: const LinkifyOptions(removeWww: true),
-      onOpen: openUrl,
+      onOpen: (link) => openUrl(link.url),
       text: text,
       style: context.textTheme.bodyLarge,
     );

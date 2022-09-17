@@ -36,19 +36,28 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       final isOnboardingLocation = state.location.contains('/onboarding');
       final isConnectLocation = state.location.contains('/connect');
 
+      print('###');
+      print('isLoggedIn: $isLoggedIn');
+      print('isConnected: $isConnected');
+      print('isConnected: ${state.location}');
+      print('isOnboardingLocation: $isOnboardingLocation');
+      print('isConnectLocation: $isConnectLocation');
+
       if (isLoggedIn && isConnected) {
         if (isOnboardingLocation || isConnectLocation) {
           final redirect = initialRedirect ?? '/';
           initialRedirect = null;
           return redirect;
         }
-      } else if (isLoggedIn && !isConnected) {
-        if (!isConnectLocation) {
-          initialRedirect = state.location;
-          return '/connect';
+      } else {
+        if (isLoggedIn && !isConnected) {
+          if (!isConnectLocation) {
+            initialRedirect = state.location;
+            return '/connect';
+          }
+        } else /* not logged in */ {
+          if (!isOnboardingLocation && !isConnectLocation) return '/onboarding';
         }
-      } else /* not logged in */ {
-        if (!isOnboardingLocation && !isConnectLocation) return '/onboarding';
       }
 
       return null;

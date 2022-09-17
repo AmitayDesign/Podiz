@@ -20,7 +20,7 @@ class SpotifyApi {
   SpotifyApi({required this.functions, required this.preferences});
 
   final clientId = '9a8daaf39e784f1c90770da4a252087f';
-  final redirectUrl = 'podiz:/';
+  final redirectUrl = 'podiz:/connect';
   final responseType = 'code';
   final state = '34fFs29kd09';
   final baseUrl = 'https://accounts.spotify.com/authorize';

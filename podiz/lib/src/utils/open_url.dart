@@ -3,10 +3,10 @@ import 'package:flutter_custom_tabs/flutter_custom_tabs.dart' as custom_tabs;
 import 'package:podiz/src/theme/palette.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-Future<void> openUrl(link) async {
+Future<void> openUrl(String url) async {
   try {
     custom_tabs.launch(
-      link.url,
+      url,
       customTabsOption: custom_tabs.CustomTabsOption(
         toolbarColor: Palette.darkPurple,
         showPageTitle: true,
@@ -34,11 +34,13 @@ Future<void> openUrl(link) async {
       ),
     );
   } catch (_) {
-    if (await canLaunchUrlString(link.url)) {
+    if (await canLaunchUrlString(url)) {
       launchUrlString(
-        link.url,
+        url,
         mode: LaunchMode.externalApplication,
       );
+    } else {
+      throw Exception('Could not open the url');
     }
   }
 }
