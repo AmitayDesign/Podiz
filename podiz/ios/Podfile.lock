@@ -919,6 +919,8 @@ PODS:
     - Flutter
   - twitter_login (0.0.1):
     - Flutter
+  - uni_links (0.0.1):
+    - Flutter
   - url_launcher_ios (0.0.1):
     - Flutter
   - webview_flutter_wkwebview (0.0.1):
@@ -952,6 +954,7 @@ DEPENDENCIES:
   - sign_in_with_apple (from `.symlinks/plugins/sign_in_with_apple/ios`)
   - spotify_sdk (from `.symlinks/plugins/spotify_sdk/ios`)
   - twitter_login (from `.symlinks/plugins/twitter_login/ios`)
+  - uni_links (from `.symlinks/plugins/uni_links/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
 
@@ -1049,6 +1052,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/spotify_sdk/ios"
   twitter_login:
     :path: ".symlinks/plugins/twitter_login/ios"
+  uni_links:
+    :path: ".symlinks/plugins/uni_links/ios"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
   webview_flutter_wkwebview:
@@ -1120,6 +1125,7 @@ SPEC CHECKSUMS:
   sign_in_with_apple: f3bf75217ea4c2c8b91823f225d70230119b8440
   spotify_sdk: 63cc13896c9ff93c4d023e03bb4b9b516602f355
   twitter_login: 2794db69b7640681171b17b3c2c84ad9dfb4a57f
+  uni_links: d97da20c7701486ba192624d99bffaaffcfc298a
   url_launcher_ios: 839c58cdb4279282219f5e248c3321761ff3c4de
   webview_flutter_wkwebview: b7e70ef1ddded7e69c796c7390ee74180182971f
 

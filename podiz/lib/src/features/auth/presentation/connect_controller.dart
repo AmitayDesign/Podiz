@@ -40,8 +40,8 @@ class ConnectionController extends StateNotifier<AsyncValue> {
       // );
       final url = spotifyApi.authenticationUrl;
       final loginCompleter = Completer();
-      if (await canLaunchUrlString(url)) {
-        await launchUrlString(url);
+      if (await canLaunchUrlString(Uri.parse(url).toString())) {
+        await launchUrlString(Uri.parse(url).toString());
       } else {
         throw Exception('Could not open a browser for authentication');
       }

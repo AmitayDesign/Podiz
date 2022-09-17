@@ -344,6 +344,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>uni_links.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>url_launcher_ios.xcscheme</key>
 		<dict>
 			<key>isShown</key>
