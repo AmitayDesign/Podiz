@@ -36,10 +36,11 @@ class SpotifyApi {
     'user-library-modify',
     'user-modify-playback-state'
   ].join(' ');
+  final forceSignInForm = false;
 
   //debug: add &show_dialog=true to disallow auto login
   String get authenticationUrl =>
-      '$baseUrl?client_id=$clientId&response_type=$responseType&redirect_uri=$redirectUrl&scope=$scope&state=$state&show_dialog=true';
+      '$baseUrl?client_id=$clientId&response_type=$responseType&redirect_uri=$redirectUrl&scope=$scope&state=$state&show_dialog=$forceSignInForm';
 
   http.Client client = http.Client();
 
