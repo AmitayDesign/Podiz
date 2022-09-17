@@ -36,7 +36,7 @@ class SpotifyApi {
     'user-library-modify',
     'user-modify-playback-state'
   ].join(' ');
-  final forceSignInForm = false;
+  final forceSignInForm = false; //default to false
 
   //debug: add &show_dialog=true to disallow auto login
   String get authenticationUrl =>

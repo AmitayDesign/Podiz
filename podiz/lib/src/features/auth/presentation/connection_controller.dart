@@ -27,34 +27,49 @@ class ConnectionController extends StateNotifier<AsyncValue> {
     required this.authRepository,
     required this.pushNotificationsRepository,
     required this.spotifyApi,
-  }) : super(const AsyncValue.loading());
+  }) : super(authRepository.currentUser == null
+            ? const AsyncValue.data(null)
+            : const AsyncValue.loading()) {
+    if (state.isLoading) signIn();
+  }
 
-  void init() => state = const AsyncValue.data(null);
+  StreamSubscription? sub;
+  Completer<String?>? loginCompleter;
 
-  Future<bool> signIn() async {
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
-      // final response = await FlutterWebAuth2.authenticate(
-      //   url: spotifyApi.authenticationUrl,
-      //   callbackUrlScheme: 'podiz',
-      // );
-      final url = spotifyApi.authenticationUrl;
-      final loginCompleter = Completer();
-      await openUrl(url);
-      final sub = linkStream.listen((link) {
-        if (link != null && link.startsWith(spotifyApi.redirectUrl)) {
-          loginCompleter.complete(link);
-        }
-      });
-      final response = await loginCompleter.future;
-      sub.cancel();
+  Future<void> signIn() async {
+    final response = await openSignInUrl();
+    if (response == null) return;
+    try {
       final data = Uri.parse(response).queryParameters;
       final error = data['error'];
       if (error != null) throw Exception('Error: $error');
       final code = data['code']!;
       final userId = await authRepository.signIn(code);
       pushNotificationsRepository.requestPermission(userId);
+    } catch (err, stack) {
+      state = AsyncValue.error(err, stackTrace: stack);
+    }
+  }
+
+  Future<String?> openSignInUrl() async {
+    loginCompleter?.complete();
+    loginCompleter = Completer();
+    await openUrl(spotifyApi.authenticationUrl);
+    state = const AsyncValue.data(null);
+    sub?.cancel();
+    sub = linkStream.listen((link) {
+      if (link != null && link.startsWith(spotifyApi.redirectUrl)) {
+        state = const AsyncValue.loading();
+        loginCompleter!.complete(link);
+      }
     });
-    return !state.hasError;
+    return await loginCompleter!.future.whenComplete(() => sub?.cancel());
+  }
+
+  @override
+  void dispose() {
+    loginCompleter?.complete();
+    sub?.cancel();
+    super.dispose();
   }
 }

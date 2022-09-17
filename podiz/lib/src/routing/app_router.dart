@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
-import 'package:podiz/src/features/auth/presentation/connect_screen.dart';
 import 'package:podiz/src/features/auth/presentation/onboarding/onboarding_screen.dart';
 import 'package:podiz/src/features/auth/presentation/profile/profile_screen.dart';
 import 'package:podiz/src/features/discussion/presentation/discussion_screen.dart';
@@ -14,7 +13,6 @@ import 'package:podiz/src/routing/refresh_stream_list.dart';
 
 enum AppRoute {
   onboarding,
-  connect,
   home,
   profile,
   settings,
@@ -23,7 +21,7 @@ enum AppRoute {
   discussion,
 }
 
-String? initialRedirect;
+String initialRedirect = '';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authRepository = ref.watch(authRepositoryProvider);
@@ -34,23 +32,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       final isLoggedIn = authRepository.currentUser != null;
       final isConnected = authRepository.isConnected;
       final isOnboardingLocation = state.location.contains('/onboarding');
-      final isConnectLocation = state.location.contains('/connect');
 
       if (isLoggedIn && isConnected) {
-        if (isOnboardingLocation || isConnectLocation) {
-          final redirect = initialRedirect ?? '/';
-          initialRedirect = null;
+        if (isOnboardingLocation) {
+          final redirect = initialRedirect.isEmpty ? '/' : initialRedirect;
+          initialRedirect = '';
           return redirect;
         }
-      } else {
-        if (isLoggedIn && !isConnected) {
-          if (!isConnectLocation) {
-            initialRedirect = state.location;
-            return '/connect';
-          }
-        } else /* not logged in */ {
-          if (!isOnboardingLocation && !isConnectLocation) return '/onboarding';
-        }
+      } else if (!isOnboardingLocation) {
+        if (isLoggedIn) initialRedirect = state.location;
+        return '/onboarding';
       }
 
       return null;
@@ -64,11 +55,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/onboarding',
         name: AppRoute.onboarding.name,
         builder: (_, state) => const OnboardingScreen(),
-      ),
-      GoRoute(
-        path: '/connect',
-        name: AppRoute.connect.name,
-        builder: (_, state) => const ConnectScreen(),
       ),
       GoRoute(
         path: '/',

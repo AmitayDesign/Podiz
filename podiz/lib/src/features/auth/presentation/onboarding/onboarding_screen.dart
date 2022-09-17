@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:podiz/src/routing/app_router.dart';
+import 'package:podiz/src/features/auth/presentation/connection_controller.dart';
+import 'package:podiz/src/features/splash/presentation/splash_screen.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
 import 'budz_page.dart';
@@ -44,8 +44,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     );
   }
 
+  Future<void> signIn() =>
+      ref.read(connectionControllerProvider.notifier).signIn();
+
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(connectionControllerProvider);
+    if (state.isLoading) {
+      return const SplashScreen();
+    } else if (!state.isRefreshing && state.hasError) {
+      return SplashScreen.error(onRetry: signIn);
+    }
     // Return a Scaffold with a PagePage containing the pages.
     // This allows for a nice scroll animation when switching between pages.
     // Note: only the currently active page will be visible.
@@ -93,13 +102,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   )
                 else
                   ElevatedButton(
-                    onPressed: () => context.goNamed(AppRoute.connect.name),
+                    onPressed: signIn,
                     child: const LocaleText('intro4'),
                   ),
-                if (Platform.isIOS)
-                  const SizedBox(
-                    height: 16,
-                  )
+                if (Platform.isIOS) const SizedBox(height: 16)
               ],
             ),
           ),
