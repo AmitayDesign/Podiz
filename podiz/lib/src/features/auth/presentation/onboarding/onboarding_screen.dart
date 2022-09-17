@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -94,6 +96,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     onPressed: () => context.goNamed(AppRoute.connect.name),
                     child: const LocaleText('intro4'),
                   ),
+                if (Platform.isIOS)
+                  const SizedBox(
+                    height: 16,
+                  )
               ],
             ),
           ),

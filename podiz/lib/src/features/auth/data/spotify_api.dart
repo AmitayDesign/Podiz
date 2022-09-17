@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,16 +27,19 @@ class SpotifyApi {
   final state = '34fFs29kd09';
   final baseUrl = 'https://accounts.spotify.com/authorize';
   final scope = [
+    'app-remote-control',
     'user-follow-read',
     'user-read-private',
     'user-read-email',
     'user-read-playback-position',
     'user-library-read',
     'user-library-modify',
+    'user-modify-playback-state'
   ].join(' ');
 
+  //debug: add &show_dialog=true to disallow auto login
   String get authenticationUrl =>
-      '$baseUrl?client_id=$clientId&response_type=$responseType&redirect_uri=$redirectUrl&scope=$scope&state=$state';
+      '$baseUrl?client_id=$clientId&response_type=$responseType&redirect_uri=$redirectUrl&scope=$scope&state=$state&show_dialog=true';
 
   http.Client client = http.Client();
 
@@ -58,16 +63,27 @@ class SpotifyApi {
       throw Exception('session timed out');
     }
     if (result == 'error') throw Exception('access token error');
-
     accessToken = result;
+
     await connectToSdk();
+
     return accessToken!;
   }
 
-  Future<bool> connectToSdk() => SpotifySdk.connectToSpotifyRemote(
+  Future<bool> connectToSdk() {
+    if (Platform.isIOS) {
+      return SpotifySdk.connectToSpotifyRemote(
         clientId: clientId,
         redirectUrl: redirectUrl,
-        accessToken: accessToken,
-        playerName: 'Podiz',
+        scope: scope,
       );
+    }
+
+    return SpotifySdk.connectToSpotifyRemote(
+      clientId: clientId,
+      redirectUrl: redirectUrl,
+      accessToken: accessToken,
+      playerName: 'Podiz',
+    );
+  }
 }

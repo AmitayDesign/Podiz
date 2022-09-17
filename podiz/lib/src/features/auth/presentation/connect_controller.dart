@@ -31,9 +31,9 @@ class ConnectionController extends StateNotifier<AsyncValue> {
 
   void init() => state = const AsyncValue.data(null);
 
-  Future<void> signIn() async {
+  Future<bool> signIn() async {
     state = const AsyncValue.loading();
-    try {
+    state = await AsyncValue.guard(() async {
       // final response = await FlutterWebAuth2.authenticate(
       //   url: spotifyApi.authenticationUrl,
       //   callbackUrlScheme: 'podiz',
@@ -42,26 +42,19 @@ class ConnectionController extends StateNotifier<AsyncValue> {
       final loginCompleter = Completer();
       await openUrl(url);
       final sub = linkStream.listen((link) {
-        print('## LINK STREAM: $link');
         if (link != null && link.startsWith(spotifyApi.redirectUrl)) {
-          print('## LINK PASSED!!');
           loginCompleter.complete(link);
         }
-      }, onError: (e) => print('## $e'));
+      });
       final response = await loginCompleter.future;
       sub.cancel();
       final data = Uri.parse(response).queryParameters;
-      print('data: $data');
       final error = data['error'];
-      print('error: $error');
       if (error != null) throw Exception('Error: $error');
       final code = data['code']!;
-      print('code: $code');
       final userId = await authRepository.signIn(code);
       pushNotificationsRepository.requestPermission(userId);
-    } catch (err, stack) {
-      print('err: $err');
-      state = AsyncValue.error(err, stackTrace: stack);
-    }
+    });
+    return !state.hasError;
   }
 }

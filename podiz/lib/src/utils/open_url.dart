@@ -4,6 +4,7 @@ import 'package:podiz/src/theme/palette.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 Future<void> openUrl(String url) async {
+  url = Uri.parse(url).toString();
   try {
     custom_tabs.launch(
       url,

@@ -34,11 +34,6 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>FMDB.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>Firebase.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -179,6 +174,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>Mixpanel-swift.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-Runner.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -199,6 +199,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>app_settings.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>cloud_firestore.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -210,6 +215,11 @@
 			<false/>
 		</dict>
 		<key>connectivity.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>device_info_plus.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -244,6 +254,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>flutter_custom_tabs.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>flutter_facebook_auth.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -254,7 +269,12 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>flutter_web_auth.xcscheme</key>
+		<key>flutter_local_notifications.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>flutter_web_auth_2.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -280,6 +300,11 @@
 			<false/>
 		</dict>
 		<key>leveldb-library.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>mixpanel_flutter.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -314,17 +339,22 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>sqflite.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>twitter_login.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>uni_links.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>url_launcher_ios.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>webview_flutter_wkwebview.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

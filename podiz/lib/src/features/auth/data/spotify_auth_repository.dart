@@ -80,6 +80,7 @@ class SpotifyAuthRepository
         .httpsCallable('getAccessTokenWithCode')
         .call({'code': code});
     // decode result
+    print(result);
     if (result.data == '0') throw Exception('Failed to get user data');
     final accessToken = result.data['access_token'];
     final timeout = result.data['timeout']; // in seconds
@@ -90,6 +91,7 @@ class SpotifyAuthRepository
     spotifyApi.timeout = now.add(Duration(seconds: timeout));
     spotifyApi.disconnect = signOut;
     // connect to sdk
+    print("connecting");
     final success = await spotifyApi.connectToSdk();
     if (!success) throw Exception('Error connecting to Spotify');
     //
