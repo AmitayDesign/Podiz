@@ -1,11 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/data/spotify_api.dart';
 import 'package:podiz/src/features/notifications/data/push_notifications_repository.dart';
-import 'package:podiz/src/utils/open_url.dart';
-import 'package:uni_links/uni_links.dart';
 
 final connectionControllerProvider =
     StateNotifierProvider.autoDispose<ConnectionController, AsyncValue>(
@@ -37,9 +36,9 @@ class ConnectionController extends StateNotifier<AsyncValue> {
   Completer<String?>? loginCompleter;
 
   Future<void> signIn() async {
-    final response = await openSignInUrl();
-    if (response == null) return;
     try {
+      final response = await openSignInUrl();
+      if (response == null) return;
       final data = Uri.parse(response).queryParameters;
       final error = data['error'];
       if (error != null) throw Exception('Error: $error');
@@ -51,20 +50,26 @@ class ConnectionController extends StateNotifier<AsyncValue> {
     }
   }
 
-  Future<String?> openSignInUrl() async {
-    loginCompleter?.complete();
-    loginCompleter = Completer();
-    await openUrl(spotifyApi.authenticationUrl);
-    state = const AsyncValue.data(null);
-    sub?.cancel();
-    sub = linkStream.listen((link) {
-      if (link != null && link.startsWith(spotifyApi.redirectUrl)) {
-        state = const AsyncValue.loading();
-        loginCompleter!.complete(link);
-      }
-    });
-    return await loginCompleter!.future.whenComplete(() => sub?.cancel());
+  Future<String?> openSignInUrl() {
+    state = const AsyncValue.loading();
+    return FlutterWebAuth2.authenticate(
+        url: spotifyApi.authenticationUrl, callbackUrlScheme: 'podiz');
   }
+
+  // Future<String?> openSignInUrl() async {
+  //   loginCompleter?.complete();
+  //   loginCompleter = Completer();
+  //   await openUrl(spotifyApi.authenticationUrl);
+  //   state = const AsyncValue.data(null);
+  //   sub?.cancel();
+  //   sub = linkStream.listen((link) {
+  //     if (link != null && link.startsWith(spotifyApi.redirectUrl)) {
+  //       state = const AsyncValue.loading();
+  //       loginCompleter!.complete(link);
+  //     }
+  //   });
+  //   return await loginCompleter!.future.whenComplete(() => sub?.cancel());
+  // }
 
   @override
   void dispose() {
