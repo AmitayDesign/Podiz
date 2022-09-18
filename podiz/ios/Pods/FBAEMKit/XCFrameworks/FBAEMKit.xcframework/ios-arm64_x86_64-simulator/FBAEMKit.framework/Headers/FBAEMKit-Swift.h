@@ -221,6 +221,7 @@ SWIFT_PROTOCOL_NAMED("SKAdNetworkReporting")
 - (void)checkAndRevokeTimer;
 @end
 
+enum FBAEMAdvertiserRuleOperator : NSInteger;
 @class NSCoder;
 
 /// Internal Type exposed to facilitate transition to Swift.
@@ -260,6 +261,33 @@ SWIFT_CLASS_NAMED("_AEMAdvertiserRuleFactory")
 - (id <FBAEMAdvertiserRuleMatching> _Nullable)createRuleWithDict:(NSDictionary<NSString *, id> * _Nonnull)dictionary SWIFT_WARN_UNUSED_RESULT;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
+
+/// Internal Type exposed to facilitate transition to Swift.
+/// API Subject to change or removal without warning. Do not use.
+/// @warning INTERNAL - DO NOT USE
+typedef SWIFT_ENUM_NAMED(NSInteger, FBAEMAdvertiserRuleOperator, "_AEMAdvertiserRuleOperator", open) {
+  FBAEMAdvertiserRuleOperatorUnknown = 0,
+  FBAEMAdvertiserRuleOperatorAnd = 1,
+  FBAEMAdvertiserRuleOperatorOr = 2,
+  FBAEMAdvertiserRuleOperatorNot = 3,
+  FBAEMAdvertiserRuleOperatorContains = 4,
+  FBAEMAdvertiserRuleOperatorNotContains = 5,
+  FBAEMAdvertiserRuleOperatorStartsWith = 6,
+  FBAEMAdvertiserRuleOperatorCaseInsensitiveContains = 7,
+  FBAEMAdvertiserRuleOperatorCaseInsensitiveNotContains = 8,
+  FBAEMAdvertiserRuleOperatorCaseInsensitiveStartsWith = 9,
+  FBAEMAdvertiserRuleOperatorRegexMatch = 10,
+  FBAEMAdvertiserRuleOperatorEqual = 11,
+  FBAEMAdvertiserRuleOperatorNotEqual = 12,
+  FBAEMAdvertiserRuleOperatorLessThan = 13,
+  FBAEMAdvertiserRuleOperatorLessThanOrEqual = 14,
+  FBAEMAdvertiserRuleOperatorGreaterThan = 15,
+  FBAEMAdvertiserRuleOperatorGreaterThanOrEqual = 16,
+  FBAEMAdvertiserRuleOperatorCaseInsensitiveIsAny = 17,
+  FBAEMAdvertiserRuleOperatorCaseInsensitiveIsNotAny = 18,
+  FBAEMAdvertiserRuleOperatorIsAny = 19,
+  FBAEMAdvertiserRuleOperatorIsNotAny = 20,
+};
 
 
 
@@ -355,7 +383,7 @@ SWIFT_CLASS_NAMED("_AEMInvocation")
 @property (nonatomic, readonly) NSInteger conversionValue;
 @property (nonatomic) BOOL isAggregated;
 - (nullable instancetype)initWithAppLinkData:(NSDictionary * _Nullable)appLinkData;
-- (BOOL)attributeEvent:(NSString * _Nonnull)event currency:(NSString * _Nullable)potentialValueCurrency value:(NSNumber * _Nullable)potentialValue parameters:(NSDictionary<NSString *, id> * _Nullable)parameters configurations:(NSDictionary<NSString *, NSArray<FBAEMConfiguration *> *> * _Nullable)configurations shouldUpdateCache:(BOOL)shouldUpdateCache;
+- (BOOL)attributeEvent:(NSString * _Nonnull)event currency:(NSString * _Nullable)potentialValueCurrency value:(NSNumber * _Nullable)potentialValue parameters:(NSDictionary<NSString *, id> * _Nullable)parameters configurations:(NSDictionary<NSString *, NSArray<FBAEMConfiguration *> *> * _Nullable)configurations shouldUpdateCache:(BOOL)shouldUpdateCache isRuleMatchInServer:(BOOL)isRuleMatchInServer;
 - (BOOL)updateConversionValueWithConfigurations:(NSDictionary<NSString *, NSArray<FBAEMConfiguration *> *> * _Nullable)configurations event:(NSString * _Nonnull)event shouldBoostPriority:(BOOL)shouldBoostPriority SWIFT_WARN_UNUSED_RESULT;
 - (BOOL)isOptimizedEvent:(NSString * _Nonnull)event configurations:(NSDictionary<NSString *, NSArray<FBAEMConfiguration *> *> * _Nullable)configurations SWIFT_WARN_UNUSED_RESULT;
 - (BOOL)isOutOfWindowWithConfigurations:(NSDictionary<NSString *, NSArray<FBAEMConfiguration *> *> * _Nullable)configurations SWIFT_WARN_UNUSED_RESULT;
@@ -445,8 +473,11 @@ SWIFT_CLASS_NAMED("_AEMUtility")
 @interface FBAEMUtility : NSObject
 SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) FBAEMUtility * _Nonnull sharedUtility;)
 + (FBAEMUtility * _Nonnull)sharedUtility SWIFT_WARN_UNUSED_RESULT;
+- (FBAEMInvocation * _Nullable)getMatchedInvocation:(NSArray<FBAEMInvocation *> * _Nonnull)invocations businessID:(NSString * _Nullable)businessID SWIFT_WARN_UNUSED_RESULT;
 - (NSNumber * _Nonnull)getInSegmentValue:(NSDictionary<NSString *, id> * _Nullable)parameters matchingRule:(id <FBAEMAdvertiserRuleMatching> _Nullable)matchingRule SWIFT_WARN_UNUSED_RESULT;
+- (NSString * _Nullable)getContent:(NSDictionary<NSString *, id> * _Nullable)parameters SWIFT_WARN_UNUSED_RESULT;
 - (NSString * _Nullable)getContentID:(NSDictionary<NSString *, id> * _Nullable)parameters SWIFT_WARN_UNUSED_RESULT;
+- (NSArray<NSString *> * _Nonnull)getBusinessIDsInOrder:(NSArray<FBAEMInvocation *> * _Nonnull)invocations SWIFT_WARN_UNUSED_RESULT;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
@@ -678,6 +709,7 @@ SWIFT_PROTOCOL_NAMED("SKAdNetworkReporting")
 - (void)checkAndRevokeTimer;
 @end
 
+enum FBAEMAdvertiserRuleOperator : NSInteger;
 @class NSCoder;
 
 /// Internal Type exposed to facilitate transition to Swift.
@@ -717,6 +749,33 @@ SWIFT_CLASS_NAMED("_AEMAdvertiserRuleFactory")
 - (id <FBAEMAdvertiserRuleMatching> _Nullable)createRuleWithDict:(NSDictionary<NSString *, id> * _Nonnull)dictionary SWIFT_WARN_UNUSED_RESULT;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
+
+/// Internal Type exposed to facilitate transition to Swift.
+/// API Subject to change or removal without warning. Do not use.
+/// @warning INTERNAL - DO NOT USE
+typedef SWIFT_ENUM_NAMED(NSInteger, FBAEMAdvertiserRuleOperator, "_AEMAdvertiserRuleOperator", open) {
+  FBAEMAdvertiserRuleOperatorUnknown = 0,
+  FBAEMAdvertiserRuleOperatorAnd = 1,
+  FBAEMAdvertiserRuleOperatorOr = 2,
+  FBAEMAdvertiserRuleOperatorNot = 3,
+  FBAEMAdvertiserRuleOperatorContains = 4,
+  FBAEMAdvertiserRuleOperatorNotContains = 5,
+  FBAEMAdvertiserRuleOperatorStartsWith = 6,
+  FBAEMAdvertiserRuleOperatorCaseInsensitiveContains = 7,
+  FBAEMAdvertiserRuleOperatorCaseInsensitiveNotContains = 8,
+  FBAEMAdvertiserRuleOperatorCaseInsensitiveStartsWith = 9,
+  FBAEMAdvertiserRuleOperatorRegexMatch = 10,
+  FBAEMAdvertiserRuleOperatorEqual = 11,
+  FBAEMAdvertiserRuleOperatorNotEqual = 12,
+  FBAEMAdvertiserRuleOperatorLessThan = 13,
+  FBAEMAdvertiserRuleOperatorLessThanOrEqual = 14,
+  FBAEMAdvertiserRuleOperatorGreaterThan = 15,
+  FBAEMAdvertiserRuleOperatorGreaterThanOrEqual = 16,
+  FBAEMAdvertiserRuleOperatorCaseInsensitiveIsAny = 17,
+  FBAEMAdvertiserRuleOperatorCaseInsensitiveIsNotAny = 18,
+  FBAEMAdvertiserRuleOperatorIsAny = 19,
+  FBAEMAdvertiserRuleOperatorIsNotAny = 20,
+};
 
 
 
@@ -812,7 +871,7 @@ SWIFT_CLASS_NAMED("_AEMInvocation")
 @property (nonatomic, readonly) NSInteger conversionValue;
 @property (nonatomic) BOOL isAggregated;
 - (nullable instancetype)initWithAppLinkData:(NSDictionary * _Nullable)appLinkData;
-- (BOOL)attributeEvent:(NSString * _Nonnull)event currency:(NSString * _Nullable)potentialValueCurrency value:(NSNumber * _Nullable)potentialValue parameters:(NSDictionary<NSString *, id> * _Nullable)parameters configurations:(NSDictionary<NSString *, NSArray<FBAEMConfiguration *> *> * _Nullable)configurations shouldUpdateCache:(BOOL)shouldUpdateCache;
+- (BOOL)attributeEvent:(NSString * _Nonnull)event currency:(NSString * _Nullable)potentialValueCurrency value:(NSNumber * _Nullable)potentialValue parameters:(NSDictionary<NSString *, id> * _Nullable)parameters configurations:(NSDictionary<NSString *, NSArray<FBAEMConfiguration *> *> * _Nullable)configurations shouldUpdateCache:(BOOL)shouldUpdateCache isRuleMatchInServer:(BOOL)isRuleMatchInServer;
 - (BOOL)updateConversionValueWithConfigurations:(NSDictionary<NSString *, NSArray<FBAEMConfiguration *> *> * _Nullable)configurations event:(NSString * _Nonnull)event shouldBoostPriority:(BOOL)shouldBoostPriority SWIFT_WARN_UNUSED_RESULT;
 - (BOOL)isOptimizedEvent:(NSString * _Nonnull)event configurations:(NSDictionary<NSString *, NSArray<FBAEMConfiguration *> *> * _Nullable)configurations SWIFT_WARN_UNUSED_RESULT;
 - (BOOL)isOutOfWindowWithConfigurations:(NSDictionary<NSString *, NSArray<FBAEMConfiguration *> *> * _Nullable)configurations SWIFT_WARN_UNUSED_RESULT;
@@ -902,8 +961,11 @@ SWIFT_CLASS_NAMED("_AEMUtility")
 @interface FBAEMUtility : NSObject
 SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) FBAEMUtility * _Nonnull sharedUtility;)
 + (FBAEMUtility * _Nonnull)sharedUtility SWIFT_WARN_UNUSED_RESULT;
+- (FBAEMInvocation * _Nullable)getMatchedInvocation:(NSArray<FBAEMInvocation *> * _Nonnull)invocations businessID:(NSString * _Nullable)businessID SWIFT_WARN_UNUSED_RESULT;
 - (NSNumber * _Nonnull)getInSegmentValue:(NSDictionary<NSString *, id> * _Nullable)parameters matchingRule:(id <FBAEMAdvertiserRuleMatching> _Nullable)matchingRule SWIFT_WARN_UNUSED_RESULT;
+- (NSString * _Nullable)getContent:(NSDictionary<NSString *, id> * _Nullable)parameters SWIFT_WARN_UNUSED_RESULT;
 - (NSString * _Nullable)getContentID:(NSDictionary<NSString *, id> * _Nullable)parameters SWIFT_WARN_UNUSED_RESULT;
+- (NSArray<NSString *> * _Nonnull)getBusinessIDsInOrder:(NSArray<FBAEMInvocation *> * _Nonnull)invocations SWIFT_WARN_UNUSED_RESULT;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 

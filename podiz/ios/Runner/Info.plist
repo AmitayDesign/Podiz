@@ -20,7 +20,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>Podiz</string>
+	<string>podiz</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -28,18 +28,30 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLName</key>
-			<string>podiz.io</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>Podiz</string>
-			</array>
-		</dict>
-	</array>
+<array>
+<dict>
+    <key>CFBundleTypeRole</key>
+    <string>Editor</string>
+    <key>CFBundleURLName</key>
+    <string></string>
+    <key>CFBundleURLSchemes</key>
+    <array>
+    <string>podiz</string>
+    </array>
+    </dict>
+    <dict>
+    <key>CFBundleTypeRole</key>
+    <string>Editor</string>
+    <key>CFBundleURLName</key>
+    <string>podiz.io</string>
+    <key>CFBundleURLSchemes</key>
+    <array>
+    <string>http</string>
+    <string>https</string>
+    </array>
+    </dict>
+    
+</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>FlutterDeepLinkingEnabled</key>
@@ -49,6 +61,7 @@
 		<string>http</string>
 		<string>https</string>
 		<string>spotify</string>
+		<string>podiz</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>

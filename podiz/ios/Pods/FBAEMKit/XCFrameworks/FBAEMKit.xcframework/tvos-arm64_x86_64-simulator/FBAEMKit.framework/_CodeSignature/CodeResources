@@ -8,10 +8,6 @@
 		<data>
 		J4XLVbU1QkQ+vsp96NbE2CDglZw=
 		</data>
-		<key>Headers/FBAEMAdvertiserRuleOperator.h</key>
-		<data>
-		pxydqvI15BpRVBvfSn9RXFP6zz0=
-		</data>
 		<key>Headers/FBAEMKit-Prefix-Header.h</key>
 		<data>
 		K7g/zhr5ZA6vVqsMHKBc4hwRqTs=
@@ -22,11 +18,11 @@
 		</data>
 		<key>Headers/FBAEMKit.h</key>
 		<data>
-		SAeBFQSY44sZ42tnGJu/XTo2Rfc=
+		EH7RUIwB2KulWfwMNiaHYkqLa1M=
 		</data>
 		<key>Headers/FBAEMKitVersions.h</key>
 		<data>
-		lt0LB4i8L9DG3Q7RDJex/2lu5cE=
+		F8Q/fm7YuJB5hez1STkAvzWMvfE=
 		</data>
 		<key>Headers/FBAEMNetworking.h</key>
 		<data>
@@ -34,11 +30,11 @@
 		</data>
 		<key>Headers/FBAEMReporter.h</key>
 		<data>
-		uxfIQHnTD3zlScCuQdLnE5L80wg=
+		gqs2qfJo8ERfjKnKXMCNjV6dzcA=
 		</data>
 		<key>Info.plist</key>
 		<data>
-		IDKK8jS7CPyIIPNYoL3mnJmS008=
+		e1mrt6vknYLXrXA9EFKhF2/hvVc=
 		</data>
 		<key>Modules/FBAEMKit.swiftmodule/arm64-apple-tvos-simulator.swiftdoc</key>
 		<data>
@@ -50,7 +46,7 @@
 		</data>
 		<key>Modules/FBAEMKit.swiftmodule/arm64-apple-tvos-simulator.swiftmodule</key>
 		<data>
-		Z9Q++alNPrfmVsMIWrdE9Xo9FoE=
+		VWXZ1KuKdgijRg2Dx/GtJjNpvVs=
 		</data>
 		<key>Modules/FBAEMKit.swiftmodule/arm64.swiftdoc</key>
 		<data>
@@ -62,7 +58,7 @@
 		</data>
 		<key>Modules/FBAEMKit.swiftmodule/arm64.swiftmodule</key>
 		<data>
-		Z9Q++alNPrfmVsMIWrdE9Xo9FoE=
+		VWXZ1KuKdgijRg2Dx/GtJjNpvVs=
 		</data>
 		<key>Modules/FBAEMKit.swiftmodule/x86_64-apple-tvos-simulator.swiftdoc</key>
 		<data>
@@ -74,7 +70,7 @@
 		</data>
 		<key>Modules/FBAEMKit.swiftmodule/x86_64-apple-tvos-simulator.swiftmodule</key>
 		<data>
-		tDcItG2CLElOXFRX+S5p0qEjVZs=
+		hGH3yVvxuTfBK4gvBxWYfT6gNGQ=
 		</data>
 		<key>Modules/FBAEMKit.swiftmodule/x86_64.swiftdoc</key>
 		<data>
@@ -86,7 +82,7 @@
 		</data>
 		<key>Modules/FBAEMKit.swiftmodule/x86_64.swiftmodule</key>
 		<data>
-		tDcItG2CLElOXFRX+S5p0qEjVZs=
+		hGH3yVvxuTfBK4gvBxWYfT6gNGQ=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -100,13 +96,6 @@
 			<key>hash2</key>
 			<data>
 			b7OWeUClIk3eMzKQ88dpyks5XwvN2rqz8ma+jGc9aC0=
-			</data>
-		</dict>
-		<key>Headers/FBAEMAdvertiserRuleOperator.h</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			V/lKJil+YXykdXxtDcsdsCAVbcXhTZXclpWuGeikoDA=
 			</data>
 		</dict>
 		<key>Headers/FBAEMKit-Prefix-Header.h</key>
@@ -127,14 +116,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			0orEOqsOQXBzPfx9+NoVnIfUqQ0XpweKaAcbpoMjZq0=
+			/YT55nQZWOt3pcZUvWnW/QaRDB2jznCcwcZ3iT0AH0M=
 			</data>
 		</dict>
 		<key>Headers/FBAEMKitVersions.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			F2v0+JMaC65lEZ3pwwxDYTyH2HcsrA5d8Y+P+hJ4faw=
+			NvrLVRPWSsL+zjnnFAr6dpsyBZvI3TtlTO0UeVzqd8Q=
 			</data>
 		</dict>
 		<key>Headers/FBAEMNetworking.h</key>
@@ -148,7 +137,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			nrCXaOrWQfN/3ArcWphTRyHF++9EH8hi+b+FVLXGTjE=
+			SyxI8OIv09XuBOpiuo0yzIrJnWd2ij38o2zxBnQNPIM=
 			</data>
 		</dict>
 		<key>Modules/FBAEMKit.swiftmodule/arm64-apple-tvos-simulator.swiftdoc</key>
@@ -169,7 +158,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Hbw3sXSfGYyorqC9grxVPoHYXuK3BUJOaiCN2StcQgk=
+			GKTniNBpjt1xoijuK8bB4BTvj6ExAG3vzbcNMgATOKk=
 			</data>
 		</dict>
 		<key>Modules/FBAEMKit.swiftmodule/arm64.swiftdoc</key>
@@ -190,7 +179,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Hbw3sXSfGYyorqC9grxVPoHYXuK3BUJOaiCN2StcQgk=
+			GKTniNBpjt1xoijuK8bB4BTvj6ExAG3vzbcNMgATOKk=
 			</data>
 		</dict>
 		<key>Modules/FBAEMKit.swiftmodule/x86_64-apple-tvos-simulator.swiftdoc</key>
@@ -211,7 +200,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			cG5vyXSxc2jkMkeMySTJq2b/4YTLEnffQvfYynZkQ9I=
+			pWYQAfWwJk6H3COQHIoRfFPmOtY2OdpFCfikZI2HjCk=
 			</data>
 		</dict>
 		<key>Modules/FBAEMKit.swiftmodule/x86_64.swiftdoc</key>
@@ -232,7 +221,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			cG5vyXSxc2jkMkeMySTJq2b/4YTLEnffQvfYynZkQ9I=
+			pWYQAfWwJk6H3COQHIoRfFPmOtY2OdpFCfikZI2HjCk=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>

@@ -195,8 +195,6 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 @import ObjectiveC;
 #endif
 
-#import <FBSDKLoginKit/FBSDKLoginKit.h>
-
 #pragma clang diagnostic ignored "-Wproperty-attribute-mismatch"
 #pragma clang diagnostic ignored "-Wduplicate-method-arg"
 #if __has_warning("-Wpragma-clang-attribute")
@@ -251,6 +249,72 @@ SWIFT_CLASS_NAMED("DeviceLoginCodeInfo")
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
 
+/// Custom error codes for device login errors in the login error domain
+typedef SWIFT_ENUM_NAMED(NSInteger, FBSDKDeviceLoginError, "DeviceLoginErrorCode", open) {
+/// Your device is polling too frequently.
+  FBSDKDeviceLoginErrorExcessivePolling = 1349172,
+/// User has declined to authorize your application.
+  FBSDKDeviceLoginErrorAuthorizationDeclined = 1349173,
+/// User has not yet authorized your application. Continue polling.
+  FBSDKDeviceLoginErrorAuthorizationPending = 1349174,
+/// The code you entered has expired.
+  FBSDKDeviceLoginErrorCodeExpired = 1349152,
+};
+
+@protocol FBSDKDeviceLoginManagerDelegate;
+
+/// Use this class to perform a device login flow.
+/// The device login flow starts by requesting a code from the device login API.
+/// This class informs the delegate when this code is received. You should then present the
+/// code to the user to enter. In the meantime, this class polls the device login API
+/// periodically and informs the delegate of the results.
+/// See <a href="https://developers.facebook.com/docs/facebook-login/for-devices">Facebook Device Login</a>.
+SWIFT_CLASS_NAMED("DeviceLoginManager")
+@interface FBSDKDeviceLoginManager : NSObject
+/// The device login manager delegate.
+@property (nonatomic, weak) id <FBSDKDeviceLoginManagerDelegate> _Nullable delegate;
+/// The requested permissions.
+@property (nonatomic, readonly, copy) NSArray<NSString *> * _Nonnull permissions;
+/// The optional URL to redirect the user to after they complete the login.
+/// The URL must be configured in your App Settings -> Advanced -> OAuth Redirect URIs
+@property (nonatomic, copy) NSURL * _Nullable redirectURL;
+/// Initializes a new instance.
+/// @param permissions The permissions to request.
+/// @param enableSmartLogin Whether to enable smart login.
+- (nonnull instancetype)initWithPermissions:(NSArray<NSString *> * _Nonnull)permissions enableSmartLogin:(BOOL)enableSmartLogin OBJC_DESIGNATED_INITIALIZER;
+/// Starts the device login flow
+/// This instance will retain self until the flow is finished or cancelled.
+- (void)start;
+/// Attempts to cancel the device login flow.
+- (void)cancel;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+@end
+
+@class NSNetService;
+
+@interface FBSDKDeviceLoginManager (SWIFT_EXTENSION(FBSDKLoginKit)) <NSNetServiceDelegate>
+- (void)netService:(NSNetService * _Nonnull)service didNotPublish:(NSDictionary<NSString *, NSNumber *> * _Nonnull)errorValues;
+@end
+
+
+@class FBSDKDeviceLoginManagerResult;
+
+/// A delegate for <code>DeviceLoginManager</code>.
+SWIFT_PROTOCOL_NAMED("DeviceLoginManagerDelegate")
+@protocol FBSDKDeviceLoginManagerDelegate
+/// Indicates the device login flow has started. You should parse <code>codeInfo</code> to present the code to the user to enter.
+/// @param loginManager the login manager instance.
+/// @param codeInfo the code info data.
+- (void)deviceLoginManager:(FBSDKDeviceLoginManager * _Nonnull)loginManager startedWithCodeInfo:(FBSDKDeviceLoginCodeInfo * _Nonnull)codeInfo;
+/// Indicates the device login flow has finished.
+/// @param loginManager the login manager instance.
+/// @param result the results of the login flow.
+/// @param error the error, if available.
+/// The flow can be finished if the user completed the flow, cancelled, or if the code has expired.
+- (void)deviceLoginManager:(FBSDKDeviceLoginManager * _Nonnull)loginManager completedWithResult:(FBSDKDeviceLoginManagerResult * _Nullable)result error:(NSError * _Nullable)error;
+@end
+
 @class FBSDKAccessToken;
 
 /// Represents the results of the a device login flow. This is used by <code>DeviceLoginManager</code>
@@ -298,6 +362,33 @@ SWIFT_PROTOCOL_NAMED("_UserInterfaceStringProviding")
 @interface FBSDKInternalUtility (SWIFT_EXTENSION(FBSDKLoginKit)) <_FBSDKUserInterfaceStringProviding>
 @end
 
+/// Custom error codes for login errors in the login error domain
+typedef SWIFT_ENUM_NAMED(NSInteger, FBSDKLoginError, "LoginErrorCode", open) {
+/// Reserved
+  FBSDKLoginErrorReserved = 300,
+/// The error code for unknown errors
+  FBSDKLoginErrorUnknown = 301,
+/// The user’s password has changed and must log in again
+  FBSDKLoginErrorPasswordChanged = 302,
+/// The user must log in to their account on www.facebook.com to restore access
+  FBSDKLoginErrorUserCheckpointed = 303,
+/// Indicates a failure to request new permissions because the user has changed
+  FBSDKLoginErrorUserMismatch = 304,
+/// The user must confirm their account with Facebook before logging in
+  FBSDKLoginErrorUnconfirmedUser = 305,
+/// The Accounts framework failed without returning an error, indicating the app’s slider in the
+/// iOS Facebook Settings (device Settings -> Facebook -> App Name) has been disabled.
+  FBSDKLoginErrorSystemAccountAppDisabled = 306,
+/// An error occurred related to Facebook system Account store
+  FBSDKLoginErrorSystemAccountUnavailable = 307,
+/// The login response was missing a valid challenge string
+  FBSDKLoginErrorBadChallengeString = 308,
+/// The ID token returned in login response was invalid
+  FBSDKLoginErrorInvalidIDToken = 309,
+/// A current access token was required and not provided
+  FBSDKLoginErrorMissingAccessToken = 310,
+};
+
 
 /// Internal Type exposed to facilitate transition to Swift.
 /// API Subject to change or removal without warning. Do not use.
@@ -316,13 +407,11 @@ SWIFT_PROTOCOL_NAMED("_ServerConfigurationProviding")
 /// API Subject to change or removal without warning. Do not use.
 /// @warning INTERNAL - DO NOT USE
 SWIFT_CLASS_NAMED("_DevicePoller")
-@interface FBSDKDevicePoller : NSObject <FBSDKDevicePolling>
-- (void)scheduleBlock:(void (^ _Nonnull)(void))block interval:(NSUInteger)interval;
+@interface FBSDKDevicePoller : NSObject
+- (void)scheduleWithInterval:(NSUInteger)interval block:(void (^ _Nonnull)(void))block;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
-@protocol NSNetServiceDelegate;
-@class NSNetService;
 
 SWIFT_CLASS_NAMED("_DeviceRequestsHelper")
 @interface FBSDKDeviceRequestsHelper : NSObject
@@ -549,8 +638,6 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 @import ObjectiveC;
 #endif
 
-#import <FBSDKLoginKit/FBSDKLoginKit.h>
-
 #pragma clang diagnostic ignored "-Wproperty-attribute-mismatch"
 #pragma clang diagnostic ignored "-Wduplicate-method-arg"
 #if __has_warning("-Wpragma-clang-attribute")
@@ -605,6 +692,72 @@ SWIFT_CLASS_NAMED("DeviceLoginCodeInfo")
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
 
+/// Custom error codes for device login errors in the login error domain
+typedef SWIFT_ENUM_NAMED(NSInteger, FBSDKDeviceLoginError, "DeviceLoginErrorCode", open) {
+/// Your device is polling too frequently.
+  FBSDKDeviceLoginErrorExcessivePolling = 1349172,
+/// User has declined to authorize your application.
+  FBSDKDeviceLoginErrorAuthorizationDeclined = 1349173,
+/// User has not yet authorized your application. Continue polling.
+  FBSDKDeviceLoginErrorAuthorizationPending = 1349174,
+/// The code you entered has expired.
+  FBSDKDeviceLoginErrorCodeExpired = 1349152,
+};
+
+@protocol FBSDKDeviceLoginManagerDelegate;
+
+/// Use this class to perform a device login flow.
+/// The device login flow starts by requesting a code from the device login API.
+/// This class informs the delegate when this code is received. You should then present the
+/// code to the user to enter. In the meantime, this class polls the device login API
+/// periodically and informs the delegate of the results.
+/// See <a href="https://developers.facebook.com/docs/facebook-login/for-devices">Facebook Device Login</a>.
+SWIFT_CLASS_NAMED("DeviceLoginManager")
+@interface FBSDKDeviceLoginManager : NSObject
+/// The device login manager delegate.
+@property (nonatomic, weak) id <FBSDKDeviceLoginManagerDelegate> _Nullable delegate;
+/// The requested permissions.
+@property (nonatomic, readonly, copy) NSArray<NSString *> * _Nonnull permissions;
+/// The optional URL to redirect the user to after they complete the login.
+/// The URL must be configured in your App Settings -> Advanced -> OAuth Redirect URIs
+@property (nonatomic, copy) NSURL * _Nullable redirectURL;
+/// Initializes a new instance.
+/// @param permissions The permissions to request.
+/// @param enableSmartLogin Whether to enable smart login.
+- (nonnull instancetype)initWithPermissions:(NSArray<NSString *> * _Nonnull)permissions enableSmartLogin:(BOOL)enableSmartLogin OBJC_DESIGNATED_INITIALIZER;
+/// Starts the device login flow
+/// This instance will retain self until the flow is finished or cancelled.
+- (void)start;
+/// Attempts to cancel the device login flow.
+- (void)cancel;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+@end
+
+@class NSNetService;
+
+@interface FBSDKDeviceLoginManager (SWIFT_EXTENSION(FBSDKLoginKit)) <NSNetServiceDelegate>
+- (void)netService:(NSNetService * _Nonnull)service didNotPublish:(NSDictionary<NSString *, NSNumber *> * _Nonnull)errorValues;
+@end
+
+
+@class FBSDKDeviceLoginManagerResult;
+
+/// A delegate for <code>DeviceLoginManager</code>.
+SWIFT_PROTOCOL_NAMED("DeviceLoginManagerDelegate")
+@protocol FBSDKDeviceLoginManagerDelegate
+/// Indicates the device login flow has started. You should parse <code>codeInfo</code> to present the code to the user to enter.
+/// @param loginManager the login manager instance.
+/// @param codeInfo the code info data.
+- (void)deviceLoginManager:(FBSDKDeviceLoginManager * _Nonnull)loginManager startedWithCodeInfo:(FBSDKDeviceLoginCodeInfo * _Nonnull)codeInfo;
+/// Indicates the device login flow has finished.
+/// @param loginManager the login manager instance.
+/// @param result the results of the login flow.
+/// @param error the error, if available.
+/// The flow can be finished if the user completed the flow, cancelled, or if the code has expired.
+- (void)deviceLoginManager:(FBSDKDeviceLoginManager * _Nonnull)loginManager completedWithResult:(FBSDKDeviceLoginManagerResult * _Nullable)result error:(NSError * _Nullable)error;
+@end
+
 @class FBSDKAccessToken;
 
 /// Represents the results of the a device login flow. This is used by <code>DeviceLoginManager</code>
@@ -652,6 +805,33 @@ SWIFT_PROTOCOL_NAMED("_UserInterfaceStringProviding")
 @interface FBSDKInternalUtility (SWIFT_EXTENSION(FBSDKLoginKit)) <_FBSDKUserInterfaceStringProviding>
 @end
 
+/// Custom error codes for login errors in the login error domain
+typedef SWIFT_ENUM_NAMED(NSInteger, FBSDKLoginError, "LoginErrorCode", open) {
+/// Reserved
+  FBSDKLoginErrorReserved = 300,
+/// The error code for unknown errors
+  FBSDKLoginErrorUnknown = 301,
+/// The user’s password has changed and must log in again
+  FBSDKLoginErrorPasswordChanged = 302,
+/// The user must log in to their account on www.facebook.com to restore access
+  FBSDKLoginErrorUserCheckpointed = 303,
+/// Indicates a failure to request new permissions because the user has changed
+  FBSDKLoginErrorUserMismatch = 304,
+/// The user must confirm their account with Facebook before logging in
+  FBSDKLoginErrorUnconfirmedUser = 305,
+/// The Accounts framework failed without returning an error, indicating the app’s slider in the
+/// iOS Facebook Settings (device Settings -> Facebook -> App Name) has been disabled.
+  FBSDKLoginErrorSystemAccountAppDisabled = 306,
+/// An error occurred related to Facebook system Account store
+  FBSDKLoginErrorSystemAccountUnavailable = 307,
+/// The login response was missing a valid challenge string
+  FBSDKLoginErrorBadChallengeString = 308,
+/// The ID token returned in login response was invalid
+  FBSDKLoginErrorInvalidIDToken = 309,
+/// A current access token was required and not provided
+  FBSDKLoginErrorMissingAccessToken = 310,
+};
+
 
 /// Internal Type exposed to facilitate transition to Swift.
 /// API Subject to change or removal without warning. Do not use.
@@ -670,13 +850,11 @@ SWIFT_PROTOCOL_NAMED("_ServerConfigurationProviding")
 /// API Subject to change or removal without warning. Do not use.
 /// @warning INTERNAL - DO NOT USE
 SWIFT_CLASS_NAMED("_DevicePoller")
-@interface FBSDKDevicePoller : NSObject <FBSDKDevicePolling>
-- (void)scheduleBlock:(void (^ _Nonnull)(void))block interval:(NSUInteger)interval;
+@interface FBSDKDevicePoller : NSObject
+- (void)scheduleWithInterval:(NSUInteger)interval block:(void (^ _Nonnull)(void))block;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
-@protocol NSNetServiceDelegate;
-@class NSNetService;
 
 SWIFT_CLASS_NAMED("_DeviceRequestsHelper")
 @interface FBSDKDeviceRequestsHelper : NSObject

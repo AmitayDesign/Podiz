@@ -610,11 +610,11 @@ PODS:
   - BoringSSL-GRPC/Implementation (0.0.24):
     - BoringSSL-GRPC/Interface (= 0.0.24)
   - BoringSSL-GRPC/Interface (0.0.24)
-  - cloud_firestore (3.4.3):
+  - cloud_firestore (3.4.8):
     - Firebase/Firestore (= 9.3.0)
     - firebase_core
     - Flutter
-  - cloud_functions (3.3.3):
+  - cloud_functions (3.3.7):
     - Firebase/Functions (= 9.3.0)
     - firebase_core
     - Flutter
@@ -623,14 +623,14 @@ PODS:
     - Reachability
   - device_info_plus (0.0.1):
     - Flutter
-  - FBAEMKit (14.0.0):
-    - FBSDKCoreKit_Basics (= 14.0.0)
-  - FBSDKCoreKit (14.0.0):
-    - FBAEMKit (= 14.0.0)
-    - FBSDKCoreKit_Basics (= 14.0.0)
-  - FBSDKCoreKit_Basics (14.0.0)
-  - FBSDKLoginKit (14.0.0):
-    - FBSDKCoreKit (= 14.0.0)
+  - FBAEMKit (14.1.0):
+    - FBSDKCoreKit_Basics (= 14.1.0)
+  - FBSDKCoreKit (14.1.0):
+    - FBAEMKit (= 14.1.0)
+    - FBSDKCoreKit_Basics (= 14.1.0)
+  - FBSDKCoreKit_Basics (14.1.0)
+  - FBSDKLoginKit (14.1.0):
+    - FBSDKCoreKit (= 14.1.0)
   - Firebase/Auth (9.3.0):
     - Firebase/CoreOnly
     - FirebaseAuth (~> 9.3.0)
@@ -657,26 +657,26 @@ PODS:
   - Firebase/Storage (9.3.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 9.3.0)
-  - firebase_auth (3.6.2):
+  - firebase_auth (3.9.0):
     - Firebase/Auth (= 9.3.0)
     - firebase_core
     - Flutter
   - firebase_core (1.20.0):
     - Firebase/CoreOnly (= 9.3.0)
     - Flutter
-  - firebase_database (9.1.1):
+  - firebase_database (9.1.4):
     - Firebase/Database (= 9.3.0)
     - firebase_core
     - Flutter
-  - firebase_dynamic_links (4.3.3):
+  - firebase_dynamic_links (4.3.7):
     - Firebase/DynamicLinks (= 9.3.0)
     - firebase_core
     - Flutter
-  - firebase_messaging (12.0.1):
+  - firebase_messaging (12.0.3):
     - Firebase/Messaging (= 9.3.0)
     - firebase_core
     - Flutter
-  - firebase_storage (10.3.4):
+  - firebase_storage (10.3.8):
     - Firebase/Storage (= 9.3.0)
     - firebase_core
     - Flutter
@@ -773,8 +773,8 @@ PODS:
   - Flutter (1.0.0)
   - flutter_custom_tabs (0.0.1):
     - Flutter
-  - flutter_facebook_auth (4.4.0):
-    - FBSDKLoginKit (~> 14.0.0)
+  - flutter_facebook_auth (4.4.1):
+    - FBSDKLoginKit (= 14.1.0)
     - Flutter
   - flutter_keyboard_visibility (0.0.1):
     - Flutter
@@ -1064,21 +1064,21 @@ SPEC CHECKSUMS:
   app_settings: d103828c9f5d515c4df9ee754dabd443f7cedcf3
   AppAuth: 80317d99ac7ff2801a2f18ff86b48cd315ed465d
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
-  cloud_firestore: 08093e207dfb2e6c82a6b272def699e022548786
-  cloud_functions: 646a1d8ecc5868b97e6c41cb2bc10b7509ba611c
+  cloud_firestore: a8f64f53663ff04575229fd5c976032c8ba13537
+  cloud_functions: 65c9877c5f36693972212e7a7e3518b578cc5aa6
   connectivity: c4130b2985d4ef6fd26f9702e886bd5260681467
   device_info_plus: e5c5da33f982a436e103237c0c85f9031142abed
-  FBAEMKit: d00064597439e75885c70d9adbcb5f3e9ad84f5d
-  FBSDKCoreKit: e5d3acfffe5063a9d0b967ba2ad1f5afc460cf43
-  FBSDKCoreKit_Basics: 1ff46a12e80f0b66e6c00e1ef32d6a5b5b9008a5
-  FBSDKLoginKit: dbe86ef42ab142f3bd0f1c904a21bb33f31c5569
+  FBAEMKit: a899515e45476027f73aef377b5cffadcd56ca3a
+  FBSDKCoreKit: 24f8bc8d3b5b2a8c5c656a1329492a12e8efa792
+  FBSDKCoreKit_Basics: 6e578c9bdc7aa1365dbbbde633c9ebb536bcaa98
+  FBSDKLoginKit: 787de205d524c3a4b17d527916f1d066e4361660
   Firebase: ef75abb1cdbc746d5a38f4e26c422c807b189b8c
-  firebase_auth: e4bd9a01f6c45764bf3bfb0cea4d5ce3673a92a2
+  firebase_auth: 58259492057cd7e7c5690095e0462e0491b88287
   firebase_core: 96214f90497b808a2cf2a24517084c5f6de37b53
-  firebase_database: 8a1e2fd8d74a5bbdcbb7b563df3f175571bc968c
-  firebase_dynamic_links: 0cc25cd58aa0b24acfcf10e1aaf6f32323f1c361
-  firebase_messaging: a2cd2c6dd7b5430bb9e4e50e9a474413ae3bce09
-  firebase_storage: e95ec41580e311cb30b1ed7459b9e94fb4bbe672
+  firebase_database: 40d05a377703882445590a9ebb06c7c70af90380
+  firebase_dynamic_links: d69eef432f02218088153e955b321eb3627b6d86
+  firebase_messaging: 5fd2688097852e9f6e029c766c4ece369ca6dec5
+  firebase_storage: b841b069edb75d518386ca20c10ce9eec41327b7
   FirebaseAnalytics: bf46f5163f44097ce2c789de0b3e6f87f1da834a
   FirebaseAppCheckInterop: 63119cdfc94b16c3e9421513c17f597aee2ea225
   FirebaseAuth: 9ebc3577fe0acf9092df21ac314024b70aebf21e
@@ -1099,7 +1099,7 @@ SPEC CHECKSUMS:
   FirebaseStorageInternal: 425c7dc7de44d9b7e07a9f8d6515bab0f1266b87
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_custom_tabs: 7a10a08686955cb748e5d26e0ae586d30689bf89
-  flutter_facebook_auth: 8992ef870d441b8403a3b6b9859e7932605407cf
+  flutter_facebook_auth: 361ac7a57263ebf327f26089507ead0d66558ee8
   flutter_keyboard_visibility: 0339d06371254c3eb25eeb90ba8d17dca8f9c069
   flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743
   flutter_web_auth_2: c0c62d522e9f2f116968cb89debcecfab775791f

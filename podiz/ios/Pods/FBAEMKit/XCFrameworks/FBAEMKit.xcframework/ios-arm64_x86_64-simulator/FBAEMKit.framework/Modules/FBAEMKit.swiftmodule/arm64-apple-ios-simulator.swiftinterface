@@ -30,6 +30,34 @@ import _Concurrency
   @objc override dynamic public init()
   @objc deinit
 }
+@objc(FBAEMAdvertiserRuleOperator) public enum _AEMAdvertiserRuleOperator : Swift.Int {
+  case unknown = 0
+  case and
+  case or
+  case not
+  case contains
+  case notContains
+  case startsWith
+  case caseInsensitiveContains
+  case caseInsensitiveNotContains
+  case caseInsensitiveStartsWith
+  case regexMatch
+  case equal
+  case notEqual
+  case lessThan
+  case lessThanOrEqual
+  case greaterThan
+  case greaterThanOrEqual
+  case caseInsensitiveIsAny
+  case caseInsensitiveIsNotAny
+  case isAny
+  case isNotAny
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
 @objc(FBAEMAdvertiserRuleProviding) public protocol _AEMAdvertiserRuleProviding {
   @objc(createRuleWithJson:) func createRule(json: Swift.String?) -> FBAEMKit._AEMAdvertiserRuleMatching?
   @objc(createRuleWithDict:) func createRule(dictionary: [Swift.String : Any]) -> FBAEMKit._AEMAdvertiserRuleMatching?
@@ -138,7 +166,7 @@ import _Concurrency
   @objc public var isAggregated: Swift.Bool
   @objc convenience public init?(appLinkData: [Swift.AnyHashable : Any]?)
   @objc @discardableResult
-  public func attributeEvent(_ event: Swift.String, currency potentialValueCurrency: Swift.String?, value potentialValue: Foundation.NSNumber?, parameters: [Swift.String : Any]?, configurations: [Swift.String : [FBAEMKit._AEMConfiguration]]?, shouldUpdateCache: Swift.Bool) -> Swift.Bool
+  public func attributeEvent(_ event: Swift.String, currency potentialValueCurrency: Swift.String?, value potentialValue: Foundation.NSNumber?, parameters: [Swift.String : Any]?, configurations: [Swift.String : [FBAEMKit._AEMConfiguration]]?, shouldUpdateCache: Swift.Bool, isRuleMatchInServer: Swift.Bool) -> Swift.Bool
   @objc public func updateConversionValue(configurations: [Swift.String : [FBAEMKit._AEMConfiguration]]?, event: Swift.String, shouldBoostPriority: Swift.Bool) -> Swift.Bool
   @objc public func isOptimizedEvent(_ event: Swift.String, configurations: [Swift.String : [FBAEMKit._AEMConfiguration]]?) -> Swift.Bool
   @objc public func isOutOfWindow(configurations: [Swift.String : [FBAEMKit._AEMConfiguration]]?) -> Swift.Bool
@@ -188,8 +216,14 @@ import _Concurrency
 }
 @_inheritsConvenienceInitializers @objcMembers @objc(FBAEMUtility) final public class _AEMUtility : ObjectiveC.NSObject {
   @objc(sharedUtility) public static let shared: FBAEMKit._AEMUtility
+  @objc final public func getMatchedInvocation(_ invocations: [FBAEMKit._AEMInvocation], businessID: Swift.String?) -> FBAEMKit._AEMInvocation?
   @objc final public func getInSegmentValue(_ parameters: [Swift.String : Any]?, matchingRule: FBAEMKit._AEMAdvertiserRuleMatching?) -> Foundation.NSNumber
+  @objc final public func getContent(_ parameters: [Swift.String : Any]?) -> Swift.String?
   @objc final public func getContentID(_ parameters: [Swift.String : Any]?) -> Swift.String?
+  @objc final public func getBusinessIDsInOrder(_ invocations: [FBAEMKit._AEMInvocation]) -> [Swift.String]
   @objc override dynamic public init()
   @objc deinit
 }
+extension FBAEMKit._AEMAdvertiserRuleOperator : Swift.Equatable {}
+extension FBAEMKit._AEMAdvertiserRuleOperator : Swift.Hashable {}
+extension FBAEMKit._AEMAdvertiserRuleOperator : Swift.RawRepresentable {}

@@ -38,6 +38,7 @@ class ConnectionController extends StateNotifier<AsyncValue> {
 
   Future<void> signIn() async {
     final response = await openSignInUrl();
+    print(response);
     if (response == null) return;
     try {
       final data = Uri.parse(response).queryParameters;
@@ -55,14 +56,16 @@ class ConnectionController extends StateNotifier<AsyncValue> {
     loginCompleter?.complete();
     loginCompleter = Completer();
     await openUrl(spotifyApi.authenticationUrl);
+    print("hello");
     state = const AsyncValue.data(null);
     sub?.cancel();
     sub = linkStream.listen((link) {
+      print(link);
       if (link != null && link.startsWith(spotifyApi.redirectUrl)) {
         state = const AsyncValue.loading();
         loginCompleter!.complete(link);
       }
-    });
+    }, onError: (err) => print(err.toString()));
     return await loginCompleter!.future.whenComplete(() => sub?.cancel());
   }
 

@@ -229,6 +229,39 @@ SWIFT_PROTOCOL_NAMED("_LoginEventLogging")
 @end
 
 @class NSString;
+
+/// Represents a code verifier used in the PKCE (Proof Key for Code Exchange)
+/// process. This is a cryptographically random string using the characters
+/// A-Z, a-z, 0-9, and the punctuation characters -._~ (hyphen, period,
+/// underscore, and tilde), between 43 and 128 characters long.
+SWIFT_CLASS_NAMED("CodeVerifier")
+@interface FBSDKCodeVerifier : NSObject
+/// The string value of the code verifier
+@property (nonatomic, readonly, copy) NSString * _Nonnull value;
+/// The SHA256 hashed challenge of the code verifier
+@property (nonatomic, readonly, copy) NSString * _Nonnull challenge;
+/// Attempts to initialize a new code verifier instance with the given string.
+/// Creation will fail and return nil if the string is invalid.
+/// @param string the code verifier string
+- (nullable instancetype)initWithString:(NSString * _Nonnull)string;
+/// Initializes a new code verifier instance with a random string value
+- (nonnull instancetype)init;
+@end
+
+/// Passed to openURL to indicate which default audience to use for sessions that post data to Facebook.
+/// Certain operations such as publishing a status or publishing a photo require an audience. When the user
+/// grants an application permission to perform a publish operation, a default audience is selected as the
+/// publication ceiling for the application. This enumerated value allows the application to select which
+/// audience to ask the user to grant publish permission for.
+typedef SWIFT_ENUM_NAMED(NSUInteger, FBSDKDefaultAudience, "DefaultAudience", open) {
+/// Indicates that the user’s friends are able to see posts made by the application
+  FBSDKDefaultAudienceFriends = 0,
+/// Indicates that only the user is able to see posts made by the application
+  FBSDKDefaultAudienceOnlyMe = 1,
+/// Indicates that all Facebook users are able to see posts made by the application
+  FBSDKDefaultAudienceEveryone = 2,
+};
+
 @class NSURL;
 @class NSDate;
 
@@ -249,6 +282,72 @@ SWIFT_CLASS_NAMED("DeviceLoginCodeInfo")
 - (nonnull instancetype)initWithIdentifier:(NSString * _Nonnull)identifier loginCode:(NSString * _Nonnull)loginCode verificationURL:(NSURL * _Nonnull)verificationURL expirationDate:(NSDate * _Nonnull)expirationDate pollingInterval:(NSUInteger)pollingInterval OBJC_DESIGNATED_INITIALIZER;
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+@end
+
+/// Custom error codes for device login errors in the login error domain
+typedef SWIFT_ENUM_NAMED(NSInteger, FBSDKDeviceLoginError, "DeviceLoginErrorCode", open) {
+/// Your device is polling too frequently.
+  FBSDKDeviceLoginErrorExcessivePolling = 1349172,
+/// User has declined to authorize your application.
+  FBSDKDeviceLoginErrorAuthorizationDeclined = 1349173,
+/// User has not yet authorized your application. Continue polling.
+  FBSDKDeviceLoginErrorAuthorizationPending = 1349174,
+/// The code you entered has expired.
+  FBSDKDeviceLoginErrorCodeExpired = 1349152,
+};
+
+@protocol FBSDKDeviceLoginManagerDelegate;
+
+/// Use this class to perform a device login flow.
+/// The device login flow starts by requesting a code from the device login API.
+/// This class informs the delegate when this code is received. You should then present the
+/// code to the user to enter. In the meantime, this class polls the device login API
+/// periodically and informs the delegate of the results.
+/// See <a href="https://developers.facebook.com/docs/facebook-login/for-devices">Facebook Device Login</a>.
+SWIFT_CLASS_NAMED("DeviceLoginManager")
+@interface FBSDKDeviceLoginManager : NSObject
+/// The device login manager delegate.
+@property (nonatomic, weak) id <FBSDKDeviceLoginManagerDelegate> _Nullable delegate;
+/// The requested permissions.
+@property (nonatomic, readonly, copy) NSArray<NSString *> * _Nonnull permissions;
+/// The optional URL to redirect the user to after they complete the login.
+/// The URL must be configured in your App Settings -> Advanced -> OAuth Redirect URIs
+@property (nonatomic, copy) NSURL * _Nullable redirectURL;
+/// Initializes a new instance.
+/// @param permissions The permissions to request.
+/// @param enableSmartLogin Whether to enable smart login.
+- (nonnull instancetype)initWithPermissions:(NSArray<NSString *> * _Nonnull)permissions enableSmartLogin:(BOOL)enableSmartLogin OBJC_DESIGNATED_INITIALIZER;
+/// Starts the device login flow
+/// This instance will retain self until the flow is finished or cancelled.
+- (void)start;
+/// Attempts to cancel the device login flow.
+- (void)cancel;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+@end
+
+
+@class NSNetService;
+
+@interface FBSDKDeviceLoginManager (SWIFT_EXTENSION(FBSDKLoginKit)) <NSNetServiceDelegate>
+- (void)netService:(NSNetService * _Nonnull)service didNotPublish:(NSDictionary<NSString *, NSNumber *> * _Nonnull)errorValues;
+@end
+
+@class FBSDKDeviceLoginManagerResult;
+
+/// A delegate for <code>DeviceLoginManager</code>.
+SWIFT_PROTOCOL_NAMED("DeviceLoginManagerDelegate")
+@protocol FBSDKDeviceLoginManagerDelegate
+/// Indicates the device login flow has started. You should parse <code>codeInfo</code> to present the code to the user to enter.
+/// @param loginManager the login manager instance.
+/// @param codeInfo the code info data.
+- (void)deviceLoginManager:(FBSDKDeviceLoginManager * _Nonnull)loginManager startedWithCodeInfo:(FBSDKDeviceLoginCodeInfo * _Nonnull)codeInfo;
+/// Indicates the device login flow has finished.
+/// @param loginManager the login manager instance.
+/// @param result the results of the login flow.
+/// @param error the error, if available.
+/// The flow can be finished if the user completed the flow, cancelled, or if the code has expired.
+- (void)deviceLoginManager:(FBSDKDeviceLoginManager * _Nonnull)loginManager completedWithResult:(FBSDKDeviceLoginManagerResult * _Nullable)result error:(NSError * _Nullable)error;
 @end
 
 @class FBSDKAccessToken;
@@ -272,7 +371,6 @@ SWIFT_CLASS_NAMED("DeviceLoginManagerResult")
 enum FBSDKLoginButtonTooltipBehavior : NSUInteger;
 enum FBSDKTooltipColorStyle : NSUInteger;
 enum FBSDKLoginTracking : NSUInteger;
-@class FBSDKCodeVerifier;
 @class NSCoder;
 
 /// A button that initiates a log in or log out flow upon tapping.
@@ -285,7 +383,7 @@ enum FBSDKLoginTracking : NSUInteger;
 SWIFT_CLASS_NAMED("FBLoginButton")
 @interface FBSDKLoginButton : FBSDKButton
 /// The default audience to use, if publish permissions are requested at login time.
-@property (nonatomic) FBSDKDefaultAudience defaultAudience;
+@property (nonatomic) enum FBSDKDefaultAudience defaultAudience;
 /// Gets or sets the delegate.
 @property (nonatomic, weak) IBOutlet id <FBSDKLoginButtonDelegate> _Nullable delegate;
 /// The permissions to request.
@@ -579,6 +677,111 @@ SWIFT_CLASS_NAMED("LoginConfiguration")
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
 
+/// Custom error codes for login errors in the login error domain
+typedef SWIFT_ENUM_NAMED(NSInteger, FBSDKLoginError, "LoginErrorCode", open) {
+/// Reserved
+  FBSDKLoginErrorReserved = 300,
+/// The error code for unknown errors
+  FBSDKLoginErrorUnknown = 301,
+/// The user’s password has changed and must log in again
+  FBSDKLoginErrorPasswordChanged = 302,
+/// The user must log in to their account on www.facebook.com to restore access
+  FBSDKLoginErrorUserCheckpointed = 303,
+/// Indicates a failure to request new permissions because the user has changed
+  FBSDKLoginErrorUserMismatch = 304,
+/// The user must confirm their account with Facebook before logging in
+  FBSDKLoginErrorUnconfirmedUser = 305,
+/// The Accounts framework failed without returning an error, indicating the app’s slider in the
+/// iOS Facebook Settings (device Settings -> Facebook -> App Name) has been disabled.
+  FBSDKLoginErrorSystemAccountAppDisabled = 306,
+/// An error occurred related to Facebook system Account store
+  FBSDKLoginErrorSystemAccountUnavailable = 307,
+/// The login response was missing a valid challenge string
+  FBSDKLoginErrorBadChallengeString = 308,
+/// The ID token returned in login response was invalid
+  FBSDKLoginErrorInvalidIDToken = 309,
+/// A current access token was required and not provided
+  FBSDKLoginErrorMissingAccessToken = 310,
+};
+
+
+/// Provides methods for logging the user in and out.
+/// It works directly with <code>AccessToken</code> (for data access) and <code>AuthenticationToken</code> (for authentication);
+/// it sets the “current” tokens upon successful authorizations (or sets to <code>nil</code> in case of <code>logOut</code>).
+/// You should check <code>AccessToken.current</code> before calling a login method to see if there is
+/// a cached token available (typically in a <code>viewDidLoad</code> implementation).
+/// @warning If you are managing your own tokens outside of <code>AccessToken</code>, you will need to set
+/// <code>AccessToken.current</code> before calling a login method to authorize further permissions on your tokens.
+SWIFT_CLASS_NAMED("LoginManager")
+@interface FBSDKLoginManager : NSObject
+/// The default audience. You should set this if you intend to ask for publish permissions.
+@property (nonatomic) enum FBSDKDefaultAudience defaultAudience;
+/// Initialize an instance of <code>LoginManager.</code>
+/// \param defaultAudience Optional default audience to use. Default: <code>.friends</code>.
+///
+- (nonnull instancetype)initWithDefaultAudience:(enum FBSDKDefaultAudience)defaultAudience;
+/// Logs the user in or authorizes additional permissions.
+/// @param viewController the view controller from which to present the login UI. If nil, the topmost view
+/// controller will be automatically determined and used.
+/// @param configuration the login configuration to use.
+/// @param completion the login completion handler.
+/// Use this method when asking for permissions. You should only ask for permissions when they
+/// are needed and the value should be explained to the user. You can inspect the
+/// <code>FBSDKLoginManagerLoginResultBlock</code>’s <code>result.declinedPermissions</code> to provide more information
+/// to the user if they decline permissions.
+/// To reduce unnecessary login attempts, you should typically check if <code>AccessToken.current</code>
+/// already contains the permissions you need. If it does, you probably do not need to call this method.
+/// @warning You can only perform one login call at a time. Calling a login method before the completion handler is
+/// called on a previous login attempt will result in an error.
+/// @warning This method will present a UI to the user and thus should be called on the main thread.
+- (void)logInFromViewController:(UIViewController * _Nullable)viewController configuration:(FBSDKLoginConfiguration * _Nullable)configuration completion:(FBSDKLoginManagerLoginResultBlock _Nonnull)completion;
+/// Logs the user in or authorizes additional permissions.
+/// @param permissions the optional array of permissions. Note this is converted to NSSet and is only
+/// an NSArray for the convenience of literal syntax.
+/// @param viewController the view controller to present from. If nil, the topmost view controller will be
+/// automatically determined as best as possible.
+/// @param handler the callback.
+/// Use this method when asking for read permissions. You should only ask for permissions when they
+/// are needed and explain the value to the user. You can inspect the <code>FBSDKLoginManagerLoginResultBlock</code>’s
+/// <code>result.declinedPermissions</code> to provide more information to the user if they decline permissions.
+/// You typically should check if <code>AccessToken.current</code> already contains the permissions you need before
+/// asking to reduce unnecessary login attempts. For example, you could perform that check in <code>viewDidLoad</code>.
+/// @warning You can only perform one login call at a time. Calling a login method before the completion handler is
+/// called on a previous login attempt will result in an error.
+/// @warning This method will present a UI to the user and thus should be called on the main thread.
+- (void)logInWithPermissions:(NSArray<NSString *> * _Nonnull)permissions fromViewController:(UIViewController * _Nullable)viewController handler:(FBSDKLoginManagerLoginResultBlock _Nullable)handler;
+/// Requests user’s permission to reathorize application’s data access, after it has expired due to inactivity.
+/// @param viewController the view controller from which to present the login UI. If nil, the topmost view
+/// controller will be automatically determined and used.
+/// @param handler the callback.
+/// Use this method when you need to reathorize your app’s access to user data via the Graph API.
+/// You should only call this after access has expired.
+/// You should provide as much context to the user as possible as to why you need to reauthorize the access, the
+/// scope of access being reathorized, and what added value your app provides when the access is reathorized.
+/// You can inspect the <code>result.declinedPermissions</code> to determine if you should provide more information to the
+/// user based on any declined permissions.
+/// @warning This method will reauthorize using a <code>LoginConfiguration</code> with <code>FBSDKLoginTracking</code> set to <code>.enabled</code>.
+/// @warning This method will present UI the user. You typically should call this if <code>AccessToken.isDataAccessExpired</code>
+/// is true.
+- (void)reauthorizeDataAccess:(UIViewController * _Nonnull)viewController handler:(FBSDKLoginManagerLoginResultBlock _Nonnull)handler;
+/// Logs the user out
+/// This nils out the singleton instances of <code>AccessToken</code>, <code>AuthenticationToken</code> and <code>Profle</code>.
+/// @note This is only a client side logout. It will not log the user out of their Facebook account.
+- (void)logOut;
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
+
+
+@class UIApplication;
+
+@interface FBSDKLoginManager (SWIFT_EXTENSION(FBSDKLoginKit)) <FBSDKURLOpening>
+- (BOOL)application:(UIApplication * _Nullable)application openURL:(NSURL * _Nullable)url sourceApplication:(NSString * _Nullable)sourceApplication annotation:(id _Nullable)annotation SWIFT_WARN_UNUSED_RESULT;
+- (BOOL)canOpenURL:(NSURL * _Nonnull)url forApplication:(UIApplication * _Nullable)application sourceApplication:(NSString * _Nullable)sourceApplication annotation:(id _Nullable)annotation SWIFT_WARN_UNUSED_RESULT;
+- (void)applicationDidBecomeActive:(UIApplication * _Nonnull)application;
+- (BOOL)isAuthenticationURL:(NSURL * _Nonnull)url SWIFT_WARN_UNUSED_RESULT;
+- (BOOL)shouldStopPropagationOfURL:(NSURL * _Nonnull)url SWIFT_WARN_UNUSED_RESULT;
+@end
 
 @class FBSDKAuthenticationToken;
 
@@ -604,12 +807,30 @@ SWIFT_CLASS_NAMED("LoginManagerLoginResult")
 /// @param grantedPermissions The set of granted permissions
 /// @param declinedPermissions The set of declined permissions
 - (nonnull instancetype)initWithToken:(FBSDKAccessToken * _Nullable)token authenticationToken:(FBSDKAuthenticationToken * _Nullable)authenticationToken isCancelled:(BOOL)isCancelled grantedPermissions:(NSSet<NSString *> * _Nonnull)grantedPermissions declinedPermissions:(NSSet<NSString *> * _Nonnull)declinedPermissions OBJC_DESIGNATED_INITIALIZER;
-/// Internal method exposed to facilitate transition to Swift.
-/// API Subject to change or removal without warning. Do not use.
-/// @warning INTERNAL - DO NOT USE
-- (void)addLoggingExtra:(id _Nonnull)object forKey:(NSString * _Nonnull)key;
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+@end
+
+
+/// The <code>LoginTooltipViewDelegate</code> protocol defines the methods used to receive event
+/// notifications from <code>FBLoginTooltipView</code> objects.
+SWIFT_PROTOCOL_NAMED("LoginTooltipViewDelegate")
+@protocol FBSDKLoginTooltipViewDelegate
+@optional
+/// Asks the delegate if the tooltip view should appear
+/// @param view The tooltip view.
+/// @param appIsEligible The value fetched from the server identifying if the app
+/// is eligible for the new login experience.
+/// Use this method to customize display behavior.
+- (BOOL)loginTooltipView:(FBSDKLoginTooltipView * _Nonnull)view shouldAppear:(BOOL)appIsEligible SWIFT_WARN_UNUSED_RESULT;
+/// Tells the delegate the tooltip view will appear, specifically after it’s been
+/// added to the super view but before the fade in animation.
+/// @param view The tooltip view.
+- (void)loginTooltipViewWillAppear:(FBSDKLoginTooltipView * _Nonnull)view;
+/// Tells the delegate the tooltip view will not appear (i.e., was not
+/// added to the super view).
+/// @param view The tooltip view.
+- (void)loginTooltipViewWillNotAppear:(FBSDKLoginTooltipView * _Nonnull)view;
 @end
 
 /// <code>enabled</code> and <code>limited</code> see: https://developers.facebook.com/docs/facebook-login/ios/limited-login/
@@ -632,56 +853,15 @@ SWIFT_PROTOCOL_NAMED("_ServerConfigurationProviding")
 @end
 
 
-/// Class responsible for generating an <code>AuthenticationToken</code> given a valid token string.
-/// An <code>AuthenticationToken</code> is verified based of the OpenID Connect Protocol.
-SWIFT_CLASS_NAMED("_AuthenticationTokenFactory")
-@interface FBSDKAuthenticationTokenFactory : NSObject <FBSDKAuthenticationTokenCreating>
-/// Create an <code>AuthenticationToken</code> given a valid token string.
-/// Returns nil to the completion handler if the token string is invalid
-/// An <code>AuthenticationToken</code> is verified based of the OpenID Connect Protocol.
-/// @param tokenString the raw ID token string
-/// @param nonce the nonce string used to associate a client session with the token
-/// @param graphDomain the graph domain where user is authenticated
-/// @param completion the completion handler
-- (void)createTokenFromTokenString:(NSString * _Nonnull)tokenString nonce:(NSString * _Nonnull)nonce graphDomain:(NSString * _Nonnull)graphDomain completion:(FBSDKAuthenticationTokenBlock _Nonnull)completion;
-- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
-@end
-
-
-/// Internal Type exposed to facilitate transition to Swift.
-/// API Subject to change or removal without warning. Do not use.
-/// <ul>
-///   <li>
-///     Warning INTERNAL:  DO NOT USE
-///   </li>
-/// </ul>
-SWIFT_CLASS_NAMED("_AuthenticationTokenHeader")
-@interface FBSDKAuthenticationTokenHeader : NSObject
-/// Key identifier used in identifying the key to be used to verify the signature.
-@property (nonatomic, readonly, copy) NSString * _Nonnull kid;
-/// Returns a new instance, when one can be created from the parameters given, otherwise <code>nil</code>.
-/// \param encodedHeader Base64-encoded string of the header.
-///
-///
-/// returns:
-/// An FBAuthenticationTokenHeader object.
-- (nullable instancetype)initFromEncodedString:(NSString * _Nonnull)encodedHeader OBJC_DESIGNATED_INITIALIZER;
-- (nonnull instancetype)init SWIFT_UNAVAILABLE;
-+ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
-@end
-
-
 /// Internal Type exposed to facilitate transition to Swift.
 /// API Subject to change or removal without warning. Do not use.
 /// @warning INTERNAL - DO NOT USE
 SWIFT_CLASS_NAMED("_DevicePoller")
-@interface FBSDKDevicePoller : NSObject <FBSDKDevicePolling>
-- (void)scheduleBlock:(void (^ _Nonnull)(void))block interval:(NSUInteger)interval;
+@interface FBSDKDevicePoller : NSObject
+- (void)scheduleWithInterval:(NSUInteger)interval block:(void (^ _Nonnull)(void))block;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
-@protocol NSNetServiceDelegate;
-@class NSNetService;
 
 SWIFT_CLASS_NAMED("_DeviceRequestsHelper")
 @interface FBSDKDeviceRequestsHelper : NSObject
@@ -700,6 +880,35 @@ SWIFT_CLASS_NAMED("_DeviceRequestsHelper")
 /// @param delegate The delegate registered with the service.
 + (void)cleanUpAdvertisementServiceFor:(id <NSNetServiceDelegate> _Nonnull)delegate;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
+@protocol FBSDKLoginCompleting;
+
+/// Internal Type exposed to facilitate transition to Swift.
+/// API Subject to change or removal without warning. Do not use.
+/// <ul>
+///   <li>
+///     Warning INTERNAL:  DO NOT USE
+///   </li>
+/// </ul>
+SWIFT_CLASS_NAMED("_LoginCompleterFactory")
+@interface FBSDKLoginCompleterFactory : NSObject
+- (id <FBSDKLoginCompleting> _Nonnull)createLoginCompleterWithUrlParameters:(NSDictionary<NSString *, id> * _Nonnull)parameters appID:(NSString * _Nonnull)appID SWIFT_WARN_UNUSED_RESULT;
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
+
+/// Internal type exposed to facilitate transition to Swift.
+/// API Subject to change or removal without warning. Do not use.
+/// @warning INTERNAL - DO NOT USE
+SWIFT_PROTOCOL_NAMED("_LoginCompleting")
+@protocol FBSDKLoginCompleting
+/// Invoke handler with the login parameters derived from the authentication result.
+/// See the implementing class’s documentation for whether it completes synchronously or asynchronously.
+- (void)completeLoginWithHandler:(FBSDKLoginCompletionParametersBlock _Nonnull)handler;
+/// Invoke handler with the login parameters derived from the authentication result.
+/// See the implementing class’s documentation for whether it completes synchronously or asynchronously.
+- (void)completeLoginWithNonce:(NSString * _Nullable)nonce codeVerifier:(NSString * _Nullable)codeVerifier handler:(FBSDKLoginCompletionParametersBlock _Nonnull)handler;
 @end
 
 @class FBSDKProfile;
@@ -736,7 +945,6 @@ SWIFT_CLASS_NAMED("_LoginCompletionParameters")
 @end
 
 
-@class FBSDKLoginManager;
 @class NSError;
 
 /// Internal Type exposed to facilitate transition to Swift.
@@ -790,9 +998,29 @@ SWIFT_CLASS_NAMED("_LoginRecoveryAttempter")
 /// Internal Type exposed to facilitate transition to Swift.
 /// API Subject to change or removal without warning. Do not use.
 /// @warning INTERNAL - DO NOT USE
+/// Extracts the log in completion parameters from the parameters dictionary,
+/// which must contain the parsed result of the return URL query string.
+/// The  user_id key is first used to derive the User ID. If that fails,  signed_request
+/// is used.
+/// Completion occurs synchronously.
+SWIFT_CLASS("_TtC13FBSDKLoginKit18_LoginURLCompleter")
+@interface _LoginURLCompleter : NSObject <FBSDKLoginCompleting>
+/// Performs the work needed to populate the login completion parameters before they
+/// are used to determine login success, failure or cancellation.
+- (void)completeLoginWithHandler:(FBSDKLoginCompletionParametersBlock _Nonnull)handler;
+- (void)completeLoginWithNonce:(NSString * _Nullable)nonce codeVerifier:(NSString * _Nullable)codeVerifier handler:(FBSDKLoginCompletionParametersBlock _Nonnull)handler;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+@end
+
+
+
+/// Internal Type exposed to facilitate transition to Swift.
+/// API Subject to change or removal without warning. Do not use.
+/// @warning INTERNAL - DO NOT USE
 SWIFT_CLASS_NAMED("_LoginUtility")
 @interface FBSDKLoginUtility : NSObject
-+ (NSString * _Nonnull)stringForAudience:(FBSDKDefaultAudience)audience SWIFT_WARN_UNUSED_RESULT;
++ (NSString * _Nonnull)stringForAudience:(enum FBSDKDefaultAudience)audience SWIFT_WARN_UNUSED_RESULT;
 + (NSDictionary<NSString *, id> * _Nullable)queryParamsFromLoginURL:(NSURL * _Nonnull)url SWIFT_WARN_UNUSED_RESULT;
 + (NSString * _Nullable)userIDFromSignedRequest:(NSString * _Nullable)signedRequest SWIFT_WARN_UNUSED_RESULT;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
@@ -805,7 +1033,7 @@ SWIFT_CLASS_NAMED("_LoginUtility")
 /// API Subject to change or removal without warning. Do not use.
 /// @warning INTERNAL - DO NOT USE
 SWIFT_CLASS_NAMED("_ProfileFactory")
-@interface FBSDKProfileFactory : NSObject <FBSDKProfileCreating>
+@interface FBSDKProfileFactory : NSObject
 - (FBSDKProfile * _Nonnull)createProfileWithUserID:(FBSDKUserIdentifier _Nonnull)userID firstName:(NSString * _Nullable)firstName middleName:(NSString * _Nullable)middleName lastName:(NSString * _Nullable)lastName name:(NSString * _Nullable)name linkURL:(NSURL * _Nullable)linkURL refreshDate:(NSDate * _Nullable)refreshDate imageURL:(NSURL * _Nullable)imageURL email:(NSString * _Nullable)email friendIDs:(NSArray<NSString *> * _Nullable)friendIDs birthday:(NSDate * _Nullable)birthday ageRange:(FBSDKUserAgeRange * _Nullable)ageRange hometown:(FBSDKLocation * _Nullable)hometown location:(FBSDKLocation * _Nullable)location gender:(NSString * _Nullable)gender isLimited:(BOOL)isLimited SWIFT_WARN_UNUSED_RESULT;
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
