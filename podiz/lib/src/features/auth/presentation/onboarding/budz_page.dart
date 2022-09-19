@@ -13,41 +13,43 @@ class BudzPage extends StatelessWidget {
     return Container(
       constraints: const BoxConstraints(maxWidth: 360),
       alignment: Alignment.center,
-      padding: const EdgeInsets.symmetric(
-        horizontal: 40,
-        vertical: 24,
-      ),
-      decoration: BoxDecoration(
-        color: context.colorScheme.background,
-        borderRadius: BorderRadius.circular(kBorderRadius),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            Locales.string(context, "intro3_1"),
-            style: context.textTheme.headlineSmall,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            Locales.string(context, "intro3_2"),
-            style: context.textTheme.bodyMedium,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 32),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              BudzImage('assets/icons/podiz.svg'),
-              BudzSign("+"),
-              BudzImage('assets/icons/spotify.svg'),
-              BudzSign("="),
-              BudzImage('assets/icons/heart.svg'),
-            ],
-          ),
-        ],
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 40,
+          vertical: 24,
+        ),
+        decoration: BoxDecoration(
+          color: context.colorScheme.background,
+          borderRadius: BorderRadius.circular(kBorderRadius),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              Locales.string(context, "intro3_1"),
+              style: context.textTheme.headlineSmall,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              Locales.string(context, "intro3_2"),
+              style: context.textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                BudzImage('assets/icons/podiz.svg'),
+                BudzSign("+"),
+                BudzImage('assets/icons/spotify.svg'),
+                BudzSign("="),
+                BudzImage('assets/icons/heart.svg'),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
