@@ -26,12 +26,14 @@ class SpotifyPlayerRepository implements PlayerRepository {
 
   @override
   Stream<PlayingEpisode?> watchPlayingEpisode() =>
-      SpotifySdk.subscribePlayerState().asyncMap(playingEpisodeFromPlayerState);
+      SpotifySdk.subscribePlayerState()
+          .skipWhile((state) => state.track == null)
+          .asyncMap(playingEpisodeFromPlayerState);
 
   @override
   Future<PlayingEpisode?> fetchPlayingEpisode() async {
     final state = await SpotifySdk.getPlayerState()
-        .timeout(Duration(seconds: 1), onTimeout: () async {
+        .timeout(const Duration(seconds: 1), onTimeout: () async {
       await spotifyApi.connectToSdk();
       return await SpotifySdk.getPlayerState();
     });
@@ -59,7 +61,7 @@ class SpotifyPlayerRepository implements PlayerRepository {
     mixPanelRepository.userOpenPodcast();
 
     await SpotifySdk.play(spotifyUri: uriFromId(episodeId))
-        .timeout(Duration(seconds: 1), onTimeout: (() async {
+        .timeout(const Duration(seconds: 1), onTimeout: (() async {
       await spotifyApi.connectToSdk();
       await SpotifySdk.play(spotifyUri: uriFromId(episodeId));
     }));
@@ -71,7 +73,7 @@ class SpotifyPlayerRepository implements PlayerRepository {
     try {
       if (time != null) await seekTo(time);
       await SpotifySdk.resume().timeout(
-        Duration(seconds: 1),
+        const Duration(seconds: 1),
         onTimeout: () async {
           await play(episodeId, time);
         },
@@ -109,7 +111,7 @@ class SpotifyPlayerRepository implements PlayerRepository {
   Future<void> seekTo(Duration time) async {
     return SpotifySdk.seekTo(positionedMilliseconds: time.inMilliseconds)
         .timeout(
-      Duration(seconds: 1),
+      const Duration(seconds: 1),
       onTimeout: () async {
         await spotifyApi.connectToSdk();
         SpotifySdk.seekTo(positionedMilliseconds: time.inMilliseconds);
