@@ -66,10 +66,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-# flutter_icons:
-#   android: true
-#   ios: true
-#   image_path: "assets/app_icon/notification_tray.png"
 flutter_icons:
   android: true
   image_path: "assets/app_icon/ios_app_icon.png"
@@ -78,6 +74,10 @@ flutter_icons:
   ios: true
   remove_alpha_ios: true
   image_path_ios: "assets/app_icon/ios_app_icon.png"
+# flutter_icons:
+#   android: true
+#   ios: true
+#   image_path: "assets/app_icon/notification_tray.png"
 
 flutter:
   uses-material-design: true
