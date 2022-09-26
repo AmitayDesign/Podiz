@@ -4,8 +4,8 @@ const { fetchSpotifyUserFavorites } = require("./user-favorites.js");
 const admin = require("firebase-admin");
 const fetch = require("node-fetch");
 
-var client_id = "9a8daaf39e784f1c90770da4a252087f";
-var client_secret = "10de465afd164e8e9196988aa738a127";
+var client_id = "5deee54ca37b4fc59abaa2869233bb3d";
+var client_secret = "93a97941742f4b37b9da3b4ddb3a2895";
 
 var authenticationHost = "https://accounts.spotify.com/";
 
