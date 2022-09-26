@@ -47,31 +47,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       final page = pageController.page;
       if (page != null && page == page.toInt()) goToDestination(page.toInt());
     });
+    final user = ref.read(currentUserProvider);
+    ref.read(showcaseRepositoryProvider).isFirstTime(user.id).then(
+          (firstTime) => firstTime ? startShowcase() : openPlayingEpisode(),
+        );
+  }
 
-    final firstTime = ref.read(showcaseRepositoryProvider).isFirstTime;
-    // start the showcase
-    if (firstTime) {
-      WidgetsBinding.instance.addPostFrameCallback(
-        (_) {
-          ShowCaseWidget.of(context).startShowCase(showcaseKeys);
-          setState(() {});
-        },
-      );
-    }
-    // navigate to discussion when entering the app if already listening to an episode
-    else {
-      ref.listenOnce<AsyncValue<PlayingEpisode?>>(
-        firstPlayerFutureProvider,
-        (_, firstEpisodeValue) => firstEpisodeValue.whenData((firstEpisode) {
-          if (firstEpisode != null && firstEpisode.isPlaying) {
-            context.goNamed(
-              AppRoute.discussion.name,
-              params: {'episodeId': firstEpisode.id},
-            );
-          }
-        }),
-      );
-    }
+  Future<void> startShowcase() async {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        ShowCaseWidget.of(context).startShowCase(showcaseKeys);
+        setState(() {});
+      },
+    );
+  }
+
+  Future<void> openPlayingEpisode() async {
+    ref.listenOnce<AsyncValue<PlayingEpisode?>>(
+      firstPlayerFutureProvider,
+      (_, firstEpisodeValue) => firstEpisodeValue.whenData((firstEpisode) {
+        if (firstEpisode != null && firstEpisode.isPlaying) {
+          context.goNamed(
+            AppRoute.discussion.name,
+            params: {'episodeId': firstEpisode.id},
+          );
+        }
+      }),
+    );
   }
 
   @override
