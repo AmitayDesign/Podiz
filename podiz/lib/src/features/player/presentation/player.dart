@@ -41,7 +41,7 @@ class Player extends ConsumerWidget {
                   padding:
                       const EdgeInsets.only(top: PlayerSlider.height / 2 + 2)
                           .add(
-                    Platform.isIOS
+                    Platform.isIOS && extraBottomPadding
                         ? const EdgeInsets.only(bottom: 16)
                         : EdgeInsets.zero,
                   ),
