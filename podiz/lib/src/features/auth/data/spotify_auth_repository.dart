@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -175,8 +176,10 @@ mixin ConnectionState {
         SpotifySdk.subscribeConnectionStatus().listen((status) async {
       connectionState.value = status.connected;
       final userId = preferences.getStringOrNull(userKey);
-      if (!status.connected && userId != null) {
-        spotifyApi.getAccessToken();
+      if (!Platform.isIOS) {
+        if (!status.connected && userId != null) {
+          spotifyApi.getAccessToken();
+        }
       }
     });
   }

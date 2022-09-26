@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
 class ErrorPlayer extends StatelessWidget {
-  const ErrorPlayer({Key? key}) : super(key: key);
+  final bool extraBottomPadding;
+  const ErrorPlayer(this.extraBottomPadding, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +17,16 @@ class ErrorPlayer extends StatelessWidget {
         children: [
           Container(height: 4, color: Colors.white38),
           Container(
-            height: Player.height - 4,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            height: (Platform.isIOS && extraBottomPadding
+                    ? Player.extraHeight
+                    : Player.height) -
+                4,
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12).add(
+              Platform.isIOS && extraBottomPadding
+                  ? const EdgeInsets.only(bottom: 16)
+                  : EdgeInsets.zero,
+            ),
             alignment: Alignment.centerLeft,
             child: Row(
               children: [

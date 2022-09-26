@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:podiz/src/common_widgets/circle_button.dart';
 import 'package:podiz/src/constants/constants.dart';
@@ -26,7 +28,12 @@ class SkeletonCommentSheet extends StatelessWidget {
         ),
         child: SkeletonItem(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 8).add(
+              Platform.isIOS
+                  ? const EdgeInsets.only(bottom: 16)
+                  : EdgeInsets.zero,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [

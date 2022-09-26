@@ -190,14 +190,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
 
                 // so it doesnt end behind the bottom bar
-                const SliverToBoxAdapter(
-                    child: SizedBox(height: Player.height)),
+                SliverToBoxAdapter(child: SizedBox(height: Player.extraHeight)),
               ],
             ),
           ),
         ),
         floatingActionButton: isCurrentUser ? null : ProfileFollowFab(user),
-        bottomNavigationBar: const Player(),
+        bottomNavigationBar: const Player(extraBottomPadding: true),
       ),
     );
   }
