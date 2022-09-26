@@ -39,12 +39,7 @@ class Player extends ConsumerWidget {
               children: [
                 Padding(
                   padding:
-                      const EdgeInsets.only(top: PlayerSlider.height / 2 + 2)
-                          .add(
-                    Platform.isIOS && extraBottomPadding
-                        ? const EdgeInsets.only(bottom: 16)
-                        : EdgeInsets.zero,
-                  ),
+                      const EdgeInsets.only(top: PlayerSlider.height / 2 + 2),
                   child: Material(
                     color: Palette.darkPurple,
                     child: InkWell(
@@ -53,7 +48,11 @@ class Player extends ConsumerWidget {
                         params: {'episodeId': episode.id},
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(24, 12, 16, 12),
+                        padding: const EdgeInsets.fromLTRB(24, 12, 16, 12).add(
+                          Platform.isIOS && extraBottomPadding
+                              ? const EdgeInsets.only(bottom: 16)
+                              : EdgeInsets.zero,
+                        ),
                         child: Row(
                           children: [
                             PodcastAvatar(imageUrl: episode.imageUrl, size: 52),
