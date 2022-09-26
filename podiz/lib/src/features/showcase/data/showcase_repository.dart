@@ -1,12 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/utils/instances.dart';
 
-import 'showcase_view_repository.dart';
+import 'firebase_showcase_repository.dart';
 
 final showcaseRepositoryProvider = Provider<ShowcaseRepository>(
   (ref) {
-    final repository = ShowcaseViewRepository(
-      preferences: ref.watch(preferencesProvider),
+    final repository = FirebaseShowcaseRepository(
+      firestore: ref.watch(firestoreProvider),
     );
     // ref.onDispose(repository.dispose);
     return repository;
@@ -14,6 +14,6 @@ final showcaseRepositoryProvider = Provider<ShowcaseRepository>(
 );
 
 abstract class ShowcaseRepository {
-  bool get isFirstTime;
-  Future<void> disable();
+  Future<bool> isFirstTime(String userId);
+  Future<void> disable(String userId);
 }
