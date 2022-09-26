@@ -21,6 +21,8 @@ class SpotifyApi {
 
   SpotifyApi({required this.functions, required this.preferences});
 
+  final forceSignInFormKey = 'forceSignInForm';
+
   final clientId = '5deee54ca37b4fc59abaa2869233bb3d';
   final redirectUrl = 'podiz:/connect';
   final responseType = 'code';
@@ -36,7 +38,9 @@ class SpotifyApi {
     'user-library-modify',
     'user-modify-playback-state'
   ].join(' ');
-  final forceSignInForm = false; //default to false
+
+  bool get forceSignInForm =>
+      preferences.getBool(forceSignInFormKey, defaultValue: false).getValue();
 
   //debug: add &show_dialog=true to disallow auto login
   String get authenticationUrl =>
@@ -47,7 +51,7 @@ class SpotifyApi {
   late String userId;
   String? accessToken;
   DateTime? timeout;
-  VoidCallback? disconnect;
+  VoidCallback? onDisconnect;
 
   bool get tokenExpired => timeout?.isBefore(DateTime.now()) ?? true;
 
@@ -60,7 +64,7 @@ class SpotifyApi {
 
     final result = response.data['result'];
     if (result == 'unauthorized') {
-      disconnect?.call();
+      onDisconnect?.call();
       throw Exception('session timed out');
     }
     if (result == 'error') throw Exception('access token error');

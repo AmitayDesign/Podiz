@@ -60,6 +60,7 @@ class SpotifyAuthRepository
     try {
       final userId = await connectWithCode(code);
       await preferences.setString(userKey, userId);
+      await preferences.setBool(spotifyApi.forceSignInFormKey, false);
     } catch (e) {
       //TODO throw specific exceptions
       // eg when a user doesnt have premium
@@ -89,7 +90,7 @@ class SpotifyAuthRepository
     spotifyApi.userId = userId;
     spotifyApi.accessToken = accessToken;
     spotifyApi.timeout = now.add(Duration(seconds: timeout));
-    spotifyApi.disconnect = signOut;
+    spotifyApi.onDisconnect = signOut;
     // connect to sdk
     final success = await spotifyApi.connectToSdk();
     if (!success) throw Exception('Error connecting to Spotify');
@@ -102,7 +103,10 @@ class SpotifyAuthRepository
     late bool success;
     try {
       success = await preferences.remove(userKey);
-      if (success) await SpotifySdk.disconnect();
+      if (success) {
+        await preferences.setBool(spotifyApi.forceSignInFormKey, true);
+        await SpotifySdk.disconnect();
+      }
     } catch (e) {
       throw Exception('Sign out error: $e');
     }
