@@ -54,7 +54,8 @@ class _MyAppState extends ConsumerState<MyApp> {
             },
             onFinish: () {
               ref.read(showcaseRunningProvider.notifier).state = false;
-              ref.read(showcaseRepositoryProvider).disable();
+              final user = ref.read(currentUserProvider);
+              ref.read(showcaseRepositoryProvider).disable(user.id);
             },
             child: Consumer(builder: (context, ref, _) {
               final firstConnectionValue = ref.watch(firstUserFutureProvider);

@@ -98,8 +98,7 @@ class _PodcastScreenState extends ConsumerState<PodcastScreen> {
                 ),
 
                 // so it doesnt end behind the bottom bar
-                const SliverToBoxAdapter(
-                    child: SizedBox(height: Player.height)),
+                SliverToBoxAdapter(child: SizedBox(height: Player.extraHeight)),
               ],
             ),
           ),
@@ -108,7 +107,7 @@ class _PodcastScreenState extends ConsumerState<PodcastScreen> {
           podcastId: widget.podcastId,
           imageUrl: podcast.imageUrl,
         ),
-        bottomNavigationBar: const Player(),
+        bottomNavigationBar: const Player(extraBottomPadding: true),
       ),
     );
   }

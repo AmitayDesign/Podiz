@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:podiz/src/constants/constants.dart';
 import 'package:podiz/src/features/discussion/presentation/sheet/comment_sheet.dart';
@@ -18,7 +20,11 @@ class ErrorCommentSheet extends StatelessWidget {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16).add(
+            Platform.isIOS
+                ? const EdgeInsets.only(bottom: 16)
+                : EdgeInsets.zero,
+          ),
           child: Row(
             children: [
               const SizedBox.square(

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/users_listening_text.dart';
@@ -26,7 +28,7 @@ import 'target_comment.dart';
 final commentSheetTargetProvider = StateProvider<Comment?>((ref) => null);
 
 class CommentSheet extends ConsumerWidget {
-  static const height = 116.0; //! hardcoded
+  static final height = 116.0 + (Platform.isIOS ? 16 : 0); //! hardcoded
   const CommentSheet({Key? key}) : super(key: key);
 
   Comment sendComment(
@@ -77,7 +79,11 @@ class CommentSheet extends ConsumerWidget {
               ),
               child: Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8).add(
+                  Platform.isIOS
+                      ? const EdgeInsets.only(bottom: 16)
+                      : EdgeInsets.zero,
+                ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,

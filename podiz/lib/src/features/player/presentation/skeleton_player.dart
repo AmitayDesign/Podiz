@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:podiz/src/features/episodes/presentation/avatar/skeleton_podcast_avatar.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
@@ -6,7 +8,8 @@ import 'package:podiz/src/theme/palette.dart';
 import 'package:skeletons/skeletons.dart';
 
 class SkeletonPlayer extends StatelessWidget {
-  const SkeletonPlayer({Key? key}) : super(key: key);
+  final bool extraBottomPadding;
+  const SkeletonPlayer(this.extraBottomPadding, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +38,15 @@ class SkeletonPlayer extends StatelessWidget {
             children: [
               const SkeletonLine(style: SkeletonLineStyle(height: 4)),
               Container(
-                height: Player.height - 4,
-                padding: const EdgeInsets.only(left: 24, right: 16),
+                height: (Platform.isIOS && extraBottomPadding
+                        ? Player.extraHeight
+                        : Player.height) -
+                    4,
+                padding: const EdgeInsets.only(left: 24, right: 16).add(
+                  Platform.isIOS && extraBottomPadding
+                      ? const EdgeInsets.only(bottom: 16)
+                      : EdgeInsets.zero,
+                ),
                 child: Row(
                   children: [
                     const SkeletonPodcastAvatar(size: 52),

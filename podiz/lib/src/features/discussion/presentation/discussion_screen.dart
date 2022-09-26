@@ -89,7 +89,7 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
             return Stack(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(
+                  padding: EdgeInsets.only(
                     top: DiscussionHeader.height,
                     bottom: CommentSheet.height,
                   ),

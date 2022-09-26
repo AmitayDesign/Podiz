@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -15,17 +17,19 @@ import 'package:podiz/src/utils/string_zwsp.dart';
 import 'skeleton_player.dart';
 
 class Player extends ConsumerWidget {
-  const Player({Key? key}) : super(key: key);
+  final bool extraBottomPadding;
+  const Player({Key? key, this.extraBottomPadding = false}) : super(key: key);
 
   static const height = 80.0; //! hardcoded
+  static final extraHeight = height + (Platform.isIOS ? 16 : 0); //! hardcoded
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final episodeValue = ref.watch(playerStateChangesProvider);
     final state = ref.watch(playerControllerProvider);
     return episodeValue.when(
-      loading: () => const SkeletonPlayer(),
-      error: (e, _) => const ErrorPlayer(),
+      loading: () => SkeletonPlayer(extraBottomPadding),
+      error: (e, _) => ErrorPlayer(extraBottomPadding),
       data: (episode) {
         if (episode == null) return const SizedBox.shrink();
         return Column(
@@ -35,7 +39,12 @@ class Player extends ConsumerWidget {
               children: [
                 Padding(
                   padding:
-                      const EdgeInsets.only(top: PlayerSlider.height / 2 + 2),
+                      const EdgeInsets.only(top: PlayerSlider.height / 2 + 2)
+                          .add(
+                    Platform.isIOS
+                        ? const EdgeInsets.only(bottom: 16)
+                        : EdgeInsets.zero,
+                  ),
                   child: Material(
                     color: Palette.darkPurple,
                     child: InkWell(
