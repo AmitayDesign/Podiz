@@ -63,6 +63,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ref.listenOnce<AsyncValue<PlayingEpisode?>>(
         firstPlayerFutureProvider,
         (_, firstEpisodeValue) => firstEpisodeValue.whenData((firstEpisode) {
+          print("First Episode" + firstEpisode.toString());
           if (firstEpisode != null && firstEpisode.isPlaying) {
             context.goNamed(
               AppRoute.discussion.name,

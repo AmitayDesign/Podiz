@@ -53,7 +53,7 @@ class SpotifyApi {
 
   Future<String> getAccessToken() async {
     if (!tokenExpired && accessToken != null) return accessToken!;
-
+    print("accrsssss token");
     final response = await functions
         .httpsCallable('getAccessTokenWithRefreshToken')
         .call({'userId': userId});
