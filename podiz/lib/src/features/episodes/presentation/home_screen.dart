@@ -53,6 +53,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         );
   }
 
+<<<<<<< HEAD
+    final firstTime = ref.read(showcaseRepositoryProvider).isFirstTime;
+    // start the showcase
+    if (firstTime) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) {
+          ShowCaseWidget.of(context).startShowCase(showcaseKeys);
+          setState(() {});
+        },
+      );
+    }
+    // navigate to discussion when entering the app if already listening to an episode
+    else {
+      ref.listenOnce<AsyncValue<PlayingEpisode?>>(
+        firstPlayerFutureProvider,
+        (_, firstEpisodeValue) => firstEpisodeValue.whenData((firstEpisode) {
+          print("First Episode" + firstEpisode.toString());
+          if (firstEpisode != null && firstEpisode.isPlaying) {
+            context.goNamed(
+              AppRoute.discussion.name,
+              params: {'episodeId': firstEpisode.id},
+            );
+          }
+        }),
+      );
+    }
+=======
   Future<void> startShowcase() async {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
@@ -74,6 +101,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         }
       }),
     );
+>>>>>>> 5ccb0de1fae159197902603b33c15c5cafe12de2
   }
 
   @override
