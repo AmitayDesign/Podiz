@@ -111,9 +111,10 @@ async function fetchSpotifyUser(accessToken) {
     console.log(`userId: ${user.id}`);
 
     // if user does not exist, create user in firestore
-    var userExists = await helpers.checkUserExists(user.id);
-    console.log(`userExists ${userExists}`);
-    if (!userExists) await helpers.addUserToFirestore(user);
+    // var userExists = await helpers.checkUserExists(user.id);
+    // console.log(`userExists ${userExists}`);
+    // if (!userExists)
+    await helpers.addUserToFirestore(user);
     console.log('user added to firestore');
 
     // save user favorite shows
