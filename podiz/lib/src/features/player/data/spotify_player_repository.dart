@@ -47,10 +47,13 @@ class SpotifyPlayerRepository implements PlayerRepository {
     if (track == null || !track.isEpisode || !track.isPodcast) return null;
     final episodeId = idFromUri(track.uri);
     // fetch episode
+    final stateTime = DateTime.now();
     var episode = await episodeRepository.fetchEpisode(episodeId);
+    final futureDuration = DateTime.now().difference(stateTime);
+
     return PlayingEpisode.fromEpisode(
       episode,
-      position: Duration(milliseconds: state.playbackPosition),
+      position: Duration(milliseconds: state.playbackPosition) + futureDuration,
       isPlaying: !state.isPaused,
       playbackSpeed: state.playbackSpeed,
     );
