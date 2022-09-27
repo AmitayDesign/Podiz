@@ -29,10 +29,10 @@ exports.fetchFromHost = (path, accessToken) =>
 
 const userRef = (userId) => admin.firestore().collection("users").doc(userId);
 
-exports.checkUserExists = async (userId) => {
-  var episodeDoc = await userRef(userId).get();
-  return episodeDoc.exists;
-};
+// exports.checkUserExists = async (userId) => {
+//   var episodeDoc = await userRef(userId).get();
+//   return episodeDoc.exists;
+// };
 
 exports.addUserToFirestore = (user) =>
   userRef(user.id).set(

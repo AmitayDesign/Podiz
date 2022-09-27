@@ -121,6 +121,30 @@ class SpotifyAuthRepository
         .update(user.toJson())
         .catchError((e) => throw Exception('Error updating user'));
   }
+
+  @override
+  Future<void> requestData() {
+    // TODO: implement requestData
+    throw UnimplementedError();
+    //! read about this
+    // ask for login
+    // show data on popup
+    //! OR
+    // send an email with a link
+    // the link shows the user data
+  }
+
+  @override
+  Future<void> wipeData() {
+    // TODO: implement wipeData
+    throw UnimplementedError();
+    // delete user comments
+    // decrement episode comment counter ?
+    // delete spotifyAuth doc
+    // delete userPrivate doc
+    // delete user doc
+    // log out
+  }
 }
 
 mixin AuthState {

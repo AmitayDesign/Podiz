@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:podiz/src/constants/constants.dart';
+import 'package:podiz/src/features/discussion/presentation/sheet/comment_sheet.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/theme/context_theme.dart';
-
-import 'quick_note_sheet.dart';
 
 class QuickNoteButton extends StatelessWidget {
   final Episode episode;
@@ -30,7 +29,7 @@ class QuickNoteButton extends StatelessWidget {
           isScrollControlled: true,
           builder: (context) => Padding(
             padding: MediaQuery.of(context).viewInsets,
-            child: QuickNoteSheet(episode: episode),
+            child: CommentSheet(episode: episode),
           ),
         ),
         icon: Icon(

@@ -27,11 +27,13 @@ class SpoilerAlertCard extends StatelessWidget {
           Text(
             'Spoiler Alert',
             style: titleStyle,
+            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
             'Are you sure you want to see comments beyond your current listening time?',
             style: subtitleStyle,
+            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Row(

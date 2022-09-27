@@ -29,6 +29,9 @@ abstract class AuthRepository {
   Future<String> signIn(String code);
   Future<void> signOut();
   Future<void> updateUser(UserPodiz user);
+  //
+  Future<void> requestData();
+  Future<void> wipeData();
 }
 
 //* Providers
