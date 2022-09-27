@@ -11,6 +11,8 @@ import 'package:podiz/src/features/discussion/presentation/comment/comment_text_
 import 'package:podiz/src/features/discussion/presentation/discussion_controller.dart';
 import 'package:podiz/src/features/discussion/presentation/sheet/error_comment_sheet.dart';
 import 'package:podiz/src/features/discussion/presentation/sheet/skeleton_comment_sheet.dart';
+import 'package:podiz/src/features/episodes/domain/episode.dart';
+import 'package:podiz/src/features/episodes/presentation/card/quick_note_sheet.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/player_button.dart';
 import 'package:podiz/src/features/player/presentation/player_controller.dart';
@@ -29,7 +31,9 @@ final commentSheetTargetProvider = StateProvider<Comment?>((ref) => null);
 
 class CommentSheet extends ConsumerWidget {
   static final height = 116.0 + (Platform.isIOS ? 16 : 0); //! hardcoded
-  const CommentSheet({Key? key}) : super(key: key);
+
+  final Episode? episode;
+  const CommentSheet({Key? key, this.episode}) : super(key: key);
 
   Comment sendComment(
     Reader read,
@@ -65,7 +69,13 @@ class CommentSheet extends ConsumerWidget {
         loading: () => const SkeletonCommentSheet(),
         error: (e, _) => const ErrorCommentSheet(),
         data: (episode) {
-          if (episode == null) return const SizedBox.shrink();
+          if (episode == null) {
+            if (this.episode == null) {
+              return const SizedBox.shrink();
+            } else {
+              return QuickNoteSheet(episode: this.episode!);
+            }
+          }
           return showcase(
             context,
             ref.read,
@@ -115,7 +125,7 @@ class CommentSheet extends ConsumerWidget {
 
                     //* Comment text field
                     CommentTextField(
-                      autofocus: isReply,
+                      autofocus: isReply || this.episode != null,
                       hint:
                           isReply ? 'Add a reply...' : 'Share your insight...',
                       onSend: (text) {
