@@ -23,6 +23,7 @@ abstract class PushNotificationsRepository {
   Future<void> revokePermission(String userId);
   Future<void> handleNotifications();
   Stream<NotificationPodiz> selectedNotificationChanges();
+  Future<void> debugDisplay();
 }
 
 final selectedNotificationStreamProvider = StreamProvider<NotificationPodiz>(

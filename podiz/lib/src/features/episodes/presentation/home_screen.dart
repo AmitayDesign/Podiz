@@ -167,6 +167,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           child: Scaffold(
             extendBody: true,
             //floatingActionButton: notificationDebugFAB(),
+            floatingActionButton: localDebugFAB(),
             body: PageView(
               controller: pageController,
               children: const [
@@ -212,6 +213,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       },
     );
   }
+
+  Widget localDebugFAB() => FloatingActionButton(
+      child: const Icon(Icons.notifications),
+      onPressed: () =>
+          ref.read(pushNotificationsRepositoryProvider).debugDisplay());
 
   Widget notificationDebugFAB() {
     final userId = ref.read(currentUserProvider).id;
