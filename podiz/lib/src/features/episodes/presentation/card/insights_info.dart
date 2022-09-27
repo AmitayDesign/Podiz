@@ -5,6 +5,7 @@ import 'package:podiz/src/common_widgets/stacked_avatars.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
+import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/theme/context_theme.dart';
@@ -19,9 +20,12 @@ class InsightsInfo extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final liveEpisode =
         ref.watch(episodeStreamProvider(episode.id)).valueOrNull ?? episode;
-    final imageUrls = liveEpisode.usersWatching
-        .map((userId) =>
-            ref.watch(userFutureProvider(userId)).valueOrNull?.imageUrl)
+    final comments =
+        ref.watch(commentsStreamProvider(liveEpisode.id)).value ?? [];
+    final imageUrls = comments
+        .map((comment) =>
+            ref.watch(userFutureProvider(comment.userId)).valueOrNull?.imageUrl)
+        .toSet()
         .toList();
     return Row(
       children: [
