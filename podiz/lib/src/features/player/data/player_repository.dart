@@ -32,10 +32,9 @@ abstract class PlayerRepository {
 //* Providers
 
 final playerStateChangesProvider = StreamProvider<PlayingEpisode?>(
-  (ref) async* {
-    final connected = ref.watch(connectionChangesProvider).valueOrNull;
-    if (connected != true) yield null;
-    yield* ref.watch(playerRepositoryProvider).watchPlayingEpisode();
+  (ref) {
+    ref.watch(connectionChangesProvider);
+    return ref.watch(playerRepositoryProvider).watchPlayingEpisode();
   },
 );
 

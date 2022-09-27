@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -22,6 +24,7 @@ enum AppRoute {
 }
 
 String initialRedirect = '';
+bool isFirstTime = true;
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authRepository = ref.watch(authRepositoryProvider);
@@ -41,7 +44,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         }
       } else if (!isOnboardingLocation) {
         if (isLoggedIn) initialRedirect = state.location;
-        return '/onboarding';
+        if (Platform.isAndroid || isFirstTime) {
+          isFirstTime = false;
+          return '/onboarding';
+        }
       }
 
       return null;

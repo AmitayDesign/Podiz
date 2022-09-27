@@ -56,6 +56,7 @@ class SpotifyApi {
   bool get tokenExpired => timeout?.isBefore(DateTime.now()) ?? true;
 
   Future<String> getAccessToken() async {
+    print("### GET ACCESS TOKEN!!!!");
     if (!tokenExpired && accessToken != null) return accessToken!;
     print("accrsssss token");
     final response = await functions
@@ -76,6 +77,7 @@ class SpotifyApi {
   }
 
   Future<bool> connectToSdk() {
+    print("### CONNNECTING!!!!!!!");
     if (Platform.isIOS) {
       return SpotifySdk.connectToSpotifyRemote(
         clientId: clientId,
