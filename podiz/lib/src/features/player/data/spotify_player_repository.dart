@@ -24,16 +24,20 @@ class SpotifyPlayerRepository implements PlayerRepository {
     required this.mixPanelRepository,
   });
 
+  PlayingEpisode? lastPlayingEpisode;
+
   @override
   Stream<PlayingEpisode?> watchPlayingEpisode() =>
       SpotifySdk.subscribePlayerState()
           .skipWhile((state) => state.track == null)
-          .asyncMap(playingEpisodeFromPlayerState);
+          .asyncMap(playingEpisodeFromPlayerState)
+          .handleError((e) => lastPlayingEpisode);
 
   @override
   Future<PlayingEpisode?> fetchPlayingEpisode() async {
     final state = await SpotifySdk.getPlayerState()
         .timeout(const Duration(seconds: 1), onTimeout: () async {
+      print('### FETCH');
       await spotifyApi.connectToSdk();
       return await SpotifySdk.getPlayerState();
     });
@@ -50,13 +54,13 @@ class SpotifyPlayerRepository implements PlayerRepository {
     final stateTime = DateTime.now();
     var episode = await episodeRepository.fetchEpisode(episodeId);
     final futureDuration = DateTime.now().difference(stateTime);
-
-    return PlayingEpisode.fromEpisode(
+    lastPlayingEpisode = PlayingEpisode.fromEpisode(
       episode,
       position: Duration(milliseconds: state.playbackPosition) + futureDuration,
       isPlaying: !state.isPaused,
       playbackSpeed: state.playbackSpeed,
     );
+    return lastPlayingEpisode;
   }
 
   @override
@@ -65,6 +69,7 @@ class SpotifyPlayerRepository implements PlayerRepository {
 
     await SpotifySdk.play(spotifyUri: uriFromId(episodeId))
         .timeout(const Duration(seconds: 1), onTimeout: (() async {
+      print('### PLAYNING');
       await spotifyApi.connectToSdk();
       await SpotifySdk.play(spotifyUri: uriFromId(episodeId));
     }));
@@ -116,6 +121,7 @@ class SpotifyPlayerRepository implements PlayerRepository {
         .timeout(
       const Duration(seconds: 1),
       onTimeout: () async {
+        print('### PAUSE');
         await spotifyApi.connectToSdk();
         SpotifySdk.seekTo(positionedMilliseconds: time.inMilliseconds);
       },

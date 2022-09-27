@@ -92,6 +92,7 @@ class SpotifyAuthRepository
     spotifyApi.timeout = now.add(Duration(seconds: timeout));
     spotifyApi.onDisconnect = signOut;
     // connect to sdk
+    print('### SIGN IN');
     final success = await spotifyApi.connectToSdk();
     if (!success) throw Exception('Error connecting to Spotify');
     //
@@ -204,7 +205,7 @@ mixin ConnectionState {
         SpotifySdk.subscribeConnectionStatus().listen((status) async {
       connectionState.value = status.connected;
       final userId = preferences.getStringOrNull(userKey);
-      if (!Platform.isIOS) {
+      if (Platform.isAndroid) {
         if (!status.connected && userId != null) {
           spotifyApi.getAccessToken();
         }
