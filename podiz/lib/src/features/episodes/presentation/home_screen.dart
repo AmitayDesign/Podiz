@@ -122,6 +122,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             context.pushNamed(
               AppRoute.discussion.name,
               params: {'episodeId': comment.episodeId},
+              queryParams: {'t': comment.timestamp.inSeconds},
             );
             break;
           case Channel.follows:
