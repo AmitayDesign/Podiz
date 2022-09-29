@@ -37,6 +37,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  final feedController = ScrollController();
   late var destination = widget.destination ?? HomePage.feed;
   late final pageController = PageController(initialPage: destination.index);
 
@@ -78,6 +79,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   void dispose() {
+    feedController.dispose();
     pageController.dispose();
     super.dispose();
   }
@@ -102,6 +104,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       context.goNamed(
         AppRoute.home.name,
         queryParams: {'destination': HomePage.values[i].name},
+      );
+    } else if (i == 0) {
+      feedController.animateTo(
+        0,
+        duration: kTabScrollDuration,
+        curve: Curves.ease,
       );
     }
   }
@@ -170,10 +178,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             floatingActionButton: localDebugFAB(),
             body: PageView(
               controller: pageController,
-              children: const [
-                FeedPage(),
-                SearchPage(),
-                NotificationsPage(),
+              children: [
+                FeedPage(scrollController: feedController),
+                const SearchPage(),
+                const NotificationsPage(),
               ],
             ),
             bottomNavigationBar: Column(
