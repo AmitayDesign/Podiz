@@ -53,8 +53,9 @@ class ConnectionController extends StateNotifier<AsyncValue> {
   Future<String?> openSignInUrl() {
     state = const AsyncValue.loading();
     return FlutterWebAuth2.authenticate(
-        url: Uri.parse(spotifyApi.authenticationUrl).toString(),
-        callbackUrlScheme: 'podiz');
+      url: Uri.parse(spotifyApi.authenticationUrl).toString(),
+      callbackUrlScheme: 'podiz',
+    );
   }
 
   // Future<String?> openSignInUrl() async {
