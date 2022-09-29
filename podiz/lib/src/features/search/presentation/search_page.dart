@@ -23,15 +23,21 @@ import 'podcast_card.dart';
 import 'user_card.dart';
 
 class SearchPage extends ConsumerStatefulWidget {
-  const SearchPage({Key? key}) : super(key: key);
+  final ScrollController? scrollController;
+  const SearchPage({Key? key, this.scrollController}) : super(key: key);
 
   @override
   ConsumerState<SearchPage> createState() => _SearchPageState();
 }
 
-class _SearchPageState extends ConsumerState<SearchPage> {
+/// Use the [AutomaticKeepAliveClientMixin] to keep the state.
+class _SearchPageState extends ConsumerState<SearchPage>
+    with AutomaticKeepAliveClientMixin {
   late final searchController = TextEditingController();
   String get query => searchController.text;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -68,6 +74,9 @@ class _SearchPageState extends ConsumerState<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    // call 'super.build' when using 'AutomaticKeepAliveClientMixin'
+    super.build(context);
+
     final user = ref.watch(currentUserProvider);
     final userRepository = ref.watch(userRepositoryProvider);
     final episodeRepository = ref.watch(episodeRepositoryProvider);
@@ -79,6 +88,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
           valueListenable: searchController,
           builder: (context, value, _) {
             return CustomScrollView(
+              controller: widget.scrollController,
               slivers: [
                 // so it doesnt start behind the app bar
                 const SliverToBoxAdapter(

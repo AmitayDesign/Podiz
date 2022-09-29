@@ -10,11 +10,25 @@ import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
 import 'package:podiz/src/features/notifications/presentation/notifications_bar.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
 
-class NotificationsPage extends ConsumerWidget {
-  const NotificationsPage({Key? key}) : super(key: key);
+class NotificationsPage extends ConsumerStatefulWidget {
+  final ScrollController? scrollController;
+  const NotificationsPage({Key? key, this.scrollController}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<NotificationsPage> createState() => _NotificationsPageState();
+}
+
+/// Use the [AutomaticKeepAliveClientMixin] to keep the state.
+class _NotificationsPageState extends ConsumerState<NotificationsPage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    // call 'super.build' when using 'AutomaticKeepAliveClientMixin'
+    super.build(context);
+
     final filter = ref.watch(notificationsFilterProvider);
     final user = ref.watch(currentUserProvider);
     final commentsValue = ref.watch(userRepliesStreamProvider(user.id));
@@ -48,6 +62,7 @@ class NotificationsPage extends ConsumerWidget {
             extendBodyBehindAppBar: true,
             appBar: NotificationsBar(comments),
             body: CustomScrollView(
+              controller: widget.scrollController,
               slivers: [
                 // so it doesnt start behind the app bar
                 const SliverToBoxAdapter(
