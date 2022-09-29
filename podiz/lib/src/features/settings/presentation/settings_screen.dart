@@ -57,6 +57,11 @@ class SettingsScreen extends ConsumerWidget {
           ),
           const Spacer(),
 
+          Text(
+            'Illustrations by https://icons8.com',
+            style: context.textTheme.labelSmall!.copyWith(fontSize: 8),
+          ),
+
           //* Button
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
