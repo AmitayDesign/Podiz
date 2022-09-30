@@ -20,7 +20,8 @@ import 'feed_controller.dart';
 import 'feed_title.dart';
 
 class FeedPage extends ConsumerStatefulWidget {
-  const FeedPage({Key? key}) : super(key: key);
+  final ScrollController? scrollController;
+  const FeedPage({Key? key, this.scrollController}) : super(key: key);
 
   @override
   ConsumerState<FeedPage> createState() => _FeedPageState();
@@ -29,7 +30,7 @@ class FeedPage extends ConsumerStatefulWidget {
 /// Use the [AutomaticKeepAliveClientMixin] to keep the state.
 class _FeedPageState extends ConsumerState<FeedPage>
     with AutomaticKeepAliveClientMixin {
-  late final scrollController = ScrollController()
+  late final scrollController = (widget.scrollController ?? ScrollController())
     ..addListener(
       () => ref.read(feedControllerProvider.notifier).handleTitles(),
     );
@@ -39,7 +40,7 @@ class _FeedPageState extends ConsumerState<FeedPage>
 
   @override
   void dispose() {
-    scrollController.dispose();
+    if (widget.scrollController == null) scrollController.dispose();
     super.dispose();
   }
 

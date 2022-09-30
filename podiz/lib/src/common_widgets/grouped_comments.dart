@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/skeleton_grouped_comments.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/discussion/presentation/comment/comment_card.dart';
+import 'package:podiz/src/features/discussion/presentation/sheet/comment_sheet.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 
@@ -40,6 +41,14 @@ class GroupedComments extends ConsumerWidget {
                         comment,
                         episodeId: episodeId,
                         navigate: true,
+                        onReply: () => showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (context) => Padding(
+                            padding: MediaQuery.of(context).viewInsets,
+                            child: CommentSheet(episode: episode),
+                          ),
+                        ),
                       ),
                     )
                 ],
