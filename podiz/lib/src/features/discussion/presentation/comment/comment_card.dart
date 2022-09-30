@@ -32,12 +32,15 @@ class CommentCard extends ConsumerStatefulWidget {
   final bool navigate;
   final bool showcase;
 
+  final VoidCallback? onReply;
+
   const CommentCard(
     this.comment, {
     Key? key,
     required this.episodeId,
     this.navigate = false,
     this.showcase = false,
+    this.onReply,
   }) : super(key: key);
 
   @override
@@ -146,9 +149,11 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                   CommentText(widget.comment.text),
                   const SizedBox(height: 16),
                   CommentTrailing(
-                    onReply: () => ref
-                        .read(commentSheetTargetProvider.notifier)
-                        .state = widget.comment,
+                    onReply: () {
+                      ref.read(commentSheetTargetProvider.notifier).state =
+                          widget.comment;
+                      widget.onReply?.call();
+                    },
                     onShare: () => share(widget.comment),
                   ),
                   if (widget.comment.replyCount > 0) ...[

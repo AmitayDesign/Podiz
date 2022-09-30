@@ -180,7 +180,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           child: Scaffold(
             extendBody: true,
             //floatingActionButton: notificationDebugFAB(),
-            floatingActionButton: localDebugFAB(),
+            // floatingActionButton: localDebugFAB(),
             body: PageView(
               controller: pageController,
               children: [
