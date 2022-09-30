@@ -13,11 +13,11 @@ class ProfileFollowFab extends ConsumerWidget {
   final UserPodiz user;
   const ProfileFollowFab(this.user, {Key? key}) : super(key: key);
 
-  void follow(Reader read, UserPodiz user, bool isFollowing) {
+  void follow(Reader read, UserPodiz currentUser, bool isFollowing) {
     final userRepository = read(userRepositoryProvider);
     isFollowing
-        ? userRepository.unfollow(user.id, user.id)
-        : userRepository.follow(user.id, user.id);
+        ? userRepository.unfollow(currentUser.id, user.id)
+        : userRepository.follow(currentUser.id, user.id);
   }
 
   @override
