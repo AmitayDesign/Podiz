@@ -12,6 +12,7 @@ class PrivacyScreen extends ConsumerWidget {
   const PrivacyScreen({Key? key}) : super(key: key);
 
   //TODO change sender
+  //TODO change this to cloud functions maybe
   Future<void> requestInformation(Reader read) async {
     final user = read(currentUserProvider);
     await read(firestoreProvider).collection('mail').add({
