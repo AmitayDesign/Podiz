@@ -23,7 +23,6 @@ import 'package:podiz/src/features/showcase/data/showcase_repository.dart';
 import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
 import 'package:podiz/src/features/showcase/presentation/showcase_keys.dart';
 import 'package:podiz/src/routing/app_router.dart';
-import 'package:podiz/src/utils/instances.dart';
 
 enum HomePage { feed, search, notifications }
 
@@ -175,58 +174,65 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       },
     );
 
-    return KeyboardVisibilityBuilder(
-      builder: (context, isKeyBoardOpen) {
-        return TapToUnfocus(
-          child: Scaffold(
-            extendBody: true,
-            // floatingActionButton: notificationDebugFAB(),
-            // floatingActionButton: localDebugFAB(),
-            body: PageView(
-              controller: pageController,
-              children: [
-                FeedPage(scrollController: pageScrollControllers[0]),
-                SearchPage(scrollController: pageScrollControllers[1]),
-                NotificationsPage(scrollController: pageScrollControllers[2]),
-              ],
-            ),
-            bottomNavigationBar: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Player(),
-                ClipRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: SizedBox(
-                      height: HomeScreen.bottomBarHeigh,
-                      child: BottomNavigationBar(
-                        onTap: (i) => i != destination.index
-                            ? goToDestination(i)
-                            : scrollToTheTop(i),
-                        currentIndex: destination.index,
-                        items: const [
-                          BottomNavigationBarItem(
-                            label: 'Home',
-                            icon: Icon(Icons.home_rounded),
-                          ),
-                          BottomNavigationBarItem(
-                            label: 'Search',
-                            icon: Icon(Icons.search_rounded),
-                          ),
-                          BottomNavigationBarItem(
-                            label: 'Notifications',
-                            icon: Icon(Icons.notifications_rounded),
-                          ),
-                        ],
+    return WillPopScope(
+      onWillPop: () async {
+        if (destination == HomePage.feed) return true;
+        goToDestination(0);
+        return false;
+      },
+      child: KeyboardVisibilityBuilder(
+        builder: (context, isKeyBoardOpen) {
+          return TapToUnfocus(
+            child: Scaffold(
+              extendBody: true,
+              // floatingActionButton: notificationDebugFAB(),
+              // floatingActionButton: localDebugFAB(),
+              body: PageView(
+                controller: pageController,
+                children: [
+                  FeedPage(scrollController: pageScrollControllers[0]),
+                  SearchPage(scrollController: pageScrollControllers[1]),
+                  NotificationsPage(scrollController: pageScrollControllers[2]),
+                ],
+              ),
+              bottomNavigationBar: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Player(),
+                  ClipRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: SizedBox(
+                        height: HomeScreen.bottomBarHeigh,
+                        child: BottomNavigationBar(
+                          onTap: (i) => i != destination.index
+                              ? goToDestination(i)
+                              : scrollToTheTop(i),
+                          currentIndex: destination.index,
+                          items: const [
+                            BottomNavigationBarItem(
+                              label: 'Home',
+                              icon: Icon(Icons.home_rounded),
+                            ),
+                            BottomNavigationBarItem(
+                              label: 'Search',
+                              icon: Icon(Icons.search_rounded),
+                            ),
+                            BottomNavigationBarItem(
+                              label: 'Notifications',
+                              icon: Icon(Icons.notifications_rounded),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
