@@ -23,6 +23,7 @@ import 'package:podiz/src/features/showcase/data/showcase_repository.dart';
 import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
 import 'package:podiz/src/features/showcase/presentation/showcase_keys.dart';
 import 'package:podiz/src/routing/app_router.dart';
+import 'package:podiz/src/utils/instances.dart';
 
 enum HomePage { feed, search, notifications }
 
@@ -179,7 +180,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         return TapToUnfocus(
           child: Scaffold(
             extendBody: true,
-            //floatingActionButton: notificationDebugFAB(),
+            // floatingActionButton: notificationDebugFAB(),
             // floatingActionButton: localDebugFAB(),
             body: PageView(
               controller: pageController,
