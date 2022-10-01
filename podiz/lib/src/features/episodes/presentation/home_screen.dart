@@ -23,6 +23,7 @@ import 'package:podiz/src/features/showcase/data/showcase_repository.dart';
 import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
 import 'package:podiz/src/features/showcase/presentation/showcase_keys.dart';
 import 'package:podiz/src/routing/app_router.dart';
+import 'package:podiz/src/utils/instances.dart';
 
 enum HomePage { feed, search, notifications }
 
@@ -37,6 +38,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  final pageScrollControllers = List.generate(3, (_) => ScrollController());
   late var destination = widget.destination ?? HomePage.feed;
   late final pageController = PageController(initialPage: destination.index);
 
@@ -45,7 +47,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
     pageController.addListener(() {
       final page = pageController.page;
-      if (page != null && page == page.toInt()) goToDestination(page.toInt());
+      if (page != null &&
+          page == page.toInt() &&
+          page.toInt() != destination.index) goToDestination(page.toInt());
     });
     final user = ref.read(currentUserProvider);
     ref.read(showcaseRepositoryProvider).isFirstTime(user.id).then(
@@ -78,6 +82,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   void dispose() {
+    for (var controller in pageScrollControllers) {
+      controller.dispose();
+    }
     pageController.dispose();
     super.dispose();
   }
@@ -98,12 +105,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void goToDestination(int i) {
-    if (i != destination.index) {
-      context.goNamed(
-        AppRoute.home.name,
-        queryParams: {'destination': HomePage.values[i].name},
-      );
-    }
+    context.goNamed(
+      AppRoute.home.name,
+      queryParams: {'destination': HomePage.values[i].name},
+    );
+  }
+
+  void scrollToTheTop(int i) {
+    pageScrollControllers[i].animateTo(
+      0,
+      duration: kTabScrollDuration,
+      curve: Curves.ease,
+    );
   }
 
   @override
@@ -122,6 +135,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             context.pushNamed(
               AppRoute.discussion.name,
               params: {'episodeId': comment.episodeId},
+              queryParams: {'t': comment.timestamp.inSeconds},
             );
             break;
           case Channel.follows:
@@ -170,10 +184,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             //floatingActionButton: localDebugFAB(),
             body: PageView(
               controller: pageController,
-              children: const [
-                FeedPage(),
-                SearchPage(),
-                NotificationsPage(),
+              children: [
+                FeedPage(scrollController: pageScrollControllers[0]),
+                SearchPage(scrollController: pageScrollControllers[1]),
+                NotificationsPage(scrollController: pageScrollControllers[2]),
               ],
             ),
             bottomNavigationBar: Column(
@@ -186,7 +200,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: SizedBox(
                       height: HomeScreen.bottomBarHeigh,
                       child: BottomNavigationBar(
-                        onTap: goToDestination,
+                        onTap: (i) => i != destination.index
+                            ? goToDestination(i)
+                            : scrollToTheTop(i),
                         currentIndex: destination.index,
                         items: const [
                           BottomNavigationBarItem(

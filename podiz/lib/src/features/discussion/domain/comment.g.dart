@@ -11,6 +11,7 @@ Comment _$CommentFromJson(Map<String, dynamic> json) => Comment(
       text: json['text'] as String,
       episodeId: json['episodeId'] as String,
       userId: json['userId'] as String,
+      date: dateFromTimestamp(json['date'] as Timestamp?),
       timestamp: durationFromMs(json['timestamp'] as int),
       parentIds: (json['parentIds'] as List<dynamic>?)
               ?.map((e) => e as String)
@@ -25,6 +26,7 @@ Map<String, dynamic> _$CommentToJson(Comment instance) => <String, dynamic>{
       'text': instance.text,
       'episodeId': instance.episodeId,
       'userId': instance.userId,
+      'date': timestampFromDate(instance.date),
       'timestamp': msFromDuration(instance.timestamp),
       'parentIds': instance.parentIds,
       'parentUserId': instance.parentUserId,
