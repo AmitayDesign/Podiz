@@ -11,6 +11,7 @@ const search = require("./src/search.js");
 const notifications = require("./src/notifications.js");
 const comments = require("./src/comments.js");
 const player = require("./src/player.js");
+// const userData = require("./src/user-data.js");
 
 admin.initializeApp(functions.config().firebase);
 
@@ -98,3 +99,15 @@ exports.playEpisode = functions.https.onCall((data, _) =>
 exports.pauseEpisode = functions.https.onCall((data, _) =>
   player.pauseEpisode(data.accessToken)
 );
+
+exports.requestData = functions.https.onRequest((req, res) => {
+  var userId = req.query.id;
+  res.send('<button>Download data</button>');
+  // return userData.whipeData(userId);
+});
+
+exports.whipeData = functions.https.onRequest((req, res) => {
+  var userId = req.query.id;
+  res.send('<p>Your data was erased successfuly!</p>');
+  // return userData.whipeData(userId);
+});

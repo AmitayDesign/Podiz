@@ -21,7 +21,9 @@ class PrivacyScreen extends ConsumerWidget {
       'message': {
         //TODO subject and text
         'subject': 'Your data',
-        'text': 'There you go! A zip filw with your data is attached bellow',
+        'text': 'There you go! '
+            'To download all your data just click on this link\n'
+            'https://us-central1-podiz-130ca.cloudfunctions.net/requestData',
         //TODO make a zip with all the user data
         //TODO search 'node mailer zip attachment and see how to add it here
         //TODO make the button load and/or prompt a 'you ll receive an email soon'
@@ -39,7 +41,9 @@ class PrivacyScreen extends ConsumerWidget {
         //TODO subject and text
         'subject': 'Delete your data',
         //TODO create deletion link
-        'text': 'There you go! To delete all your data just click on this link',
+        'text': 'There you go! '
+            'To delete all your data just click on this link\n'
+            'https://us-central1-podiz-130ca.cloudfunctions.net/whipeData',
         // 'attachments': [],
       }
     });
