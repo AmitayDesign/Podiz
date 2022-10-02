@@ -77,7 +77,7 @@ class _CommentCardState extends ConsumerState<CommentCard> {
     final podcast =
         ref.read(podcastFutureProvider(episode.showId)).valueOrNull!;
     final timestamp = comment.timestamp.inSeconds;
-    final link = 'podiz.io/discussion/$episodeId?t=$timestamp';
+    final link = 'http://podiz.io/discussion/$episodeId?t=$timestamp';
     RenderBox? box = context.findRenderObject() as RenderBox?;
     final ipad = await isIpad();
     Share.share(
