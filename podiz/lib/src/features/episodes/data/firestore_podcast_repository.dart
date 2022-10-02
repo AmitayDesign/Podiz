@@ -52,6 +52,7 @@ class FirestorePodcastRepository extends PodcastRepository {
   @override
   Future<void> refetchPodcast(String podcastId) => fetchSpotifyShow(podcastId);
 
+  //! THIS MUST ONLY BE CALLED FOR THE CURRENT USER
   @override
   Future<void> refetchFavoritePodcasts(String userId) async {
     final accessToken = await spotifyApi.getAccessToken();

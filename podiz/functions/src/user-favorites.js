@@ -28,6 +28,7 @@ const saveFavorites = async (accessToken, userId, favorites, lastFavorite) => {
 	var favoriteIds = await Promise.all(
 		favorites.items.map(async (item) => {
 			var show = item.show;
+			console.log(show.name);
 			var showExists = await helpers.checkShowExists(show.id);
 			if (!showExists) await fetchSpotifyShow(accessToken, show.id);
 			if (show.id == lastFavorite) fetchMore = false;
