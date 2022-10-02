@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
+import 'package:podiz/src/theme/context_theme.dart';
+import 'package:podiz/src/theme/palette.dart';
 
 /// Generic function to show a Material dialog
 Future<bool?> showAlertDialog({
@@ -12,16 +14,27 @@ Future<bool?> showAlertDialog({
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: context.colorScheme.surface,
         title: Text(title),
+        titleTextStyle: context.textTheme.titleMedium,
         content: content != null ? Text(content) : null,
+        contentTextStyle: context.textTheme.bodyMedium,
         actions: [
           if (cancelActionText != null)
             TextButton(
-              child: Text(cancelActionText),
+              child: Text(
+                cancelActionText,
+                style: context.textTheme.titleSmall!
+                    .copyWith(color: Palette.purple),
+              ),
               onPressed: () => Navigator.of(context).pop(false),
             ),
           TextButton(
-            child: Text(defaultActionText ?? 'Ok'.hardcoded),
+            child: Text(
+              defaultActionText ?? 'Ok'.hardcoded,
+              style:
+                  context.textTheme.titleSmall!.copyWith(color: Palette.purple),
+            ),
             onPressed: () => Navigator.of(context).pop(true),
           ),
         ],

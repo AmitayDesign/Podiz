@@ -13,6 +13,12 @@ class PrivacyScreen extends ConsumerWidget {
   const PrivacyScreen({Key? key}) : super(key: key);
 
   Future<void> requestInformation(BuildContext context, Reader read) async {
+    final result = await showAlertDialog(
+      context: context,
+      title: 'Request Data',
+      content: 'We will send you an email to confirm your identity.',
+    );
+    if (result != true) return;
     final user = read(currentUserProvider);
     final mailDoc = read(firestoreProvider).collection('mail').doc();
     await mailDoc.set({
@@ -25,14 +31,15 @@ class PrivacyScreen extends ConsumerWidget {
             '?id=${mailDoc.id}',
       }
     });
-    showAlertDialog(
-      context: context,
-      title: 'Request Data',
-      content: 'We are sending you an email with so we can confirm it\'s you.',
-    );
   }
 
   Future<void> whipeData(BuildContext context, Reader read) async {
+    final result = await showAlertDialog(
+      context: context,
+      title: 'Whipe Data',
+      content: 'We will send you an email to confirm your identity.',
+    );
+    if (result != true) return;
     final user = read(currentUserProvider);
     final mailDoc = read(firestoreProvider).collection('mail').doc();
     await mailDoc.set({
@@ -46,11 +53,6 @@ class PrivacyScreen extends ConsumerWidget {
             '?id=${mailDoc.id}',
       }
     });
-    showAlertDialog(
-      context: context,
-      title: 'Whipe Data',
-      content: 'We are sending you an email with so we can confirm it\'s you.',
-    );
   }
 
   @override
