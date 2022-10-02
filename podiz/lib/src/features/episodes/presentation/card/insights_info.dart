@@ -9,6 +9,7 @@ import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/theme/context_theme.dart';
+import 'package:skeletons/skeletons.dart';
 
 class InsightsInfo extends ConsumerWidget {
   final Episode episode;
@@ -22,32 +23,41 @@ class InsightsInfo extends ConsumerWidget {
         ref.watch(episodeStreamProvider(episode.id)).valueOrNull ?? episode;
     final comments =
         ref.watch(commentsStreamProvider(liveEpisode.id)).value ?? [];
-    final imageUrls = comments
+    final users = comments
         .map((comment) =>
-            ref.watch(userFutureProvider(comment.userId)).valueOrNull?.imageUrl)
+            ref.watch(userFutureProvider(comment.userId)).valueOrNull)
         .toSet()
         .toList();
     return Row(
       children: [
-        imageUrls.length > 1
+        users.length > 1
             ? StackedAvatars(
-                imageUrls: imageUrls,
+                imageUrls: users.map((user) => user?.imageUrl).toList(),
                 borderColor: borderColor,
               )
             : Consumer(
                 builder: (context, ref, _) {
-                  final user = ref.watch(currentUserProvider);
-                  return UserAvatar(user: user);
+                  final user = comments.isEmpty
+                      ? ref.watch(currentUserProvider)
+                      : users.first;
+                  if (user != null) return UserAvatar(user: user);
+                  return const SkeletonAvatar(
+                    style: SkeletonAvatarStyle(
+                      width: 32,
+                      height: 32,
+                      shape: BoxShape.circle,
+                    ),
+                  );
                 },
               ),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
-            liveEpisode.commentsCount == 0
+            comments.isEmpty
                 ? Locales.string(context, "noinsigths")
-                : liveEpisode.commentsCount == 1
+                : comments.length == 1
                     ? '1 insight'
-                    : '${liveEpisode.commentsCount} insights',
+                    : '${comments.length} insights',
             style: context.textTheme.bodySmall,
             overflow: TextOverflow.ellipsis,
           ),

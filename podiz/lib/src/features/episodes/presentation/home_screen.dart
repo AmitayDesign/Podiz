@@ -138,14 +138,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           notificationValue.whenData((notification) async {
         switch (notification.channel) {
           case Channel.replies:
-            final commentId = notification.id;
+            final replyId = notification.id;
             final discussionRepository = ref.read(discussionRepositoryProvider);
-            final comment = await discussionRepository.fetchComment(commentId);
+            final reply = await discussionRepository.fetchComment(replyId);
+            final comment =
+                await discussionRepository.fetchComment(reply.parentIds.first);
             if (!mounted) return;
             context.pushNamed(
               AppRoute.discussion.name,
               params: {'episodeId': comment.episodeId},
-              queryParams: {'t': comment.timestamp.inSeconds},
+              queryParams: {'t': comment.timestamp.inSeconds.toString()},
             );
             break;
           case Channel.follows:

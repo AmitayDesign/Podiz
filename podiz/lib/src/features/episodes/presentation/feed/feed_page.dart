@@ -115,14 +115,14 @@ class _FeedPageState extends ConsumerState<FeedPage>
               ),
 
             //* My Casts
-            if (user.favPodcasts.isNotEmpty)
+            if (user.favPodcasts.isNotEmpty) ...[
+              if (user.lastListened != null)
+                SliverFeedTitle(
+                  Locales.string(context, feedController.myCastsLocaleKey),
+                  textKey: feedController.myCastsKey,
+                ),
               SliverList(
                 delegate: SliverChildListDelegate([
-                  if (user.lastListened != null)
-                    FeedTitle(
-                      Locales.string(context, feedController.myCastsLocaleKey),
-                      textKey: feedController.myCastsKey,
-                    ),
                   for (final podcastId in user.favPodcasts.take(6))
                     Consumer(builder: (context, ref, _) {
                       final podcastValue =
@@ -155,6 +155,7 @@ class _FeedPageState extends ConsumerState<FeedPage>
                     }),
                 ]),
               ),
+            ],
 
             //* Hot & Live
             if (user.lastListened != null || user.favPodcasts.isNotEmpty)

@@ -109,9 +109,12 @@ class CommentSheet extends ConsumerWidget {
                             ),
                           ),
                           TextButton(
-                            onPressed: () => ref
-                                .read(commentSheetTargetProvider.notifier)
-                                .state = null,
+                            onPressed: () {
+                              if (this.episode != null) Navigator.pop(context);
+                              ref
+                                  .read(commentSheetTargetProvider.notifier)
+                                  .state = null;
+                            },
                             child: Text(
                               'Cancel'.hardcoded,
                               style: context.textTheme.bodySmall,
@@ -137,6 +140,7 @@ class CommentSheet extends ConsumerWidget {
                           addExampleToShowcase(ref.read, episode.id);
                           ShowCaseWidget.of(context).next();
                         }
+                        if (this.episode != null) Navigator.pop(context);
                       },
                     ),
                     const SizedBox(height: 4),
