@@ -72,132 +72,137 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
         ),
       ),
-      data: (user) => Scaffold(
-        extendBody: true,
-        body: RefreshIndicator(
-          onRefresh: () => ref
-              .read(podcastRepositoryProvider)
-              .refetchFavoritePodcasts(user.id),
-          child: NotificationListener<ScrollEndNotification>(
-            onNotification: (_) {
-              snapHeader();
-              return false;
-            },
-            child: CustomScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              controller: scrollController,
-              slivers: [
-                //* Sliver app bar
-                ProfileSliverHeader(
-                  user: user,
-                  minHeight: minHeight,
-                  maxHeight: maxHeight,
-                ),
+      data: (user) {
+        final child = NotificationListener<ScrollEndNotification>(
+          onNotification: (_) {
+            snapHeader();
+            return false;
+          },
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            controller: scrollController,
+            slivers: [
+              //* Sliver app bar
+              ProfileSliverHeader(
+                user: user,
+                minHeight: minHeight,
+                maxHeight: maxHeight,
+              ),
 
-                //* Favorite podcasts (horizontal scroll)
-                if (user.favPodcasts.isNotEmpty)
-                  SliverToBoxAdapter(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            '${user.name.split(' ')[0]}\'s Favorite Podcasts',
-                            style: context.textTheme.titleSmall,
-                          ),
+              //* Favorite podcasts (horizontal scroll)
+              if (user.favPodcasts.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          '${user.name.split(' ')[0]}\'s Favorite Podcasts',
+                          style: context.textTheme.titleSmall,
                         ),
-                        const SizedBox(height: 8),
-                        SizedBox(
-                          height: 64,
-                          child: ListView.builder(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: user.favPodcasts.length,
-                            itemBuilder: (context, i) {
-                              return Consumer(
-                                builder: (context, ref, _) {
-                                  final podcastId = user.favPodcasts[i];
-                                  final podcastValue = ref
-                                      .watch(podcastFutureProvider(podcastId));
-                                  const padding = EdgeInsets.only(right: 16);
+                      ),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        height: 64,
+                        child: ListView.builder(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          scrollDirection: Axis.horizontal,
+                          itemCount: user.favPodcasts.length,
+                          itemBuilder: (context, i) {
+                            return Consumer(
+                              builder: (context, ref, _) {
+                                final podcastId = user.favPodcasts[i];
+                                final podcastValue =
+                                    ref.watch(podcastFutureProvider(podcastId));
+                                const padding = EdgeInsets.only(right: 16);
 
-                                  return podcastValue.when(
-                                    loading: () => const Padding(
-                                      padding: padding,
-                                      child: SkeletonPodcastAvatar(),
-                                    ),
-                                    error: (e, _) => const SizedBox.shrink(),
-                                    data: (podcast) => Padding(
-                                      padding: padding,
-                                      child: PodcastAvatar(
-                                        imageUrl: podcast.imageUrl,
-                                        onTap: () => context.pushNamed(
-                                          AppRoute.podcast.name,
-                                          params: {'podcastId': podcast.id},
-                                        ),
+                                return podcastValue.when(
+                                  loading: () => const Padding(
+                                    padding: padding,
+                                    child: SkeletonPodcastAvatar(),
+                                  ),
+                                  error: (e, _) => const SizedBox.shrink(),
+                                  data: (podcast) => Padding(
+                                    padding: padding,
+                                    child: PodcastAvatar(
+                                      imageUrl: podcast.imageUrl,
+                                      onTap: () => context.pushNamed(
+                                        AppRoute.podcast.name,
+                                        params: {'podcastId': podcast.id},
                                       ),
                                     ),
-                                  );
-                                },
-                              );
-                            },
-                          ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                const SliverToBoxAdapter(child: SizedBox(height: 16)),
-
-                //* List of comments
-                Consumer(
-                  builder: (context, ref, _) {
-                    final commentsValue =
-                        ref.watch(userCommentsStreamProvider(user.id));
-                    return commentsValue.when(
-                      loading: () => SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: EmptyScreen.loading(),
-                        ),
-                      ),
-                      error: (e, _) => SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: EmptyScreen.text(
-                            'There was an error loading the comments.',
-                          ),
-                        ),
-                      ),
-                      data: (comments) {
-                        final episodeIds = comments
-                            .map((comment) => comment.episodeId)
-                            .toSet();
-                        return SliverList(
-                          delegate: SliverChildListDelegate([
-                            for (final episodeId in episodeIds)
-                              GroupedComments(
-                                episodeId,
-                                comments
-                                    .where((c) => c.episodeId == episodeId)
-                                    .toList(),
-                              )
-                          ]),
-                        );
-                      },
-                    );
-                  },
                 ),
+              const SliverToBoxAdapter(child: SizedBox(height: 16)),
 
-                // so it doesnt end behind the bottom bar
-                SliverToBoxAdapter(child: SizedBox(height: Player.extraHeight)),
-              ],
-            ),
+              //* List of comments
+              Consumer(
+                builder: (context, ref, _) {
+                  final commentsValue =
+                      ref.watch(userCommentsStreamProvider(user.id));
+                  return commentsValue.when(
+                    loading: () => SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: EmptyScreen.loading(),
+                      ),
+                    ),
+                    error: (e, _) => SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: EmptyScreen.text(
+                          'There was an error loading the comments.',
+                        ),
+                      ),
+                    ),
+                    data: (comments) {
+                      final episodeIds =
+                          comments.map((comment) => comment.episodeId).toSet();
+                      return SliverList(
+                        delegate: SliverChildListDelegate([
+                          for (final episodeId in episodeIds)
+                            GroupedComments(
+                              episodeId,
+                              comments
+                                  .where((c) => c.episodeId == episodeId)
+                                  .toList(),
+                            )
+                        ]),
+                      );
+                    },
+                  );
+                },
+              ),
+
+              // so it doesnt end behind the bottom bar
+              SliverToBoxAdapter(child: SizedBox(height: Player.extraHeight)),
+              const SliverFillRemaining()
+            ],
           ),
-        ),
-        floatingActionButton: isCurrentUser ? null : ProfileFollowFab(user),
-        bottomNavigationBar: const Player(extraBottomPadding: true),
-      ),
+        );
+        return Scaffold(
+          extendBody: true,
+          body: isCurrentUser
+              ? RefreshIndicator(
+                  onRefresh: () => ref
+                      .read(podcastRepositoryProvider)
+                      .refetchFavoritePodcasts(user.id),
+                  child: child,
+                )
+              : child,
+          floatingActionButton: isCurrentUser ? null : ProfileFollowFab(user),
+          bottomNavigationBar: const Player(extraBottomPadding: true),
+        );
+      },
     );
   }
 }

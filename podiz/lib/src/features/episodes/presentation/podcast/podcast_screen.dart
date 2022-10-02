@@ -99,6 +99,8 @@ class _PodcastScreenState extends ConsumerState<PodcastScreen> {
 
                 // so it doesnt end behind the bottom bar
                 SliverToBoxAdapter(child: SizedBox(height: Player.extraHeight)),
+
+                const SliverFillRemaining(),
               ],
             ),
           ),

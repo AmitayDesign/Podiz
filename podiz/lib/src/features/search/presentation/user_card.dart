@@ -6,6 +6,7 @@ import 'package:podiz/src/constants/constants.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/context_theme.dart';
+import 'package:podiz/src/utils/string_zwsp.dart';
 
 class UserCard extends ConsumerWidget {
   final UserPodiz user;
@@ -40,7 +41,7 @@ class UserCard extends ConsumerWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  user.name,
+                  user.name.useCorrectEllipsis(),
                   style: titleStyle,
                   overflow: TextOverflow.ellipsis,
                 ),
