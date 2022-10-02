@@ -80,10 +80,12 @@ class SpotifyApi {
     print("### CONNNECTING!!!!!!!");
     if (Platform.isIOS) {
       return SpotifySdk.connectToSpotifyRemote(
-        clientId: clientId,
-        redirectUrl: redirectUrl,
-        scope: scope,
-      );
+          clientId: clientId,
+          redirectUrl: redirectUrl,
+          scope: scope,
+          spotifyUri: ""
+          // accessToken: accessToken,
+          );
     }
 
     return SpotifySdk.connectToSpotifyRemote(

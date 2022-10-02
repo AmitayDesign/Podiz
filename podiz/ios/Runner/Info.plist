@@ -2,8 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- <key>FirebaseDynamicLinksCustomDomains</key>
-	<string>https://podiz.io</string> -->
+	<key>FirebaseDynamicLinksCustomDomains</key>
+<array>
+    <string>https://podiz.io/discussion</string>
+
+</array>
 	<key>App transport Security Settings</key>
 	<dict>
 		<key>Allow Arbitrary Loads</key>
