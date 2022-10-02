@@ -35,7 +35,9 @@ class ConnectionController extends StateNotifier<AsyncValue> {
   StreamSubscription? sub;
   Completer<String?>? loginCompleter;
 
+  int signInTries = 0;
   Future<void> signIn() async {
+    signInTries++;
     try {
       final response = await openSignInUrl();
       if (response == null) return;
@@ -46,7 +48,9 @@ class ConnectionController extends StateNotifier<AsyncValue> {
       final userId = await authRepository.signIn(code);
       pushNotificationsRepository.requestPermission(userId);
     } catch (err, stack) {
-      state = AsyncValue.error(err, stackTrace: stack);
+      signInTries < 3
+          ? Future.delayed(const Duration(milliseconds: 200), signIn)
+          : state = AsyncValue.error(err, stackTrace: stack);
     }
   }
 
