@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podiz/src/common_widgets/alert_dialogs.dart';
 import 'package:podiz/src/common_widgets/back_text_button.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/common_widgets/loading_button.dart';
@@ -11,7 +12,7 @@ import 'package:podiz/src/utils/instances.dart';
 class PrivacyScreen extends ConsumerWidget {
   const PrivacyScreen({Key? key}) : super(key: key);
 
-  Future<void> requestInformation(Reader read) async {
+  Future<void> requestInformation(BuildContext context, Reader read) async {
     final user = read(currentUserProvider);
     final mailDoc = read(firestoreProvider).collection('mail').doc();
     await mailDoc.set({
@@ -24,9 +25,14 @@ class PrivacyScreen extends ConsumerWidget {
             '?id=${mailDoc.id}',
       }
     });
+    showAlertDialog(
+      context: context,
+      title: 'Request Data',
+      content: 'We are sending you an email with so we can confirm it\'s you.',
+    );
   }
 
-  Future<void> whipeData(Reader read) async {
+  Future<void> whipeData(BuildContext context, Reader read) async {
     final user = read(currentUserProvider);
     final mailDoc = read(firestoreProvider).collection('mail').doc();
     await mailDoc.set({
@@ -40,6 +46,11 @@ class PrivacyScreen extends ConsumerWidget {
             '?id=${mailDoc.id}',
       }
     });
+    showAlertDialog(
+      context: context,
+      title: 'Whipe Data',
+      content: 'We are sending you an email with so we can confirm it\'s you.',
+    );
   }
 
   @override
@@ -88,13 +99,13 @@ class PrivacyScreen extends ConsumerWidget {
             child: Column(
               children: [
                 LoadingOutlinedButton(
-                  onPressed: () => requestInformation(ref.read),
+                  onPressed: () => requestInformation(context, ref.read),
                   child: Text('REQUEST MY INFORMATION'.hardcoded),
                 ),
                 const SizedBox(height: 16),
                 LoadingOutlinedButton(
                   color: context.colorScheme.error,
-                  onPressed: () => whipeData(ref.read),
+                  onPressed: () => whipeData(context, ref.read),
                   child: Text('WHIPE MY DATA'.hardcoded),
                 ),
               ],
