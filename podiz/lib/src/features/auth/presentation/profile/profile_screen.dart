@@ -191,6 +191,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
                 // so it doesnt end behind the bottom bar
                 SliverToBoxAdapter(child: SizedBox(height: Player.extraHeight)),
+                const SliverFillRemaining()
               ],
             ),
           ),
