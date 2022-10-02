@@ -73,7 +73,7 @@ class PrivacyScreen extends ConsumerWidget {
               children: const [
                 TextSpan(text: '\n'),
                 TextSpan(
-                  text: 'Amitay@Podiz.com',
+                  text: 'amitay@podiz.com',
                   style: TextStyle(fontWeight: FontWeight.w700),
                 ),
               ],

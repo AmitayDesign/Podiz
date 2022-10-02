@@ -36,10 +36,7 @@ class FeedController extends StateNotifier<String> {
     final hotLiveDidNotPass =
         hotLivePosition == null || hotLivePosition > GradientBar.height;
 
-    if (lastPodcastExists &&
-        user.lastListened != null &&
-        myCastsDidNotPass &&
-        hotLiveDidNotPass) {
+    if (lastPodcastExists && myCastsDidNotPass && hotLiveDidNotPass) {
       state = lastListenedLocaleKey;
     } else if (user.favPodcasts.isNotEmpty && hotLiveDidNotPass) {
       state = myCastsLocaleKey;
