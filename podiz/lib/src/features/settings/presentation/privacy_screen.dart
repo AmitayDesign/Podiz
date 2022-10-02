@@ -5,6 +5,7 @@ import 'package:podiz/src/common_widgets/back_text_button.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/common_widgets/loading_button.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/notifications/data/push_notifications_repository.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 import 'package:podiz/src/utils/instances.dart';
@@ -53,6 +54,8 @@ class PrivacyScreen extends ConsumerWidget {
             '?id=${mailDoc.id}',
       }
     });
+    read(pushNotificationsRepositoryProvider).revokePermission(user.id);
+    read(authRepositoryProvider).signOut();
   }
 
   @override
