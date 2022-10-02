@@ -53,11 +53,11 @@ class InsightsInfo extends ConsumerWidget {
         const SizedBox(width: 8),
         Expanded(
           child: Text(
-            liveEpisode.commentsCount == 0
+            comments.isEmpty
                 ? Locales.string(context, "noinsigths")
-                : liveEpisode.commentsCount == 1
+                : comments.length == 1
                     ? '1 insight'
-                    : '${liveEpisode.commentsCount} insights',
+                    : '${comments.length} insights',
             style: context.textTheme.bodySmall,
             overflow: TextOverflow.ellipsis,
           ),
