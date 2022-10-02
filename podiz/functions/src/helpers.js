@@ -27,7 +27,11 @@ exports.fetchFromHost = (path, accessToken) =>
 
 // USER
 
+exports.mailRef = (id) => admin.firestore().collection("mail").doc(id);
+exports.userPrivateRef = (userId) => admin.firestore()
+  .collection("usersPrivate").doc(userId);
 const userRef = (userId) => admin.firestore().collection("users").doc(userId);
+exports.userRef = userRef;
 
 // exports.checkUserExists = async (userId) => {
 //   var episodeDoc = await userRef(userId).get();
@@ -45,9 +49,16 @@ exports.addUserToFirestore = (user) =>
     { merge: true }
   );
 
-exports.addUserFavorites = (userId, favoritIds) =>
-  userRef(userId).update({
-    favPodcasts: admin.firestore.FieldValue.arrayUnion(...favoritIds),
+exports.addUserFavorites = (userId, favoriteIds) =>
+  admin.firestore().runTransaction((t) => {
+    t.update(userRef(userId), {
+      favPodcasts: admin.firestore.FieldValue.arrayUnion(...favoriteIds),
+    });
+    for (let showId of favoriteIds) {
+      t.update(showRef(showId), {
+        followers: admin.firestore.FieldValue.arrayUnion(userId),
+      });
+    }
   });
 
 exports.getUserFavorites = async (userId) => {
@@ -57,8 +68,11 @@ exports.getUserFavorites = async (userId) => {
 
 // EPISODE
 
+exports.commentsRef = () =>
+  admin.firestore().collection("comments");
 const episodeRef = (episodeId) =>
   admin.firestore().collection("episodes").doc(episodeId);
+exports.episodeRef = episodeRef;
 
 exports.checkEpisodeExists = async (episodeId) => {
   var episodeDoc = await episodeRef(episodeId).get();
@@ -111,6 +125,7 @@ exports.removeUserFromEpisodeListening = (episodeId, userId) =>
 // SHOW
 
 const showRef = (showId) => admin.firestore().collection("shows").doc(showId);
+exports.showRef = showRef;
 
 exports.checkShowExists = async (showId) => {
   var showDoc = await showRef(showId).get();
@@ -154,3 +169,8 @@ const buildSearchArray = (text) => {
   }
   return searchArray;
 };
+
+exports.addHours = (numOfHours, date = new Date()) => {
+  date.setTime(date.getTime() + numOfHours * 60 * 60 * 1000);
+  return date;
+}

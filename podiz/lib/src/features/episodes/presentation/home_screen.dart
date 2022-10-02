@@ -154,6 +154,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               AppRoute.profile.name,
               params: {'userId': userId},
             );
+            if (Platform.isIOS) ref.read(playerRepositoryProvider).pause();
             break;
         }
       }),
