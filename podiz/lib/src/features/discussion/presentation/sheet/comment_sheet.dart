@@ -140,6 +140,7 @@ class CommentSheet extends ConsumerWidget {
                           addExampleToShowcase(ref.read, episode.id);
                           ShowCaseWidget.of(context).next();
                         }
+                        if (this.episode != null) Navigator.pop(context);
                       },
                     ),
                     const SizedBox(height: 4),
