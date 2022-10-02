@@ -240,11 +240,14 @@ class _CommentCardState extends ConsumerState<CommentCard> {
     Comment reply, [
     List<Comment> replies = const [],
   ]) =>
-      ReplyWidget(reply,
-          replies: replies,
-          collapsed: collapsed,
-          episodeId: widget.episodeId,
-          onShare: (comment) => share(comment));
+      ReplyWidget(
+        reply,
+        replies: replies,
+        collapsed: collapsed,
+        episodeId: widget.episodeId,
+        onReply: widget.onReply,
+        onShare: (comment) => share(comment),
+      );
 
   Widget showcase({required UserPodiz user, required Widget child}) {
     next() {

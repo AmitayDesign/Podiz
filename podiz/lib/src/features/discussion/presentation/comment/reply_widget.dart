@@ -16,6 +16,8 @@ class ReplyWidget extends ConsumerWidget {
   final String episodeId;
   final void Function(Comment comment)? onShare;
 
+  final VoidCallback? onReply;
+
   const ReplyWidget(
     this.comment, {
     Key? key,
@@ -23,6 +25,7 @@ class ReplyWidget extends ConsumerWidget {
     this.collapsed = false,
     required this.episodeId,
     required this.onShare,
+    this.onReply,
   }) : super(key: key);
 
   List<Comment> get directReplies =>
@@ -69,15 +72,19 @@ class ReplyWidget extends ConsumerWidget {
                       const SizedBox(height: 12),
                       if (!collapsed && comment.parentIds.length < 3) ...[
                         CommentTrailing(
-                          onReply: () => ref
-                              .read(commentSheetTargetProvider.notifier)
-                              .state = comment,
+                          onReply: () {
+                            ref
+                                .read(commentSheetTargetProvider.notifier)
+                                .state = comment;
+                            onReply?.call();
+                          },
                           onShare: () => onShare?.call(comment),
                         ),
                         for (final reply in directReplies)
                           ReplyWidget(
                             reply,
                             episodeId: episodeId,
+                            onReply: onReply,
                             onShare: onShare,
                             replies: replies
                                 .where((r) => r.parentIds.contains(reply.id))

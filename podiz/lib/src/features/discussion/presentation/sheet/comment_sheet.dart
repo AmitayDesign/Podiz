@@ -109,9 +109,12 @@ class CommentSheet extends ConsumerWidget {
                             ),
                           ),
                           TextButton(
-                            onPressed: () => ref
-                                .read(commentSheetTargetProvider.notifier)
-                                .state = null,
+                            onPressed: () {
+                              if (this.episode != null) Navigator.pop(context);
+                              ref
+                                  .read(commentSheetTargetProvider.notifier)
+                                  .state = null;
+                            },
                             child: Text(
                               'Cancel'.hardcoded,
                               style: context.textTheme.bodySmall,
