@@ -51,12 +51,17 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
   Stream<List<Comment>> watchUserComments(String userId) =>
       firestore.commentsCollection
           .where('userId', isEqualTo: userId)
-          .where('parentIds', isEqualTo: [])
+          // .where('parentIds', isEqualTo: [])
           .orderBy('episodeId')
           .orderBy('date')
           .snapshots()
-          .map((snapshot) =>
-              snapshot.docs.map((doc) => Comment.fromFirestore(doc)).toList());
+          .asyncMap((snapshot) => Future.wait(snapshot.docs.map((doc) async {
+                Comment comment = Comment.fromFirestore(doc);
+                if (comment.parentIds.isNotEmpty) {
+                  comment = await fetchComment(comment.parentIds.first);
+                }
+                return comment;
+              }).toList()));
 
   @override
   Stream<List<Comment>> watchUserReplies(String userId) =>
