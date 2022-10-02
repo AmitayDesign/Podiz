@@ -50,7 +50,7 @@ exports.addUserToFirestore = (user) =>
   );
 
 exports.addUserFavorites = (userId, favoriteIds) =>
-  admin.firestore().runTransaction((t) => {
+  admin.firestore().runTransaction(async (t) => {
     t.update(userRef(userId), {
       favPodcasts: admin.firestore.FieldValue.arrayUnion(...favoriteIds),
     });
