@@ -38,7 +38,8 @@ class PrivacyScreen extends ConsumerWidget {
     final result = await showAlertDialog(
       context: context,
       title: 'Whipe Data',
-      content: 'We will send you an email to confirm your identity.',
+      content:
+          'You\'ll be signed out and we will send you an email to confirm your identity.',
     );
     if (result != true) return;
     final user = read(currentUserProvider);
