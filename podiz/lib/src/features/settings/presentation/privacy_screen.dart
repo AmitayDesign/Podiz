@@ -11,40 +11,33 @@ import 'package:podiz/src/utils/instances.dart';
 class PrivacyScreen extends ConsumerWidget {
   const PrivacyScreen({Key? key}) : super(key: key);
 
-  //TODO change sender
-  //TODO change this to cloud functions maybe
   Future<void> requestInformation(Reader read) async {
     final user = read(currentUserProvider);
-    await read(firestoreProvider).collection('mail').add({
-      'to': user.email,
-      // 'toUids': [user.id],
+    final mailDoc = read(firestoreProvider).collection('mail').doc();
+    await mailDoc.set({
+      'toUids': [user.id],
       'message': {
-        //TODO subject and text
         'subject': 'Your data',
         'text': 'There you go! '
             'To download all your data just click on this link\n'
-            'https://us-central1-podiz-130ca.cloudfunctions.net/requestData',
-        //TODO make a zip with all the user data
-        //TODO search 'node mailer zip attachment and see how to add it here
-        //TODO make the button load and/or prompt a 'you ll receive an email soon'
-        // 'attachments': [],
+            'https://us-central1-podiz-130ca.cloudfunctions.net/requestData'
+            '?id=${mailDoc.id}',
       }
     });
   }
 
   Future<void> whipeData(Reader read) async {
     final user = read(currentUserProvider);
-    await read(firestoreProvider).collection('mail').add({
-      'to': user.email,
-      // 'toUids': [user.id],
+    final mailDoc = read(firestoreProvider).collection('mail').doc();
+    await mailDoc.set({
+      'toUids': [user.id],
       'message': {
-        //TODO subject and text
         'subject': 'Delete your data',
         //TODO create deletion link
         'text': 'There you go! '
             'To delete all your data just click on this link\n'
-            'https://us-central1-podiz-130ca.cloudfunctions.net/whipeData',
-        // 'attachments': [],
+            'https://us-central1-podiz-130ca.cloudfunctions.net/whipeData'
+            '?id=${mailDoc.id}',
       }
     });
   }
