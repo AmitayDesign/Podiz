@@ -31,11 +31,8 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
             <!-- Deep linking -->
-            <meta-data
-                android:name="flutter_deeplinking_enabled"
-                android:value="true"
-            />
-            <!-- Deep linking for opening shared comments -->
+            <meta-data 
+                android:name="flutter_deeplinking_enabled" android:value="true" />
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -43,13 +40,6 @@
                 <data android:scheme="http" android:host="podiz.io" />
                 <data android:scheme="https" />
             </intent-filter>
-            <!-- Deep linking for spotify auth using uni links -->
-            <!-- <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="podiz" />
-            </intent-filter> -->
         </activity>
         <!-- Deep linking for spotify auth using flutter web auth 2 -->
         <activity android:name="com.linusu.flutter_web_auth_2.CallbackActivity"
