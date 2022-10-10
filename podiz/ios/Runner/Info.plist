@@ -3,10 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>FirebaseDynamicLinksCustomDomains</key>
-<array>
-    <string>https://podiz.io/discussion</string>
-
-</array>
+	<array>
+		<string>https://podiz.io/discussion</string>
+	</array>
 	<key>App transport Security Settings</key>
 	<dict>
 		<key>Allow Arbitrary Loads</key>
@@ -24,6 +23,10 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:podiz.io</string>
+	</array>
 	<key>CFBundleName</key>
 	<string>podiz</string>
 	<key>CFBundlePackageType</key>
@@ -51,7 +54,6 @@
 			<string>podiz.io</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>http</string>
 				<string>https</string>
 			</array>
 		</dict>
