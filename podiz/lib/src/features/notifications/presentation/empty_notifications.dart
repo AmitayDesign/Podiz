@@ -24,7 +24,7 @@ class EmptyNotifications extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Image.asset(
-                    'assets/images/onBoardingMen.png',
+                    'assets/images/noNotifications.png',
                     fit: BoxFit.contain,
                   ),
                   const SizedBox(height: 32),
