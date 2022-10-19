@@ -34,15 +34,15 @@ void main() async {
 
       await Firebase.initializeApp();
 
-      if (Platform.isIOS) {
-        final PendingDynamicLinkData? initialLink =
-            await FirebaseDynamicLinks.instance.getInitialLink();
-        if (initialLink != null) {
-          Uri deepLink = initialLink.link;
-          initialRedirect =
-              deepLink.path + "?t=" + deepLink.queryParameters['t']!;
-        }
-      }
+      // if (Platform.isIOS) {
+      //   final PendingDynamicLinkData? initialLink =
+      //       await FirebaseDynamicLinks.instance.getInitialLink();
+      //   if (initialLink != null) {
+      //     Uri deepLink = initialLink.link;
+      //     initialRedirect =
+      //         deepLink.path + "?t=" + deepLink.queryParameters['t']!;
+      //   }
+      // }
 
       await providerContainer.read(preferencesFutureProvider.future);
       await providerContainer.read(pushNotificationsRepositoryProvider).init();

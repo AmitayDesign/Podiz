@@ -1,6 +1,9 @@
 import 'dart:io' as io;
+import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -77,7 +80,16 @@ class _CommentCardState extends ConsumerState<CommentCard> {
     final podcast =
         ref.read(podcastFutureProvider(episode.showId)).valueOrNull!;
     final timestamp = comment.timestamp.inSeconds;
-    final link = 'http://podiz.io/discussion/$episodeId?t=$timestamp';
+    var link = 'https://podiz.io/discussion/$episodeId?t=$timestamp';
+    // if (Platform.isIOS) {
+    //   final dynamicLinkParamenters = DynamicLinkParameters(
+    //       link: Uri.parse(link),
+    //       uriPrefix: '',
+    //       iosParameters: const IOSParameters(bundleId: "com.amitay.podiz"));
+    //   var dynamicLink =
+    //       await FirebaseDynamicLinks.instance.buildLink(dynamicLinkParamenters);
+    //   link = dynamicLink.toString();
+    // }
     RenderBox? box = context.findRenderObject() as RenderBox?;
     final ipad = await isIpad();
     Share.share(

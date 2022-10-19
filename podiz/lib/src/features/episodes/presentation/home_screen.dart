@@ -52,14 +52,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           page == page.toInt() &&
           page.toInt() != destination.index) goToDestination(page.toInt());
     });
-    if (Platform.isIOS) {
-      FirebaseDynamicLinks.instance.onLink.listen((dynamicLink) {
-        Uri deeplLink = dynamicLink.link;
-        context.goNamed(AppRoute.discussion.name,
-            params: {'episodeId': deeplLink.path.split('/')[-1]},
-            queryParams: {'t': deeplLink.queryParameters['t']});
-      });
-    }
+    // if (Platform.isIOS) {
+    //   FirebaseDynamicLinks.instance.onLink.listen((dynamicLink) {
+    //     Uri deeplLink = dynamicLink.link;
+    //     context.goNamed(AppRoute.discussion.name,
+    //         params: {'episodeId': deeplLink.path.split('/')[-1]},
+    //         queryParams: {'t': deeplLink.queryParameters['t']});
+    //   });
+    // }
 
     final user = ref.read(currentUserProvider);
     ref.read(showcaseRepositoryProvider).isFirstTime(user.id).then(
