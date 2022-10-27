@@ -91,7 +91,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 minHeight: minHeight,
                 maxHeight: maxHeight,
               ),
-
               //* Favorite podcasts (horizontal scroll)
               if (user.favPodcasts.isNotEmpty)
                 SliverToBoxAdapter(
