@@ -80,7 +80,7 @@ class _CommentCardState extends ConsumerState<CommentCard> {
     final podcast =
         ref.read(podcastFutureProvider(episode.showId)).valueOrNull!;
     final timestamp = comment.timestamp.inSeconds;
-    var link = 'https://podiz.io/discussion/$episodeId?t=$timestamp';
+    var link = 'podiz://podiz.io/discussion/$episodeId?t=$timestamp';
     // if (Platform.isIOS) {
     //   final dynamicLinkParamenters = DynamicLinkParameters(
     //       link: Uri.parse(link),
