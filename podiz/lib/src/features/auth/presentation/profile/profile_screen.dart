@@ -13,9 +13,12 @@ import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/episodes/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/features/episodes/presentation/avatar/skeleton_podcast_avatar.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/context_theme.dart';
+
+import 'empty_profile.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   final String userId;
@@ -88,7 +91,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 minHeight: minHeight,
                 maxHeight: maxHeight,
               ),
-
               //* Favorite podcasts (horizontal scroll)
               if (user.favPodcasts.isNotEmpty)
                 SliverToBoxAdapter(
@@ -149,6 +151,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 builder: (context, ref, _) {
                   final commentsValue =
                       ref.watch(userCommentsStreamProvider(user.id));
+                  final isPlayerAlive =
+                      ref.watch(playerStateChangesProvider).valueOrNull != null;
                   return commentsValue.when(
                     loading: () => SliverToBoxAdapter(
                       child: Padding(
@@ -167,17 +171,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     data: (comments) {
                       final episodeIds =
                           comments.map((comment) => comment.episodeId).toSet();
-                      return SliverList(
-                        delegate: SliverChildListDelegate([
-                          for (final episodeId in episodeIds)
-                            GroupedComments(
-                              episodeId,
-                              comments
-                                  .where((c) => c.episodeId == episodeId)
-                                  .toList(),
+
+                      return comments.isEmpty
+                          ? SliverPadding(
+                              padding: const EdgeInsets.all(16).add(
+                                EdgeInsets.only(
+                                  bottom:
+                                      isPlayerAlive ? Player.extraHeight : 0,
+                                ),
+                              ),
+                              sliver: SliverToBoxAdapter(
+                                  child: EmptyProfile(name: user.name)),
                             )
-                        ]),
-                      );
+                          : SliverList(
+                              delegate: SliverChildListDelegate([
+                                for (final episodeId in episodeIds)
+                                  GroupedComments(
+                                    episodeId,
+                                    comments
+                                        .where((c) => c.episodeId == episodeId)
+                                        .toList(),
+                                  )
+                              ]),
+                            );
                     },
                   );
                 },

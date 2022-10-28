@@ -5,8 +5,6 @@ import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/episodes/domain/podcast.dart';
 import 'package:podiz/src/statistics/mix_panel_repository.dart';
 import 'package:podiz/src/utils/firestore_refs.dart';
-import 'package:podiz/src/utils/uri_from_id.dart';
-import 'package:spotify_sdk/spotify_sdk.dart';
 
 class FirestorePodcastRepository extends PodcastRepository {
   final FirebaseFirestore firestore;
@@ -84,7 +82,7 @@ class FirestorePodcastRepository extends PodcastRepository {
     });
     await batch.commit();
     mixPanelRepository.userFollowPodcast();
-    SpotifySdk.addToLibrary(spotifyUri: uriFromId(podcastId));
+    // SpotifySdk.addToLibrary(spotifyUri: uriFromId(podcastId));
   }
 
   @override
@@ -97,7 +95,7 @@ class FirestorePodcastRepository extends PodcastRepository {
       'favPodcasts': FieldValue.arrayRemove([podcastId])
     });
     await batch.commit();
-    SpotifySdk.removeFromLibrary(spotifyUri: uriFromId(podcastId));
+    // SpotifySdk.removeFromLibrary(spotifyUri: uriFromId(podcastId));
   }
 
   // List<String> getFavoritePodcasts() {
