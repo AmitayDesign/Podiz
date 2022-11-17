@@ -9,6 +9,7 @@ import 'package:podiz/src/features/player/presentation/error_player.dart';
 import 'package:podiz/src/features/player/presentation/player_button.dart';
 import 'package:podiz/src/features/player/presentation/player_controller.dart';
 import 'package:podiz/src/features/player/presentation/player_slider.dart';
+import 'package:podiz/src/features/player/presentation/spotify_button.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/palette.dart';
@@ -35,6 +36,10 @@ class Player extends ConsumerWidget {
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            SpotifyButton(episode.id),
+            const SizedBox(
+              height: 16.0,
+            ),
             Stack(
               children: [
                 Padding(

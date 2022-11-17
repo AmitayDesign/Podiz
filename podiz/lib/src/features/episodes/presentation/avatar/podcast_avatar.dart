@@ -24,7 +24,7 @@ class PodcastAvatar extends StatelessWidget {
       height: size,
       width: size,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(kBorderRadius),
+        borderRadius: BorderRadius.circular(4.0),
         image: DecorationImage(
           image: image,
           fit: BoxFit.cover,

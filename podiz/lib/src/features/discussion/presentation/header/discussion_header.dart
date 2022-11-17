@@ -5,6 +5,7 @@ import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/episodes/presentation/card/episode_content.dart';
 import 'package:podiz/src/features/player/presentation/player_slider.dart';
+import 'package:podiz/src/features/player/presentation/spotify_button.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 import 'error_discussion_header.dart';
@@ -51,6 +52,10 @@ class DiscussionHeader extends ConsumerWidget {
                         const PlayerSlider(),
                       ],
                     ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    SpotifyButton(episode.id),
                   ],
                 ));
       },
