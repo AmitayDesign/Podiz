@@ -48,7 +48,12 @@ class SpotifyPlayerRepository implements PlayerRepository {
   Future<PlayingEpisode?> playingEpisodeFromPlayerState(
       PlayerState state) async {
     final track = state.track;
-    if (track == null || !track.isEpisode || !track.isPodcast) return null;
+    if (track == null) return null;
+    if (Platform.isIOS && spotifyApi.stopIOSPlayer) {
+      spotifyApi.stopIOSPlayer = false;
+      if (!track.isEpisode || !track.isPodcast) pause();
+    }
+    if (!track.isEpisode || !track.isPodcast) return null;
     final episodeId = idFromUri(track.uri);
     // fetch episode
     final stateTime = DateTime.now();
