@@ -1,5 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.podiz">
+    <queries>
+   <package android:name="com.spotify.music"/>
+ </queries>
    <application
         android:label="Podiz"
         android:name="${applicationName}"
@@ -36,6 +39,7 @@
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.HOME"/>
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="http" android:host="podiz.io" />
                 <data android:scheme="https" />

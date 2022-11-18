@@ -7,8 +7,6 @@ description: A new Flutter project.
 #* iOS setup
 # https://pub.dev/packages/flutter_local_notifications#-ios-setup
 
-
-
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
@@ -27,6 +25,7 @@ dependencies:
   custom_refresh_indicator: ^1.2.1
   device_info_plus: ^4.1.2
   equatable: ^2.0.3
+  external_app_launcher: ^3.1.0
   firebase_auth: ^3.6.1
   firebase_core: 1.20.0
   firebase_database: ^9.1.1
