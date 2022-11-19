@@ -52,7 +52,6 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
       firestore.commentsCollection
           .where('userId', isEqualTo: userId)
           // .where('parentIds', isEqualTo: [])
-          .orderBy('episodeId')
           .orderBy('date', descending: true)
           .snapshots()
           .asyncMap((snapshot) => Future.wait(snapshot.docs.map((doc) async {

@@ -47,6 +47,7 @@ dependencies:
   go_router: ^4.2.7
   google_fonts: ^3.0.1
   http: ^0.13.5
+  intl: ^0.17.0
   json_annotation: ^4.4.0
   lottie: ^1.4.2
   mixpanel_flutter: ^1.6.0
