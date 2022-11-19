@@ -31,6 +31,7 @@ ${BUILT_PRODUCTS_DIR}/abseil/absl.framework
 ${BUILT_PRODUCTS_DIR}/app_settings/app_settings.framework
 ${BUILT_PRODUCTS_DIR}/connectivity/connectivity.framework
 ${BUILT_PRODUCTS_DIR}/device_info_plus/device_info_plus.framework
+${BUILT_PRODUCTS_DIR}/external_app_launcher/external_app_launcher.framework
 ${BUILT_PRODUCTS_DIR}/flutter_custom_tabs/flutter_custom_tabs.framework
 ${BUILT_PRODUCTS_DIR}/flutter_facebook_auth/flutter_facebook_auth.framework
 ${BUILT_PRODUCTS_DIR}/flutter_keyboard_visibility/flutter_keyboard_visibility.framework
