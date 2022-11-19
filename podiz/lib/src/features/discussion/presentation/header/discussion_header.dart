@@ -26,38 +26,36 @@ class DiscussionHeader extends ConsumerWidget {
       data: (episode) {
         final podcastValue = ref.watch(podcastFutureProvider(episode.showId));
         return podcastValue.when(
-            loading: () => const SkeletonDiscussionHeader(),
-            error: (e, _) => const ErrorDiscussionHeader(),
-            data: (podcast) => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              bottom: PlayerSlider.height / 2 + 2),
-                          child: Material(
-                            color: backgroundColor,
-                            child: EpisodeContent(
-                              episode,
-                              podcast: podcast,
-                              disableAvatarNavigation: true,
-                              color: backgroundColor,
-                              avatarSize: 48,
-                              titleMaxLines: 1,
-                            ),
-                          ),
-                        ),
-                        const PlayerSlider(),
-                      ],
+          loading: () => const SkeletonDiscussionHeader(),
+          error: (e, _) => const ErrorDiscussionHeader(),
+          data: (podcast) => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        bottom: PlayerSlider.height / 2 + 2),
+                    child: Material(
+                      color: backgroundColor,
+                      child: EpisodeContent(
+                        episode,
+                        podcast: podcast,
+                        disableAvatarNavigation: true,
+                        color: backgroundColor,
+                        avatarSize: 48,
+                        titleMaxLines: 1,
+                      ),
                     ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    SpotifyButton(episode.id),
-                  ],
-                ));
+                  ),
+                  const PlayerSlider(),
+                ],
+              ),
+              SpotifyButton(episode.id),
+            ],
+          ),
+        );
       },
     );
   }

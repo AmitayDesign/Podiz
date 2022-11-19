@@ -12,38 +12,41 @@ class SpotifyButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 88.0),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-          backgroundColor: Palette.spotifyGreen,
-          foregroundColor: context.colorScheme.background,
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100),
         ),
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        backgroundColor: Palette.spotifyGreen,
+        foregroundColor: context.colorScheme.background,
+        minimumSize: Size.zero,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
           SvgPicture.asset(
             "assets/icons/spotify.svg",
-            width: 32,
-            height: 32,
+            width: 24,
+            height: 24,
             fit: BoxFit.contain,
             color: context.colorScheme.background,
           ),
-          const SizedBox(
-            width: 12,
-          ),
+          const SizedBox(width: 12),
           Text(
             "OPEN SPOTIFY".hardcoded,
             style: context.textTheme.titleSmall!
                 .copyWith(color: context.colorScheme.background),
+            // maxLines: 1,
           )
-        ]),
-        onPressed: () async {
-          await LaunchApp.openApp(
-              androidPackageName: 'com.spotify.music',
-              iosUrlScheme: 'spotify:/'); //TODO add link to playStore
-        },
+        ],
       ),
+      onPressed: () async {
+        await LaunchApp.openApp(
+          androidPackageName: 'com.spotify.music',
+          iosUrlScheme: 'spotify:/',
+        ); //TODO add link to playStore
+      },
     );
   }
 }

@@ -37,9 +37,6 @@ class Player extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             SpotifyButton(episode.id),
-            const SizedBox(
-              height: 16.0,
-            ),
             Stack(
               children: [
                 Padding(

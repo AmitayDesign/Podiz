@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,7 +9,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/app.dart';
 import 'package:podiz/src/features/notifications/data/push_notifications_repository.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
-import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/utils/instances.dart';
 
 void main() async {
