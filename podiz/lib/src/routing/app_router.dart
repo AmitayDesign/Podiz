@@ -32,16 +32,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     initialLocation: '/',
     debugLogDiagnostics: false,
     redirect: (state) {
-      print('------------------');
-      print(state.location);
       final isLoggedIn = authRepository.currentUser != null;
-      print('isLoggedIn: $isLoggedIn');
       final hasEmail = authRepository.currentUser?.email != null;
-      print('hasEmail: $hasEmail');
       final isConnected = authRepository.isConnected;
-      print('isConnected: $isConnected');
       final isOnboardingLocation = state.location.contains('/onboarding');
-      print('isOnboardingLocation: $isOnboardingLocation');
       final isEmailLocation =
           isOnboardingLocation && state.queryParams['page'] == 'email';
 
