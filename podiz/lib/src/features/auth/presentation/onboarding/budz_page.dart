@@ -5,8 +5,7 @@ import 'package:podiz/src/constants/constants.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
 class BudzPage extends StatelessWidget {
-  final VoidCallback? onSuccess;
-  const BudzPage({Key? key, this.onSuccess}) : super(key: key);
+  const BudzPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

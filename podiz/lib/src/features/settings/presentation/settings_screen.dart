@@ -69,6 +69,7 @@ class SettingsScreen extends ConsumerWidget {
               children: [
                 LoadingOutlinedButton(
                   onPressed: () {
+                    //! create auth service
                     final user = ref.read(currentUserProvider);
                     ref
                         .read(pushNotificationsRepositoryProvider)

@@ -3,8 +3,7 @@ import 'package:flutter_locales/flutter_locales.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
 class IntroPage extends StatelessWidget {
-  final VoidCallback? onSuccess;
-  const IntroPage({Key? key, this.onSuccess}) : super(key: key);
+  const IntroPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -32,24 +32,44 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     initialLocation: '/',
     debugLogDiagnostics: false,
     redirect: (state) {
+      print('------------------');
+      print(state.location);
       final isLoggedIn = authRepository.currentUser != null;
+      print('isLoggedIn: $isLoggedIn');
+      final hasEmail = authRepository.currentUser?.email != null;
+      print('hasEmail: $hasEmail');
       final isConnected = authRepository.isConnected;
+      print('isConnected: $isConnected');
       final isOnboardingLocation = state.location.contains('/onboarding');
+      print('isOnboardingLocation: $isOnboardingLocation');
+      final isEmailLocation =
+          isOnboardingLocation && state.queryParams['page'] == 'email';
 
-      if (isLoggedIn && isConnected) {
-        if (isOnboardingLocation) {
+      if (isOnboardingLocation && !isEmailLocation) {
+        if (isLoggedIn && isConnected) {
+          if (!hasEmail) return '/onboarding?page=email';
+          // clear redirect and go to home or somewhere on app
           final redirect = initialRedirect.isEmpty ? '/' : initialRedirect;
           initialRedirect = '';
           return redirect;
+        } else {
+          return null;
         }
-      } else if (!isOnboardingLocation) {
-        if (isLoggedIn) initialRedirect = state.location;
-        if (Platform.isAndroid || isFirstTime) {
-          isFirstTime = false;
-          return '/onboarding';
+      } else if (!isEmailLocation) /* somewhere in the app */ {
+        if (isLoggedIn && isConnected) {
+          if (!hasEmail) return '/onboarding?page=email';
+          return null;
+        } else {
+          // save redirect while connecting
+          if (isLoggedIn) initialRedirect = state.location;
+          if (Platform.isAndroid || isFirstTime) {
+            isFirstTime = false;
+            return '/onboarding';
+          }
         }
+      } else /* email location */ {
+        if (hasEmail) return '/';
       }
-
       return null;
     },
     refreshListenable: GoRouterRefreshStreamList([
@@ -60,7 +80,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/onboarding',
         name: AppRoute.onboarding.name,
-        builder: (_, state) => const OnboardingScreen(),
+        builder: (_, state) {
+          final pageName = state.queryParams['page'];
+          final page = OnboardingPage.values.firstWhereOrNull(
+            (p) => p.name == pageName,
+          );
+          return OnboardingScreen(page: page);
+        },
       ),
       GoRoute(
         path: '/',
