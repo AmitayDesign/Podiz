@@ -48,6 +48,7 @@ class SpotifyApi {
 
   http.Client client = http.Client();
 
+  bool stopIOSPlayer = false;
   late String userId;
   String? accessToken;
   DateTime? timeout;

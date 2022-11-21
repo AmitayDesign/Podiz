@@ -4,6 +4,8 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import 'package:podiz/src/common_widgets/symbols.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
@@ -49,6 +51,13 @@ class CommentCard extends ConsumerStatefulWidget {
 
 class _CommentCardState extends ConsumerState<CommentCard> {
   late var collapsed = widget.comment.replyCount > 1;
+  late DateTime date;
+
+  @override
+  void initState() {
+    date = DateTime.now();
+    super.initState();
+  }
 
   void openEpisode() async {
     // play 10 seconds before
@@ -101,6 +110,24 @@ class _CommentCardState extends ConsumerState<CommentCard> {
     ref.read(mixPanelRepository).userShare();
   }
 
+  String format(DateTime d) {
+    var dateSub60min = date.subtract(const Duration(minutes: 60));
+    var dateSub24h = date.subtract(const Duration(hours: 24));
+
+    if (dateSub24h.compareTo(d) == -1) {
+      var minutes = date.difference(d);
+      return '${minutes.inMinutes}m\' ago';
+    } else if (dateSub60min.compareTo(d) == -1) {
+      var hours = date.difference(d);
+      return '${hours.inHours}h\' ago';
+    }
+    if (d.year == DateTime.now().year) {
+      return DateFormat('HH:mm MMM dd').format(d);
+    } else {
+      return DateFormat('HH:mm MMM dd yyyy').format(d);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final user =
@@ -142,7 +169,13 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                               user.name,
                               style: context.textTheme.titleSmall,
                             ),
-                            Text('${user.followers.length} followers'),
+                            Text(
+                              '${user.followers.length} followers'
+                              ' $dot ${format(widget.comment.date!)}',
+                              maxLines: 1,
+                              style: context.textTheme.bodySmall,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ],
                         ),
                       ),

@@ -52,7 +52,10 @@ class ReplyWidget extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Text('${user.followers.length} followers'),
+              Text(
+                '${user.followers.length} followers',
+                style: context.textTheme.bodySmall,
+              ),
             ],
           ),
           const SizedBox(height: 8),
