@@ -121,7 +121,11 @@ class _CommentCardState extends ConsumerState<CommentCard> {
       var hours = date.difference(d);
       return '${hours.inHours}h\' ago';
     }
-    return DateFormat('H:m MMM dd yyyy').format(d);
+    if (d.year == DateTime.now().year) {
+      return DateFormat('HH:mm MMM dd').format(d);
+    } else {
+      return DateFormat('HH:mm MMM dd yyyy').format(d);
+    }
   }
 
   @override
@@ -165,11 +169,12 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                               user.name,
                               style: context.textTheme.titleSmall,
                             ),
-                            Row(
-                              children: [
-                                Text('${user.followers.length} followers'),
-                                Text(' $dot ${format(widget.comment.date!)}')
-                              ],
+                            Text(
+                              '${user.followers.length} followers'
+                              ' $dot ${format(widget.comment.date!)}',
+                              maxLines: 1,
+                              style: context.textTheme.bodySmall,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
