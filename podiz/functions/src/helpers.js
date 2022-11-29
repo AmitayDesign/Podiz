@@ -42,7 +42,7 @@ exports.addUserToFirestore = (user) =>
   userRef(user.id).set(
     {
       name: user.display_name,
-      email: user.email,
+      // email: user.email, //! no spotify permission
       imageUrl: user.images[0].url,
       searchArray: buildSearchArray(user.display_name),
     },
