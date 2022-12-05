@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:podiz/src/common_widgets/app_bar_gradient.dart';
 import 'package:podiz/src/common_widgets/back_text_button.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
+import 'package:podiz/src/common_widgets/spotify_redirect_logo.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
@@ -27,6 +28,7 @@ class ProfileSliverHeader extends StatelessWidget {
     return SliverAppBar(
       pinned: true,
       stretch: true,
+      actions: [SpotifyRedirectLogo(id: user.id, type: 'users')],
       automaticallyImplyLeading: false,
       backgroundColor: Colors.transparent,
       toolbarHeight: GradientBar.height,
