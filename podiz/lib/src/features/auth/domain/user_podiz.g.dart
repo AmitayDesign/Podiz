@@ -9,7 +9,7 @@ part of 'user_podiz.dart';
 UserPodiz _$UserPodizFromJson(Map<String, dynamic> json) => UserPodiz(
       id: json['id'] as String,
       name: json['name'] as String,
-      email: json['email'] as String,
+      email: json['email'] as String?,
       followers: (json['followers'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??

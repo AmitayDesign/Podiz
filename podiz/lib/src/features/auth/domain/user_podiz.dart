@@ -9,7 +9,7 @@ part 'user_podiz.g.dart';
 class UserPodiz with EquatableMixin {
   final String id;
   final String name;
-  final String email;
+  final String? email;
   final String? imageUrl;
 
   final String? lastListened;

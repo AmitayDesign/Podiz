@@ -46,7 +46,8 @@ class ConnectionController extends StateNotifier<AsyncValue> {
       if (error != null) throw Exception('Error: $error');
       final code = data['code']!;
       final userId = await authRepository.signIn(code);
-      pushNotificationsRepository.requestPermission(userId);
+      await pushNotificationsRepository.requestPermission(userId);
+      state = const AsyncValue.data(null);
     } catch (err, stack) {
       signInTries < 3
           ? Future.delayed(const Duration(milliseconds: 200), signIn)
