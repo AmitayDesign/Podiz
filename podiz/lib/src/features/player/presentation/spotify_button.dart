@@ -44,7 +44,7 @@ class SpotifyButton extends ConsumerWidget {
       onPressed: () async {
         await LaunchApp.openApp(
           androidPackageName: 'com.spotify.music',
-          iosUrlScheme: 'spotify:/',
+          iosUrlScheme: 'https://open.spotify.com/episode/$episodeId',
         ); //TODO add link to playStore
       },
     );

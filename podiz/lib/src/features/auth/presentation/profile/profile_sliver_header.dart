@@ -28,7 +28,7 @@ class ProfileSliverHeader extends StatelessWidget {
     return SliverAppBar(
       pinned: true,
       stretch: true,
-      actions: [SpotifyRedirectLogo(id: user.id, type: 'users')],
+      actions: [SpotifyRedirectLogo(id: user.id, type: 'user')],
       automaticallyImplyLeading: false,
       backgroundColor: Colors.transparent,
       toolbarHeight: GradientBar.height,
