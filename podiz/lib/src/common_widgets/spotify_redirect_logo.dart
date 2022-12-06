@@ -28,7 +28,6 @@ class SpotifyRedirectLogo extends StatelessWidget {
             iosUrlScheme: episodeUrl.toString(),
           );
         }
-        print(episodeUrl);
         launchUrl(episodeUrl, mode: LaunchMode.externalApplication);
       },
     );
