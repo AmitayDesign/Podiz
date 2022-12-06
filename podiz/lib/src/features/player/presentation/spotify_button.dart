@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:external_app_launcher/external_app_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 import 'package:podiz/src/theme/palette.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SpotifyButton extends ConsumerWidget {
   const SpotifyButton(this.episodeId, {Key? key}) : super(key: key);
@@ -42,10 +45,14 @@ class SpotifyButton extends ConsumerWidget {
         ],
       ),
       onPressed: () async {
-        await LaunchApp.openApp(
-          androidPackageName: 'com.spotify.music',
-          iosUrlScheme: 'spotify:/',
-        ); //TODO add link to playStore
+        final episodeUrl = Uri.https('open.spotify.com', '/episode/$episodeId');
+        if (Platform.isIOS) {
+          await LaunchApp.openApp(
+            androidPackageName: 'com.spotify.music',
+            iosUrlScheme: episodeUrl.toString(),
+          );
+        }
+        launchUrl(episodeUrl, mode: LaunchMode.externalApplication);
       },
     );
   }
