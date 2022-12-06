@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:external_app_launcher/external_app_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:podiz/src/common_widgets/spotify_icon.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 import 'package:podiz/src/theme/palette.dart';
@@ -28,18 +28,13 @@ class SpotifyButton extends ConsumerWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SvgPicture.asset(
-            "assets/icons/spotify.svg",
-            width: 24,
-            height: 24,
-            fit: BoxFit.contain,
-            color: context.colorScheme.background,
-          ),
+          SpotifyIcon(color: context.colorScheme.onPrimary),
           const SizedBox(width: 12),
           Text(
             "OPEN SPOTIFY".hardcoded,
-            style: context.textTheme.titleSmall!
-                .copyWith(color: context.colorScheme.background),
+            style: context.textTheme.titleSmall!.copyWith(
+              color: context.colorScheme.onPrimary,
+            ),
             // maxLines: 1,
           )
         ],

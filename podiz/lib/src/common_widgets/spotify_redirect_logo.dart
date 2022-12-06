@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:external_app_launcher/external_app_launcher.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:podiz/src/common_widgets/spotify_icon.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SpotifyRedirectLogo extends StatelessWidget {
@@ -19,7 +19,7 @@ class SpotifyRedirectLogo extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       iconSize: 12,
-      icon: SvgPicture.asset("assets/icons/spotify.svg"),
+      icon: const SpotifyIcon(),
       onPressed: () async {
         final episodeUrl = Uri.https('open.spotify.com', '/$type/$id');
         if (Platform.isIOS) {
