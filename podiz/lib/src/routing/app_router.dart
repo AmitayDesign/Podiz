@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
@@ -132,7 +133,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 final seconds = int.tryParse(secondsString);
                 if (seconds != null) time = Duration(seconds: seconds);
               }
-              return DiscussionScreen(episodeId, time: time);
+              return DiscussionScreen(
+                episodeId,
+                time: time,
+                key: UniqueKey(),
+              );
             },
           ),
         ],
