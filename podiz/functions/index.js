@@ -3,6 +3,7 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 // functions
 const auth = require("./src/auth.js");
+const auth_new = require("./src/auth_new.js");
 const favorites = require("./src/user-favorites.js");
 const listening = require("./src/episode-listening.js");
 const episodes = require("./src/episodes.js");
@@ -54,6 +55,10 @@ exports.removeEpisodeListening = functions.database
 
 exports.getAccessTokenWithCode = functions.https.onCall((data, _) =>
   auth.getAccessTokenWithCode(data.code)
+);
+
+exports.getAccessTokenWithCode2 = functions.https.onCall((data, _) =>
+  auth_new.getAccessTokenWithCode2(data.code)
 );
 
 exports.getAccessTokenWithRefreshToken = functions.https.onCall((data, _) =>

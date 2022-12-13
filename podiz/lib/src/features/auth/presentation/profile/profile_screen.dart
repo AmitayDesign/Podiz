@@ -173,15 +173,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           comments.map((comment) => comment.episodeId).toSet();
 
                       return comments.isEmpty
-                          ? SliverPadding(
-                              padding: const EdgeInsets.all(16).add(
-                                EdgeInsets.only(
-                                  bottom:
-                                      isPlayerAlive ? Player.extraHeight : 0,
-                                ),
-                              ),
-                              sliver: SliverToBoxAdapter(
-                                  child: EmptyProfile(name: user.name)),
+                          ? SliverToBoxAdapter(
+                              child: EmptyProfile(name: user.name),
                             )
                           : SliverList(
                               delegate: SliverChildListDelegate([
@@ -200,7 +193,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
 
               // so it doesnt end behind the bottom bar
-              SliverToBoxAdapter(child: SizedBox(height: Player.extraHeight)),
+              SliverToBoxAdapter(
+                  child: SizedBox(
+                      height:
+                          Player.heightWithSpotify + (isCurrentUser ? 0 : 80))),
             ],
           ),
         );

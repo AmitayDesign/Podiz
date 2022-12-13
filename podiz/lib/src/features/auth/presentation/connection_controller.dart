@@ -18,7 +18,7 @@ final connectionControllerProvider =
 class ConnectionController extends StateNotifier<AsyncValue> {
   final AuthRepository authRepository;
   final PushNotificationsRepository pushNotificationsRepository;
-  final SpotifyApi spotifyApi;
+  final SpotifyAPI spotifyApi;
 
   String? lastUsedUrl;
 
@@ -39,13 +39,16 @@ class ConnectionController extends StateNotifier<AsyncValue> {
   Future<void> signIn() async {
     signInTries++;
     try {
+      // open external spotify authentication window
       final response = await openSignInUrl();
       if (response == null) return;
+      // get the authentication code from the response
       final data = Uri.parse(response).queryParameters;
       final error = data['error'];
       if (error != null) throw Exception('Error: $error');
       final code = data['code']!;
-      final userId = await authRepository.signIn(code);
+      // sign in with spotify
+      final userId = await authRepository.signInWithSpotify(code);
       await pushNotificationsRepository.requestPermission(userId);
       state = const AsyncValue.data(null);
     } catch (err, stack) {
@@ -58,25 +61,10 @@ class ConnectionController extends StateNotifier<AsyncValue> {
   Future<String?> openSignInUrl() {
     state = const AsyncValue.loading();
     return FlutterWebAuth2.authenticate(
-      url: Uri.parse(spotifyApi.authenticationUrl).toString(),
+      url: Uri.parse(spotifyApi.authUrl).toString(),
       callbackUrlScheme: 'podiz',
     );
   }
-
-  // Future<String?> openSignInUrl() async {
-  //   loginCompleter?.complete();
-  //   loginCompleter = Completer();
-  //   await openUrl(spotifyApi.authenticationUrl);
-  //   state = const AsyncValue.data(null);
-  //   sub?.cancel();
-  //   sub = linkStream.listen((link) {
-  //     if (link != null && link.startsWith(spotifyApi.redirectUrl)) {
-  //       state = const AsyncValue.loading();
-  //       loginCompleter!.complete(link);
-  //     }
-  //   });
-  //   return await loginCompleter!.future.whenComplete(() => sub?.cancel());
-  // }
 
   @override
   void dispose() {

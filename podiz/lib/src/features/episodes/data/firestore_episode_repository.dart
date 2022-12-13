@@ -9,7 +9,7 @@ import 'episode_repository.dart';
 class FirestoreEpisodeRepository extends EpisodeRepository {
   final FirebaseFirestore firestore;
   final FirebaseFunctions functions;
-  final SpotifyApi spotifyApi;
+  final SpotifyAPI spotifyApi;
 
   FirestoreEpisodeRepository({
     required this.firestore,
@@ -34,7 +34,7 @@ class FirestoreEpisodeRepository extends EpisodeRepository {
   }
 
   Future<String> fetchSpotifyEpisode(String episodeId) async {
-    final accessToken = await spotifyApi.getAccessToken();
+    final accessToken = await spotifyApi.fetchAccessToken();
     final result = await functions
         .httpsCallable('fetchSpotifyEpisode')
         .call({'accessToken': accessToken, 'episodeId': episodeId});

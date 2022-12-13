@@ -31,6 +31,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/',
     debugLogDiagnostics: false,
+    //TODO REFACT THIS FLOW
+    // move the has email check into the onboarding location
+    //
     redirect: (state) {
       final isLoggedIn = authRepository.currentUser != null;
       final hasEmail = authRepository.currentUser?.email != null;
@@ -38,25 +41,36 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       final isOnboardingLocation = state.location.contains('/onboarding');
       final isEmailLocation =
           isOnboardingLocation && state.queryParams['page'] == 'email';
+      print('LOCATION: ${state.location}');
+      print('isLoggedIn: $isLoggedIn');
+      print('isConnected: $isConnected');
+      print('hasEmail: $hasEmail');
 
       if (isOnboardingLocation && !isEmailLocation) {
         if (isLoggedIn && isConnected) {
           if (!hasEmail) return '/onboarding?page=email';
           // clear redirect and go to home or somewhere on app
           final redirect = initialRedirect.isEmpty ? '/' : initialRedirect;
+          print('REDIRECT TO: $redirect');
           initialRedirect = '';
           return redirect;
-        } else {
-          return null;
         }
       } else if (!isEmailLocation) /* somewhere in the app */ {
         if (isLoggedIn && isConnected) {
-          if (!hasEmail) return '/onboarding?page=email';
-          return null;
+          if (!hasEmail) {
+            initialRedirect = state.location;
+            print('REDIRECT = $initialRedirect');
+            return '/onboarding?page=email';
+          }
         } else {
+          if (!isLoggedIn) {
+            initialRedirect = '';
+            return '/onboarding';
+          }
           // save redirect while connecting
-          if (isLoggedIn) initialRedirect = state.location;
-          if (Platform.isAndroid || isFirstTime) {
+          initialRedirect = state.location;
+          print('REDIRECT = $initialRedirect');
+          if (Platform.isAndroid && isFirstTime) {
             isFirstTime = false;
             return '/onboarding';
           }

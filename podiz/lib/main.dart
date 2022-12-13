@@ -7,15 +7,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/app.dart';
-import 'package:podiz/src/features/notifications/data/push_notifications_repository.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/utils/instances.dart';
+import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 void main() async {
   await runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
-      final providerContainer = ProviderContainer();
 
       await Locales.init(['en']);
       await SystemChrome.setPreferredOrientations([
@@ -41,12 +40,13 @@ void main() async {
       //   }
       // }
 
-      await providerContainer.read(preferencesFutureProvider.future);
-      await providerContainer.read(pushNotificationsRepositoryProvider).init();
+      final preferences = await StreamingSharedPreferences.instance;
 
       //* Entry point of the app
-      runApp(UncontrolledProviderScope(
-        container: providerContainer,
+      runApp(ProviderScope(
+        overrides: [
+          preferencesProvider.overrideWithValue(preferences),
+        ],
         child: const MyApp(),
       ));
 

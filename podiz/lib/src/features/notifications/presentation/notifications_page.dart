@@ -57,12 +57,12 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
           }
           return Scaffold(
             extendBodyBehindAppBar: true,
-            appBar: NotificationsBar(comments),
+            // appBar: NotificationsBar(comments),
             body: comments.isEmpty
                 ? Padding(
                     padding: const EdgeInsets.all(16).add(EdgeInsets.only(
                       bottom: HomeScreen.bottomBarHeigh +
-                          (isPlayerAlive ? Player.height : 0),
+                          (isPlayerAlive ? Player.heightWithSpotify : 0),
                     )),
                     child: const EmptyNotifications(),
                   )
@@ -89,7 +89,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                       // so it doesnt end behind the bottom bar
                       const SliverToBoxAdapter(
                         child: SizedBox(
-                          height: HomeScreen.bottomBarHeigh + Player.height,
+                          height: HomeScreen.bottomBarHeigh +
+                              Player.heightWithSpotify,
                         ),
                       ),
                     ],

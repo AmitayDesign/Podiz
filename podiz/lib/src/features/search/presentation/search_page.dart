@@ -57,7 +57,7 @@ class _SearchPageState extends ConsumerState<SearchPage>
   final queries = <String>{};
   Future<void> searchInSpotify(String query) async {
     setState(() => ++loadingCount);
-    final accessToken = await ref.read(spotifyApiProvider).getAccessToken();
+    final accessToken = await ref.read(spotifyApiProvider).fetchAccessToken();
     await ref
         .read(functionsProvider)
         .httpsCallable("fetchSpotifySearch")
@@ -157,7 +157,8 @@ class _SearchPageState extends ConsumerState<SearchPage>
                 // so it doesnt end behind the bottom bar
                 const SliverToBoxAdapter(
                   child: SizedBox(
-                    height: HomeScreen.bottomBarHeigh + Player.height,
+                    height:
+                        HomeScreen.bottomBarHeigh + Player.heightWithSpotify,
                   ),
                 ),
               ],

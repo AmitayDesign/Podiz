@@ -20,7 +20,7 @@ class _SpotifySearchButtonState extends ConsumerState<SpotifySearchButton> {
   //TODO put this in a repository
   void searchInSpotify() async {
     setState(() => isLoading = true);
-    final accessToken = await ref.read(spotifyApiProvider).getAccessToken();
+    final accessToken = await ref.read(spotifyApiProvider).fetchAccessToken();
     await ref
         .read(functionsProvider)
         .httpsCallable("fetchSpotifySearch")

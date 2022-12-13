@@ -144,6 +144,12 @@
 @import sign_in_with_apple;
 #endif
 
+#if __has_include(<soundpool/SoundpoolPlugin.h>)
+#import <soundpool/SoundpoolPlugin.h>
+#else
+@import soundpool;
+#endif
+
 #if __has_include(<spotify_sdk/SpotifySdkPlugin.h>)
 #import <spotify_sdk/SpotifySdkPlugin.h>
 #else
@@ -200,6 +206,7 @@
   [FLTSharePlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTSharePlusPlugin"]];
   [FLTSharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTSharedPreferencesPlugin"]];
   [SignInWithApplePlugin registerWithRegistrar:[registry registrarForPlugin:@"SignInWithApplePlugin"]];
+  [SoundpoolPlugin registerWithRegistrar:[registry registrarForPlugin:@"SoundpoolPlugin"]];
   [SpotifySdkPlugin registerWithRegistrar:[registry registrarForPlugin:@"SpotifySdkPlugin"]];
   [TwitterLoginPlugin registerWithRegistrar:[registry registrarForPlugin:@"TwitterLoginPlugin"]];
   [UniLinksPlugin registerWithRegistrar:[registry registrarForPlugin:@"UniLinksPlugin"]];

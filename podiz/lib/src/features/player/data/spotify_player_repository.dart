@@ -12,7 +12,7 @@ import 'package:spotify_sdk/spotify_sdk.dart';
 import 'player_repository.dart';
 
 class SpotifyPlayerRepository implements PlayerRepository {
-  final SpotifyApi spotifyApi;
+  final SpotifyAPI spotifyApi;
   final FirebaseFunctions functions;
   final EpisodeRepository episodeRepository;
   final MixPanelRepository mixPanelRepository;

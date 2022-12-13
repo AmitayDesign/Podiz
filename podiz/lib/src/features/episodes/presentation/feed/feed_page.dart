@@ -190,7 +190,7 @@ class _FeedPageState extends ConsumerState<FeedPage>
             // so it doesnt end behind the bottom bar
             const SliverToBoxAdapter(
               child: SizedBox(
-                height: HomeScreen.bottomBarHeigh + Player.height,
+                height: HomeScreen.bottomBarHeigh + Player.heightWithSpotify,
               ),
             ),
           ],

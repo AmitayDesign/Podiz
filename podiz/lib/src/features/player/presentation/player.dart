@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:podiz/src/features/discussion/presentation/discussion_controller.dart';
 import 'package:podiz/src/features/episodes/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
+import 'package:podiz/src/features/player/domain/player_time.dart';
 import 'package:podiz/src/features/player/presentation/error_player.dart';
 import 'package:podiz/src/features/player/presentation/player_button.dart';
 import 'package:podiz/src/features/player/presentation/player_controller.dart';
@@ -15,11 +17,15 @@ import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/palette.dart';
 import 'package:podiz/src/utils/string_zwsp.dart';
 
+import 'player_slider_controller.dart';
 import 'skeleton_player.dart';
 
 class Player extends ConsumerWidget {
   final bool extraBottomPadding;
   const Player({Key? key, this.extraBottomPadding = false}) : super(key: key);
+
+  static const heightWithSpotify = height + 64; //! hardcoded
+  static final extraHeightWithSpotify = extraHeight + 64; //! hardcoded
 
   static const height = 80.0; //! hardcoded
   static final extraHeight = height + (Platform.isIOS ? 16 : 0); //! hardcoded
@@ -33,6 +39,21 @@ class Player extends ConsumerWidget {
       error: (e, _) => ErrorPlayer(extraBottomPadding),
       data: (episode) {
         if (episode == null) return const SizedBox.shrink();
+        //! beep
+        // filter comments based on player position
+        ref.listen(filteredCommentsProvider(episode.id), (_, __) {});
+        ref.listen<PlayerTime>(
+          playerSliderControllerProvider,
+          (_, playerTime) {
+            final beep = ref
+                .read(playerSliderControllerProvider.notifier)
+                .updatesWithTime;
+            ref
+                .read(filteredCommentsProvider(episode.id).notifier)
+                .updateComments(playerTime.position, beep);
+          },
+        );
+        //! beep
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [

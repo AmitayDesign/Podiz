@@ -65,11 +65,16 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
       }),
     );
     // filter comments based on player position
+    //! and beep
     ref.listen<PlayerTime>(
       playerSliderControllerProvider,
-      (_, playerTime) => ref
-          .read(filteredCommentsProvider(episodeId).notifier)
-          .updateComments(playerTime.position),
+      (_, playerTime) {
+        final beep =
+            ref.read(playerSliderControllerProvider.notifier).updatesWithTime;
+        ref
+            .read(filteredCommentsProvider(episodeId).notifier)
+            .updateComments(playerTime.position, beep);
+      },
     );
 
     final totalComments =

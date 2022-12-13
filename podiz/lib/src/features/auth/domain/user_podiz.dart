@@ -1,17 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:podiz/src/utils/doc_typedef.dart';
+
+import 'app_user.dart';
 
 part 'user_podiz.g.dart';
 
 @JsonSerializable()
-class UserPodiz with EquatableMixin {
-  final String id;
-  final String name;
-  final String? email;
-  final String? imageUrl;
-
+class UserPodiz extends AppUser {
   final String? lastListened;
 
   @JsonKey(defaultValue: [])
@@ -24,15 +20,15 @@ class UserPodiz with EquatableMixin {
   final List<String> favPodcasts;
 
   const UserPodiz({
-    required this.id,
-    required this.name,
-    required this.email,
+    required String id,
+    required String name,
+    required String? email,
     required this.followers,
     required this.following,
-    required this.imageUrl,
+    required String? imageUrl,
     required this.lastListened,
     required this.favPodcasts,
-  });
+  }) : super(id: id, name: name, email: email, imageUrl: imageUrl);
 
   factory UserPodiz.fromFirestore(Doc doc) =>
       UserPodiz.fromJson(doc.data()!..['id'] = doc.id);

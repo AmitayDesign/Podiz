@@ -17,10 +17,8 @@ class ErrorPlayer extends StatelessWidget {
         children: [
           Container(height: 4, color: Colors.white38),
           Container(
-            height: (Platform.isIOS && extraBottomPadding
-                    ? Player.extraHeight
-                    : Player.height) -
-                4,
+            height:
+                (extraBottomPadding ? Player.extraHeight : Player.height) - 4,
             padding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 12).add(
               Platform.isIOS && extraBottomPadding

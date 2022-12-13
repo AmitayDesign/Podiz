@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
+import 'package:podiz/src/features/discussion/presentation/sound_controller.dart';
 import 'package:podiz/src/features/player/presentation/player_slider_controller.dart';
 import 'package:podiz/src/features/showcase/presentation/showcase_controller.dart';
 
@@ -21,6 +22,7 @@ final filteredCommentsProvider = StateNotifierProvider.family
       comments: comments.reversed.toList(),
       showingAll: showingAllComments,
       currentPosition: position,
+      beepController: ref.watch(beepControllerProvider),
     );
   },
 );
@@ -29,11 +31,13 @@ class DiscussionController extends StateNotifier<List<Comment>> {
   final List<Comment> comments;
   final bool showingAll;
   final bool showcase;
+  final BeepController? beepController;
 
   DiscussionController({
     required this.comments,
     required this.showingAll,
     required Duration currentPosition,
+    this.beepController,
   })  : showcase = false,
         super(
             showingAll ? comments : filterComments(comments, currentPosition));
@@ -42,15 +46,21 @@ class DiscussionController extends StateNotifier<List<Comment>> {
       : comments = [],
         showingAll = true,
         showcase = true,
+        beepController = null,
         super([]);
 
   static List<Comment> filterComments(List<Comment> comments, Duration pos) =>
       comments.where((c) => c.timestamp <= pos).toList();
 
-  void updateComments(Duration position) {
+  void updateComments(Duration position, bool beep) {
     if (showingAll) return;
     final filteredComments = filterComments(comments, position);
-    if (filteredComments.length != state.length) state = filteredComments;
+    if (filteredComments.length != state.length) {
+      if (beep && filteredComments.length > state.length) {
+        beepController?.play();
+      }
+      state = filteredComments;
+    }
   }
 
   void addComment(Comment comment) {

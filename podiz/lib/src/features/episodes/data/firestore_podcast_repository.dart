@@ -9,7 +9,7 @@ import 'package:podiz/src/utils/firestore_refs.dart';
 class FirestorePodcastRepository extends PodcastRepository {
   final FirebaseFirestore firestore;
   final FirebaseFunctions functions;
-  final SpotifyApi spotifyApi;
+  final SpotifyAPI spotifyApi;
   final MixPanelRepository mixPanelRepository;
 
   FirestorePodcastRepository(
@@ -36,7 +36,7 @@ class FirestorePodcastRepository extends PodcastRepository {
   }
 
   Future<String> fetchSpotifyShow(String showId) async {
-    final accessToken = await spotifyApi.getAccessToken();
+    final accessToken = await spotifyApi.fetchAccessToken();
     final result = await functions
         .httpsCallable('fetchSpotifyShow')
         .call({'accessToken': accessToken, 'showId': showId});
@@ -53,7 +53,7 @@ class FirestorePodcastRepository extends PodcastRepository {
   //! THIS MUST ONLY BE CALLED FOR THE CURRENT USER
   @override
   Future<void> refetchFavoritePodcasts(String userId) async {
-    final accessToken = await spotifyApi.getAccessToken();
+    final accessToken = await spotifyApi.fetchAccessToken();
     final result = await functions
         .httpsCallable('fetchSpotifyUserFavorites')
         .call({'accessToken': accessToken, 'userId': userId});

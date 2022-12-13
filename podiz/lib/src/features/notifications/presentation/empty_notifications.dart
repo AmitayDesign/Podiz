@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
@@ -38,7 +39,10 @@ class EmptyNotifications extends StatelessWidget {
             ),
           ),
           ElevatedButton(
-            onPressed: () => context.goNamed(AppRoute.home.name),
+            onPressed: () => context.goNamed(
+              AppRoute.home.name,
+              queryParams: {'destination': HomePage.feed.name},
+            ),
             child: const Text('Go to home page'),
           ),
         ],

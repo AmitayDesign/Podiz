@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:podiz/src/features/auth/domain/app_user.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/routing/app_router.dart';
 
 class UserAvatar extends StatelessWidget {
-  final UserPodiz user;
+  final AppUser user;
   final double radius;
   final bool enableNavigation;
 

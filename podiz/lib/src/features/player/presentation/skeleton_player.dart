@@ -38,10 +38,9 @@ class SkeletonPlayer extends StatelessWidget {
             children: [
               const SkeletonLine(style: SkeletonLineStyle(height: 4)),
               Container(
-                height: (Platform.isIOS && extraBottomPadding
-                        ? Player.extraHeight
-                        : Player.height) -
-                    4,
+                height:
+                    (extraBottomPadding ? Player.extraHeight : Player.height) -
+                        4,
                 padding: const EdgeInsets.only(left: 24, right: 16).add(
                   Platform.isIOS && extraBottomPadding
                       ? const EdgeInsets.only(bottom: 16)
