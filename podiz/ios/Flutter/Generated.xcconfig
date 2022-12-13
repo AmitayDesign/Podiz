@@ -1,6 +1,6 @@
 // This is a generated file; do not edit or check into version control.
-FLUTTER_ROOT=C:\src\flutter
-FLUTTER_APPLICATION_PATH=C:\Users\ggala\OneDrive\Documents\flutter projects\Upwork\podiz
+FLUTTER_ROOT=C:\Users\agala\Documents\flutter
+FLUTTER_APPLICATION_PATH=C:\Users\agala\Documents\projects\Upwork\podiz
 COCOAPODS_PARALLEL_CODE_SIGN=true
 FLUTTER_TARGET=lib\main.dart
 FLUTTER_BUILD_DIR=build
@@ -9,6 +9,6 @@ FLUTTER_BUILD_NUMBER=1
 EXCLUDED_ARCHS[sdk=iphonesimulator*]=i386 arm64
 EXCLUDED_ARCHS[sdk=iphoneos*]=armv7
 DART_OBFUSCATION=false
-TRACK_WIDGET_CREATION=false
-TREE_SHAKE_ICONS=true
-PACKAGE_CONFIG=/Users/teresinhaneves/pedro/Upwork/podiz/.dart_tool/package_config.json
+TRACK_WIDGET_CREATION=true
+TREE_SHAKE_ICONS=false
+PACKAGE_CONFIG=.dart_tool/package_config.json
