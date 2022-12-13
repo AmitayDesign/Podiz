@@ -60,8 +60,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     //TODO onboarding error popup
-    ref.listen(onboardingControllerProvider,
-        (_, state) => print('ERROR UPDATING EMAIL'));
+    ref.listen(
+      onboardingControllerProvider,
+      (_, state) => print('ERROR UPDATING EMAIL'),
+    );
 
     final state = ref.watch(connectionControllerProvider);
     if (state.isLoading) {
