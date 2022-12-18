@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:podiz/src/features/notifications/data/push_notifications_repository.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
+import 'package:uni_links/uni_links.dart';
 
 import 'features/auth/data/auth_repository.dart';
 import 'features/showcase/data/showcase_repository.dart';
@@ -21,11 +25,21 @@ class MyApp extends ConsumerStatefulWidget {
 }
 
 class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
+  StreamSubscription? _sub;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     ref.read(pushNotificationsRepositoryProvider).handleNotifications();
+    _sub = linkStream.listen((String? link) {
+      Uri uri = Uri.parse(link!);
+      print(uri);
+      // context.goNamed(AppRoute.discussion.name, queryParams: {
+      //   "episodeId": uri.path.split() ,
+      //   "time": uri.queryParameters["t"]
+      // });
+      print(link);
+    }, onError: (err) {});
   }
 
   @override

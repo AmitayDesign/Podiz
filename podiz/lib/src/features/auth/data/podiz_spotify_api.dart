@@ -27,14 +27,14 @@ class PodizSpotifyAPI implements SpotifyAPI {
   final state = '34fFs29kd09';
   final baseUrl = 'https://accounts.spotify.com/authorize';
   final scope = [
-    'app-remote-control',
-    'user-follow-read',
-    'user-read-private',
-    'user-read-email',
-    'user-read-playback-position',
-    'user-library-read',
-    'user-library-modify',
-    'user-modify-playback-state'
+    // 'app-remote-control',
+    'user-follow-read', //
+    'user-read-private', //
+    // 'user-read-email',
+    'user-read-playback-position', //
+    'user-library-read', //
+    // 'user-library-modify',
+    'user-modify-playback-state' //
   ].join(' ');
 
   @override
