@@ -2,33 +2,33 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:soundpool/soundpool.dart';
 
-final beepControllerProvider = Provider<BeepController>((ref) {
-  final controller = BeepController();
-  ref.onDispose(controller.dispose);
-  return controller;
-});
+final beepControllerProvider = Provider<BeepController>(
+  // * Override this in the main method
+  (ref) {
+    throw UnimplementedError();
+  },
+);
 
 class BeepController {
-  int? _soundId;
-  final _soundpool = Soundpool.fromOptions(
-    options: const SoundpoolOptions(streamType: StreamType.notification),
-  );
+  final int _soundId;
+  final Soundpool _soundpool;
 
-  BeepController() {
-    _loadSound();
-  }
+  BeepController(this._soundpool, this._soundId);
 
-  void _loadSound() async {
-    _soundId = await rootBundle
+  static Future<BeepController> get instance async {
+    final soundpool = Soundpool.fromOptions(
+      options: const SoundpoolOptions(streamType: StreamType.notification),
+    );
+    final soundId = await rootBundle
         .load('assets/sounds/graceful.mp3')
-        .then(_soundpool.load);
+        .then(soundpool.load);
+    return BeepController(soundpool, soundId);
   }
 
+  void play() => _soundpool.play(_soundId);
+
+  // TODO how to dispose with override?
   void dispose() {
     _soundpool.dispose();
-  }
-
-  void play() {
-    if (_soundId != null) _soundpool.play(_soundId!);
   }
 }

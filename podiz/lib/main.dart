@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/app.dart';
+import 'package:podiz/src/features/discussion/presentation/sound_controller.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/utils/instances.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
@@ -41,11 +42,13 @@ void main() async {
       // }
 
       final preferences = await StreamingSharedPreferences.instance;
+      final beepController = await BeepController.instance;
 
       //* Entry point of the app
       runApp(ProviderScope(
         overrides: [
           preferencesProvider.overrideWithValue(preferences),
+          beepControllerProvider.overrideWithValue(beepController),
         ],
         child: const MyApp(),
       ));
