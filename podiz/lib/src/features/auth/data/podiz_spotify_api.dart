@@ -21,7 +21,7 @@ class PodizSpotifyAPI implements SpotifyAPI {
   bool get forceSignInFormValue =>
       prefs.getBool(forceSignInFormKey, defaultValue: false).getValue();
 
-  final clientId = '9a8daaf39e784f1c90770da4a252087f';
+  final clientId = '5deee54ca37b4fc59abaa2869233bb3d';
   final redirectUrl = 'podiz:/connect';
   final responseType = 'code';
   final state = '34fFs29kd09';
