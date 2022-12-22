@@ -24,13 +24,13 @@ enum AppRoute {
   discussion,
 }
 
-String initialRedirect = '';
+String initialRedirect = '/';
 bool isFirstTime = true;
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authRepository = ref.watch(authRepositoryProvider);
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: initialRedirect,
     debugLogDiagnostics: false,
     //TODO REFACT THIS FLOW
     // move the has email check into the onboarding location
@@ -51,9 +51,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         if (isLoggedIn && isConnected) {
           if (!hasEmail) return '/onboarding?page=email';
           // clear redirect and go to home or somewhere on app
-          final redirect = initialRedirect.isEmpty ? '/' : initialRedirect;
+          final redirect = initialRedirect;
           print('REDIRECT TO: $redirect');
-          initialRedirect = '';
+          initialRedirect = '/';
           return redirect;
         }
       } else if (!isEmailLocation) /* somewhere in the app */ {
@@ -65,13 +65,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           }
         } else {
           if (!isLoggedIn) {
-            initialRedirect = '';
+            initialRedirect = '/';
             return '/onboarding';
           }
           // save redirect while connecting
           initialRedirect = state.location;
           print('REDIRECT = $initialRedirect');
-          if (Platform.isAndroid && isFirstTime) {
+          if (Platform.isAndroid || isFirstTime) {
             isFirstTime = false;
             return '/onboarding';
           }

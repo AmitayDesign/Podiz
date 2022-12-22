@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,6 +26,7 @@ import 'package:podiz/src/features/showcase/data/showcase_repository.dart';
 import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
 import 'package:podiz/src/features/showcase/presentation/showcase_keys.dart';
 import 'package:podiz/src/routing/app_router.dart';
+import 'package:uni_links/uni_links.dart';
 
 enum HomePage { feed, search, notifications }
 
@@ -42,24 +44,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   final pageScrollControllers = List.generate(3, (_) => ScrollController());
   late var destination = widget.destination ?? HomePage.feed;
   late final pageController = PageController(initialPage: destination.index);
-
+  StreamSubscription? _sub;
   @override
   void initState() {
+    print("####hello");
     super.initState();
+    initUniLinks();
     pageController.addListener(() {
       final page = pageController.page;
       if (page != null &&
           page == page.toInt() &&
           page.toInt() != destination.index) goToDestination(page.toInt());
     });
-    // if (Platform.isIOS) {
-    //   FirebaseDynamicLinks.instance.onLink.listen((dynamicLink) {
-    //     Uri deeplLink = dynamicLink.link;
-    //     context.goNamed(AppRoute.discussion.name,
-    //         params: {'episodeId': deeplLink.path.split('/')[-1]},
-    //         queryParams: {'t': deeplLink.queryParameters['t']});
-    //   });
-    // }
 
     final user = ref.read(currentUserProvider);
     ref.read(showcaseRepositoryProvider).isFirstTime(user.id).then(
@@ -96,6 +92,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       controller.dispose();
     }
     pageController.dispose();
+    print("#####disposing");
+    _sub?.cancel();
     super.dispose();
   }
 
@@ -129,8 +127,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
+  void initUniLinks() async {
+    FirebaseDynamicLinks.instance.onLink.listen(
+        (PendingDynamicLinkData? dynamicLink) async {
+      final Uri? deeplink = dynamicLink!.link;
+      if (deeplink != null) {
+        handleMyLink(deeplink);
+      }
+    }, onError: (_) {
+      print("error");
+    });
+  }
+
+  void handleMyLink(Uri uri) {
+    //TODO handle params
+    // print(uri.toString().split("/")[]);
+    context.goNamed(
+      AppRoute.discussion.name,
+      params: {"episodeId": uri.path.split("/")[2].split("?")[0]},
+      queryParams: {"t": uri.queryParameters["t"]},
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    print("entering the home");
+    print("######oh yeah");
+
     // open discussion if a notification was selected
     ref.listen<AsyncValue<NotificationPodiz>>(
       selectedNotificationStreamProvider,

@@ -1,6 +1,7 @@
 import 'dart:io' as io;
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -86,7 +87,7 @@ class _CommentCardState extends ConsumerState<CommentCard> {
     final podcast =
         ref.read(podcastFutureProvider(episode.showId)).valueOrNull!;
     final timestamp = comment.timestamp.inSeconds;
-    var link = 'https://podiz.io/discussion/$episodeId?t=$timestamp';
+    var url = 'https://podiz.io';
     // if (Platform.isIOS) {
     //   final dynamicLinkParamenters = DynamicLinkParameters(
     //       link: Uri.parse(link),
@@ -98,10 +99,21 @@ class _CommentCardState extends ConsumerState<CommentCard> {
     // }
     RenderBox? box = context.findRenderObject() as RenderBox?;
     final ipad = await isIpad();
+
+    final DynamicLinkParameters params = DynamicLinkParameters(
+        link: Uri.parse("$url/discussion/$episodeId?t=$timestamp"),
+        uriPrefix: "https://amitay.page.link",
+        iosParameters: const IOSParameters(
+          bundleId: "com.amitay.podiz",
+          minimumVersion: "0",
+        ));
+
+    final link = await FirebaseDynamicLinks.instance.buildLink(params);
+
     Share.share(
       'Check out this comment I found on Podiz about ${podcast.name}!\n\n'
       '${comment.text}\n'
-      '$link',
+      '${link.toString()}',
       subject: 'Insight I found on Podiz about ${podcast.name}',
       sharePositionOrigin:
           ipad ? box!.localToGlobal(Offset.zero) & box.size : null,

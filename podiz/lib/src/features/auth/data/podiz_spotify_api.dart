@@ -58,6 +58,7 @@ class PodizSpotifyAPI implements SpotifyAPI {
         .httpsCallable('getAccessTokenWithCode2')
         .call({'code': code});
     // handle result
+    print(result.data);
     if (result.data == '0') throw Exception('Failed to get user data');
     accessToken = result.data['access_token'];
     final timeoutInSeconds = result.data['timeout'];
@@ -86,6 +87,7 @@ class PodizSpotifyAPI implements SpotifyAPI {
         .httpsCallable('getAccessTokenWithRefreshToken')
         .call({'userId': userId});
     // handle responde
+    print(response);
     final result = response.data['result'];
     if (result == 'unauthorized') {
       onDisconnect?.call();
