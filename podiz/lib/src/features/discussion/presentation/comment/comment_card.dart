@@ -101,12 +101,17 @@ class _CommentCardState extends ConsumerState<CommentCard> {
     final ipad = await isIpad();
 
     final DynamicLinkParameters params = DynamicLinkParameters(
-        link: Uri.parse("$url/discussion/$episodeId?t=$timestamp"),
-        uriPrefix: "https://amitay.page.link",
-        iosParameters: const IOSParameters(
-          bundleId: "com.amitay.podiz",
-          minimumVersion: "0",
-        ));
+      link: Uri.parse("$url/discussion/$episodeId?t=$timestamp"),
+      uriPrefix: "https://amitay.page.link",
+      iosParameters: const IOSParameters(
+        bundleId: "com.amitay.podiz",
+        minimumVersion: "0",
+      ),
+      androidParameters: const AndroidParameters(
+        packageName: "com.amitay.podiz",
+        minimumVersion: 0,
+      ),
+    );
 
     final link = await FirebaseDynamicLinks.instance.buildLink(params);
 

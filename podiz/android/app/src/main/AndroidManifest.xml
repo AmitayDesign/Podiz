@@ -45,8 +45,16 @@
                 <data android:scheme="https" />
                 <data android:scheme="podiz" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:host="amitay.page.link"
+                    android:scheme="https"/>
+            </intent-filter>\>
         </activity>
-        <!-- Deep linking for spotify auth using flutter web auth 2 -->
+        <!-- Deep linking for spotify auth using flutter web auth 2 --> 
         <activity android:name="com.linusu.flutter_web_auth_2.CallbackActivity"
          android:exported="true">
             <intent-filter android:label="flutter_web_auth_2">
