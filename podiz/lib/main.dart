@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/app.dart';
 import 'package:podiz/src/features/discussion/presentation/sound_controller.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
+import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/utils/instances.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
@@ -31,6 +33,8 @@ void main() async {
 
       await Firebase.initializeApp();
 
+      final PendingDynamicLinkData? initialLink =
+          await FirebaseDynamicLinks.instance.getInitialLink();
       // if (Platform.isIOS) {
       //   final PendingDynamicLinkData? initialLink =
       //       await FirebaseDynamicLinks.instance.getInitialLink();
@@ -44,13 +48,17 @@ void main() async {
       final preferences = await StreamingSharedPreferences.instance;
       final beepController = await BeepController.instance;
 
+      if (initialLink != null) {
+        initialRedirect = initialLink.link.path;
+      }
+
       //* Entry point of the app
       runApp(ProviderScope(
         overrides: [
           preferencesProvider.overrideWithValue(preferences),
           beepControllerProvider.overrideWithValue(beepController),
         ],
-        child: const MyApp(),
+        child: MyApp(),
       ));
 
       //! This code will present some error UI if any uncaught exception happens

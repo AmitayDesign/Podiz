@@ -57,7 +57,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
           }
           return Scaffold(
             extendBodyBehindAppBar: true,
-            // appBar: NotificationsBar(comments),
+            appBar: NotificationsBar(comments),
             body: comments.isEmpty
                 ? Padding(
                     padding: const EdgeInsets.all(16).add(EdgeInsets.only(

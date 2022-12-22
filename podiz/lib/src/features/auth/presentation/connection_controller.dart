@@ -39,6 +39,7 @@ class ConnectionController extends StateNotifier<AsyncValue> {
   Future<void> signIn() async {
     signInTries++;
     try {
+      print("#####begin");
       // open external spotify authentication window
       final response = await openSignInUrl();
       if (response == null) return;
@@ -48,7 +49,9 @@ class ConnectionController extends StateNotifier<AsyncValue> {
       if (error != null) throw Exception('Error: $error');
       final code = data['code']!;
       // sign in with spotify
+      print("#####after code");
       final userId = await authRepository.signInWithSpotify(code);
+      print(userId);
       await pushNotificationsRepository.requestPermission(userId);
       state = const AsyncValue.data(null);
     } catch (err, stack) {

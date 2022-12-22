@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,28 +19,18 @@ import 'statistics/mix_panel_repository.dart';
 import 'theme/app_theme.dart';
 
 class MyApp extends ConsumerStatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
 
   @override
   ConsumerState<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
-  StreamSubscription? _sub;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     ref.read(pushNotificationsRepositoryProvider).handleNotifications();
-    _sub = linkStream.listen((String? link) {
-      Uri uri = Uri.parse(link!);
-      print(uri);
-      // context.goNamed(AppRoute.discussion.name, queryParams: {
-      //   "episodeId": uri.path.split() ,
-      //   "time": uri.queryParameters["t"]
-      // });
-      print(link);
-    }, onError: (err) {});
   }
 
   @override
@@ -75,6 +66,7 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
         darkTheme: theme,
         themeMode: ThemeMode.dark,
         builder: (context, child) {
+          // return child!;
           return ShowCaseWidget(
             disableAnimation: true,
             disableBarrierInteraction: true,
