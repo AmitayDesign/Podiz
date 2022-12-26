@@ -1,0 +1,6 @@
+framework module flutter_facebook_auth {
+  umbrella header "flutter_facebook_auth-umbrella.h"
+
+  export *
+  module * { export * }
+}

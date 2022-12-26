@@ -1,0 +1,6 @@
+framework module twitter_login {
+  umbrella header "twitter_login-umbrella.h"
+
+  export *
+  module * { export * }
+}

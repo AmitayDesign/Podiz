@@ -1,0 +1,34 @@
+{
+  "name": "spotify_sdk",
+  "version": "0.0.1",
+  "summary": "Unofficial Spotify Flutter SDK.",
+  "description": "Unofficial Spotify Flutter SDK.",
+  "homepage": "https://github.com/brim-borium/spotify_sdk",
+  "license": {
+    "file": "../LICENSE"
+  },
+  "authors": {
+    "Your Company": "fdimanidis@gmail.com"
+  },
+  "source": {
+    "path": "."
+  },
+  "source_files": "Classes/**/*",
+  "dependencies": {
+    "Flutter": [
+
+    ]
+  },
+  "platforms": {
+    "ios": "9.0"
+  },
+  "pod_target_xcconfig": {
+    "DEFINES_MODULE": "YES",
+    "VALID_ARCHS[sdk=iphonesimulator*]": "x86_64"
+  },
+  "swift_versions": "5.0",
+  "prepare_command": "./prepare-iOS-SDK.sh",
+  "vendored_frameworks": "ios-sdk/SpotifyiOS.xcframework",
+  "preserve_paths": "ios-sdk/SpotifyiOS.xcframework",
+  "swift_version": "5.0"
+}

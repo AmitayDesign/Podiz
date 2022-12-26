@@ -1,0 +1,48 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "podiz",
+			"cwd": "podiz",
+			"request": "launch",
+			"type": "dart"
+		},
+		{
+			"name": "podiz (profile mode)",
+			"cwd": "podiz",
+			"request": "launch",
+			"type": "dart",
+			"flutterMode": "profile"
+		},
+		{
+			"name": "podiz (release mode)",
+			"cwd": "podiz",
+			"request": "launch",
+			"type": "dart",
+			"flutterMode": "release"
+		},
+		{
+			"name": "my_app",
+			"cwd": "Flutter\\my_app",
+			"request": "launch",
+			"type": "dart"
+		},
+		{
+			"name": "my_app (profile mode)",
+			"cwd": "Flutter\\my_app",
+			"request": "launch",
+			"type": "dart",
+			"flutterMode": "profile"
+		},
+		{
+			"name": "my_app (release mode)",
+			"cwd": "Flutter\\my_app",
+			"request": "launch",
+			"type": "dart",
+			"flutterMode": "release"
+		}
+	]
+}
