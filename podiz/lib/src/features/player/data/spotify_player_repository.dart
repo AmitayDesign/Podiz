@@ -29,7 +29,7 @@ class SpotifyPlayerRepository implements PlayerRepository {
   @override
   Stream<PlayingEpisode?> watchPlayingEpisode() =>
       SpotifySdk.subscribePlayerState()
-          .skipWhile((state) => state.track == null)
+          // .skipWhile((state) => state.track == null)
           .asyncMap(playingEpisodeFromPlayerState)
           .handleError((e) => lastPlayingEpisode);
 
