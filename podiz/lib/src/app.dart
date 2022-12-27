@@ -1,13 +1,8 @@
-import 'dart:async';
-
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:podiz/src/features/notifications/data/push_notifications_repository.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
-import 'package:uni_links/uni_links.dart';
 
 import 'features/auth/data/auth_repository.dart';
 import 'features/showcase/data/showcase_repository.dart';
@@ -19,7 +14,7 @@ import 'statistics/mix_panel_repository.dart';
 import 'theme/app_theme.dart';
 
 class MyApp extends ConsumerStatefulWidget {
-  MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   ConsumerState<MyApp> createState() => _MyAppState();
