@@ -1,26 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
-Future<bool?> showDeleteCommentDialog({
+Future<bool?> showCommentDialog({
   required BuildContext context,
+  required String title,
+  required String cancelActionText,
+  required String defaultActionText,
 }) =>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: context.colorScheme.surface,
-        title: const Text('Are you sure you want to delete this comment?'),
+        title: Text(title),
         titleTextStyle: context.textTheme.bodyLarge,
         actions: [
           TextButton(
             child: Text(
-              'Don\'t delete',
+              cancelActionText,
               style: context.textTheme.titleSmall,
             ),
             onPressed: () => Navigator.of(context).pop(false),
           ),
           TextButton(
             child: Text(
-              'Delete',
+              defaultActionText,
               style: context.textTheme.titleSmall!
                   .copyWith(color: context.colorScheme.error),
             ),

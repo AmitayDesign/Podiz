@@ -5,6 +5,7 @@ import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
+import 'package:podiz/src/features/discussion/domain/mutable_comment.dart';
 import 'package:podiz/src/features/discussion/presentation/comment/comment_text_field.dart';
 import 'package:podiz/src/features/discussion/presentation/comment/delete_comment_dialog.dart';
 import 'package:podiz/src/features/discussion/presentation/sheet/comment_sheet.dart';
@@ -97,13 +98,27 @@ class CommentMenuButton extends ConsumerWidget {
             ref.read(commentControllerProvider).text = comment.text;
             break;
           case CommentMenuOption.delete:
-            final success = await showDeleteCommentDialog(context: context);
+            final success = await showCommentDialog(
+              context: context,
+              title: 'Are you sure you want to delete this comment?',
+              cancelActionText: 'Don\'t delete',
+              defaultActionText: 'Delete',
+            );
             if (success == true) {
               ref.read(discussionRepositoryProvider).deleteComment(comment);
             }
             break;
           case CommentMenuOption.report:
-            ref.read(discussionRepositoryProvider).reportComment(comment);
+            final success = await showCommentDialog(
+              context: context,
+              title: 'Are you sure you want to report this comment?',
+              cancelActionText: 'Don\'t report',
+              defaultActionText: 'Report',
+            );
+            if (success == true) {
+              final reported = comment.report();
+              ref.read(discussionRepositoryProvider).updateComment(reported);
+            }
             break;
         }
       },

@@ -22,6 +22,7 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
       firestore.commentsCollection
           .where('episodeId', isEqualTo: episodeId)
           .where('parentIds', isEqualTo: [])
+          .where('reported', isNotEqualTo: true)
           .orderBy('timestamp')
           .snapshots()
           .map((snapshot) =>
@@ -133,7 +134,7 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
   }
 
   @override
-  Future<void> editComment(Comment comment) {
+  Future<void> updateComment(Comment comment) {
     return firestore.commentsCollection
         .doc(comment.id)
         .update(comment.toJson());
@@ -187,11 +188,5 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
         });
       }
     });
-  }
-
-  @override
-  Future<void> reportComment(Comment comment) {
-    // TODO: implement reportComment
-    throw UnimplementedError();
   }
 }

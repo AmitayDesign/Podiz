@@ -42,7 +42,7 @@ class CommentSheet extends ConsumerWidget {
     String text,
   ) {
     final comment = read(commentSheetEditProvider)!.setText(text);
-    read(discussionRepositoryProvider).editComment(comment);
+    read(discussionRepositoryProvider).updateComment(comment);
     read(commentSheetEditProvider.notifier).state = null;
     read(commentControllerProvider).clear();
     return comment;
