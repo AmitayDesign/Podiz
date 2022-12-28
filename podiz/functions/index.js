@@ -66,9 +66,9 @@ exports.getAccessTokenWithRefreshToken = functions.https.onCall((data, _) =>
 );
 
 exports.replyNotificationTrigger = functions.firestore
-  .document('/comments/{commentId}')
+  .document("/comments/{commentId}")
   .onCreate(async (snapshot, context) => {
-    var commentId = context.params.commentId
+    var commentId = context.params.commentId;
     var data = snapshot.data();
     var episodeId = data.episodeId;
     var targetUserId = data.parentUserId;
@@ -76,14 +76,18 @@ exports.replyNotificationTrigger = functions.firestore
     var text = data.text;
     if (targetUserId != null && targetUserId != userId)
       return notifications.replyNotificationTrigger(
-        targetUserId, commentId, episodeId, userId, text
+        targetUserId,
+        commentId,
+        episodeId,
+        userId,
+        text
       );
   });
 
 exports.followNotificationTrigger = functions.firestore
-  .document('/users/{userId}')
+  .document("/users/{userId}")
   .onUpdate(async (snapshot, context) => {
-    var targetUserId = context.params.userId
+    var targetUserId = context.params.userId;
     var followersBefore = snapshot.before.data().followers ?? [];
     var followersAfter = snapshot.after.data().followers ?? [];
     if (followersBefore.length < followersAfter.length) {
@@ -96,6 +100,12 @@ exports.scheduleWeeklyComments = functions.pubsub
   .schedule("0 0 * * *")
   .timeZone("Europe/Lisbon")
   .onRun((_) => comments.updateWeeklyComments());
+
+exports.scheduleEpisodeUpdate = functions.pubsub
+  .schedule("05 15 * * *")
+  .timeZone("Europe/Lisbon")
+  .onRun((_) => search.updateEpisodeDaily());
+
 
 exports.playEpisode = functions.https.onCall((data, _) =>
   player.playEpisode(data.accessToken, data.episodeId, data.time)
