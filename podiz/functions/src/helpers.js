@@ -28,8 +28,8 @@ exports.fetchFromHost = (path, accessToken) =>
 // USER
 
 exports.mailRef = (id) => admin.firestore().collection("mail").doc(id);
-exports.userPrivateRef = (userId) => admin.firestore()
-  .collection("usersPrivate").doc(userId);
+exports.userPrivateRef = (userId) =>
+  admin.firestore().collection("usersPrivate").doc(userId);
 const userRef = (userId) => admin.firestore().collection("users").doc(userId);
 exports.userRef = userRef;
 
@@ -68,8 +68,7 @@ exports.getUserFavorites = async (userId) => {
 
 // EPISODE
 
-exports.commentsRef = () =>
-  admin.firestore().collection("comments");
+exports.commentsRef = () => admin.firestore().collection("comments");
 const episodeRef = (episodeId) =>
   admin.firestore().collection("episodes").doc(episodeId);
 exports.episodeRef = episodeRef;
@@ -173,4 +172,13 @@ const buildSearchArray = (text) => {
 exports.addHours = (numOfHours, date = new Date()) => {
   date.setTime(date.getTime() + numOfHours * 60 * 60 * 1000);
   return date;
-}
+};
+
+exports.getNumberOfEpisodes = async (showId) => {
+  let snapshot = await admin
+    .firestore()
+    .collection("episodes")
+    .where("showId", "==", showId)
+    .get();
+  return snapshot.size;
+};
