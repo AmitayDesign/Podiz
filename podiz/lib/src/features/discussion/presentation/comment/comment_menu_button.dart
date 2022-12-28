@@ -6,6 +6,7 @@ import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/discussion/presentation/comment/comment_text_field.dart';
+import 'package:podiz/src/features/discussion/presentation/comment/delete_comment_dialog.dart';
 import 'package:podiz/src/features/discussion/presentation/sheet/comment_sheet.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
@@ -88,7 +89,7 @@ class CommentMenuButton extends ConsumerWidget {
                 ),
               ),
             ],
-      onSelected: (option) {
+      onSelected: (option) async {
         switch (option) {
           case CommentMenuOption.edit:
             ref.read(commentSheetTargetProvider.notifier).state = null;
@@ -96,7 +97,10 @@ class CommentMenuButton extends ConsumerWidget {
             ref.read(commentControllerProvider).text = comment.text;
             break;
           case CommentMenuOption.delete:
-            ref.read(discussionRepositoryProvider).deleteComment(comment);
+            final success = await showDeleteCommentDialog(context: context);
+            if (success == true) {
+              ref.read(discussionRepositoryProvider).deleteComment(comment);
+            }
             break;
           case CommentMenuOption.report:
             ref.read(discussionRepositoryProvider).reportComment(comment);

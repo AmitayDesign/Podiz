@@ -144,6 +144,7 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
     //TODO: check deleteComment is properly done
     //TODO: deal with child comments
     return;
+
     // generate comment doc to get the id
     final commentDoc = firestore.commentsCollection.doc(comment.id);
 
