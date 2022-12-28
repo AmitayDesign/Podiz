@@ -5,6 +5,9 @@ class PlayingEpisode extends Episode {
   final bool isPlaying;
   final double playbackSpeed;
 
+  @override
+  List<Object> get props => [id, isPlaying, initialPosition, playbackSpeed];
+
   PlayingEpisode(
       {required String id,
       required String name,

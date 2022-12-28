@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/src/common_widgets/tap_to_unfocus.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/auth/data/spotify_api.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/auth/domain/mutable_user_podiz.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
@@ -48,6 +49,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     print("####hello");
+
+    // connect to sdk
+    ref.read(spotifyApiProvider).connectToSdk();
     super.initState();
     initUniLinks();
     pageController.addListener(() {
@@ -130,7 +134,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initUniLinks() async {
     FirebaseDynamicLinks.instance.onLink.listen(
         (PendingDynamicLinkData? dynamicLink) async {
-      final Uri? deeplink = dynamicLink!.link;
+      final Uri deeplink = dynamicLink!.link;
       if (deeplink != null) {
         handleMyLink(deeplink);
       }

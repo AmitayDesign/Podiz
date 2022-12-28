@@ -29,7 +29,6 @@ class SpotifyPlayerRepository implements PlayerRepository {
   @override
   Stream<PlayingEpisode?> watchPlayingEpisode() =>
       SpotifySdk.subscribePlayerState()
-          // .skipWhile((state) => state.track == null)
           .asyncMap(playingEpisodeFromPlayerState)
           .handleError((e) => lastPlayingEpisode);
 
@@ -49,11 +48,10 @@ class SpotifyPlayerRepository implements PlayerRepository {
       PlayerState state) async {
     final track = state.track;
     if (track == null) return null;
-    if (Platform.isIOS && spotifyApi.stopIOSPlayer) {
-      spotifyApi.stopIOSPlayer = false;
-      if (!track.isEpisode || !track.isPodcast) pause();
+    if (!track.isEpisode || !track.isPodcast) {
+      pause();
+      return null;
     }
-    if (!track.isEpisode || !track.isPodcast) return null;
     final episodeId = idFromUri(track.uri);
     // fetch episode
     final stateTime = DateTime.now();
@@ -132,4 +130,10 @@ class SpotifyPlayerRepository implements PlayerRepository {
       },
     );
   }
+
+  //! SPOTIFY CONNECTION CHANGES
+
+  @override
+  Stream<bool> connectionChanges() =>
+      SpotifySdk.subscribeConnectionStatus().map((status) => status.connected);
 }

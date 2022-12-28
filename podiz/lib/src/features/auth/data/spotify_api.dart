@@ -1,4 +1,3 @@
-import 'package:flutter/animation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/utils/instances.dart';
 
@@ -12,13 +11,8 @@ final spotifyApiProvider = Provider<SpotifyAPI>(
 );
 
 abstract class SpotifyAPI {
-  bool get stopIOSPlayer;
-  set stopIOSPlayer(bool value);
   String get authUrl;
-  Future<String> fetchAuthTokenFromCode(
-    String code, {
-    VoidCallback? onDisconnect,
-  });
+  Future<String> fetchAuthTokenFromCode(String code);
   Future<String> fetchAccessToken();
   Future<bool> connectToSdk();
   Future<void> disconnect();

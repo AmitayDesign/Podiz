@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:flutter/animation.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
@@ -41,82 +38,56 @@ class PodizSpotifyAPI implements SpotifyAPI {
   String get authUrl =>
       '$baseUrl?client_id=$clientId&response_type=$responseType&redirect_uri=$redirectUrl&scope=$scope&state=$state&show_dialog=$forceSignInFormValue';
 
-  @override
-  bool stopIOSPlayer = false; //!
   late String userId;
   DateTime? timeout;
-  VoidCallback? onDisconnect;
+  String? accessToken;
+  bool get tokenExpired => timeout?.isBefore(DateTime.now()) ?? true;
 
   @override
-  Future<String> fetchAuthTokenFromCode(
-    String code, {
-    VoidCallback? onDisconnect,
-  }) async {
+  Future<String> fetchAuthTokenFromCode(String code) async {
     // get access token
     final now = DateTime.now();
     final result = await functions
         .httpsCallable('getAccessTokenWithCode2')
         .call({'code': code});
     // handle result
-    print(result.data);
     if (result.data == '0') throw Exception('Failed to get user data');
     accessToken = result.data['access_token'];
     final timeoutInSeconds = result.data['timeout'];
     final authToken = result.data['authToken'];
     userId = result.data['userId'];
-    //
     timeout = now.add(Duration(seconds: timeoutInSeconds));
-    stopIOSPlayer = true;
-    onDisconnect = onDisconnect;
-    // connect to sdk
-    final success = await connectToSdk();
-    if (!success) throw Exception('Error connecting to Spotify');
+    await forceSignInForm(force: false);
     return authToken;
   }
 
-  String? accessToken;
-  bool get tokenExpired => timeout?.isBefore(DateTime.now()) ?? true;
-
   @override
   Future<String> fetchAccessToken() async {
-    // return current access token if valid
+    // if valid, returns current access token
     if (!tokenExpired && accessToken != null) return accessToken!;
 
-    // else, get new access token
+    // else, fetch new access token
     final response = await functions
         .httpsCallable('getAccessTokenWithRefreshToken')
         .call({'userId': userId});
     // handle responde
-    print(response);
     final result = response.data['result'];
     if (result == 'unauthorized') {
-      onDisconnect?.call();
       throw Exception('session timed out');
+    } else if (result == 'error') {
+      throw Exception('access token error');
     }
-    if (result == 'error') throw Exception('access token error');
-    // save and return new access token and connect to sdk
+    // save and return new access token
     accessToken = result;
-    await connectToSdk();
-    await forceSignInForm(force: false);
+    // await connectToSdk();
     return accessToken!;
   }
 
   @override
   Future<bool> connectToSdk() {
-    if (Platform.isIOS) {
-      return SpotifySdk.connectToSpotifyRemote(
-          clientId: clientId,
-          redirectUrl: redirectUrl,
-          scope: scope,
-          spotifyUri: ""
-          // accessToken: accessToken,
-          );
-    }
-
     return SpotifySdk.connectToSpotifyRemote(
       clientId: clientId,
       redirectUrl: redirectUrl,
-      accessToken: accessToken,
       playerName: 'Podiz',
     );
   }
