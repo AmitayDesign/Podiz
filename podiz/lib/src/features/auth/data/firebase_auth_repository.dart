@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,7 +7,6 @@ import 'package:podiz/src/features/auth/data/spotify_api.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/utils/firestore_refs.dart';
 import 'package:podiz/src/utils/in_memory_store.dart';
-import 'package:spotify_sdk/spotify_sdk.dart';
 
 class FirebaseAuthRepository implements AuthRepository {
   final FirebaseAuth auth;
@@ -20,14 +18,14 @@ class FirebaseAuthRepository implements AuthRepository {
     required this.auth,
     required this.firestore,
   }) {
-    listenToConnectionChanges();
+    // listenToConnectionChanges();
     listenToAuthStateChanges();
   }
 
   void dispose() {
     userSub?.cancel();
     authSub?.cancel();
-    connectionSub?.cancel();
+    // connectionSub?.cancel();
   }
 
   final authState = InMemoryStore<UserPodiz?>();
@@ -124,26 +122,26 @@ class FirebaseAuthRepository implements AuthRepository {
 
   //! SPOTIFY CONNECTION CHANGES
 
-  @override
-  Stream<bool> connectionChanges() => connectionState.stream;
+  // @override
+  // Stream<bool> connectionChanges() => connectionState.stream;
 
-  @override
-  bool get isConnected => connectionState.value;
+  // @override
+  // bool get isConnected => connectionState.value;
 
-  final connectionState = InMemoryStore<bool>(false);
-  StreamSubscription? connectionSub;
-  void listenToConnectionChanges() {
-    connectionSub?.cancel();
-    connectionSub = SpotifySdk.subscribeConnectionStatus().listen(
-      (status) async {
-        connectionState.value = status.connected;
-        // on android, when user is logged in, keep connecting if disconnect
-        if (Platform.isAndroid) {
-          if (!status.connected && currentUser?.id != null) {
-            spotifyApi.fetchAccessToken();
-          }
-        }
-      },
-    );
-  }
+  // final connectionState = InMemoryStore<bool>(false);
+  // StreamSubscription? connectionSub;
+  // void listenToConnectionChanges() {
+  //   connectionSub?.cancel();
+  //   connectionSub = SpotifySdk.subscribeConnectionStatus().listen(
+  //     (status) async {
+  //       connectionState.value = status.connected;
+  //       // on android, when user is logged in, keep connecting if disconnect
+  //       if (Platform.isAndroid) {
+  //         if (!status.connected && currentUser?.id != null) {
+  //           spotifyApi.fetchAccessToken();
+  //         }
+  //       }
+  //     },
+  //   );
+  // }
 }

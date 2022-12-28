@@ -27,8 +27,8 @@ abstract class AuthRepository {
   Future<void> updateUser(UserPodiz user);
   Future<void> signOut();
   //
-  Stream<bool> connectionChanges();
-  bool get isConnected;
+  // Stream<bool> connectionChanges();
+  // bool get isConnected;
   //
 }
 
@@ -43,9 +43,9 @@ final authStateChangesProvider = StreamProvider<UserPodiz?>(
   (ref) => ref.watch(authRepositoryProvider).authStateChanges(),
 );
 
-final connectionChangesProvider = StreamProvider<bool>(
-  (ref) => ref.watch(authRepositoryProvider).connectionChanges(),
-);
+// final connectionChangesProvider = StreamProvider<bool>(
+//   (ref) => ref.watch(authRepositoryProvider).connectionChanges(),
+// );
 
 final currentUserProvider =
     StateNotifierProvider<StreamNotifier<UserPodiz>, UserPodiz>(

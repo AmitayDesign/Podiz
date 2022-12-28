@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/data/spotify_api.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/player/domain/player_time.dart';
@@ -33,7 +32,7 @@ abstract class PlayerRepository {
 
 final playerStateChangesProvider = StreamProvider<PlayingEpisode?>(
   (ref) {
-    ref.watch(connectionChangesProvider);
+    // ref.watch(connectionChangesProvider);
     return ref.watch(playerRepositoryProvider).watchPlayingEpisode();
   },
 );
