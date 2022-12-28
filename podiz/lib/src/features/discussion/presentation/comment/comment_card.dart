@@ -13,6 +13,7 @@ import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
+import 'package:podiz/src/features/discussion/presentation/comment/comment_menu_button.dart';
 import 'package:podiz/src/features/discussion/presentation/sheet/comment_sheet.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
@@ -157,53 +158,57 @@ class _CommentCardState extends ConsumerState<CommentCard> {
         child: Column(
           children: [
             Padding(
+              padding: const EdgeInsets.only(left: 16, right: 4),
+              child: Row(
+                children: [
+                  if (widget.showcase)
+                    showcase(
+                      user: user,
+                      child: UserAvatar(
+                        user: user,
+                        radius: kMinInteractiveDimension * 5 / 12,
+                      ),
+                    )
+                  else
+                    UserAvatar(
+                      user: user,
+                      radius: kMinInteractiveDimension * 5 / 12,
+                    ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          user.name,
+                          style: context.textTheme.titleSmall,
+                        ),
+                        Text(
+                          '${user.followers.length} followers'
+                          ' $dot ${format(widget.comment.date!)}',
+                          maxLines: 1,
+                          style: context.textTheme.bodySmall,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  TimeChip(
+                    icon: Icons.play_arrow_rounded,
+                    position: widget.comment.timestamp,
+                    onTap: openEpisode,
+                  ),
+                  CommentMenuButton(target: user),
+                ],
+              ),
+            ),
+            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Row(
-                    children: [
-                      if (widget.showcase)
-                        showcase(
-                          user: user,
-                          child: UserAvatar(
-                            user: user,
-                            radius: kMinInteractiveDimension * 5 / 12,
-                          ),
-                        )
-                      else
-                        UserAvatar(
-                          user: user,
-                          radius: kMinInteractiveDimension * 5 / 12,
-                        ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              user.name,
-                              style: context.textTheme.titleSmall,
-                            ),
-                            Text(
-                              '${user.followers.length} followers'
-                              ' $dot ${format(widget.comment.date!)}',
-                              maxLines: 1,
-                              style: context.textTheme.bodySmall,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      TimeChip(
-                        icon: Icons.play_arrow_rounded,
-                        position: widget.comment.timestamp,
-                        onTap: openEpisode,
-                      ),
-                    ],
-                  ),
                   const SizedBox(height: 16),
                   CommentText(widget.comment.text),
                   const SizedBox(height: 16),

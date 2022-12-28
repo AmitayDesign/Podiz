@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
+import 'package:podiz/src/features/discussion/presentation/comment/comment_menu_button.dart';
 import 'package:podiz/src/features/discussion/presentation/sheet/comment_sheet.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
@@ -35,31 +36,42 @@ class ReplyWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userFutureProvider(comment.userId)).valueOrNull;
     if (user == null) return const SizedBox.shrink();
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.only(left: 16, right: 4),
+          child: Row(
             children: [
-              UserAvatar(user: user, radius: 12),
-              const SizedBox(width: 8),
-              Flexible(
-                child: Text(
-                  user.name,
-                  style: context.textTheme.titleSmall,
-                  overflow: TextOverflow.ellipsis,
+              Expanded(
+                child: Row(
+                  children: [
+                    UserAvatar(user: user, radius: 12),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        user.name,
+                        style: context.textTheme.titleSmall,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '${user.followers.length} followers',
+                      style: context.textTheme.bodySmall,
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(width: 8),
-              Text(
-                '${user.followers.length} followers',
-                style: context.textTheme.bodySmall,
-              ),
+              CommentMenuButton(target: user),
             ],
           ),
-          const SizedBox(height: 8),
-          IntrinsicHeight(
+        ),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: IntrinsicHeight(
             child: Row(
               children: [
                 if (!collapsed) ...[
@@ -100,8 +112,8 @@ class ReplyWidget extends ConsumerWidget {
               ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

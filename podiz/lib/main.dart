@@ -9,6 +9,7 @@ import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/app.dart';
 import 'package:podiz/src/features/discussion/presentation/sound_controller.dart';
+import 'package:podiz/src/features/notifications/data/push_notifications_repository.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/utils/instances.dart';
@@ -45,20 +46,20 @@ void main() async {
       //   }
       // }
 
+      //* providers initializaton
       final preferences = await StreamingSharedPreferences.instance;
-      final beepController = await BeepController.instance;
+      final container = ProviderContainer(overrides: [
+        preferencesProvider.overrideWithValue(preferences),
+      ]);
+      await container.read(beepControllerProvider).init();
+      await container.read(pushNotificationsRepositoryProvider).init();
 
-      if (initialLink != null) {
-        initialRedirect = initialLink.link.path;
-      }
+      if (initialLink != null) initialRedirect = initialLink.link.path;
 
       //* Entry point of the app
-      runApp(ProviderScope(
-        overrides: [
-          preferencesProvider.overrideWithValue(preferences),
-          beepControllerProvider.overrideWithValue(beepController),
-        ],
-        child: MyApp(),
+      runApp(UncontrolledProviderScope(
+        container: container,
+        child: const MyApp(),
       ));
 
       //! This code will present some error UI if any uncaught exception happens

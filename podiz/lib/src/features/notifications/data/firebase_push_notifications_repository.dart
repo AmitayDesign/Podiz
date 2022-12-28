@@ -52,7 +52,7 @@ class FirebasePushNotificationsRepository
   };
 
   NotificationDetails details(AndroidNotificationChannel channel) {
-    const iosDetails = IOSNotificationDetails();
+    const iosDetails = DarwinNotificationDetails();
     final androidDetails = AndroidNotificationDetails(
       channel.id,
       channel.name,
@@ -68,7 +68,7 @@ class FirebasePushNotificationsRepository
     );
   }
 
-  final selectedNotifications = InMemoryStore<NotificationPodiz>();
+  final selectedNotification = InMemoryStore<NotificationPodiz>();
 
   @override
   Future<void> debugDisplay() => plugin.show(
@@ -85,14 +85,19 @@ class FirebasePushNotificationsRepository
     const AndroidInitializationSettings androidSettings =
         AndroidInitializationSettings('@mipmap/tray');
 
-    const IOSInitializationSettings iosSettings = IOSInitializationSettings();
+    const DarwinInitializationSettings iosSettings =
+        DarwinInitializationSettings();
 
     const InitializationSettings settings = InitializationSettings(
       android: androidSettings,
       iOS: iosSettings,
     );
 
-    await plugin.initialize(settings, onSelectNotification: selectNotification);
+    await plugin.initialize(
+      settings,
+      onDidReceiveNotificationResponse: (response) =>
+          selectNotification(response.payload),
+    );
     final androidPlugin = plugin.resolvePlatformSpecificImplementation<
         AndroidFlutterLocalNotificationsPlugin>();
     for (final channel in channels.values) {
@@ -170,11 +175,11 @@ class FirebasePushNotificationsRepository
   //TODO select different for each channel
   void selectNotification(String? payload) {
     if (payload != null) {
-      selectedNotifications.value = NotificationPodiz.fromPayload(payload);
+      selectedNotification.value = NotificationPodiz.fromPayload(payload);
     }
   }
 
   @override
   Stream<NotificationPodiz> selectedNotificationChanges() =>
-      selectedNotifications.stream;
+      selectedNotification.stream;
 }

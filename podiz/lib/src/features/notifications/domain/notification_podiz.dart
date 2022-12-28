@@ -4,7 +4,7 @@ class NotificationPodiz {
   final Channel channel;
   final String id;
 
-  NotificationPodiz(this.channel, this.id);
+  const NotificationPodiz(this.channel, this.id);
   factory NotificationPodiz.fromPayload(String payload) {
     final payloadList = payload.split(':');
     final id = payloadList.last;
