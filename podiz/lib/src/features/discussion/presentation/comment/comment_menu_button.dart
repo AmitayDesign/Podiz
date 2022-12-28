@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/src/common_widgets/alert_dialogs.dart';
 import 'package:podiz/src/constants/constants.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
+import 'package:podiz/src/features/discussion/domain/comment.dart';
+import 'package:podiz/src/features/discussion/presentation/comment/comment_text_field.dart';
+import 'package:podiz/src/features/discussion/presentation/sheet/comment_sheet.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
 enum CommentMenuOption { edit, delete, report }
@@ -34,7 +37,13 @@ extension EnhancedCommentMenuOption on CommentMenuOption {
 
 class CommentMenuButton extends ConsumerWidget {
   final UserPodiz target;
-  const CommentMenuButton({Key? key, required this.target}) : super(key: key);
+  final Comment comment;
+
+  const CommentMenuButton({
+    Key? key,
+    required this.target,
+    required this.comment,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -82,16 +91,15 @@ class CommentMenuButton extends ConsumerWidget {
       onSelected: (option) {
         switch (option) {
           case CommentMenuOption.edit:
-            //TODO edit comment
-            showNotImplementedAlertDialog(context: context);
+            ref.read(commentSheetTargetProvider.notifier).state = null;
+            ref.read(commentSheetEditProvider.notifier).state = comment;
+            ref.read(commentControllerProvider).text = comment.text;
             break;
           case CommentMenuOption.delete:
-            //TODO delete comment
-            showNotImplementedAlertDialog(context: context);
+            ref.read(discussionRepositoryProvider).deleteComment(comment);
             break;
           case CommentMenuOption.report:
-            //TODO report comment
-            showNotImplementedAlertDialog(context: context);
+            ref.read(discussionRepositoryProvider).reportComment(comment);
             break;
         }
       },

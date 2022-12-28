@@ -131,4 +131,66 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
 
     return commentDoc.id;
   }
+
+  @override
+  Future<void> editComment(Comment comment) {
+    return firestore.commentsCollection
+        .doc(comment.id)
+        .update(comment.toJson());
+  }
+
+  @override
+  Future<void> deleteComment(Comment comment) async {
+    //TODO: check deleteComment is properly done
+    //TODO: deal with child comments
+    return;
+    // generate comment doc to get the id
+    final commentDoc = firestore.commentsCollection.doc(comment.id);
+
+    await firestore.runTransaction((t) async {
+      // get episode counters
+      final episodeCountersRef =
+          firestore.episodeCountersCollection.doc(comment.episodeId);
+      final episodeCountersDoc = await t.get(episodeCountersRef);
+
+      //TODO mixpanel?
+
+      // delete comment
+      t.delete(commentDoc);
+
+      // decrement episode comment counter
+      final episodeRef = firestore.episodesCollection.doc(comment.episodeId);
+      t.update(episodeRef, {
+        'commentsCount': FieldValue.increment(-1),
+        'weeklyCounter': FieldValue.increment(1), //?
+      });
+
+      // decrement episode counters
+      final countersData = episodeCountersDoc.data() ?? {};
+      final counters = (countersData['counters'] as Map).cast<String, int>();
+      final now = DateTime.now();
+      counters.update(
+        '${now.year}-${now.month}-${now.day}',
+        (count) => --count,
+      );
+      t.set(
+        episodeCountersRef,
+        {'counters': counters},
+        SetOptions(merge: true),
+      );
+
+      // decrement parent comments reply counter
+      for (final parentId in comment.parentIds) {
+        t.update(firestore.commentsCollection.doc(parentId), {
+          'replyCount': FieldValue.increment(-1),
+        });
+      }
+    });
+  }
+
+  @override
+  Future<void> reportComment(Comment comment) {
+    // TODO: implement reportComment
+    throw UnimplementedError();
+  }
 }

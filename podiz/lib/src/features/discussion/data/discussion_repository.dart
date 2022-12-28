@@ -20,6 +20,9 @@ abstract class DiscussionRepository {
   Stream<List<Comment>> watchUserComments(String userId);
   Stream<List<Comment>> watchUserReplies(String userId);
   Future<String> addComment(Comment comment);
+  Future<void> editComment(Comment comment);
+  Future<void> deleteComment(Comment comment);
+  Future<void> reportComment(Comment comment);
 }
 
 //* Providers
