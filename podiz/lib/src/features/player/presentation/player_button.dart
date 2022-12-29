@@ -15,7 +15,7 @@ class PlayerButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       visualDensity: VisualDensity.compact,
-      onPressed: () => loading ? null : onPressed(),
+      onPressed: loading ? null : () => onPressed(),
       icon: icon,
     );
   }

@@ -38,7 +38,7 @@ class PodizSpotifyAPI implements SpotifyAPI {
   String get authUrl =>
       '$baseUrl?client_id=$clientId&response_type=$responseType&redirect_uri=$redirectUrl&scope=$scope&state=$state&show_dialog=$forceSignInFormValue';
 
-  late String userId;
+  String? userId;
   DateTime? timeout;
   String? accessToken;
   bool get tokenExpired => timeout?.isBefore(DateTime.now()) ?? true;
@@ -96,5 +96,8 @@ class PodizSpotifyAPI implements SpotifyAPI {
   Future<void> disconnect() async {
     await forceSignInForm();
     await SpotifySdk.disconnect();
+    userId = null;
+    accessToken = null;
+    timeout = null;
   }
 }
