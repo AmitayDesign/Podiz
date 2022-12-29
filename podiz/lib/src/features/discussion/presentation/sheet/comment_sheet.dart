@@ -17,6 +17,7 @@ import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/player_button.dart';
 import 'package:podiz/src/features/player/presentation/player_controller.dart';
 import 'package:podiz/src/features/player/presentation/player_slider_controller.dart';
+import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
 import 'package:podiz/src/features/showcase/presentation/showcase_controller.dart';
 import 'package:podiz/src/features/showcase/presentation/showcase_step.dart';
@@ -167,25 +168,25 @@ class CommentSheet extends ConsumerWidget {
                             icon: const Icon(Icons.replay_30_rounded),
                           ),
                           episode.isPlaying
-                              ? PlayerButton(
+                              ? PlayerTimeChip(
                                   loading: state == PlayerControls.pause,
-                                  onPressed: () => state != null
+                                  onTap: () => state != null
                                       ? null
                                       : ref
                                           .read(
                                               playerControllerProvider.notifier)
                                           .pause(),
-                                  icon: const Icon(Icons.pause_rounded),
+                                  icon: Icons.pause_rounded,
                                 )
-                              : PlayerButton(
+                              : PlayerTimeChip(
                                   loading: state == PlayerControls.play,
-                                  onPressed: () => state != null
+                                  onTap: () => state != null
                                       ? null
                                       : ref
                                           .read(
                                               playerControllerProvider.notifier)
                                           .play(episode.id),
-                                  icon: const Icon(Icons.play_arrow_rounded),
+                                  icon: Icons.play_arrow_rounded,
                                 ),
                           PlayerButton(
                             loading: state == PlayerControls.fastForward,

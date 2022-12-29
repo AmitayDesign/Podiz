@@ -12,6 +12,7 @@ import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/player/presentation/player_button.dart';
 import 'package:podiz/src/features/player/presentation/player_controller.dart';
 import 'package:podiz/src/features/player/presentation/player_slider_controller.dart';
+import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/palette.dart';
 
@@ -71,14 +72,14 @@ class QuickNoteSheet extends ConsumerWidget {
                         : ref.read(playerControllerProvider.notifier).rewind(),
                     icon: const Icon(Icons.replay_30_rounded),
                   ),
-                  PlayerButton(
+                  PlayerTimeChip(
                     loading: state == PlayerControls.play,
-                    onPressed: () => state != null
+                    onTap: () => state != null
                         ? null
                         : ref
                             .read(playerControllerProvider.notifier)
                             .play(episode.id),
-                    icon: const Icon(Icons.play_arrow_rounded),
+                    icon: Icons.play_arrow_rounded,
                   ),
                   PlayerButton(
                     loading: state == PlayerControls.fastForward,
