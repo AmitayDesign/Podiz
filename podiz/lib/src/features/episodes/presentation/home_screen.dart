@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -27,7 +26,6 @@ import 'package:podiz/src/features/showcase/data/showcase_repository.dart';
 import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
 import 'package:podiz/src/features/showcase/presentation/showcase_keys.dart';
 import 'package:podiz/src/routing/app_router.dart';
-import 'package:uni_links/uni_links.dart';
 
 enum HomePage { feed, search, notifications }
 
@@ -135,9 +133,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     FirebaseDynamicLinks.instance.onLink.listen(
         (PendingDynamicLinkData? dynamicLink) async {
       final Uri deeplink = dynamicLink!.link;
-      if (deeplink != null) {
-        handleMyLink(deeplink);
-      }
+      handleMyLink(deeplink);
     }, onError: (_) {
       print("error");
     });
@@ -183,7 +179,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               AppRoute.profile.name,
               params: {'userId': userId},
             );
-            if (Platform.isIOS) ref.read(playerRepositoryProvider).pause();
             break;
         }
       }),
