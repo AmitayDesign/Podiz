@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
@@ -57,7 +59,7 @@ class DiscussionController extends StateNotifier<List<Comment>> {
     final filteredComments = filterComments(comments, position);
     if (filteredComments.length != state.length) {
       if (beep && filteredComments.length > state.length) {
-        beepController?.play();
+        if (Platform.isAndroid) beepController?.play();
       }
       state = filteredComments;
     }
