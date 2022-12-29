@@ -39,8 +39,9 @@ class SpotifyPlayerRepository implements PlayerRepository {
   StreamSubscription? connectionSub;
   void listenToConnectionChanges() {
     connectionSub?.cancel();
-    connectionSub = SpotifySdk.subscribeConnectionStatus()
-        .listen((status) => connectionState.value = status.connected);
+    connectionSub = SpotifySdk.subscribeConnectionStatus().listen(
+        (status) => connectionState.value = status.connected,
+        onError: (_, __) => connectionState.value = false);
   }
 
   @override
@@ -112,7 +113,7 @@ class SpotifyPlayerRepository implements PlayerRepository {
   Future<void> pause() async {
     print("### start PAUSE (connected: $isConnected)");
     if (!isConnected) await spotifyApi.connectToSdk();
-    await SpotifySdk.pause();
+    SpotifySdk.pause();
     print("### end PAUSE (connected: $isConnected)");
   }
 
