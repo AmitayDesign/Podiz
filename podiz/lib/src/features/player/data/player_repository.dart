@@ -42,7 +42,6 @@ final connectionChangesProvider = StreamProvider<bool>(
 final playerStateChangesProvider = StreamProvider<PlayingEpisode?>(
   (ref) async* {
     final connected = ref.watch(connectionChangesProvider).valueOrNull ?? false;
-    print('###connected: $connected');
     if (connected) {
       yield* ref.watch(playerRepositoryProvider).watchPlayingEpisode();
     } else {
