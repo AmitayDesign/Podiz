@@ -69,7 +69,6 @@ class SpotifyPlayerRepository implements PlayerRepository {
     final track = state.track;
     if (track == null) return null;
     if (!track.isEpisode || !track.isPodcast) {
-      pause();
       return null;
     }
     final episodeId = idFromUri(track.uri);

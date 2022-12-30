@@ -47,10 +47,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     print("####hello");
-
-    // connect to sdk
-    ref.read(spotifyApiProvider).connectToSdk();
     super.initState();
+    connect();
     initUniLinks();
     pageController.addListener(() {
       final page = pageController.page;
@@ -63,6 +61,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ref.read(showcaseRepositoryProvider).isFirstTime(user.id).then(
           (firstTime) => firstTime ? startShowcase() : openPlayingEpisode(),
         );
+  }
+
+  Future<void> connect() async {
+    const retries = 3;
+    bool success = false;
+    for (var i = 0; i < retries && !success; i++) {
+      success = await ref.read(spotifyApiProvider).connectToSdk();
+    }
   }
 
   Future<void> startShowcase() async {
