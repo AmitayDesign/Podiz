@@ -154,7 +154,7 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
   Future<void> deleteComment(Comment comment) async {
     //TODO: check deleteComment is properly done
     //TODO: deal with child comments
-    return;
+    // return;
 
     // generate comment doc to get the id
     final commentDoc = firestore.commentsCollection.doc(comment.id);
@@ -174,7 +174,7 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
       final episodeRef = firestore.episodesCollection.doc(comment.episodeId);
       t.update(episodeRef, {
         'commentsCount': FieldValue.increment(-1),
-        'weeklyCounter': FieldValue.increment(1), //?
+        'weeklyCounter': FieldValue.increment(-1), //?
       });
 
       // decrement episode counters

@@ -26,10 +26,6 @@ abstract class AuthRepository {
   Future<void> signInWithEmailLink(String email);
   Future<void> updateUser(UserPodiz user);
   Future<void> signOut();
-  //
-  Stream<bool> connectionChanges();
-  bool get isConnected;
-  //
 }
 
 //* Providers
@@ -41,10 +37,6 @@ final firstUserFutureProvider = FutureProvider<void>(
 
 final authStateChangesProvider = StreamProvider<UserPodiz?>(
   (ref) => ref.watch(authRepositoryProvider).authStateChanges(),
-);
-
-final connectionChangesProvider = StreamProvider<bool>(
-  (ref) => ref.watch(authRepositoryProvider).connectionChanges(),
 );
 
 final currentUserProvider =

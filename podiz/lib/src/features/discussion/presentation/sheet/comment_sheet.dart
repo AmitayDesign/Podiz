@@ -210,32 +210,42 @@ class CommentSheet extends ConsumerWidget {
 
                           //* Player controls
                           PlayerButton(
-                            loading: state.isLoading,
-                            onPressed: ref
-                                .read(playerControllerProvider.notifier)
-                                .rewind,
+                            loading: state == PlayerControls.rewind,
+                            onPressed: () => state != null
+                                ? null
+                                : ref
+                                    .read(playerControllerProvider.notifier)
+                                    .rewind(),
                             icon: const Icon(Icons.replay_30_rounded),
                           ),
                           episode.isPlaying
                               ? PlayerTimeChip(
-                                  loading: state.isLoading,
-                                  onTap: ref
-                                      .read(playerControllerProvider.notifier)
-                                      .pause,
+                                  loading: state == PlayerControls.pause,
+                                  onTap: () => state != null
+                                      ? null
+                                      : ref
+                                          .read(
+                                              playerControllerProvider.notifier)
+                                          .pause(),
                                   icon: Icons.pause_rounded,
                                 )
                               : PlayerTimeChip(
-                                  loading: state.isLoading,
-                                  onTap: () => ref
-                                      .read(playerControllerProvider.notifier)
-                                      .play(episode.id),
+                                  loading: state == PlayerControls.play,
+                                  onTap: () => state != null
+                                      ? null
+                                      : ref
+                                          .read(
+                                              playerControllerProvider.notifier)
+                                          .play(episode.id),
                                   icon: Icons.play_arrow_rounded,
                                 ),
                           PlayerButton(
-                            loading: state.isLoading,
-                            onPressed: ref
-                                .read(playerControllerProvider.notifier)
-                                .fastForward,
+                            loading: state == PlayerControls.fastForward,
+                            onPressed: () => state != null
+                                ? null
+                                : ref
+                                    .read(playerControllerProvider.notifier)
+                                    .fastForward(),
                             icon: const Icon(Icons.forward_30_rounded),
                           ),
                         ],

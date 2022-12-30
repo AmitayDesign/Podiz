@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,7 +23,6 @@ enum AppRoute {
 }
 
 String initialRedirect = '/';
-bool isFirstTime = true;
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authRepository = ref.watch(authRepositoryProvider);
@@ -38,52 +35,39 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     redirect: (state) {
       final isLoggedIn = authRepository.currentUser != null;
       final hasEmail = authRepository.currentUser?.email != null;
-      final isConnected = authRepository.isConnected;
+      // final isConnected = authRepository.isConnected;
       final isOnboardingLocation = state.location.contains('/onboarding');
       final isEmailLocation =
           isOnboardingLocation && state.queryParams['page'] == 'email';
       print('LOCATION: ${state.location}');
       print('isLoggedIn: $isLoggedIn');
-      print('isConnected: $isConnected');
+      // print('isConnected: $isConnected');
       print('hasEmail: $hasEmail');
 
-      if (isOnboardingLocation && !isEmailLocation) {
-        if (isLoggedIn && isConnected) {
-          if (!hasEmail) return '/onboarding?page=email';
-          // clear redirect and go to home or somewhere on app
+      if (isEmailLocation) {
+        if (hasEmail) {
           final redirect = initialRedirect;
-          print('REDIRECT TO: $redirect');
           initialRedirect = '/';
           return redirect;
         }
-      } else if (!isEmailLocation) /* somewhere in the app */ {
-        if (isLoggedIn && isConnected) {
-          if (!hasEmail) {
-            initialRedirect = state.location;
-            print('REDIRECT = $initialRedirect');
-            return '/onboarding?page=email';
-          }
-        } else {
-          if (!isLoggedIn) {
-            initialRedirect = '/';
-            return '/onboarding';
-          }
-          // save redirect while connecting
-          initialRedirect = state.location;
-          print('REDIRECT = $initialRedirect');
-          if (Platform.isAndroid || isFirstTime) {
-            isFirstTime = false;
-            return '/onboarding';
-          }
+      } else if (isOnboardingLocation) {
+        if (isLoggedIn) {
+          if (!hasEmail) return '/onboarding?page=email';
+          // clear redirect and go to home or deeplink
+          final redirect = initialRedirect;
+          initialRedirect = '/';
+          return redirect;
         }
-      } else /* email location */ {
-        if (hasEmail) return '/';
+      } else {
+        if (!isLoggedIn) return '/onboarding';
+        if (!hasEmail) return '/onboarding?page=email';
       }
+
       return null;
     },
     refreshListenable: GoRouterRefreshStreamList([
       authRepository.authStateChanges(),
-      authRepository.connectionChanges(),
+      // authRepository.connectionChanges(),
     ]),
     routes: [
       GoRoute(

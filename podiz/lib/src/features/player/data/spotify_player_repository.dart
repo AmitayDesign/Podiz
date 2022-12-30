@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_functions/cloud_functions.dart';
@@ -5,6 +6,7 @@ import 'package:podiz/src/features/auth/data/spotify_api.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/player/domain/playing_episode.dart';
 import 'package:podiz/src/statistics/mix_panel_repository.dart';
+import 'package:podiz/src/utils/in_memory_store.dart';
 import 'package:podiz/src/utils/uri_from_id.dart';
 import 'package:spotify_sdk/models/player_state.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
@@ -22,25 +24,42 @@ class SpotifyPlayerRepository implements PlayerRepository {
     required this.functions,
     required this.episodeRepository,
     required this.mixPanelRepository,
-  });
+  }) {
+    listenToConnectionChanges();
+  }
+
+  void dispose() {
+    connectionSub?.cancel();
+  }
 
   PlayingEpisode? lastPlayingEpisode;
+
+  final connectionState = InMemoryStore<bool>(false);
+
+  StreamSubscription? connectionSub;
+  void listenToConnectionChanges() {
+    connectionSub?.cancel();
+    connectionSub = SpotifySdk.subscribeConnectionStatus().listen(
+        (status) => connectionState.value = status.connected,
+        onError: (_, __) => connectionState.value = false);
+  }
+
+  @override
+  bool get isConnected => connectionState.value;
+
+  @override
+  Stream<bool> connectionChanges() => connectionState.stream;
 
   @override
   Stream<PlayingEpisode?> watchPlayingEpisode() =>
       SpotifySdk.subscribePlayerState()
-          // .skipWhile((state) => state.track == null)
           .asyncMap(playingEpisodeFromPlayerState)
           .handleError((e) => lastPlayingEpisode);
 
   @override
   Future<PlayingEpisode?> fetchPlayingEpisode() async {
-    final state = await SpotifySdk.getPlayerState()
-        .timeout(const Duration(seconds: 1), onTimeout: () async {
-      print('### FETCH');
-      await spotifyApi.connectToSdk();
-      return await SpotifySdk.getPlayerState();
-    });
+    if (!isConnected) await spotifyApi.connectToSdk();
+    final state = await SpotifySdk.getPlayerState();
     if (state == null) return null;
     return playingEpisodeFromPlayerState(state);
   }
@@ -49,11 +68,15 @@ class SpotifyPlayerRepository implements PlayerRepository {
       PlayerState state) async {
     final track = state.track;
     if (track == null) return null;
-    if (Platform.isIOS && spotifyApi.stopIOSPlayer) {
-      spotifyApi.stopIOSPlayer = false;
-      if (!track.isEpisode || !track.isPodcast) pause();
+    if (!track.isEpisode && !track.isPodcast) {
+      // print("WTF");
+      // print(track.name);
+      // print(track.uri);
+      // print(track.isEpisode);
+      // print(track.isPodcast);
+      // pause();
+      return null;
     }
-    if (!track.isEpisode || !track.isPodcast) return null;
     final episodeId = idFromUri(track.uri);
     // fetch episode
     final stateTime = DateTime.now();
@@ -71,45 +94,51 @@ class SpotifyPlayerRepository implements PlayerRepository {
   @override
   Future<void> play(String episodeId, [Duration? time]) async {
     mixPanelRepository.userOpenPodcast();
-
-    await SpotifySdk.play(spotifyUri: uriFromId(episodeId))
-        .timeout(const Duration(seconds: 1), onTimeout: (() async {
-      print('### PLAYNING');
-      await spotifyApi.connectToSdk();
-      await SpotifySdk.play(spotifyUri: uriFromId(episodeId));
-    }));
+    print("### start PLAY (connected: $isConnected)");
+    if (!isConnected) await spotifyApi.connectToSdk();
+    await SpotifySdk.play(spotifyUri: uriFromId(episodeId));
     if (time != null) await seekTo(time);
+    print("### end PLAY (connected: $isConnected)");
   }
 
   @override
   Future<void> resume(String episodeId, [Duration? time]) async {
     try {
+      print("### start RESUME (connected: $isConnected)");
       if (time != null) await seekTo(time);
-      await SpotifySdk.resume().timeout(
-        const Duration(seconds: 1),
-        onTimeout: () async {
-          await play(episodeId, time);
-        },
-      );
+      if (!isConnected) await spotifyApi.connectToSdk();
+      await SpotifySdk.resume();
     } catch (_) {
       await play(episodeId, time);
     }
+    print("### end RESUME (connected: $isConnected)");
   }
 
   @override
   Future<void> pause() async {
-    await SpotifySdk.pause();
+    print("### start PAUSE (connected: $isConnected)");
+    if (!isConnected) await spotifyApi.connectToSdk();
+    SpotifySdk.pause();
+    print("### end PAUSE (connected: $isConnected)");
   }
 
   @override
-  Future<void> fastForward([Duration time = const Duration(seconds: 30)]) =>
-      seekToRelativePosition(time);
+  Future<void> fastForward(
+      [Duration time = const Duration(seconds: 30)]) async {
+    print("### start fastForward (connected: $isConnected)");
+    await seekToRelativePosition(time);
+    print("### end fastForward (connected: $isConnected)");
+  }
 
   @override
-  Future<void> rewind([Duration time = const Duration(seconds: 30)]) =>
-      seekToRelativePosition(-time);
+  Future<void> rewind([Duration time = const Duration(seconds: 30)]) async {
+    print("### start rewind (connected: $isConnected)");
+    await seekToRelativePosition(-time);
+    print("### end rewind (connected: $isConnected)");
+  }
 
   Future<void> seekToRelativePosition(Duration time) async {
+    if (!isConnected) await spotifyApi.connectToSdk();
     if (Platform.isIOS) {
       final state = await SpotifySdk.getPlayerState();
       final position = state?.playbackPosition ?? 0;
@@ -122,14 +151,7 @@ class SpotifyPlayerRepository implements PlayerRepository {
 
   @override
   Future<void> seekTo(Duration time) async {
-    return SpotifySdk.seekTo(positionedMilliseconds: time.inMilliseconds)
-        .timeout(
-      const Duration(seconds: 1),
-      onTimeout: () async {
-        print('### PAUSE');
-        await spotifyApi.connectToSdk();
-        SpotifySdk.seekTo(positionedMilliseconds: time.inMilliseconds);
-      },
-    );
+    if (!isConnected) await spotifyApi.connectToSdk();
+    return SpotifySdk.seekTo(positionedMilliseconds: time.inMilliseconds);
   }
 }

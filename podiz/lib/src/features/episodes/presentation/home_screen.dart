@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -9,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/src/common_widgets/tap_to_unfocus.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/auth/data/spotify_api.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/auth/domain/mutable_user_podiz.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
@@ -26,7 +26,6 @@ import 'package:podiz/src/features/showcase/data/showcase_repository.dart';
 import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
 import 'package:podiz/src/features/showcase/presentation/showcase_keys.dart';
 import 'package:podiz/src/routing/app_router.dart';
-import 'package:uni_links/uni_links.dart';
 
 enum HomePage { feed, search, notifications }
 
@@ -48,6 +47,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     print("####hello");
+
+    // connect to sdk
+    ref.read(spotifyApiProvider).connectToSdk();
     super.initState();
     initUniLinks();
     pageController.addListener(() {
@@ -130,10 +132,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initUniLinks() async {
     FirebaseDynamicLinks.instance.onLink.listen(
         (PendingDynamicLinkData? dynamicLink) async {
-      final Uri? deeplink = dynamicLink!.link;
-      if (deeplink != null) {
-        handleMyLink(deeplink);
-      }
+      final Uri deeplink = dynamicLink!.link;
+      handleMyLink(deeplink);
     }, onError: (_) {
       print("error");
     });
@@ -179,7 +179,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               AppRoute.profile.name,
               params: {'userId': userId},
             );
-            if (Platform.isIOS) ref.read(playerRepositoryProvider).pause();
             break;
         }
       }),

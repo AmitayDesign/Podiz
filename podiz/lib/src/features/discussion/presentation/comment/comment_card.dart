@@ -138,10 +138,10 @@ class _CommentCardState extends ConsumerState<CommentCard> {
     var dateSub60min = date.subtract(const Duration(minutes: 60));
     var dateSub24h = date.subtract(const Duration(hours: 24));
 
-    if (dateSub24h.compareTo(d) == -1) {
+    if (dateSub60min.compareTo(d) == -1) {
       var minutes = date.difference(d);
       return '${minutes.inMinutes}m\' ago';
-    } else if (dateSub60min.compareTo(d) == -1) {
+    } else if (dateSub24h.compareTo(d) == -1) {
       var hours = date.difference(d);
       return '${hours.inHours}h\' ago';
     }
