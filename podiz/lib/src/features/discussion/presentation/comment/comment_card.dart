@@ -17,6 +17,7 @@ import 'package:podiz/src/features/discussion/presentation/comment/comment_menu_
 import 'package:podiz/src/features/discussion/presentation/sheet/comment_sheet.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
 import 'package:podiz/src/features/showcase/presentation/showcase_step.dart';
@@ -66,15 +67,15 @@ class _CommentCardState extends ConsumerState<CommentCard> {
     // play 10 seconds before
     const delay = Duration(seconds: 10);
     final playTime = widget.comment.timestamp - delay;
-    // if (widget.navigate) {
-    context.pushNamed(
-      AppRoute.discussion.name,
-      params: {'episodeId': widget.episodeId},
-      queryParams: {'t': playTime.inSeconds.toString()},
-    );
-    // } else {
-    //   ref.read(playerRepositoryProvider).resume(widget.episodeId, playTime);
-    // }
+    if (widget.navigate) {
+      context.pushNamed(
+        AppRoute.discussion.name,
+        params: {'episodeId': widget.episodeId},
+        queryParams: {'t': playTime.inSeconds.toString()},
+      );
+    } else {
+      ref.read(playerRepositoryProvider).resume(widget.episodeId, playTime);
+    }
   }
 
   Future<bool> isIpad() async {
