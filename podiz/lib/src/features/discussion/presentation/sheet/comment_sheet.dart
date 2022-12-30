@@ -7,6 +7,7 @@ import 'package:podiz/src/constants/constants.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
+import 'package:podiz/src/features/discussion/domain/mutable_comment.dart';
 import 'package:podiz/src/features/discussion/presentation/comment/comment_text_field.dart';
 import 'package:podiz/src/features/discussion/presentation/discussion_controller.dart';
 import 'package:podiz/src/features/discussion/presentation/sheet/error_comment_sheet.dart';
@@ -28,12 +29,24 @@ import 'package:podiz/src/theme/palette.dart';
 import 'target_comment.dart';
 
 final commentSheetTargetProvider = StateProvider<Comment?>((ref) => null);
+final commentSheetEditProvider = StateProvider<Comment?>((ref) => null);
 
 class CommentSheet extends ConsumerWidget {
   static final height = 116.0 + (Platform.isIOS ? 16 : 0); //! hardcoded
 
   final Episode? episode;
   const CommentSheet({Key? key, this.episode}) : super(key: key);
+
+  Comment editComment(
+    Reader read,
+    String text,
+  ) {
+    final comment = read(commentSheetEditProvider)!.setText(text);
+    read(discussionRepositoryProvider).updateComment(comment);
+    read(commentSheetEditProvider.notifier).state = null;
+    read(commentControllerProvider).clear();
+    return comment;
+  }
 
   Comment sendComment(
     Reader read,
@@ -60,9 +73,15 @@ class CommentSheet extends ConsumerWidget {
     final state = ref.watch(playerControllerProvider);
     final target = ref.watch(commentSheetTargetProvider);
     final isReply = target != null;
+    final edit = ref.watch(commentSheetEditProvider);
+    final isEditing = edit != null;
     return WillPopScope(
       onWillPop: () async {
         ref.read(commentSheetTargetProvider.notifier).state = null;
+        if (isEditing) {
+          ref.read(commentSheetEditProvider.notifier).state = null;
+          ref.read(commentControllerProvider).clear();
+        }
         return true;
       },
       child: episodeValue.when(
@@ -126,14 +145,46 @@ class CommentSheet extends ConsumerWidget {
                       const SizedBox(height: 16),
                     ],
 
+                    //* Current comment (if it is an edit)
+                    if (isEditing) ...[
+                      Row(
+                        children: [
+                          const Icon(Icons.edit, size: kSmallIconSize),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Editing...'.hardcoded,
+                              style: context.textTheme.bodySmall,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              if (this.episode != null) Navigator.pop(context);
+                              ref
+                                  .read(commentSheetEditProvider.notifier)
+                                  .state = null;
+                            },
+                            child: Text(
+                              'Cancel'.hardcoded,
+                              style: context.textTheme.bodySmall,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+
                     //* Comment text field
                     CommentTextField(
-                      autofocus: isReply || this.episode != null,
+                      comment: edit,
+                      autofocus: isReply || isEditing || this.episode != null,
                       hint:
                           isReply ? 'Add a reply...' : 'Share your insight...',
                       onSend: (text) {
-                        final comment =
-                            sendComment(ref.read, episode.id, target, text);
+                        final comment = isEditing
+                            ? editComment(ref.read, text)
+                            : sendComment(ref.read, episode.id, target, text);
+
                         final isShowcasing = ref.read(showcaseRunningProvider);
                         if (isShowcasing) {
                           addCommentToShowcase(ref.read, episode.id, comment);

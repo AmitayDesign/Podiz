@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
+import 'package:podiz/src/features/discussion/domain/mutable_comment.dart';
 import 'package:podiz/src/statistics/mix_panel_repository.dart';
 import 'package:podiz/src/utils/firestore_refs.dart';
 
@@ -18,14 +19,24 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
   }
 
   @override
-  Stream<List<Comment>> watchComments(String episodeId) =>
-      firestore.commentsCollection
-          .where('episodeId', isEqualTo: episodeId)
-          .where('parentIds', isEqualTo: [])
-          .orderBy('timestamp')
-          .snapshots()
-          .map((snapshot) =>
-              snapshot.docs.map((doc) => Comment.fromFirestore(doc)).toList());
+  Stream<List<Comment>> watchComments(String episodeId) {
+    firestore.commentsCollection.get().then((value) {
+      for (var doc in value.docs) {
+        updateComment(Comment.fromFirestore(doc).copyWith(reported: false));
+      }
+    });
+    return firestore.commentsCollection
+        .where('episodeId', isEqualTo: episodeId)
+        .where('parentIds', isEqualTo: [])
+        .where('reported', isEqualTo: false)
+        .orderBy('timestamp')
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => Comment.fromFirestore(doc))
+              .toList();
+        });
+  }
 
   @override
   Stream<Comment?> watchLastReply(String commentId) =>
@@ -130,5 +141,62 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
     });
 
     return commentDoc.id;
+  }
+
+  @override
+  Future<void> updateComment(Comment comment) {
+    return firestore.commentsCollection
+        .doc(comment.id)
+        .update(comment.toJson());
+  }
+
+  @override
+  Future<void> deleteComment(Comment comment) async {
+    //TODO: check deleteComment is properly done
+    //TODO: deal with child comments
+    // return;
+
+    // generate comment doc to get the id
+    final commentDoc = firestore.commentsCollection.doc(comment.id);
+
+    await firestore.runTransaction((t) async {
+      // get episode counters
+      final episodeCountersRef =
+          firestore.episodeCountersCollection.doc(comment.episodeId);
+      final episodeCountersDoc = await t.get(episodeCountersRef);
+
+      //TODO mixpanel?
+
+      // delete comment
+      t.delete(commentDoc);
+
+      // decrement episode comment counter
+      final episodeRef = firestore.episodesCollection.doc(comment.episodeId);
+      t.update(episodeRef, {
+        'commentsCount': FieldValue.increment(-1),
+        'weeklyCounter': FieldValue.increment(-1), //?
+      });
+
+      // decrement episode counters
+      final countersData = episodeCountersDoc.data() ?? {};
+      final counters = (countersData['counters'] as Map).cast<String, int>();
+      final now = DateTime.now();
+      counters.update(
+        '${now.year}-${now.month}-${now.day}',
+        (count) => --count,
+      );
+      t.set(
+        episodeCountersRef,
+        {'counters': counters},
+        SetOptions(merge: true),
+      );
+
+      // decrement parent comments reply counter
+      for (final parentId in comment.parentIds) {
+        t.update(firestore.commentsCollection.doc(parentId), {
+          'replyCount': FieldValue.increment(-1),
+        });
+      }
+    });
   }
 }
