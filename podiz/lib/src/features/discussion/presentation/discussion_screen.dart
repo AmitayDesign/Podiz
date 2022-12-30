@@ -12,6 +12,7 @@ import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/palette.dart';
 
 import 'comment/comment_card.dart';
+import 'comment/comment_text_field.dart';
 import 'discussion_controller.dart';
 import 'header/discussion_header.dart';
 import 'sheet/comment_sheet.dart';
@@ -153,6 +154,11 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                     onTap: () {
                       ref.read(commentSheetTargetProvider.notifier).state =
                           null;
+                      if (ref.read(commentSheetEditProvider) != null) {
+                        ref.read(commentSheetEditProvider.notifier).state =
+                            null;
+                        ref.read(commentControllerProvider).clear();
+                      }
                       FocusManager.instance.primaryFocus?.unfocus();
                     },
                     child: Container(color: Colors.black54),

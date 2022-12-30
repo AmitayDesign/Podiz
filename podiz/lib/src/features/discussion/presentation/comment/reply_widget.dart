@@ -64,7 +64,7 @@ class ReplyWidget extends ConsumerWidget {
                   ],
                 ),
               ),
-              CommentMenuButton(target: user),
+              CommentMenuButton(target: user, comment: comment),
             ],
           ),
         ),

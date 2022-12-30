@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/circle_button.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/player_controller.dart';
 import 'package:podiz/src/theme/context_theme.dart';
@@ -24,12 +25,14 @@ final commentControllerProvider = Provider<TextEditingController>(
 );
 
 class CommentTextField extends ConsumerStatefulWidget {
+  final Comment? comment;
   final bool autofocus;
   final String hint;
   final ValueSetter<String>? onSend;
 
   const CommentTextField({
     Key? key,
+    this.comment,
     this.autofocus = false,
     this.hint = 'Share your insight...',
     this.onSend,
