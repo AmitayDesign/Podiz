@@ -70,8 +70,8 @@ class PodizSpotifyAPI implements SpotifyAPI {
     final response = await functions
         .httpsCallable('getAccessTokenWithRefreshToken')
         .call({'userId': userId});
-    // handle responde
-    final result = response.data['result'];
+    // handle response
+    final result = await response.data['result'];
     if (result == 'unauthorized') {
       throw Exception('session timed out');
     } else if (result == 'error') {
@@ -99,5 +99,10 @@ class PodizSpotifyAPI implements SpotifyAPI {
     userId = null;
     accessToken = null;
     timeout = null;
+  }
+
+  @override
+  void setUserId(String userId) {
+    this.userId = userId;
   }
 }

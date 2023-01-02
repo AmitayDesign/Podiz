@@ -16,4 +16,5 @@ abstract class SpotifyAPI {
   Future<String> fetchAccessToken();
   Future<bool> connectToSdk();
   Future<void> disconnect();
+  void setUserId(String userId);
 }

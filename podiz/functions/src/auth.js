@@ -55,6 +55,7 @@ exports.getAccessTokenWithCode = async (code) => {
 
 exports.getAccessTokenWithRefreshToken = async (userId) => {
   try {
+    console.log(userId);
     spotifyAuth = await getSpotifyAuth(userId);
 
     var response = await fetch(authenticationHost + "api/token", {
@@ -72,6 +73,7 @@ exports.getAccessTokenWithRefreshToken = async (userId) => {
 
     if (response["status"] == 200) {
       var result = await response.json();
+      console.log(result);
       admin
         .firestore()
         .collection("spotifyAuth")
@@ -115,13 +117,13 @@ async function fetchSpotifyUser(accessToken) {
     // console.log(`userExists ${userExists}`);
     // if (!userExists)
     await helpers.addUserToFirestore(user);
-    console.log('user added to firestore');
+    console.log("user added to firestore");
 
     // save user favorite shows
     fetchSpotifyUserFavorites(accessToken, user.id);
     return user.id;
   } catch (e) {
-    console.log('error fetch spotify user');
+    console.log("error fetch spotify user");
     console.log(e);
     return null;
   }

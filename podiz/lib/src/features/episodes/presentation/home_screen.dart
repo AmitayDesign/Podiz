@@ -26,6 +26,7 @@ import 'package:podiz/src/features/showcase/data/showcase_repository.dart';
 import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
 import 'package:podiz/src/features/showcase/presentation/showcase_keys.dart';
 import 'package:podiz/src/routing/app_router.dart';
+import 'package:podiz/src/utils/instances.dart';
 
 enum HomePage { feed, search, notifications }
 
@@ -46,7 +47,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   StreamSubscription? _sub;
   @override
   void initState() {
-    print("####hello");
     super.initState();
     connect();
     initUniLinks();
@@ -100,7 +100,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       controller.dispose();
     }
     pageController.dispose();
-    print("#####disposing");
     _sub?.cancel();
     super.dispose();
   }
@@ -147,7 +146,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   void handleMyLink(Uri uri) {
     //TODO handle params
-    // print(uri.toString().split("/")[]);
     context.goNamed(
       AppRoute.discussion.name,
       params: {"episodeId": uri.path.split("/")[2].split("?")[0]},
@@ -157,9 +155,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("entering the home");
-    print("######oh yeah");
-
     // open discussion if a notification was selected
     ref.listen<AsyncValue<NotificationPodiz>>(
       selectedNotificationStreamProvider,
@@ -227,6 +222,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           return TapToUnfocus(
             child: Scaffold(
               extendBody: true,
+              floatingActionButton: FloatingActionButton(
+                  onPressed: () => ref
+                      .read(functionsProvider)
+                      .httpsCallable("updateTesting")
+                      .call(),
+                  child: const Text("test")),
               //floatingActionButton: notificationDebugFAB(),
               //floatingActionButton: localDebugFAB(),
               body: PageView(

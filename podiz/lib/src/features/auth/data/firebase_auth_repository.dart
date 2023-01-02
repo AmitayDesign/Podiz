@@ -40,6 +40,7 @@ class FirebaseAuthRepository implements AuthRepository {
             handleData: (user, sink) {
               userSub?.cancel();
               if (user == null) return sink.add(null);
+              spotifyApi.setUserId(user.uid);
               userSub = firestore.usersCollection
                   .doc(user.uid)
                   .snapshots()

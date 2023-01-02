@@ -96,6 +96,15 @@ exports.followNotificationTrigger = functions.firestore
     }
   });
 
+exports.propagateCommentDeletion = functions.firestore
+  .document("/comments/{commentId}")
+  .onDelete(async (snapshot, context) => {
+    var commentId = context.params.commentId;
+    var episodeId = snapshot.data().episodeId;
+    var parentIds = snapshot.data().parentIds;
+    return comments.propagateDeletion(commentId, episodeId, parentIds);
+  });
+
 exports.scheduleWeeklyComments = functions.pubsub
   .schedule("0 0 * * *")
   .timeZone("Europe/Lisbon")
@@ -106,6 +115,9 @@ exports.scheduleEpisodeUpdate = functions.pubsub
   .timeZone("Europe/Lisbon")
   .onRun((_) => search.updateEpisodeDaily());
 
+exports.updateTesting = functions.https.onCall((data, _) =>
+  search.updateEpisodeDaily()
+);
 
 exports.playEpisode = functions.https.onCall((data, _) =>
   player.playEpisode(data.accessToken, data.episodeId, data.time)

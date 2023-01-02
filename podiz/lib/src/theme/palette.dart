@@ -20,6 +20,7 @@ abstract class Palette {
     surface: Color(0xFF262626),
     background: Color(0xFF090909),
     error: red,
+    errorContainer: darkRed,
 
     onPrimary: Color(0xFF090909),
     // onSecondary: Colors.white,

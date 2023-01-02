@@ -41,7 +41,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           isOnboardingLocation && state.queryParams['page'] == 'email';
       print('LOCATION: ${state.location}');
       print('isLoggedIn: $isLoggedIn');
-      // print('isConnected: $isConnected');
       print('hasEmail: $hasEmail');
 
       if (isEmailLocation) {
