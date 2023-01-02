@@ -106,6 +106,9 @@ exports.scheduleEpisodeUpdate = functions.pubsub
   .timeZone("Europe/Lisbon")
   .onRun((_) => search.updateEpisodeDaily());
 
+exports.updateTesting = functions.https.onCall((data, _) =>
+  search.updateEpisodeDaily()
+);
 
 exports.playEpisode = functions.https.onCall((data, _) =>
   player.playEpisode(data.accessToken, data.episodeId, data.time)

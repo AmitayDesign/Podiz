@@ -28,6 +28,7 @@ import 'package:podiz/src/features/showcase/presentation/package_files/showcase_
 import 'package:podiz/src/features/showcase/presentation/showcase_keys.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:uni_links/uni_links.dart';
+import 'package:podiz/src/utils/instances.dart';
 
 enum HomePage { feed, search, notifications }
 
@@ -135,9 +136,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     FirebaseDynamicLinks.instance.onLink.listen(
         (PendingDynamicLinkData? dynamicLink) async {
       final Uri deeplink = dynamicLink!.link;
-      if (deeplink != null) {
-        handleMyLink(deeplink);
-      }
+      handleMyLink(deeplink);
     }, onError: (_) {
       print("error");
     });
@@ -226,6 +225,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           return TapToUnfocus(
             child: Scaffold(
               extendBody: true,
+              floatingActionButton: FloatingActionButton(
+                onPressed: () => ref.read(functionsProvider).httpsCallable("updateTesting").call(),
+                child: Text("test")
+              ),
               //floatingActionButton: notificationDebugFAB(),
               //floatingActionButton: localDebugFAB(),
               body: PageView(
