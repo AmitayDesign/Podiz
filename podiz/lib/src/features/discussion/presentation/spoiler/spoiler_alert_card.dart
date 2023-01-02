@@ -19,7 +19,7 @@ class SpoilerAlertCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16)
           .add(const EdgeInsets.only(top: 16, bottom: 8)),
       decoration: BoxDecoration(
-        color: context.colorScheme.error,
+        color: context.colorScheme.errorContainer,
         borderRadius: BorderRadius.circular(kBorderRadius),
       ),
       child: Column(
@@ -56,7 +56,7 @@ class SpoilerAlertCard extends StatelessWidget {
                 child: Text(
                   'NO',
                   style: titleStyle!.copyWith(
-                    color: context.colorScheme.error,
+                    color: context.colorScheme.errorContainer,
                   ),
                 ),
               ),
