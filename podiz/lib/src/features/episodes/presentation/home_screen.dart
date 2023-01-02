@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -27,7 +26,6 @@ import 'package:podiz/src/features/showcase/data/showcase_repository.dart';
 import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
 import 'package:podiz/src/features/showcase/presentation/showcase_keys.dart';
 import 'package:podiz/src/routing/app_router.dart';
-import 'package:uni_links/uni_links.dart';
 import 'package:podiz/src/utils/instances.dart';
 
 enum HomePage { feed, search, notifications }
@@ -49,11 +47,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   StreamSubscription? _sub;
   @override
   void initState() {
-    print("####hello");
-
-    // connect to sdk
-    ref.read(spotifyApiProvider).connectToSdk();
     super.initState();
+    connect();
     initUniLinks();
     pageController.addListener(() {
       final page = pageController.page;
@@ -66,6 +61,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ref.read(showcaseRepositoryProvider).isFirstTime(user.id).then(
           (firstTime) => firstTime ? startShowcase() : openPlayingEpisode(),
         );
+  }
+
+  Future<void> connect() async {
+    const retries = 3;
+    bool success = false;
+    for (var i = 0; i < retries && !success; i++) {
+      success = await ref.read(spotifyApiProvider).connectToSdk();
+    }
   }
 
   Future<void> startShowcase() async {
@@ -97,7 +100,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       controller.dispose();
     }
     pageController.dispose();
-    print("#####disposing");
     _sub?.cancel();
     super.dispose();
   }
@@ -144,7 +146,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   void handleMyLink(Uri uri) {
     //TODO handle params
-    // print(uri.toString().split("/")[]);
     context.goNamed(
       AppRoute.discussion.name,
       params: {"episodeId": uri.path.split("/")[2].split("?")[0]},
@@ -154,9 +155,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("entering the home");
-    print("######oh yeah");
-
     // open discussion if a notification was selected
     ref.listen<AsyncValue<NotificationPodiz>>(
       selectedNotificationStreamProvider,
@@ -182,7 +180,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               AppRoute.profile.name,
               params: {'userId': userId},
             );
-            if (Platform.isIOS) ref.read(playerRepositoryProvider).pause();
             break;
         }
       }),
@@ -226,9 +223,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: Scaffold(
               extendBody: true,
               floatingActionButton: FloatingActionButton(
-                onPressed: () => ref.read(functionsProvider).httpsCallable("updateTesting").call(),
-                child: Text("test")
-              ),
+                  onPressed: () => ref
+                      .read(functionsProvider)
+                      .httpsCallable("updateTesting")
+                      .call(),
+                  child: const Text("test")),
               //floatingActionButton: notificationDebugFAB(),
               //floatingActionButton: localDebugFAB(),
               body: PageView(

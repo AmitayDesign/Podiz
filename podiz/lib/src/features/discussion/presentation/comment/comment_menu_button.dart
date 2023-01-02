@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podiz/src/common_widgets/alert_dialogs.dart';
 import 'package:podiz/src/constants/constants.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
+import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
+import 'package:podiz/src/features/discussion/domain/comment.dart';
+import 'package:podiz/src/features/discussion/domain/mutable_comment.dart';
+import 'package:podiz/src/features/discussion/presentation/comment/comment_text_field.dart';
+import 'package:podiz/src/features/discussion/presentation/comment/delete_comment_dialog.dart';
+import 'package:podiz/src/features/discussion/presentation/sheet/comment_sheet.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
 enum CommentMenuOption { edit, delete, report }
@@ -34,7 +39,13 @@ extension EnhancedCommentMenuOption on CommentMenuOption {
 
 class CommentMenuButton extends ConsumerWidget {
   final UserPodiz target;
-  const CommentMenuButton({Key? key, required this.target}) : super(key: key);
+  final Comment comment;
+
+  const CommentMenuButton({
+    Key? key,
+    required this.target,
+    required this.comment,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -79,19 +90,35 @@ class CommentMenuButton extends ConsumerWidget {
                 ),
               ),
             ],
-      onSelected: (option) {
+      onSelected: (option) async {
         switch (option) {
           case CommentMenuOption.edit:
-            //TODO edit comment
-            showNotImplementedAlertDialog(context: context);
+            ref.read(commentSheetTargetProvider.notifier).state = null;
+            ref.read(commentSheetEditProvider.notifier).state = comment;
+            ref.read(commentControllerProvider).text = comment.text;
             break;
           case CommentMenuOption.delete:
-            //TODO delete comment
-            showNotImplementedAlertDialog(context: context);
+            final success = await showCommentDialog(
+              context: context,
+              title: 'Are you sure you want to delete this comment?',
+              cancelActionText: 'Don\'t delete',
+              defaultActionText: 'Delete',
+            );
+            if (success == true) {
+              ref.read(discussionRepositoryProvider).deleteComment(comment);
+            }
             break;
           case CommentMenuOption.report:
-            //TODO report comment
-            showNotImplementedAlertDialog(context: context);
+            final success = await showCommentDialog(
+              context: context,
+              title: 'Are you sure you want to report this comment?',
+              cancelActionText: 'Don\'t report',
+              defaultActionText: 'Report',
+            );
+            if (success == true) {
+              final reported = comment.report();
+              ref.read(discussionRepositoryProvider).updateComment(reported);
+            }
             break;
         }
       },

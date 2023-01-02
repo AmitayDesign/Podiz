@@ -28,6 +28,8 @@ abstract class PlayerRepository {
   Future<void> seekTo(Duration time);
   //! create a new file for this
   Stream<bool> connectionChanges();
+
+  bool get isConnected;
 }
 
 PlayingEpisode? episodePlaying;
@@ -40,7 +42,6 @@ final connectionChangesProvider = StreamProvider<bool>(
 final playerStateChangesProvider = StreamProvider<PlayingEpisode?>(
   (ref) async* {
     final connected = ref.watch(connectionChangesProvider).valueOrNull ?? false;
-    print('###connected: $connected');
     if (connected) {
       yield* ref.watch(playerRepositoryProvider).watchPlayingEpisode();
     } else {
@@ -62,43 +63,41 @@ final firstPlayerFutureProvider = FutureProvider<PlayingEpisode?>(
   (ref) => ref.read(playerStateChangesProvider.future),
 );
 
-final playerTimeStreamProvider = StreamProvider.autoDispose<PlayerTime>(
-  (ref) async* {
-    final episode = ref.watch(playerStateChangesProvider).valueOrNull;
-    if (episode == null) {
-      episodePlaying = episode;
-      yield PlayerTime.zero;
-      return;
-    }
-
-    final duration = episode.duration;
-    if (!episode.isPlaying) {
-      episodePlaying = episode;
-      yield PlayerTime(duration: duration, position: episode.initialPosition);
-    } else {
-      final refreshRate = 1 / episode.playbackSpeed;
-      final refreshRateInMs = (refreshRate * 1000).toInt();
-      yield* Stream.periodic(
-        Duration(milliseconds: refreshRateInMs),
-        (tick) {
-          var position = episode.initialPosition + Duration(seconds: tick + 1);
-          if (position > duration) position = duration;
-          print('###pos: $position');
-          episodePlaying = PlayingEpisode.fromEpisode(
-            episode,
-            position: position,
-            isPlaying: episode.isPlaying,
-            playbackSpeed: episode.playbackSpeed,
-          );
-          return PlayerTime(
-            duration: episode.duration,
-            position: position,
-          );
-        },
-      );
-    }
+final playerTimeStreamProvider =
+    StreamProvider.autoDispose<PlayerTime>((ref) async* {
+  final episode = ref.watch(playerStateChangesProvider).valueOrNull;
+  if (episode == null) {
+    episodePlaying = episode;
+    yield PlayerTime.zero;
+    return;
   }
-);
+
+  final duration = episode.duration;
+  if (!episode.isPlaying) {
+    episodePlaying = episode;
+    yield PlayerTime(duration: duration, position: episode.initialPosition);
+  } else {
+    final refreshRate = 1 / episode.playbackSpeed;
+    final refreshRateInMs = (refreshRate * 1000).toInt();
+    yield* Stream.periodic(
+      Duration(milliseconds: refreshRateInMs),
+      (tick) {
+        var position = episode.initialPosition + Duration(seconds: tick + 1);
+        if (position > duration) position = duration;
+        episodePlaying = PlayingEpisode.fromEpisode(
+          episode,
+          position: position,
+          isPlaying: episode.isPlaying,
+          playbackSpeed: episode.playbackSpeed,
+        );
+        return PlayerTime(
+          duration: episode.duration,
+          position: position,
+        );
+      },
+    );
+  }
+});
 
 // final playerTimeStreamProvider = StreamProvider.autoDispose<PlayerTime>(
 //   (ref) async* {

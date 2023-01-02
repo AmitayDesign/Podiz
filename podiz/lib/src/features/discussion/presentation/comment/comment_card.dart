@@ -27,6 +27,7 @@ import 'package:podiz/src/theme/context_theme.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'comment_text.dart';
+import 'comment_text_field.dart';
 import 'comment_trailing.dart';
 import 'reply_widget.dart';
 
@@ -132,10 +133,10 @@ class _CommentCardState extends ConsumerState<CommentCard> {
     var dateSub60min = date.subtract(const Duration(minutes: 60));
     var dateSub24h = date.subtract(const Duration(hours: 24));
 
-    if (dateSub24h.compareTo(d) == -1) {
+    if (dateSub60min.compareTo(d) == -1) {
       var minutes = date.difference(d);
       return '${minutes.inMinutes}m\' ago';
-    } else if (dateSub60min.compareTo(d) == -1) {
+    } else if (dateSub24h.compareTo(d) == -1) {
       var hours = date.difference(d);
       return '${hours.inHours}h\' ago';
     }
@@ -200,7 +201,7 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                     position: widget.comment.timestamp,
                     onTap: openEpisode,
                   ),
-                  CommentMenuButton(target: user),
+                  CommentMenuButton(target: user, comment: widget.comment),
                 ],
               ),
             ),
@@ -214,6 +215,8 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                   const SizedBox(height: 16),
                   CommentTrailing(
                     onReply: () {
+                      ref.read(commentSheetEditProvider.notifier).state = null;
+                      ref.read(commentControllerProvider).clear();
                       ref.read(commentSheetTargetProvider.notifier).state =
                           widget.comment;
                       widget.onReply?.call();

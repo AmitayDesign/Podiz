@@ -25,6 +25,9 @@ class Comment with EquatableMixin {
 
   final int replyCount;
 
+  @JsonKey(defaultValue: false)
+  final bool reported;
+
   Comment({
     this.id = '',
     required this.text,
@@ -35,6 +38,7 @@ class Comment with EquatableMixin {
     List<String>? parentIds,
     this.parentUserId,
     this.replyCount = 0,
+    this.reported = false,
   })  : date = date ?? DateTime.now(),
         parentIds = parentIds ?? const [];
 

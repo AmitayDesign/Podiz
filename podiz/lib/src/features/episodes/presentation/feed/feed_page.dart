@@ -83,34 +83,35 @@ class _FeedPageState extends ConsumerState<FeedPage>
             //* Last Listened
             if (user.lastListened != null)
               Consumer(
-                builder: (context, ref, _) {
-                  final lastListenedValue =
-                      ref.watch(episodeFutureProvider(user.lastListened!));
-                  return SliverToBoxAdapter(
-                    child: lastListenedValue.when(
+              builder: (context, ref, _) {
+              final lastListenedValue =
+              ref.watch(episodeFutureProvider(user.lastListened!));
+              return
+              SliverToBoxAdapter(
+                child: lastListenedValue.when(
+                  loading: () => const SkeletonEpisodeCard(
+                    bottomHeight: QuickNoteButton.height,
+                  ),
+                  error: (e, _) => null,
+                  data: (lastListened) {
+                    final podcastValue =
+                        ref.watch(podcastFutureProvider(lastListened.showId));
+                    return podcastValue.when(
                       loading: () => const SkeletonEpisodeCard(
                         bottomHeight: QuickNoteButton.height,
                       ),
                       error: (e, _) => null,
-                      data: (lastListened) {
-                        final podcastValue = ref
-                            .watch(podcastFutureProvider(lastListened.showId));
-                        return podcastValue.when(
-                          loading: () => const SkeletonEpisodeCard(
-                            bottomHeight: QuickNoteButton.height,
-                          ),
-                          error: (e, _) => null,
-                          data: (podcast) {
-                            return EpisodeCard(
-                              lastListened,
-                              podcast: podcast,
-                              bottom: QuickNoteButton(episode: lastListened),
-                            );
-                          },
+                      data: (podcast) {
+                        return EpisodeCard(
+                          lastListened,
+                          podcast: podcast,
+                          bottom: QuickNoteButton(episode: lastListened),
                         );
                       },
-                    ),
-                  );
+                    );
+                  },
+                ),
+                );
                 },
               ),
 

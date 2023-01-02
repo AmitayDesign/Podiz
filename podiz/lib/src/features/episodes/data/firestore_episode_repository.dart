@@ -38,7 +38,6 @@ class FirestoreEpisodeRepository extends EpisodeRepository {
     final result = await functions
         .httpsCallable('fetchSpotifyEpisode')
         .call({'accessToken': accessToken, 'episodeId': episodeId});
-
     final success = result.data;
     if (!success) throw Exception('Failed to get episode data');
 

@@ -38,7 +38,7 @@ class PodizSpotifyAPI implements SpotifyAPI {
   String get authUrl =>
       '$baseUrl?client_id=$clientId&response_type=$responseType&redirect_uri=$redirectUrl&scope=$scope&state=$state&show_dialog=$forceSignInFormValue';
 
-  late String userId;
+  String? userId;
   DateTime? timeout;
   String? accessToken;
   bool get tokenExpired => timeout?.isBefore(DateTime.now()) ?? true;
@@ -70,8 +70,8 @@ class PodizSpotifyAPI implements SpotifyAPI {
     final response = await functions
         .httpsCallable('getAccessTokenWithRefreshToken')
         .call({'userId': userId});
-    // handle responde
-    final result = response.data['result'];
+    // handle response
+    final result = await response.data['result'];
     if (result == 'unauthorized') {
       throw Exception('session timed out');
     } else if (result == 'error') {
@@ -96,5 +96,13 @@ class PodizSpotifyAPI implements SpotifyAPI {
   Future<void> disconnect() async {
     await forceSignInForm();
     await SpotifySdk.disconnect();
+    userId = null;
+    accessToken = null;
+    timeout = null;
+  }
+
+  @override
+  void setUserId(String userId) {
+    this.userId = userId;
   }
 }

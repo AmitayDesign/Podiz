@@ -102,32 +102,42 @@ class Player extends ConsumerWidget {
                             ),
                             const SizedBox(width: 4),
                             PlayerButton(
-                              loading: state.isLoading,
-                              onPressed: ref
-                                  .read(playerControllerProvider.notifier)
-                                  .rewind,
+                              loading: state == PlayerControls.rewind,
+                              onPressed: () => state != null
+                                  ? null
+                                  : ref
+                                      .read(playerControllerProvider.notifier)
+                                      .rewind(),
                               icon: const Icon(Icons.replay_30_rounded),
                             ),
                             episode.isPlaying
                                 ? PlayerButton(
-                                    loading: state.isLoading,
-                                    onPressed: ref
-                                        .read(playerControllerProvider.notifier)
-                                        .pause,
+                                    loading: state == PlayerControls.pause,
+                                    onPressed: () => state != null
+                                        ? null
+                                        : ref
+                                            .read(playerControllerProvider
+                                                .notifier)
+                                            .pause(),
                                     icon: const Icon(Icons.pause_rounded),
                                   )
                                 : PlayerButton(
-                                    loading: state.isLoading,
-                                    onPressed: () => ref
-                                        .read(playerControllerProvider.notifier)
-                                        .play(episode.id),
+                                    loading: state == PlayerControls.play,
+                                    onPressed: () => state != null
+                                        ? null
+                                        : ref
+                                            .read(playerControllerProvider
+                                                .notifier)
+                                            .play(episode.id),
                                     icon: const Icon(Icons.play_arrow_rounded),
                                   ),
                             PlayerButton(
-                              loading: state.isLoading,
-                              onPressed: ref
-                                  .read(playerControllerProvider.notifier)
-                                  .fastForward,
+                              loading: state == PlayerControls.fastForward,
+                              onPressed: () => state != null
+                                  ? null
+                                  : ref
+                                      .read(playerControllerProvider.notifier)
+                                      .fastForward(),
                               icon: const Icon(Icons.forward_30_rounded),
                             ),
                           ],

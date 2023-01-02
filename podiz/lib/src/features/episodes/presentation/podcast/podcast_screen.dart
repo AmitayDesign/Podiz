@@ -68,51 +68,68 @@ class _PodcastScreenState extends ConsumerState<PodcastScreen> {
           ),
         ),
       ),
-      data: (podcast) => Scaffold(
-        extendBody: true,
-        body: RefreshIndicator(
-          onRefresh: () =>
+      data: (podcast) => FutureBuilder(
+          initialData: "loading",
+          future:
               ref.read(podcastRepositoryProvider).refetchPodcast(podcast.id),
-          child: NotificationListener<ScrollEndNotification>(
-            onNotification: (_) {
-              snapHeader();
-              return false;
-            },
-            child: CustomScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              controller: scrollController,
-              slivers: [
-                //* Sliver app bar
-                PodcastSliverHeader(
-                  podcast: podcast,
-                  minHeight: minHeight,
-                  maxHeight: maxHeight,
+          builder: ((context, snapshot) {
+            if (snapshot == "loading") {
+              return Scaffold(
+                appBar: const GradientBar(
+                  automaticallyImplyLeading: false,
+                  title: BackTextButton(),
                 ),
+                body: EmptyScreen.loading(),
+              );
+            }
+            return Scaffold(
+              extendBody: true,
+              body: RefreshIndicator(
+                onRefresh: () => ref
+                    .read(podcastRepositoryProvider)
+                    .refetchPodcast(podcast.id),
+                child: NotificationListener<ScrollEndNotification>(
+                  onNotification: (_) {
+                    snapHeader();
+                    return false;
+                  },
+                  child: CustomScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    controller: scrollController,
+                    slivers: [
+                      //* Sliver app bar
+                      PodcastSliverHeader(
+                        podcast: podcast,
+                        minHeight: minHeight,
+                        maxHeight: maxHeight,
+                      ),
 
-                //* List of episodes
-                SliverFirestoreQueryBuilder<Episode>(
-                  query:
-                      episodeRepository.showEpisodesFirestoreQuery(podcast.id),
-                  builder: (context, episode) =>
-                      EpisodeCard(episode, podcast: podcast),
-                ),
+                      //* List of episodes
+                      SliverFirestoreQueryBuilder<Episode>(
+                        query: episodeRepository
+                            .showEpisodesFirestoreQuery(podcast.id),
+                        builder: (context, episode) =>
+                            EpisodeCard(episode, podcast: podcast),
+                      ),
 
-                // so it doesnt end behind the bottom bar
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: Player.extraHeightWithSpotify + 64, //! hardcoded
+                      // so it doesnt end behind the bottom bar
+                      SliverToBoxAdapter(
+                        child: SizedBox(
+                          height:
+                              Player.extraHeightWithSpotify + 64, //! hardcoded
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-        ),
-        floatingActionButton: PodcastFollowFab(
-          podcastId: widget.podcastId,
-          imageUrl: podcast.imageUrl,
-        ),
-        bottomNavigationBar: const Player(extraBottomPadding: true),
-      ),
+              ),
+              floatingActionButton: PodcastFollowFab(
+                podcastId: widget.podcastId,
+                imageUrl: podcast.imageUrl,
+              ),
+              bottomNavigationBar: const Player(extraBottomPadding: true),
+            );
+          })),
     );
   }
 }
