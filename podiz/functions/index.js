@@ -96,6 +96,15 @@ exports.followNotificationTrigger = functions.firestore
     }
   });
 
+exports.propagateCommentDeletion = functions.firestore
+  .document("/comments/{commentId}")
+  .onDelete(async (snapshot, context) => {
+    var commentId = context.params.commentId;
+    var episodeId = snapshot.data().episodeId;
+    var parentIds = snapshot.data().parentIds;
+    return comments.propagateDeletion(commentId, episodeId, parentIds);
+  });
+
 exports.scheduleWeeklyComments = functions.pubsub
   .schedule("0 0 * * *")
   .timeZone("Europe/Lisbon")

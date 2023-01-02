@@ -17,6 +17,7 @@ import 'package:podiz/src/features/discussion/presentation/comment/comment_menu_
 import 'package:podiz/src/features/discussion/presentation/sheet/comment_sheet.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
 import 'package:podiz/src/features/showcase/presentation/showcase_step.dart';
@@ -62,15 +63,19 @@ class _CommentCardState extends ConsumerState<CommentCard> {
     super.initState();
   }
 
-  void openEpisode() async {
+  void seekToTimestamp() async {
     // play 10 seconds before
     const delay = Duration(seconds: 10);
     final playTime = widget.comment.timestamp - delay;
-    context.pushNamed(
-      AppRoute.discussion.name,
-      params: {'episodeId': widget.episodeId},
-      queryParams: {'t': playTime.inSeconds.toString()},
-    );
+    if (widget.navigate) {
+      context.pushNamed(
+        AppRoute.discussion.name,
+        params: {'episodeId': widget.episodeId},
+        queryParams: {'t': playTime.inSeconds.toString()},
+      );
+    } else {
+      ref.read(playerRepositoryProvider).resume(widget.episodeId, playTime);
+    }
   }
 
   Future<bool> isIpad() async {
@@ -199,7 +204,7 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                   TimeChip(
                     icon: Icons.play_arrow_rounded,
                     position: widget.comment.timestamp,
-                    onTap: openEpisode,
+                    onTap: seekToTimestamp,
                   ),
                   CommentMenuButton(target: user, comment: widget.comment),
                 ],

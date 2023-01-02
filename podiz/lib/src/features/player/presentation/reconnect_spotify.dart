@@ -1,14 +1,9 @@
-import 'dart:io';
-
-import 'package:external_app_launcher/external_app_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/spotify_icon.dart';
 import 'package:podiz/src/features/auth/data/spotify_api.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/context_theme.dart';
-import 'package:podiz/src/theme/palette.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ReconnectSpotify extends ConsumerWidget {
   const ReconnectSpotify(this.episodeId, {Key? key}) : super(key: key);
@@ -21,7 +16,7 @@ class ReconnectSpotify extends ConsumerWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(100),
         ),
-        backgroundColor: Palette.darkRed,
+        backgroundColor: context.colorScheme.error,
         foregroundColor: context.colorScheme.background,
         minimumSize: Size.zero,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
