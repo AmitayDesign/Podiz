@@ -88,6 +88,7 @@ class SpotifyPlayerRepository implements PlayerRepository {
       isPlaying: !state.isPaused,
       playbackSpeed: state.playbackSpeed,
     );
+    print('${track.name}: ${state.isPaused}');
     return lastPlayingEpisode;
   }
 
