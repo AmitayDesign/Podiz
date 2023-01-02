@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:podiz/src/constants/constants.dart';
 import 'package:podiz/src/theme/context_theme.dart';
-import 'package:podiz/src/theme/palette.dart';
 
 class SpoilerAlertCard extends StatelessWidget {
   final ValueSetter<bool> onAction;
@@ -20,11 +19,7 @@ class SpoilerAlertCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16)
           .add(const EdgeInsets.only(top: 16, bottom: 8)),
       decoration: BoxDecoration(
-<<<<<<< HEAD
-        color: Palette.darkRed,
-=======
         color: context.colorScheme.errorContainer,
->>>>>>> main
         borderRadius: BorderRadius.circular(kBorderRadius),
       ),
       child: Column(
