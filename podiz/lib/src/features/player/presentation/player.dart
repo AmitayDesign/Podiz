@@ -41,18 +41,18 @@ class Player extends ConsumerWidget {
         if (episode == null) return const SizedBox.shrink();
         //! beep
         // filter comments based on player position
-        ref.listen(filteredCommentsProvider(episode.id), (_, __) {});
-        ref.listen<PlayerTime>(
-          playerSliderControllerProvider,
-          (_, playerTime) {
-            final beep = ref
-                .read(playerSliderControllerProvider.notifier)
-                .updatesWithTime;
-            ref
-                .read(filteredCommentsProvider(episode.id).notifier)
-                .updateComments(playerTime.position, beep);
-          },
-        );
+        // ref.listen(filteredCommentsProvider(episode.id), (_, __) {});
+        // ref.listen<PlayerTime>(
+        //   playerSliderControllerProvider,
+        //   (_, playerTime) {
+        //     final beep = ref
+        //         .read(playerSliderControllerProvider.notifier)
+        //         .updatesWithTime;
+        //     ref
+        //         .read(filteredCommentsProvider(episode.id).notifier)
+        //         .updateComments(playerTime.position, beep);
+        //   },
+        // );
         //! beep
         return Column(
           mainAxisSize: MainAxisSize.min,
