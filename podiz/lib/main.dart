@@ -12,6 +12,7 @@ import 'package:podiz/src/features/discussion/presentation/sound_controller.dart
 import 'package:podiz/src/features/notifications/data/push_notifications_repository.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/routing/app_router.dart';
+import 'package:podiz/src/statistics/mix_panel_repository.dart';
 import 'package:podiz/src/utils/instances.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
@@ -34,8 +35,8 @@ void main() async {
 
       await Firebase.initializeApp();
 
-      final PendingDynamicLinkData? initialLink =
-          await FirebaseDynamicLinks.instance.getInitialLink();
+      final initialLink = await FirebaseDynamicLinks.instance.getInitialLink();
+      if (initialLink != null) initialRedirect = initialLink.link.path;
       // if (Platform.isIOS) {
       //   final PendingDynamicLinkData? initialLink =
       //       await FirebaseDynamicLinks.instance.getInitialLink();
@@ -46,15 +47,14 @@ void main() async {
       //   }
       // }
 
-      //* providers initializaton
+      //* Providers initialization
       final preferences = await StreamingSharedPreferences.instance;
       final container = ProviderContainer(overrides: [
         preferencesProvider.overrideWithValue(preferences),
       ]);
       await container.read(beepControllerProvider).init();
       await container.read(pushNotificationsRepositoryProvider).init();
-
-      if (initialLink != null) initialRedirect = initialLink.link.path;
+      await container.read(mixPanelRepository).init();
 
       //* Entry point of the app
       runApp(UncontrolledProviderScope(
