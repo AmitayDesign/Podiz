@@ -8,10 +8,10 @@ import 'firestore_episode_repository.dart';
 
 final episodeRepositoryProvider = Provider<EpisodeRepository>(
   (ref) => FirestoreEpisodeRepository(
-    spotifyApi: ref.watch(spotifyApiProvider),
-    firestore: ref.watch(firestoreProvider),
-    functions: ref.watch(functionsProvider),
-  ),
+      spotifyApi: ref.watch(spotifyApiProvider),
+      firestore: ref.watch(firestoreProvider),
+      functions: ref.watch(functionsProvider),
+      date: DateTime.now().subtract(const Duration(days: 7))),
 );
 
 abstract class EpisodeRepository {
@@ -20,6 +20,7 @@ abstract class EpisodeRepository {
   Future<Episode?> fetchLastShowEpisode(String showId);
   Query<Episode> showEpisodesFirestoreQuery(String showId);
   Query<Episode> hotliveFirestoreQuery(); //!
+  Query<Episode> hotliveFirestoreQueryRemainig(); //!
   Query<Episode> episodesFirestoreQuery(String filter); //!
 }
 

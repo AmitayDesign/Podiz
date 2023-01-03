@@ -83,35 +83,34 @@ class _FeedPageState extends ConsumerState<FeedPage>
             //* Last Listened
             if (user.lastListened != null)
               Consumer(
-              builder: (context, ref, _) {
-              final lastListenedValue =
-              ref.watch(episodeFutureProvider(user.lastListened!));
-              return
-              SliverToBoxAdapter(
-                child: lastListenedValue.when(
-                  loading: () => const SkeletonEpisodeCard(
-                    bottomHeight: QuickNoteButton.height,
-                  ),
-                  error: (e, _) => null,
-                  data: (lastListened) {
-                    final podcastValue =
-                        ref.watch(podcastFutureProvider(lastListened.showId));
-                    return podcastValue.when(
+                builder: (context, ref, _) {
+                  final lastListenedValue =
+                      ref.watch(episodeFutureProvider(user.lastListened!));
+                  return SliverToBoxAdapter(
+                    child: lastListenedValue.when(
                       loading: () => const SkeletonEpisodeCard(
                         bottomHeight: QuickNoteButton.height,
                       ),
                       error: (e, _) => null,
-                      data: (podcast) {
-                        return EpisodeCard(
-                          lastListened,
-                          podcast: podcast,
-                          bottom: QuickNoteButton(episode: lastListened),
+                      data: (lastListened) {
+                        final podcastValue = ref
+                            .watch(podcastFutureProvider(lastListened.showId));
+                        return podcastValue.when(
+                          loading: () => const SkeletonEpisodeCard(
+                            bottomHeight: QuickNoteButton.height,
+                          ),
+                          error: (e, _) => null,
+                          data: (podcast) {
+                            return EpisodeCard(
+                              lastListened,
+                              podcast: podcast,
+                              bottom: QuickNoteButton(episode: lastListened),
+                            );
+                          },
                         );
                       },
-                    );
-                  },
-                ),
-                );
+                    ),
+                  );
                 },
               ),
 
@@ -166,6 +165,29 @@ class _FeedPageState extends ConsumerState<FeedPage>
               ),
             SliverFirestoreQueryBuilder<Episode>(
               query: episodeRepository.hotliveFirestoreQuery(),
+              indexedBuilder: (context, episode, i) {
+                return Consumer(
+                  builder: (context, ref, _) {
+                    final podcastValue =
+                        ref.watch(podcastFutureProvider(episode.showId));
+                    return podcastValue.when(
+                        loading: () => const SkeletonEpisodeCard(),
+                        error: (e, _) => const SizedBox.shrink(),
+                        data: (podcast) {
+                          final card = EpisodeCard(episode, podcast: podcast);
+                          return i == 0 && user.favPodcasts.isEmpty
+                              ? showcase(
+                                  podcastTitle: podcast.name,
+                                  child: card,
+                                )
+                              : card;
+                        });
+                  },
+                );
+              },
+            ),
+            SliverFirestoreQueryBuilder<Episode>(
+              query: episodeRepository.hotliveFirestoreQueryRemainig(),
               indexedBuilder: (context, episode, i) {
                 return Consumer(
                   builder: (context, ref, _) {

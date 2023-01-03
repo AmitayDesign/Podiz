@@ -105,10 +105,10 @@ exports.propagateCommentDeletion = functions.firestore
     return comments.propagateDeletion(commentId, episodeId, parentIds);
   });
 
-exports.scheduleWeeklyComments = functions.pubsub
-  .schedule("0 0 * * *")
-  .timeZone("Europe/Lisbon")
-  .onRun((_) => comments.updateWeeklyComments());
+// exports.scheduleWeeklyComments = functions.pubsub
+//   .schedule("0 0 * * *")
+//   .timeZone("Europe/Lisbon")
+//   .onRun((_) => comments.updateWeeklyComments());
 
 exports.scheduleEpisodeUpdate = functions.pubsub
   .schedule("05 15 * * *")
