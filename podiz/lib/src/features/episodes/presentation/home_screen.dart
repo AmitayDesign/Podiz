@@ -222,12 +222,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           return TapToUnfocus(
             child: Scaffold(
               extendBody: true,
-              floatingActionButton: FloatingActionButton(
-                  onPressed: () => ref
-                      .read(functionsProvider)
-                      .httpsCallable("updateTesting")
-                      .call(),
-                  child: const Text("test")),
               //floatingActionButton: notificationDebugFAB(),
               //floatingActionButton: localDebugFAB(),
               body: PageView(
