@@ -5,7 +5,7 @@ class MixPanelManager implements MixPanelRepository {
   late Mixpanel mixpanel;
 
   @override
-  void init() async {
+  Future<void> init() async {
     mixpanel = await Mixpanel.init("d293ecfa9c2739d850381d9e245b7437",
         optOutTrackingDefault: false);
   }

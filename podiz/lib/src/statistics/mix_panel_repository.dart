@@ -5,7 +5,7 @@ final mixPanelRepository =
     Provider<MixPanelRepository>((ref) => MixPanelManager());
 
 abstract class MixPanelRepository {
-  void init();
+  Future<void> init();
   void userComment();
   void userReply();
   void userFollowUser();

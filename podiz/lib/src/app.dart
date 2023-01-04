@@ -10,7 +10,6 @@ import 'features/showcase/presentation/package_files/showcase_widget.dart';
 import 'features/showcase/presentation/showcase_controller.dart';
 import 'features/splash/presentation/splash_screen.dart';
 import 'routing/app_router.dart';
-import 'statistics/mix_panel_repository.dart';
 import 'theme/app_theme.dart';
 
 class MyApp extends ConsumerStatefulWidget {
@@ -45,8 +44,6 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final goRouter = ref.watch(goRouterProvider);
     final theme = ref.watch(themeProvider);
-    //TODO see if this in the right place
-    ref.watch(mixPanelRepository).init();
     return LocaleBuilder(
       builder: (locale) => MaterialApp.router(
         debugShowCheckedModeBanner: false,
@@ -61,7 +58,6 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
         darkTheme: theme,
         themeMode: ThemeMode.dark,
         builder: (context, child) {
-          // return child!;
           return ShowCaseWidget(
             disableAnimation: true,
             disableBarrierInteraction: true,
