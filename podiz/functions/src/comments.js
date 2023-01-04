@@ -47,59 +47,30 @@ exports.updateWeeklyComments = async () => {
 
 exports.propagateDeletion = (commentId, episodeId, parentIds) =>
   admin.firestore().runTransaction(async (t) => {
-    // reads
-
-    // get episode counters
-    let episodeCountersRef =
-      admin.firestore().collection('episodeCounters').doc(episodeId);
-    let episodeCountersDoc = await t.get(episodeCountersRef);
-
-    // get child comments
-    let repliesRef = admin.firestore().collection('comments')
-      .where(parentIds, 'array-contains', commentId);
+    // delete child comments
+    let repliesRef = admin
+      .firestore()
+      .collection("comments")
+      .where("parentIds", "array-contains", commentId);
     let repliesSnapshot = await t.get(repliesRef);
-
-    // get parent comments
-    let parentDocs = await Promise.all(parentIds.map((parentId) => {
-      let parentRef = admin.firestore().collection('comments').doc(parentId);
-      return t.get(parentRef);
-    }));
-
-    // writes
-
     // decrement episode comment counter
-    let episodeRef = firestore.collection('episodes').doc(episodeId);
+    let episodeRef = admin.firestore().collection("episodes").doc(episodeId);
     t.update(episodeRef, {
-      'commentsCount': admin.firestore.FieldValue.increment(-1),
+      commentsCount: admin.firestore.FieldValue.increment(-1),
     });
 
-    // decrement episode counters
-    let countersData = episodeCountersDoc.data;
-    let counters = countersData.counters;
-
-    let now = new Date();
-    let year = date.getFullYear();
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
-
-    let count = counters[`$year-$month-$day`];
-    counters[`$year-$month-$day`] = count - 1;
-
-    t.set(
-      episodeCountersRef,
-      { counters: counters },
-      { merge: true },
-    );
-
-    // decrement parent comments reply counter
-    for (let parentDoc of parentDocs) {
+    //Get Parents and update counters
+    for (let parentId of parentIds) {
+      let parentRef = admin.firestore().collection("comments").doc(parentId);
+      let parentDoc = await parentRef.get();
       if (parentDoc.exists) {
-        t.update(parentDoc, {
-          'replyCount': FieldValue.increment(-1)
+        t.update(parentRef, {
+          replyCount: admin.firestore.FieldValue.increment(-1),
         });
       }
     }
 
     // delete child comments
-    for (let replyDoc of repliesSnapshot.docs) t.delete(replyDoc);
+    for (let replyDoc of repliesSnapshot.docs) t.delete(replyDoc.ref);
+    console.log("replyDoc");
   });
