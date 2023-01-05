@@ -38,6 +38,21 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   String get email => emailController.text;
 
   @override
+  void didUpdateWidget(covariant OnboardingScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.page != null &&
+        controller.hasClients &&
+        controller.position.hasViewportDimension) {
+      page = widget.page!;
+      controller.animateToPage(
+        page.index,
+        duration: kTabScrollDuration,
+        curve: Curves.ease,
+      );
+    }
+  }
+
+  @override
   void dispose() {
     emailController.dispose();
     controller.dispose();
