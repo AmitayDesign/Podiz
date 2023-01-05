@@ -32,7 +32,7 @@ class OnboardingScreen extends ConsumerStatefulWidget {
 
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   late var page = widget.page ?? OnboardingPage.intro;
-  late final controller = PageController(initialPage: page.index);
+  late var controller = PageController(initialPage: page.index);
 
   final emailController = TextEditingController();
   String get email => emailController.text;
@@ -40,15 +40,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   void didUpdateWidget(covariant OnboardingScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.page != null &&
-        controller.hasClients &&
-        controller.position.hasViewportDimension) {
+    print("did change dependecy");
+    if (widget.page != null) {
       page = widget.page!;
-      controller.animateToPage(
-        page.index,
-        duration: kTabScrollDuration,
-        curve: Curves.ease,
-      );
+      controller = PageController(initialPage: page.index);
     }
   }
 
@@ -74,6 +69,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(page);
+    print(widget.page);
     //TODO onboarding error popup
     ref.listen(
       onboardingControllerProvider,
