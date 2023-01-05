@@ -135,12 +135,12 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
       );
 
       // increment parent comments reply counter
-      for (final parentId in comment.parentIds) {
-        t.update(firestore.commentsCollection.doc(parentId), {
+      for (var parentId in comment.parentIds) {
+        await firestore.commentsCollection.doc(parentId).update({
           'replyCount': FieldValue.increment(1),
         });
       }
-    });
+    }, timeout: const Duration(minutes: 1));
 
     return commentDoc.id;
   }
