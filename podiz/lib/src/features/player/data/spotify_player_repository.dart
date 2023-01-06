@@ -69,10 +69,14 @@ class SpotifyPlayerRepository implements PlayerRepository {
       PlayerState state) async {
     final track = state.track;
     if (track == null) return null;
+
+    // on iOS, when connecting, it starts playing the last played on spotify
+    // if it is a music, we want to stop it from playing
     if (isFirstState) {
       isFirstState = false;
       if (track.uri.contains('track')) pause();
     }
+
     if (!track.isEpisode && !track.isPodcast) return null;
     final episodeId = idFromUri(track.uri);
     // fetch episode
