@@ -29,8 +29,8 @@ class DiscussionScreen extends ConsumerStatefulWidget {
 }
 
 class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
-  late String episodeId = widget.episodeId;
-  bool blockNewEpisode = true;
+  late String episodeId;
+  late bool blockNewEpisode;
 
   @override
   void initState() {
@@ -38,7 +38,16 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
     initEpisode();
   }
 
+  @override
+  void didUpdateWidget(DiscussionScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    initEpisode();
+  }
+
   Future<void> initEpisode() async {
+    episodeId = widget.episodeId;
+    blockNewEpisode = true;
+
     final playerRepository = ref.read(playerRepositoryProvider);
     final playingEpisode = await playerRepository.fetchPlayingEpisode();
     final episodeIsPlaying = playingEpisode?.id == widget.episodeId;
