@@ -17,7 +17,7 @@ final episodeRepositoryProvider = Provider<EpisodeRepository>(
 abstract class EpisodeRepository {
   Stream<Episode> watchEpisode(String episodeId);
   Future<Episode> fetchEpisode(String episodeId);
-  Future<Episode?> fetchLastShowEpisode(String showId);
+  Stream<Episode?> watchLastShowEpisode(String showId);
   Query<Episode> showEpisodesFirestoreQuery(String showId);
   Query<Episode> hotliveFirestoreQuery(); //!
   Query<Episode> hotliveFirestoreQueryRemainig(); //!
@@ -38,9 +38,9 @@ final episodeFutureProvider = FutureProvider.family<Episode, String>(
   },
 );
 
-final lastShowEpisodeFutureProvider = FutureProvider.family<Episode?, String>(
+final lastShowEpisodeStreamProvider = StreamProvider.family<Episode?, String>(
   (ref, showId) {
     final episodeRepository = ref.watch(episodeRepositoryProvider);
-    return episodeRepository.fetchLastShowEpisode(showId);
+    return episodeRepository.watchLastShowEpisode(showId);
   },
 );

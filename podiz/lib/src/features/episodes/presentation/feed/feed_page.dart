@@ -132,7 +132,7 @@ class _FeedPageState extends ConsumerState<FeedPage>
                           error: (e, _) => const SizedBox.shrink(),
                           data: (podcast) {
                             final lastEpisodeValue = ref.watch(
-                                lastShowEpisodeFutureProvider(podcastId));
+                                lastShowEpisodeStreamProvider(podcastId));
                             return lastEpisodeValue.when(
                                 loading: () => const SkeletonEpisodeCard(),
                                 error: (e, _) => const SizedBox.shrink(),
