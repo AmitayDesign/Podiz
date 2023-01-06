@@ -80,54 +80,43 @@ class SpotifyPlayerRepository implements PlayerRepository {
       isPlaying: !state.isPaused,
       playbackSpeed: state.playbackSpeed,
     );
-    print('${track.name}: ${state.isPaused}');
     return lastPlayingEpisode;
   }
 
   @override
   Future<void> play(String episodeId, [Duration? time]) async {
     mixPanelRepository.userOpenPodcast();
-    print("### start PLAY (connected: $isConnected)");
     if (!isConnected) await spotifyApi.connectToSdk();
     await SpotifySdk.play(spotifyUri: uriFromId(episodeId));
     if (time != null) await seekTo(time);
-    print("### end PLAY (connected: $isConnected)");
   }
 
   @override
   Future<void> resume(String episodeId, [Duration? time]) async {
     try {
-      print("### start RESUME (connected: $isConnected)");
       if (time != null) await seekTo(time);
       if (!isConnected) await spotifyApi.connectToSdk();
       await SpotifySdk.resume();
     } catch (_) {
       await play(episodeId, time);
     }
-    print("### end RESUME (connected: $isConnected)");
   }
 
   @override
   Future<void> pause() async {
-    print("### start PAUSE (connected: $isConnected)");
     if (!isConnected) await spotifyApi.connectToSdk();
     SpotifySdk.pause();
-    print("### end PAUSE (connected: $isConnected)");
   }
 
   @override
   Future<void> fastForward(
       [Duration time = const Duration(seconds: 30)]) async {
-    print("### start fastForward (connected: $isConnected)");
     await seekToRelativePosition(time);
-    print("### end fastForward (connected: $isConnected)");
   }
 
   @override
   Future<void> rewind([Duration time = const Duration(seconds: 30)]) async {
-    print("### start rewind (connected: $isConnected)");
     await seekToRelativePosition(-time);
-    print("### end rewind (connected: $isConnected)");
   }
 
   Future<void> seekToRelativePosition(Duration time) async {

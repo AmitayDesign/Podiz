@@ -26,7 +26,6 @@ import 'package:podiz/src/features/showcase/data/showcase_repository.dart';
 import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
 import 'package:podiz/src/features/showcase/presentation/showcase_keys.dart';
 import 'package:podiz/src/routing/app_router.dart';
-import 'package:podiz/src/utils/instances.dart';
 
 enum HomePage { feed, search, notifications }
 
@@ -191,20 +190,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         final lastEpisodeId = lastEpisodeValue?.valueOrNull?.id;
         final wasPlaying = lastEpisodeValue?.valueOrNull?.isPlaying ?? false;
         episodeValue.whenData((episode) {
-          if (episode == null) return;
           final presenceRepository = ref.read(presenceRepositoryProvider);
-          // update last listened
+          // episode is null, disconnect
+          if (episode == null) return presenceRepository.disconnect();
+          // else, update listening episode
+          // 1. update user last listened
           final user =
               ref.read(currentUserProvider).updateLastListened(episode.id);
           ref.read(authRepositoryProvider).updateUser(user);
-          // update listening right now
+          // 2. update listening episode
+          // pause > play
           if (!wasPlaying && episode.isPlaying) {
             presenceRepository.configureUserPresence(user.id, episode.id);
+            // play > pause
           } else if (wasPlaying && !episode.isPlaying) {
             presenceRepository.disconnect();
+            // play > play, diff eposide
           } else if (wasPlaying &&
               episode.isPlaying &&
-              lastEpisodeId == episode.id) {
+              lastEpisodeId != episode.id) {
             presenceRepository.updateLastListened(user.id, episode.id);
           }
         });
