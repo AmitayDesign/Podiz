@@ -4,10 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/episodes/presentation/feed/feed_controller.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/context_theme.dart';
-
-import 'feed_controller.dart';
 
 class FeedBar extends ConsumerWidget with PreferredSizeWidget {
   const FeedBar({Key? key}) : super(key: key);

@@ -8,3 +8,8 @@ extension DateDifference on DateTime {
     return date.difference(today).inDays;
   }
 }
+
+extension IntToDateTime on int {
+  /// Returns the [DateTime] with [this] days before today.
+  DateTime daysAgo() => DateTime.now().subtract(Duration(days: this));
+}

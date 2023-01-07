@@ -1,11 +1,12 @@
-import 'package:equatable/equatable.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
-import 'package:podiz/src/utils/date_difference.dart';
 import 'package:podiz/src/utils/global_key_box.dart';
+
+import 'trending_section.dart';
 
 final feedControllerProvider = StateNotifierProvider<FeedController, String>(
   (ref) {
@@ -33,50 +34,24 @@ class FeedController extends StateNotifier<String> {
     final myCastsDidNotPass = user.favPodcasts.isEmpty ||
         myCastsPosition == null ||
         myCastsPosition > GradientBar.height;
-    print('----');
-    print(trending.isEmpty);
-    print(trending.first.key.offset?.dy);
-    final trendingDidNotPass = trending.isEmpty || trending.first.didNotPass;
 
-    if (lastPodcastExists && myCastsDidNotPass && trendingDidNotPass) {
+    if (lastPodcastExists && myCastsDidNotPass && _trendingDidNotPass()) {
       state = lastListenedTitle;
-    } else if (user.favPodcasts.isNotEmpty && trendingDidNotPass) {
+    } else if (user.favPodcasts.isNotEmpty && _trendingDidNotPass()) {
       state = myCastsTitle;
     } else if (trending.isNotEmpty) {
-      for (var i = 0; i < trending.length - 1; i++) {
-        if (trending[i + 1].didNotPass) {
-          state = trending[i].title;
-          return;
-        }
-      }
-      state = trending.last.title;
-    }
-  }
-}
-
-class TrendingSection with EquatableMixin {
-  final key = GlobalKey();
-  final String title;
-  TrendingSection(DateTime date) : title = generateTitle(date);
-
-  static generateTitle(DateTime date) {
-    switch (date.differenceInDays(DateTime.now())) {
-      case 0:
-        return 'Trending Today';
-      case 1:
-        return 'Trending Yesterday';
-      default:
-        final day = date.day.toString().padLeft(2, '0');
-        final month = date.month.toString().padLeft(2, '0');
-        return 'Trending $day.$month';
+      final section =
+          trending.reversed.firstWhereOrNull((section) => section.passed);
+      if (section != null) state = section.title;
     }
   }
 
-  bool get didNotPass {
-    final position = key.offset?.dy;
-    return position == null || position > GradientBar.height;
+  bool _trendingDidNotPass() {
+    if (trending.isEmpty) return true;
+    if (trending.first.position != null &&
+        trending.first.position! > GradientBar.height) return true;
+    if (trending.first.position != null &&
+        trending.first.position! <= GradientBar.height) return false;
+    return !trending.any((section) => section.position != null);
   }
-
-  @override
-  List<Object> get props => [title];
 }

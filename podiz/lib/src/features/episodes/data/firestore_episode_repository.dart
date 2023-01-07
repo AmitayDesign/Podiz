@@ -100,8 +100,8 @@ class FirestoreEpisodeRepository extends EpisodeRepository {
   @override
   Stream<List<Episode>> trendingEpisodesOnDate(DateTime date) =>
       firestore.episodesCollection
-          // .where('releaseDate', isEqualTo: stringFromDate(date))
-          // .where('commentsCount', isGreaterThan: 0)
+          .where('releaseDate', isEqualTo: stringFromDate(date))
+          .where('commentsCount', isGreaterThan: 0)
           .orderBy('commentsCount', descending: true)
           .limit(7)
           .snapshots()
