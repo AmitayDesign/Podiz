@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
-import 'package:podiz/src/constants/constants.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
@@ -159,78 +158,74 @@ class _FeedPageState extends ConsumerState<FeedPage>
             ],
 
             //* Trending
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, days) {
-                  final episodesValue =
-                      ref.watch(trendingEpisodesProvider(days));
-                  return episodesValue.when(
-                    loading: () {
-                      return Container(
-                        alignment: Alignment.center,
-                        padding: const EdgeInsets.all(8),
-                        child: const SizedBox.square(
-                          dimension: kSmallIconSize,
-                          child: CircularProgressIndicator(strokeWidth: 3),
-                        ),
-                      );
-                    },
-                    error: (e, _) {
-                      return null;
-                    },
-                    data: (episodes) {
-                      if (episodes.isEmpty) return null;
-                      final date =
-                          DateTime.now().subtract(Duration(days: days));
-                      final trending = feedController.trending;
-                      var section = TrendingSection(date);
-                      if (trending.contains(section)) {
-                        section = trending.firstWhere((s) => s == section);
-                      } else {
-                        trending.add(section);
-                      }
+            // SliverList(
+            //   delegate: SliverChildBuilderDelegate(
+            //     (context, days) {
+            //       final episodesValue =
+            //           ref.watch(trendingEpisodesProvider(days));
+            //       return episodesValue.when(
+            //         loading: () => Container(
+            //           alignment: Alignment.center,
+            //           padding: const EdgeInsets.all(8),
+            //           child: const SizedBox.square(
+            //             dimension: kSmallIconSize,
+            //             child: CircularProgressIndicator(strokeWidth: 3),
+            //           ),
+            //         ),
+            //         error: (e, _) => null,
+            //         data: (episodes) {
+            //           if (episodes.isEmpty) return null;
+            //           final date =
+            //               DateTime.now().subtract(Duration(days: days));
+            //           final trending = feedController.trending;
+            //           var section = TrendingSection(date);
+            //           if (trending.contains(section)) {
+            //             section = trending.firstWhere((s) => s == section);
+            //           } else {
+            //             trending.add(section);
+            //           }
 
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          if (user.lastListened != null ||
-                              user.favPodcasts.isNotEmpty ||
-                              trending.first != section)
-                            FeedTitle(
-                              section.title,
-                              textKey: section.key,
-                            ),
-                          for (var i = 0; i < episodes.length; i++)
-                            Consumer(
-                              builder: (context, ref, _) {
-                                final podcastValue = ref.watch(
-                                    podcastFutureProvider(episodes[i].showId));
-                                return podcastValue.when(
-                                    loading: () => const SkeletonEpisodeCard(),
-                                    error: (e, _) => const SizedBox.shrink(),
-                                    data: (podcast) {
-                                      final card = EpisodeCard(
-                                        episodes[i],
-                                        podcast: podcast,
-                                      );
-                                      return user.favPodcasts.isEmpty &&
-                                              i == 0 &&
-                                              trending.first == section
-                                          ? showcase(
-                                              podcastTitle: podcast.name,
-                                              child: card,
-                                            )
-                                          : card;
-                                    });
-                              },
-                            ),
-                        ],
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
+            //           return Column(
+            //             crossAxisAlignment: CrossAxisAlignment.stretch,
+            //             children: [
+            //               if (user.lastListened != null ||
+            //                   user.favPodcasts.isNotEmpty ||
+            //                   trending.first != section)
+            //                 FeedTitle(
+            //                   section.title,
+            //                   textKey: section.key,
+            //                 ),
+            //               for (var i = 0; i < episodes.length; i++)
+            //                 Consumer(
+            //                   builder: (context, ref, _) {
+            //                     final podcastValue = ref.watch(
+            //                         podcastFutureProvider(episodes[i].showId));
+            //                     return podcastValue.when(
+            //                         loading: () => const SkeletonEpisodeCard(),
+            //                         error: (e, _) => const SizedBox.shrink(),
+            //                         data: (podcast) {
+            //                           final card = EpisodeCard(
+            //                             episodes[i],
+            //                             podcast: podcast,
+            //                           );
+            //                           return user.favPodcasts.isEmpty &&
+            //                                   i == 0 &&
+            //                                   trending.first == section
+            //                               ? showcase(
+            //                                   podcastTitle: podcast.name,
+            //                                   child: card,
+            //                                 )
+            //                               : card;
+            //                         });
+            //                   },
+            //                 ),
+            //             ],
+            //           );
+            //         },
+            //       );
+            //     },
+            //   ),
+            // ),
 
             // so it doesnt end behind the bottom bar
             SliverToBoxAdapter(

@@ -33,6 +33,9 @@ class FeedController extends StateNotifier<String> {
     final myCastsDidNotPass = user.favPodcasts.isEmpty ||
         myCastsPosition == null ||
         myCastsPosition > GradientBar.height;
+    print('----');
+    print(trending.isEmpty);
+    print(trending.first.key.offset?.dy);
     final trendingDidNotPass = trending.isEmpty || trending.first.didNotPass;
 
     if (lastPodcastExists && myCastsDidNotPass && trendingDidNotPass) {
