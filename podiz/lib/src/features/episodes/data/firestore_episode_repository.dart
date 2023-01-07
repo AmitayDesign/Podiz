@@ -59,7 +59,7 @@ class FirestoreEpisodeRepository extends EpisodeRepository {
 
   @override
   Query<Episode> showEpisodesFirestoreQuery(String showId) =>
-      FirebaseFirestore.instance.episodesCollection
+      firestore.episodesCollection
           .where('showId', isEqualTo: showId)
           .orderBy('releaseDate', descending: true)
           .withConverter(
@@ -69,7 +69,7 @@ class FirestoreEpisodeRepository extends EpisodeRepository {
 
   @override
   Query<Episode> episodesFirestoreQuery(String filter) =>
-      FirebaseFirestore.instance.episodesCollection
+      firestore.episodesCollection
           .where('searchArray', arrayContains: filter.toLowerCase())
           .withConverter(
             fromFirestore: (doc, _) => Episode.fromFirestore(doc),
@@ -77,36 +77,34 @@ class FirestoreEpisodeRepository extends EpisodeRepository {
           );
 
   @override
-  Query<Episode> hotliveFirestoreQuery() =>
-      FirebaseFirestore.instance.episodesCollection
-          // .where('commentsCount', isNotEqualTo: -1)
-          .where('releaseDate', isGreaterThan: stringFromDate(date))
-          .orderBy('releaseDate', descending: true)
-          .orderBy('commentsCount', descending: true)
-          .withConverter(
-            fromFirestore: (doc, _) => Episode.fromFirestore(doc),
-            toFirestore: (episode, _) => {},
-          );
+  Query<Episode> hotliveFirestoreQuery() => firestore.episodesCollection
+      // .where('commentsCount', isNotEqualTo: -1)
+      .where('releaseDate', isGreaterThan: stringFromDate(date))
+      .orderBy('releaseDate', descending: true)
+      .orderBy('commentsCount', descending: true)
+      .withConverter(
+        fromFirestore: (doc, _) => Episode.fromFirestore(doc),
+        toFirestore: (episode, _) => {},
+      );
 
   @override
-  Query<Episode> hotliveFirestoreQueryRemainig() =>
-      FirebaseFirestore.instance.episodesCollection
-          .where('releaseDate', isLessThan: stringFromDate(date))
-          // .orderBy('commentsCount', descending: true)
-          .orderBy('releaseDate', descending: true)
-          .withConverter(
-            fromFirestore: (doc, _) => Episode.fromFirestore(doc),
-            toFirestore: (episode, _) => {},
-          );
+  Query<Episode> hotliveFirestoreQueryRemainig() => firestore.episodesCollection
+      .where('releaseDate', isLessThan: stringFromDate(date))
+      // .orderBy('commentsCount', descending: true)
+      .orderBy('releaseDate', descending: true)
+      .withConverter(
+        fromFirestore: (doc, _) => Episode.fromFirestore(doc),
+        toFirestore: (episode, _) => {},
+      );
 
   @override
-  Query<Episode> trendingEpisodeOnDate(DateTime date) =>
-      FirebaseFirestore.instance.episodesCollection
-          .where('releaseDate', isEqualTo: stringFromDate(date))
+  Stream<List<Episode>> trendingEpisodesOnDate(DateTime date) =>
+      firestore.episodesCollection
+          // .where('releaseDate', isEqualTo: stringFromDate(date))
+          // .where('commentsCount', isGreaterThan: 0)
           .orderBy('commentsCount', descending: true)
           .limit(7)
-          .withConverter(
-            fromFirestore: (doc, _) => Episode.fromFirestore(doc),
-            toFirestore: (episode, _) => {},
-          );
+          .snapshots()
+          .map((snapshot) =>
+              snapshot.docs.map((doc) => Episode.fromFirestore(doc)).toList());
 }

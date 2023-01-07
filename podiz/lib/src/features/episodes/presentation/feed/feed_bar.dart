@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
@@ -22,7 +21,7 @@ class FeedBar extends ConsumerWidget with PreferredSizeWidget {
     final title = ref.watch(feedControllerProvider);
     return GradientBar(
       title: Text(
-        Locales.string(context, title),
+        title,
         style: context.textTheme.bodyLarge,
       ),
       actions: [

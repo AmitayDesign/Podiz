@@ -22,6 +22,7 @@ abstract class EpisodeRepository {
   Query<Episode> hotliveFirestoreQuery(); //!
   Query<Episode> hotliveFirestoreQueryRemainig(); //!
   Query<Episode> episodesFirestoreQuery(String filter); //!
+  Stream<List<Episode>> trendingEpisodesOnDate(DateTime date);
 }
 
 final episodeStreamProvider = StreamProvider.family<Episode, String>(
@@ -42,5 +43,12 @@ final lastShowEpisodeFutureProvider = FutureProvider.family<Episode?, String>(
   (ref, showId) {
     final episodeRepository = ref.watch(episodeRepositoryProvider);
     return episodeRepository.fetchLastShowEpisode(showId);
+  },
+);
+
+final trendingEpisodesProvider = StreamProvider.family<List<Episode>, int>(
+  (ref, days) {
+    final date = DateTime.now().subtract(Duration(days: days));
+    return ref.read(episodeRepositoryProvider).trendingEpisodesOnDate(date);
   },
 );
