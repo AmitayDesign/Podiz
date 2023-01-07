@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,6 +16,8 @@ import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
 import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
 import 'package:podiz/src/features/showcase/presentation/showcase_step.dart';
+import 'package:podiz/src/theme/context_theme.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'feed_bar.dart';
 import 'feed_controller.dart';
@@ -30,6 +34,9 @@ class FeedPage extends ConsumerStatefulWidget {
 /// Use the [AutomaticKeepAliveClientMixin] to keep the state.
 class _FeedPageState extends ConsumerState<FeedPage>
     with AutomaticKeepAliveClientMixin {
+  //
+  final myCastsController = PageController();
+
   late final scrollController = (widget.scrollController ?? ScrollController())
     ..addListener(
       () => ref.read(feedControllerProvider.notifier).handleTitles(),
@@ -37,6 +44,13 @@ class _FeedPageState extends ConsumerState<FeedPage>
 
   @override
   bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    final user = ref.read(currentUserProvider);
+    ref.read(podcastRepositoryProvider).refetchFavoritePodcasts(user.id);
+  }
 
   @override
   void dispose() {
@@ -117,43 +131,85 @@ class _FeedPageState extends ConsumerState<FeedPage>
             //* My Casts
             if (user.favPodcasts.isNotEmpty) ...[
               if (user.lastListened != null)
-                SliverFeedTitle(
-                  Locales.string(context, feedController.myCastsLocaleKey),
-                  textKey: feedController.myCastsKey,
+                SliverToBoxAdapter(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      FeedTitle(
+                        Locales.string(
+                            context, feedController.myCastsLocaleKey),
+                        textKey: feedController.myCastsKey,
+                      ),
+                      FeedTitleWidget(
+                        child: SmoothPageIndicator(
+                          controller: myCastsController,
+                          count: (user.favPodcasts.length / 2).ceil(),
+                          effect: ScrollingDotsEffect(
+                            offset: 0,
+                            radius: 8,
+                            dotWidth: 8,
+                            dotHeight: 8,
+                            spacing: 8,
+                            activeDotScale: 1,
+                            dotColor: context.colorScheme.surface,
+                            activeDotColor: context.colorScheme.onBackground,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              SliverList(
-                delegate: SliverChildListDelegate([
-                  for (final podcastId in user.favPodcasts.take(6))
-                    Consumer(builder: (context, ref, _) {
-                      final podcastValue =
-                          ref.watch(podcastFutureProvider(podcastId));
-                      return podcastValue.when(
-                          loading: () => const SkeletonEpisodeCard(),
-                          error: (e, _) => const SizedBox.shrink(),
-                          data: (podcast) {
-                            final lastEpisodeValue = ref.watch(
-                                lastShowEpisodeStreamProvider(podcastId));
-                            return lastEpisodeValue.when(
-                                loading: () => const SkeletonEpisodeCard(),
-                                error: (e, _) => const SizedBox.shrink(),
-                                data: (lastEpisode) {
-                                  if (lastEpisode == null) {
-                                    return const SizedBox.shrink();
-                                  }
-                                  final card = EpisodeCard(
-                                    lastEpisode,
-                                    podcast: podcast,
-                                  );
-                                  return podcastId == user.favPodcasts.first
-                                      ? showcase(
-                                          podcastTitle: podcast.name,
-                                          child: card,
-                                        )
-                                      : card;
-                                });
-                          });
-                    }),
-                ]),
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: user.favPodcasts.length == 1 ? 144 : 288,
+                  child: PageView.builder(
+                    controller: myCastsController,
+                    itemCount: (user.favPodcasts.length / 2).ceil(),
+                    itemBuilder: (context, index) {
+                      final first = index * 2;
+                      final last = min(first + 2, user.favPodcasts.length);
+                      final podcastIds = user.favPodcasts.sublist(first, last);
+                      return Column(
+                        children: [
+                          for (final podcastId in podcastIds)
+                            Consumer(builder: (context, ref, _) {
+                              final podcastValue =
+                                  ref.watch(podcastFutureProvider(podcastId));
+                              return podcastValue.when(
+                                  loading: () => const SkeletonEpisodeCard(),
+                                  error: (e, _) => const SizedBox.shrink(),
+                                  data: (podcast) {
+                                    final lastEpisodeValue = ref.watch(
+                                        lastShowEpisodeStreamProvider(
+                                            podcastId));
+                                    return lastEpisodeValue.when(
+                                        loading: () =>
+                                            const SkeletonEpisodeCard(),
+                                        error: (e, _) =>
+                                            const SizedBox.shrink(),
+                                        data: (lastEpisode) {
+                                          if (lastEpisode == null) {
+                                            return const SizedBox.shrink();
+                                          }
+                                          final card = EpisodeCard(
+                                            lastEpisode,
+                                            podcast: podcast,
+                                          );
+                                          return podcastId ==
+                                                  user.favPodcasts.first
+                                              ? showcase(
+                                                  podcastTitle: podcast.name,
+                                                  child: card,
+                                                )
+                                              : card;
+                                        });
+                                  });
+                            }),
+                        ],
+                      );
+                    },
+                  ),
+                ),
               ),
             ],
 

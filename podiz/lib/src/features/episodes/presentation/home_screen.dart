@@ -44,6 +44,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   late var destination = widget.destination ?? HomePage.feed;
   late final pageController = PageController(initialPage: destination.index);
   StreamSubscription? _sub;
+
   @override
   void initState() {
     super.initState();
