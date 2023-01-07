@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
-import 'package:podiz/src/common_widgets/sliver_firestore_query_builder.dart';
+import 'package:podiz/src/constants/constants.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
-import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/episodes/presentation/card/episode_card.dart';
 import 'package:podiz/src/features/episodes/presentation/card/quick_note_button.dart';
 import 'package:podiz/src/features/episodes/presentation/card/skeleton_episode_card.dart';
 import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
+import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
 import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
 import 'package:podiz/src/features/showcase/presentation/showcase_step.dart';
+import 'package:podiz/src/utils/date_difference.dart';
 
 import 'feed_bar.dart';
 import 'feed_controller.dart';
 import 'feed_title.dart';
+import 'trending_section.dart';
 
 class FeedPage extends ConsumerStatefulWidget {
   final ScrollController? scrollController;
@@ -65,6 +66,8 @@ class _FeedPageState extends ConsumerState<FeedPage>
     final user = ref.watch(currentUserProvider);
     final episodeRepository = ref.watch(episodeRepositoryProvider);
     final feedController = ref.read(feedControllerProvider.notifier);
+    final isPlayerAlive =
+        ref.watch(playerStateChangesProvider).valueOrNull != null;
 
     return RefreshIndicator(
       onRefresh: () =>
@@ -118,7 +121,7 @@ class _FeedPageState extends ConsumerState<FeedPage>
             if (user.favPodcasts.isNotEmpty) ...[
               if (user.lastListened != null)
                 SliverFeedTitle(
-                  Locales.string(context, feedController.myCastsLocaleKey),
+                  feedController.myCastsTitle,
                   textKey: feedController.myCastsKey,
                 ),
               SliverList(
@@ -157,63 +160,79 @@ class _FeedPageState extends ConsumerState<FeedPage>
               ),
             ],
 
-            //* Hot & Live
-            if (user.lastListened != null || user.favPodcasts.isNotEmpty)
-              SliverFeedTitle(
-                Locales.string(context, feedController.hotLiveLocaleKey),
-                textKey: feedController.hotLiveKey,
+            //* Trending
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, days) {
+                  final episodesValue =
+                      ref.watch(trendingEpisodesProvider(days));
+                  return episodesValue.when(
+                    loading: () => Container(
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.all(8),
+                      child: const SizedBox.square(
+                        dimension: kSmallIconSize,
+                        child: CircularProgressIndicator(strokeWidth: 3),
+                      ),
+                    ),
+                    error: (e, _) => null,
+                    data: (episodes) {
+                      if (episodes.isEmpty) return null;
+                      final trending = feedController.trending;
+                      var section = TrendingSection(days.daysAgo());
+                      if (trending.contains(section)) {
+                        section = trending.firstWhere((s) => s == section);
+                      } else {
+                        trending.add(section);
+                      }
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          if (user.lastListened != null ||
+                              user.favPodcasts.isNotEmpty ||
+                              trending.first != section)
+                            FeedTitle(
+                              section.title,
+                              textKey: section.key,
+                            ),
+                          for (var i = 0; i < episodes.length; i++)
+                            Consumer(
+                              builder: (context, ref, _) {
+                                final podcastValue = ref.watch(
+                                    podcastFutureProvider(episodes[i].showId));
+                                return podcastValue.when(
+                                    loading: () => const SkeletonEpisodeCard(),
+                                    error: (e, _) => const SizedBox.shrink(),
+                                    data: (podcast) {
+                                      final card = EpisodeCard(
+                                        episodes[i],
+                                        podcast: podcast,
+                                      );
+                                      return user.favPodcasts.isEmpty &&
+                                              i == 0 &&
+                                              trending.first == section
+                                          ? showcase(
+                                              podcastTitle: podcast.name,
+                                              child: card,
+                                            )
+                                          : card;
+                                    });
+                              },
+                            ),
+                        ],
+                      );
+                    },
+                  );
+                },
               ),
-            SliverFirestoreQueryBuilder<Episode>(
-              query: episodeRepository.hotliveFirestoreQuery(),
-              indexedBuilder: (context, episode, i) {
-                return Consumer(
-                  builder: (context, ref, _) {
-                    final podcastValue =
-                        ref.watch(podcastFutureProvider(episode.showId));
-                    return podcastValue.when(
-                        loading: () => const SkeletonEpisodeCard(),
-                        error: (e, _) => const SizedBox.shrink(),
-                        data: (podcast) {
-                          final card = EpisodeCard(episode, podcast: podcast);
-                          return i == 0 && user.favPodcasts.isEmpty
-                              ? showcase(
-                                  podcastTitle: podcast.name,
-                                  child: card,
-                                )
-                              : card;
-                        });
-                  },
-                );
-              },
-            ),
-            SliverFirestoreQueryBuilder<Episode>(
-              query: episodeRepository.hotliveFirestoreQueryRemainig(),
-              indexedBuilder: (context, episode, i) {
-                return Consumer(
-                  builder: (context, ref, _) {
-                    final podcastValue =
-                        ref.watch(podcastFutureProvider(episode.showId));
-                    return podcastValue.when(
-                        loading: () => const SkeletonEpisodeCard(),
-                        error: (e, _) => const SizedBox.shrink(),
-                        data: (podcast) {
-                          final card = EpisodeCard(episode, podcast: podcast);
-                          return i == 0 && user.favPodcasts.isEmpty
-                              ? showcase(
-                                  podcastTitle: podcast.name,
-                                  child: card,
-                                )
-                              : card;
-                        });
-                  },
-                );
-              },
             ),
 
             // so it doesnt end behind the bottom bar
-            const SliverToBoxAdapter(
+            SliverToBoxAdapter(
               child: SizedBox(
-                height: HomeScreen.bottomBarHeigh + Player.heightWithSpotify,
+                height: HomeScreen.bottomBarHeigh +
+                    (isPlayerAlive ? Player.heightWithSpotify : 0),
               ),
             ),
           ],

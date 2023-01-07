@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
-import 'package:podiz/src/features/discussion/domain/mutable_comment.dart';
 import 'package:podiz/src/statistics/mix_panel_repository.dart';
 import 'package:podiz/src/utils/firestore_refs.dart';
 
@@ -20,11 +19,6 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
 
   @override
   Stream<List<Comment>> watchComments(String episodeId) {
-    firestore.commentsCollection.get().then((value) {
-      for (var doc in value.docs) {
-        updateComment(Comment.fromFirestore(doc).copyWith(reported: false));
-      }
-    });
     return firestore.commentsCollection
         .where('episodeId', isEqualTo: episodeId)
         .where('parentIds', isEqualTo: [])

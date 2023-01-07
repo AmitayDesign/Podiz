@@ -1,9 +1,12 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/utils/global_key_box.dart';
+
+import 'trending_section.dart';
 
 final feedControllerProvider = StateNotifierProvider<FeedController, String>(
   (ref) {
@@ -13,35 +16,42 @@ final feedControllerProvider = StateNotifierProvider<FeedController, String>(
 );
 
 class FeedController extends StateNotifier<String> {
-  final lastListenedLocaleKey = 'lastlistened';
-  final myCastsLocaleKey = 'mycasts';
-  final hotLiveLocaleKey = 'hotlive';
+  final lastListenedTitle = 'Last Listened';
+  final myCastsTitle = 'My Casts';
   final myCastsKey = GlobalKey();
-  final hotLiveKey = GlobalKey();
+  final trending = <TrendingSection>[];
 
   final UserPodiz user;
 
-  FeedController({required this.user}) : super('lastlistened') {
+  FeedController({required this.user}) : super('Last Listened') {
     handleTitles();
   }
 
   void handleTitles() {
     final myCastsPosition = myCastsKey.offset?.dy;
-    final hotLivePosition = hotLiveKey.offset?.dy;
 
     final lastPodcastExists = user.lastListened != null;
     final myCastsDidNotPass = user.favPodcasts.isEmpty ||
         myCastsPosition == null ||
         myCastsPosition > GradientBar.height;
-    final hotLiveDidNotPass =
-        hotLivePosition == null || hotLivePosition > GradientBar.height;
 
-    if (lastPodcastExists && myCastsDidNotPass && hotLiveDidNotPass) {
-      state = lastListenedLocaleKey;
-    } else if (user.favPodcasts.isNotEmpty && hotLiveDidNotPass) {
-      state = myCastsLocaleKey;
-    } else {
-      state = hotLiveLocaleKey;
+    if (lastPodcastExists && myCastsDidNotPass && _trendingDidNotPass()) {
+      state = lastListenedTitle;
+    } else if (user.favPodcasts.isNotEmpty && _trendingDidNotPass()) {
+      state = myCastsTitle;
+    } else if (trending.isNotEmpty) {
+      final section =
+          trending.reversed.firstWhereOrNull((section) => section.passed);
+      if (section != null) state = section.title;
     }
+  }
+
+  bool _trendingDidNotPass() {
+    if (trending.isEmpty) return true;
+    if (trending.first.position != null &&
+        trending.first.position! > GradientBar.height) return true;
+    if (trending.first.position != null &&
+        trending.first.position! <= GradientBar.height) return false;
+    return !trending.any((section) => section.position != null);
   }
 }

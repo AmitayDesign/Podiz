@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/features/auth/data/spotify_api.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
+import 'package:podiz/src/utils/date_difference.dart';
 import 'package:podiz/src/utils/instances.dart';
 
 import 'firestore_episode_repository.dart';
@@ -22,6 +23,7 @@ abstract class EpisodeRepository {
   Query<Episode> hotliveFirestoreQuery(); //!
   Query<Episode> hotliveFirestoreQueryRemainig(); //!
   Query<Episode> episodesFirestoreQuery(String filter); //!
+  Stream<List<Episode>> trendingEpisodesOnDate(DateTime date);
 }
 
 final episodeStreamProvider = StreamProvider.family<Episode, String>(
@@ -42,5 +44,12 @@ final lastShowEpisodeFutureProvider = FutureProvider.family<Episode?, String>(
   (ref, showId) {
     final episodeRepository = ref.watch(episodeRepositoryProvider);
     return episodeRepository.fetchLastShowEpisode(showId);
+  },
+);
+
+final trendingEpisodesProvider = StreamProvider.family<List<Episode>, int>(
+  (ref, days) {
+    final date = days.daysAgo();
+    return ref.read(episodeRepositoryProvider).trendingEpisodesOnDate(date);
   },
 );
