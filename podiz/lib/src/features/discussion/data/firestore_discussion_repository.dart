@@ -72,7 +72,7 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
       firestore.commentsCollection
           .where('parentUserId', isEqualTo: userId)
           .orderBy('episodeId')
-          .orderBy('date')
+          .orderBy('date', descending: true)
           .snapshots()
           .map((snapshot) => snapshot.docs
               .where((doc) {
