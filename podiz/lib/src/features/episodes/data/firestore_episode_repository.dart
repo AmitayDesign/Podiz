@@ -47,14 +47,15 @@ class FirestoreEpisodeRepository extends EpisodeRepository {
   }
 
   @override
-  Future<Episode?> fetchLastShowEpisode(String showId) async {
-    final snapshot = await firestore.episodesCollection
+  Stream<Episode?> watchLastShowEpisode(String showId) {
+    return firestore.episodesCollection
         .where('showId', isEqualTo: showId)
         .orderBy('releaseDate', descending: true)
         .limit(1)
-        .get();
-    if (snapshot.size == 1) return Episode.fromFirestore(snapshot.docs.single);
-    return null;
+        .snapshots()
+        .map((snapshot) => snapshot.size == 1
+            ? Episode.fromFirestore(snapshot.docs.single)
+            : null);
   }
 
   @override

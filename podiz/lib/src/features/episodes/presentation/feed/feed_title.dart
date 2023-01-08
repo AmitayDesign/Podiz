@@ -1,6 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 
+class FeedTitleWidget extends StatelessWidget {
+  final Widget child;
+  final Key? textKey;
+  const FeedTitleWidget({Key? key, required this.child, this.textKey})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16, bottom: 8)
+          .add(const EdgeInsets.symmetric(horizontal: 16)),
+      child: child,
+    );
+  }
+}
+
 class FeedTitle extends StatelessWidget {
   final String text;
   final Key? textKey;
