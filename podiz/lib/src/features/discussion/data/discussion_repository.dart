@@ -15,6 +15,7 @@ final discussionRepositoryProvider = Provider<DiscussionRepository>(
 abstract class DiscussionRepository {
   Future<Comment> fetchComment(String commentId);
   Stream<List<Comment>> watchComments(String episodeId);
+  Stream<List<Comment>> watchAllLevelComments(String episodeId);
   Stream<Comment?> watchLastReply(String commentId);
   Stream<List<Comment>> watchReplies(String commentId);
   Stream<List<Comment>> watchUserComments(String userId);
@@ -30,6 +31,12 @@ final commentsStreamProvider =
     StreamProvider.family.autoDispose<List<Comment>, String>(
   (ref, episodeId) =>
       ref.watch(discussionRepositoryProvider).watchComments(episodeId),
+);
+
+final allLevelCommentsStreamProvider =
+    StreamProvider.family.autoDispose<List<Comment>, String>(
+  (ref, episodeId) =>
+      ref.watch(discussionRepositoryProvider).watchAllLevelComments(episodeId),
 );
 
 final lastReplyStreamProvider =

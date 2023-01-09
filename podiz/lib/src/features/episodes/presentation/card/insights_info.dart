@@ -22,12 +22,12 @@ class InsightsInfo extends ConsumerWidget {
     final liveEpisode =
         ref.watch(episodeStreamProvider(episode.id)).valueOrNull ?? episode;
     final comments =
-        ref.watch(commentsStreamProvider(liveEpisode.id)).value ?? [];
+        ref.watch(allLevelCommentsStreamProvider(liveEpisode.id)).value ?? [];
     final users = comments
-        .map((comment) =>
-            ref.watch(userFutureProvider(comment.userId)).valueOrNull)
+        .map((comment) => comment.userId)
         .toSet()
-        .toList();
+        .take(3)
+        .map((userId) => ref.watch(userFutureProvider(userId)).valueOrNull);
     return Row(
       children: [
         users.length > 1

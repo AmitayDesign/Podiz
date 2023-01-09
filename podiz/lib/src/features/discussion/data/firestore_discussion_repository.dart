@@ -33,6 +33,18 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
   }
 
   @override
+  Stream<List<Comment>> watchAllLevelComments(String episodeId) {
+    return firestore.commentsCollection
+        .where('episodeId', isEqualTo: episodeId)
+        .where('reported', isEqualTo: false)
+        .orderBy('timestamp')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) => Comment.fromFirestore(doc)).toList();
+    });
+  }
+
+  @override
   Stream<Comment?> watchLastReply(String commentId) =>
       firestore.commentsCollection
           .where('parentIds', isEqualTo: [commentId])
