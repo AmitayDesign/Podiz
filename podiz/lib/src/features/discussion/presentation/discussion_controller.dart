@@ -18,7 +18,9 @@ final filteredCommentsProvider = StateNotifierProvider.family
     if (isShowcaseRunning) return DiscussionController.showcase();
 
     final comments = ref.watch(commentsStreamProvider(episodeId)).value ?? [];
-    final position = ref.read(playerSliderControllerProvider).position;
+    final playerTime = ref.read(playerSliderControllerProvider);
+    final position =
+        playerTime.episodeId == episodeId ? playerTime.position : Duration.zero;
     final showingAllComments = ref.watch(showingAllCommentsProvider);
     return DiscussionController(
       comments: comments.reversed.toList(),
