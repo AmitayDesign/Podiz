@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/back_text_button.dart';
 import 'package:podiz/src/common_widgets/empty_screen.dart';
 import 'package:podiz/src/common_widgets/tap_to_unfocus.dart';
+import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/domain/player_time.dart';
 import 'package:podiz/src/features/player/domain/playing_episode.dart';
@@ -177,7 +178,13 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
             );
           },
         ),
-        bottomSheet: const CommentSheet(),
+        bottomSheet: Consumer(builder: (context, ref, _) {
+          final episodeValue = ref.watch(episodeFutureProvider(episodeId));
+          return episodeValue.maybeWhen(
+            orElse: () => const SizedBox.shrink(),
+            data: (episode) => CommentSheet(episode, pinned: true),
+          );
+        }),
       ),
     );
   }

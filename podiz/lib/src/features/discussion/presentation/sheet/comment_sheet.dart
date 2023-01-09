@@ -10,10 +10,7 @@ import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/discussion/domain/mutable_comment.dart';
 import 'package:podiz/src/features/discussion/presentation/comment/comment_text_field.dart';
 import 'package:podiz/src/features/discussion/presentation/discussion_controller.dart';
-import 'package:podiz/src/features/discussion/presentation/sheet/error_comment_sheet.dart';
-import 'package:podiz/src/features/discussion/presentation/sheet/skeleton_comment_sheet.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
-import 'package:podiz/src/features/episodes/presentation/card/quick_note_sheet.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/player_button.dart';
 import 'package:podiz/src/features/player/presentation/player_controller.dart';
@@ -26,6 +23,8 @@ import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 import 'package:podiz/src/theme/palette.dart';
 
+import 'error_comment_sheet.dart';
+import 'skeleton_comment_sheet.dart';
 import 'target_comment.dart';
 
 final commentSheetTargetProvider = StateProvider<Comment?>((ref) => null);
@@ -34,8 +33,10 @@ final commentSheetEditProvider = StateProvider<Comment?>((ref) => null);
 class CommentSheet extends ConsumerWidget {
   static final height = 116.0 + (Platform.isIOS ? 16 : 0); //! hardcoded
 
-  final Episode? episode;
-  const CommentSheet({Key? key, this.episode}) : super(key: key);
+  final Episode episode;
+  final bool pinned;
+  const CommentSheet(this.episode, {Key? key, this.pinned = false})
+      : super(key: key);
 
   Comment editComment(
     Reader read,
@@ -91,7 +92,6 @@ class CommentSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final episodeValue = ref.watch(playerStateChangesProvider);
     final state = ref.watch(playerControllerProvider);
     final target = ref.watch(commentSheetTargetProvider);
     final isReply = target != null;
@@ -106,179 +106,179 @@ class CommentSheet extends ConsumerWidget {
         }
         return true;
       },
-      child: episodeValue.when(
-        loading: () => const SkeletonCommentSheet(),
-        error: (e, _) => const ErrorCommentSheet(),
-        data: (episode) {
-          if (episode == null) {
-            if (this.episode == null) {
-              return const SizedBox.shrink();
-            } else {
-              return QuickNoteSheet(episode: this.episode!);
-            }
-          }
-          return showcase(
-            context,
-            ref.read,
-            episodeId: episode.id,
-            child: Material(
-              color: Palette.grey900,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(kBorderRadius),
-                ),
-              ),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8).add(
-                  Platform.isIOS
-                      ? const EdgeInsets.only(bottom: 16)
-                      : EdgeInsets.zero,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    //* Parent comment (if is a reply)
-                    if (isReply) ...[
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Replying to...'.hardcoded,
-                              style: context.textTheme.bodySmall,
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              if (this.episode != null) Navigator.pop(context);
-                              ref
-                                  .read(commentSheetTargetProvider.notifier)
-                                  .state = null;
-                            },
-                            child: Text(
-                              'Cancel'.hardcoded,
-                              style: context.textTheme.bodySmall,
-                            ),
-                          ),
-                        ],
-                      ),
-                      TargetComment(target),
-                      const SizedBox(height: 16),
-                    ],
-
-                    //* Current comment (if it is an edit)
-                    if (isEditing) ...[
-                      Row(
-                        children: [
-                          const Icon(Icons.edit, size: kSmallIconSize),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'Editing...'.hardcoded,
-                              style: context.textTheme.bodySmall,
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              if (this.episode != null) Navigator.pop(context);
-                              ref
-                                  .read(commentSheetEditProvider.notifier)
-                                  .state = null;
-                            },
-                            child: Text(
-                              'Cancel'.hardcoded,
-                              style: context.textTheme.bodySmall,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-
-                    //* Comment text field
-                    CommentTextField(
-                      comment: edit,
-                      autofocus: isReply || isEditing || this.episode != null,
-                      hint:
-                          isReply ? 'Add a reply...' : 'Share your insight...',
-                      onSend: (text) {
-                        final comment = isEditing
-                            ? editComment(ref.read, text)
-                            : sendComment(ref.read, episode.id, target, text);
-
-                        final isShowcasing = ref.read(showcaseRunningProvider);
-                        if (isShowcasing) {
-                          addCommentToShowcase(ref.read, episode.id, comment);
-                          addExampleToShowcase(ref.read, episode.id);
-                          ShowCaseWidget.of(context).next();
-                        }
-                        if (this.episode != null) Navigator.pop(context);
-                      },
-                    ),
-                    const SizedBox(height: 4),
-                    Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: Row(
-                        children: [
-                          //* Listening with you
-                          Expanded(
-                            child: UsersListeningText(
-                              (others) =>
-                                  '$others listening with you'.hardcoded,
-                              episode: episode,
-                            ),
-                          ),
-
-                          //* Player controls
-                          PlayerButton(
-                            loading: state == PlayerControls.rewind,
-                            onPressed: () => state != null
-                                ? null
-                                : ref
-                                    .read(playerControllerProvider.notifier)
-                                    .rewind(),
-                            icon: const Icon(Icons.replay_30_rounded),
-                          ),
-                          episode.isPlaying
-                              ? PlayerTimeChip(
-                                  loading: state == PlayerControls.pause,
-                                  onTap: () => state != null
-                                      ? null
-                                      : ref
-                                          .read(
-                                              playerControllerProvider.notifier)
-                                          .pause(),
-                                  icon: Icons.pause_rounded,
-                                )
-                              : PlayerTimeChip(
-                                  loading: state == PlayerControls.play,
-                                  onTap: () => state != null
-                                      ? null
-                                      : ref
-                                          .read(
-                                              playerControllerProvider.notifier)
-                                          .play(episode.id),
-                                  icon: Icons.play_arrow_rounded,
-                                ),
-                          PlayerButton(
-                            loading: state == PlayerControls.fastForward,
-                            onPressed: () => state != null
-                                ? null
-                                : ref
-                                    .read(playerControllerProvider.notifier)
-                                    .fastForward(),
-                            icon: const Icon(Icons.forward_30_rounded),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+      child: showcase(
+        context,
+        ref.read,
+        episodeId: episode.id,
+        child: Material(
+          color: Palette.grey900,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(kBorderRadius),
             ),
-          );
-        },
+          ),
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 8).add(
+              Platform.isIOS
+                  ? const EdgeInsets.only(bottom: 16)
+                  : EdgeInsets.zero,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                //* Parent comment (if is a reply)
+                if (isReply) ...[
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Replying to...'.hardcoded,
+                          style: context.textTheme.bodySmall,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          if (!pinned) Navigator.pop(context);
+                          ref.read(commentSheetTargetProvider.notifier).state =
+                              null;
+                        },
+                        child: Text(
+                          'Cancel'.hardcoded,
+                          style: context.textTheme.bodySmall,
+                        ),
+                      ),
+                    ],
+                  ),
+                  TargetComment(target),
+                  const SizedBox(height: 16),
+                ],
+
+                //* Current comment (if it is an edit)
+                if (isEditing) ...[
+                  Row(
+                    children: [
+                      const Icon(Icons.edit, size: kSmallIconSize),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Editing...'.hardcoded,
+                          style: context.textTheme.bodySmall,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          if (!pinned) Navigator.pop(context);
+                          ref.read(commentSheetEditProvider.notifier).state =
+                              null;
+                        },
+                        child: Text(
+                          'Cancel'.hardcoded,
+                          style: context.textTheme.bodySmall,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                ],
+
+                //* Comment text field
+                CommentTextField(
+                  comment: edit,
+                  autofocus: isReply || isEditing || !pinned,
+                  hint: isReply ? 'Add a reply...' : 'Share your insight...',
+                  onSend: (text) {
+                    final comment = isEditing
+                        ? editComment(ref.read, text)
+                        : sendComment(ref.read, episode.id, target, text);
+
+                    final isShowcasing = ref.read(showcaseRunningProvider);
+                    if (isShowcasing) {
+                      addCommentToShowcase(ref.read, episode.id, comment);
+                      addExampleToShowcase(ref.read, episode.id);
+                      ShowCaseWidget.of(context).next();
+                    }
+                    if (!pinned) Navigator.pop(context);
+                  },
+                ),
+                Consumer(
+                  builder: (context, ref, _) {
+                    final episodeValue = ref.watch(playerStateChangesProvider);
+                    return episodeValue.when(
+                        loading: () => const SkeletonCommentSheet(),
+                        error: (e, _) => const ErrorCommentSheet(),
+                        data: (episode) {
+                          if (episode == null ||
+                              episode.id != this.episode.id) {
+                            return const SizedBox.shrink();
+                          }
+                          return Padding(
+                            padding: const EdgeInsets.all(4)
+                                .add(const EdgeInsets.only(top: 4)),
+                            child: Row(
+                              children: [
+                                //* Listening with you
+                                Expanded(
+                                  child: UsersListeningText(
+                                    (others) =>
+                                        '$others listening with you'.hardcoded,
+                                    episode: episode,
+                                  ),
+                                ),
+
+                                //* Player controls
+                                PlayerButton(
+                                  loading: state == PlayerControls.rewind,
+                                  onPressed: () => state != null
+                                      ? null
+                                      : ref
+                                          .read(
+                                              playerControllerProvider.notifier)
+                                          .rewind(),
+                                  icon: const Icon(Icons.replay_30_rounded),
+                                ),
+                                episode.isPlaying
+                                    ? PlayerTimeChip(
+                                        loading: state == PlayerControls.pause,
+                                        onTap: () => state != null
+                                            ? null
+                                            : ref
+                                                .read(playerControllerProvider
+                                                    .notifier)
+                                                .pause(),
+                                        icon: Icons.pause_rounded,
+                                      )
+                                    : PlayerTimeChip(
+                                        loading: state == PlayerControls.play,
+                                        onTap: () => state != null
+                                            ? null
+                                            : ref
+                                                .read(playerControllerProvider
+                                                    .notifier)
+                                                .play(episode.id),
+                                        icon: Icons.play_arrow_rounded,
+                                      ),
+                                PlayerButton(
+                                  loading: state == PlayerControls.fastForward,
+                                  onPressed: () => state != null
+                                      ? null
+                                      : ref
+                                          .read(
+                                              playerControllerProvider.notifier)
+                                          .fastForward(),
+                                  icon: const Icon(Icons.forward_30_rounded),
+                                ),
+                              ],
+                            ),
+                          );
+                        });
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
