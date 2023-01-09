@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/gradient_bar.dart';
@@ -162,83 +163,79 @@ class _FeedPageState extends ConsumerState<FeedPage>
                   ),
                 ),
               SliverToBoxAdapter(
-                child: SizedBox(
-                  height: user.favPodcasts.length == 1 ? 144 : 288,
-                  child: Consumer(builder: (context, ref, _) {
-                    final episodeValues = user.favPodcasts
-                        .map((podcastId) =>
-                            ref.watch(lastShowEpisodeStreamProvider(podcastId)))
-                        .toList();
-                    final myCastIsLoading =
-                        episodeValues.any((value) => value.isLoading);
-                    if (!myCastIsLoading) {
-                      episodeValues.sort((a, b) {
-                        if (a.hasError) return 1;
-                        if (b.hasError) return -1;
-                        final aReleaseDate = a.value!.releaseDate;
-                        final bReleaseDate = b.value!.releaseDate;
-                        return bReleaseDate.compareTo(aReleaseDate);
-                      });
-                    }
-                    return PageView.builder(
-                      controller: myCastsController,
-                      itemCount: (episodeValues.length / 2).ceil(),
-                      itemBuilder: (context, index) {
-                        final first = index * 2;
-                        final last = min(first + 2, episodeValues.length);
-                        final values = episodeValues.sublist(first, last);
+                child: Consumer(builder: (context, ref, _) {
+                  final episodeValues = user.favPodcasts
+                      .map((podcastId) =>
+                          ref.watch(lastShowEpisodeStreamProvider(podcastId)))
+                      .toList();
+                  final myCastIsLoading =
+                      episodeValues.any((value) => value.isLoading);
+                  if (!myCastIsLoading) {
+                    episodeValues.sort((a, b) {
+                      if (a.hasError) return 1;
+                      if (b.hasError) return -1;
+                      final aReleaseDate = a.value!.releaseDate;
+                      final bReleaseDate = b.value!.releaseDate;
+                      return bReleaseDate.compareTo(aReleaseDate);
+                    });
+                  }
+                  return ExpandablePageView.builder(
+                    controller: myCastsController,
+                    itemCount: (episodeValues.length / 2).ceil(),
+                    itemBuilder: (context, index) {
+                      final first = index * 2;
+                      final last = min(first + 2, episodeValues.length);
+                      final values = episodeValues.sublist(first, last);
 
-                        // if not sorted yet, show loading
-                        if (myCastIsLoading) {
-                          return Column(
-                            children: List.filled(
-                              values.length,
-                              const SkeletonEpisodeCard(),
-                            ),
-                          );
-                        }
-
+                      // if not sorted yet, show loading
+                      if (myCastIsLoading) {
                         return Column(
-                          children: [
-                            for (final episodeValue in values)
-                              Consumer(builder: (context, ref, _) {
-                                return episodeValue.when(
-                                    loading: () => const SkeletonEpisodeCard(),
-                                    error: (e, _) => const SizedBox.shrink(),
-                                    data: (episode) {
-                                      if (episode == null) {
-                                        return const SizedBox.shrink();
-                                      }
-                                      final podcastValue = ref.watch(
-                                          podcastFutureProvider(
-                                              episode.showId));
-                                      return podcastValue.when(
-                                          loading: () =>
-                                              const SkeletonEpisodeCard(),
-                                          error: (e, _) =>
-                                              const SizedBox.shrink(),
-                                          data: (podcast) {
-                                            final card = EpisodeCard(
-                                              episode,
-                                              podcast: podcast,
-                                            );
-                                            return episode ==
-                                                    episodeValues
-                                                        .first.valueOrNull
-                                                ? showcase(
-                                                    podcastTitle: podcast.name,
-                                                    child: card,
-                                                  )
-                                                : card;
-                                          });
-                                    });
-                              }),
-                          ],
+                          children: List.filled(
+                            values.length,
+                            const SkeletonEpisodeCard(),
+                          ),
                         );
-                      },
-                    );
-                  }),
-                ),
+                      }
+
+                      return Column(
+                        children: [
+                          for (final episodeValue in values)
+                            Consumer(builder: (context, ref, _) {
+                              return episodeValue.when(
+                                  loading: () => const SkeletonEpisodeCard(),
+                                  error: (e, _) => const SizedBox.shrink(),
+                                  data: (episode) {
+                                    if (episode == null) {
+                                      return const SizedBox.shrink();
+                                    }
+                                    final podcastValue = ref.watch(
+                                        podcastFutureProvider(episode.showId));
+                                    return podcastValue.when(
+                                        loading: () =>
+                                            const SkeletonEpisodeCard(),
+                                        error: (e, _) =>
+                                            const SizedBox.shrink(),
+                                        data: (podcast) {
+                                          final card = EpisodeCard(
+                                            episode,
+                                            podcast: podcast,
+                                          );
+                                          return episode ==
+                                                  episodeValues
+                                                      .first.valueOrNull
+                                              ? showcase(
+                                                  podcastTitle: podcast.name,
+                                                  child: card,
+                                                )
+                                              : card;
+                                        });
+                                  });
+                            }),
+                        ],
+                      );
+                    },
+                  );
+                }),
               ),
             ],
 
