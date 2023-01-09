@@ -75,16 +75,21 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage>
                             SizedBox(height: GradientBar.backgroundHeight + 16),
                       ),
 
-                      SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, i) {
-                            final comment = filteredComments.elementAt(i);
-                            final episodeId = comment.episodeId;
-                            return GroupedComments(episodeId, [comment]);
-                          },
-                          childCount: filteredComments.length,
+                      if (filter == null)
+                        SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, i) {
+                              final comment = filteredComments.elementAt(i);
+                              final episodeId = comment.episodeId;
+                              return GroupedComments(episodeId, [comment]);
+                            },
+                            childCount: filteredComments.length,
+                          ),
+                        )
+                      else
+                        SliverToBoxAdapter(
+                          child: GroupedComments(filter, filteredComments),
                         ),
-                      ),
 
                       // so it doesnt end behind the bottom bar
                       const SliverToBoxAdapter(

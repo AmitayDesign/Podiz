@@ -71,7 +71,6 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
   Stream<List<Comment>> watchUserReplies(String userId) =>
       firestore.commentsCollection
           .where('parentUserId', isEqualTo: userId)
-          .orderBy('episodeId')
           .orderBy('date', descending: true)
           .snapshots()
           .map((snapshot) => snapshot.docs
