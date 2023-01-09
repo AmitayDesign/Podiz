@@ -78,7 +78,6 @@ class _FeedPageState extends ConsumerState<FeedPage>
     super.build(context);
 
     final user = ref.watch(currentUserProvider);
-    final episodeRepository = ref.watch(episodeRepositoryProvider);
     final feedController = ref.read(feedControllerProvider.notifier);
     final lastLoaded = ref.watch(lastTrendingDayLoadedProvider);
     final isPlayerAlive =
@@ -165,53 +164,80 @@ class _FeedPageState extends ConsumerState<FeedPage>
               SliverToBoxAdapter(
                 child: SizedBox(
                   height: user.favPodcasts.length == 1 ? 144 : 288,
-                  child: PageView.builder(
-                    controller: myCastsController,
-                    itemCount: (user.favPodcasts.length / 2).ceil(),
-                    itemBuilder: (context, index) {
-                      final first = index * 2;
-                      final last = min(first + 2, user.favPodcasts.length);
-                      final podcastIds = user.favPodcasts.sublist(first, last);
-                      return Column(
-                        children: [
-                          for (final podcastId in podcastIds)
-                            Consumer(builder: (context, ref, _) {
-                              final podcastValue =
-                                  ref.watch(podcastFutureProvider(podcastId));
-                              return podcastValue.when(
-                                  loading: () => const SkeletonEpisodeCard(),
-                                  error: (e, _) => const SizedBox.shrink(),
-                                  data: (podcast) {
-                                    final lastEpisodeValue = ref.watch(
-                                        lastShowEpisodeStreamProvider(
-                                            podcastId));
-                                    return lastEpisodeValue.when(
-                                        loading: () =>
-                                            const SkeletonEpisodeCard(),
-                                        error: (e, _) =>
-                                            const SizedBox.shrink(),
-                                        data: (lastEpisode) {
-                                          if (lastEpisode == null) {
-                                            return const SizedBox.shrink();
-                                          }
-                                          final card = EpisodeCard(
-                                            lastEpisode,
-                                            podcast: podcast,
-                                          );
-                                          return podcastId ==
-                                                  user.favPodcasts.first
-                                              ? showcase(
-                                                  podcastTitle: podcast.name,
-                                                  child: card,
-                                                )
-                                              : card;
-                                        });
-                                  });
-                            }),
-                        ],
-                      );
-                    },
-                  ),
+                  child: Consumer(builder: (context, ref, _) {
+                    final episodeValues = user.favPodcasts
+                        .map((podcastId) =>
+                            ref.watch(lastShowEpisodeStreamProvider(podcastId)))
+                        .toList();
+                    final myCastIsLoading =
+                        episodeValues.any((value) => value.isLoading);
+                    if (!myCastIsLoading) {
+                      episodeValues.sort((a, b) {
+                        if (a.hasError) return 1;
+                        if (b.hasError) return -1;
+                        final aReleaseDate = a.value!.releaseDate;
+                        final bReleaseDate = b.value!.releaseDate;
+                        return bReleaseDate.compareTo(aReleaseDate);
+                      });
+                    }
+                    return PageView.builder(
+                      controller: myCastsController,
+                      itemCount: (episodeValues.length / 2).ceil(),
+                      itemBuilder: (context, index) {
+                        final first = index * 2;
+                        final last = min(first + 2, episodeValues.length);
+                        final values = episodeValues.sublist(first, last);
+
+                        // if not sorted yet, show loading
+                        if (myCastIsLoading) {
+                          return Column(
+                            children: List.filled(
+                              values.length,
+                              const SkeletonEpisodeCard(),
+                            ),
+                          );
+                        }
+
+                        return Column(
+                          children: [
+                            for (final episodeValue in values)
+                              Consumer(builder: (context, ref, _) {
+                                return episodeValue.when(
+                                    loading: () => const SkeletonEpisodeCard(),
+                                    error: (e, _) => const SizedBox.shrink(),
+                                    data: (episode) {
+                                      if (episode == null) {
+                                        return const SizedBox.shrink();
+                                      }
+                                      final podcastValue = ref.watch(
+                                          podcastFutureProvider(
+                                              episode.showId));
+                                      return podcastValue.when(
+                                          loading: () =>
+                                              const SkeletonEpisodeCard(),
+                                          error: (e, _) =>
+                                              const SizedBox.shrink(),
+                                          data: (podcast) {
+                                            final card = EpisodeCard(
+                                              episode,
+                                              podcast: podcast,
+                                            );
+                                            return episode ==
+                                                    episodeValues
+                                                        .first.valueOrNull
+                                                ? showcase(
+                                                    podcastTitle: podcast.name,
+                                                    child: card,
+                                                  )
+                                                : card;
+                                          });
+                                    });
+                              }),
+                          ],
+                        );
+                      },
+                    );
+                  }),
                 ),
               ),
             ],
