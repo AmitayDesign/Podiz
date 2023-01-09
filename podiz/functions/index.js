@@ -20,10 +20,6 @@ exports.fetchSpotifyUser = functions.https.onCall((data, _) =>
   auth.fetchSpotifyUser(data.accessToken)
 );
 
-exports.fetchSpotifyIsPlaying = functions.https.onCall((data, _) =>
-  auth.fetchSpotifyIsPlaying(data.accessToken)
-);
-
 exports.fetchSpotifyUserFavorites = functions.https.onCall((data, _) =>
   favorites.fetchSpotifyUserFavorites(data.accessToken, data.userId)
 );

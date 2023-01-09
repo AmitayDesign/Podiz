@@ -11,8 +11,6 @@ final spotifyApiProvider = Provider<SpotifyAPI>(
 );
 
 abstract class SpotifyAPI {
-  set shouldPausePlayer(bool value);
-  bool get shouldPausePlayer;
   String get authUrl;
   Future<String> fetchAuthTokenFromCode(String code);
   Future<String> fetchAccessToken();

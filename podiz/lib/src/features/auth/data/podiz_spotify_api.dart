@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
@@ -30,7 +28,7 @@ class PodizSpotifyAPI implements SpotifyAPI {
     'user-follow-read', //
     'user-read-private', //
     // 'user-read-email',
-    'user-read-currently-playing', //
+    // 'user-read-currently-playing', //
     'user-read-playback-position', //
     'user-library-read', //
     // 'user-library-modify',
@@ -87,19 +85,7 @@ class PodizSpotifyAPI implements SpotifyAPI {
   }
 
   @override
-  bool shouldPausePlayer = false;
-
-  @override
   Future<bool> connectToSdk() async {
-    if (Platform.isIOS) {
-      final accessToken = await fetchAccessToken();
-      final response = await functions
-          .httpsCallable('fetchSpotifyIsPlaying')
-          .call({'accessToken': accessToken});
-      final isPlaying = response.data;
-      print("PLAYING $isPlaying");
-      if (isPlaying == false) shouldPausePlayer = true;
-    }
     return SpotifySdk.connectToSpotifyRemote(
       clientId: clientId,
       redirectUrl: redirectUrl,

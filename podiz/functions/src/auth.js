@@ -128,18 +128,3 @@ async function fetchSpotifyUser(accessToken) {
     return null;
   }
 }
-
-exports.fetchSpotifyIsPlaying = async (accessToken) => {
-  try {
-    // fetch show from spotify
-    var response = await helpers.fetchFromHost(
-      "/me/player/currently-playing?additional_types=episode", accessToken);
-    if (response["status"] != 200) return false;
-
-    var playerState = await response.json();
-    return playerState.is_playing;
-
-  } catch (e) {
-    return false;
-  }
-};
