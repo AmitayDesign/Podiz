@@ -80,6 +80,7 @@ class _FeedPageState extends ConsumerState<FeedPage>
     final user = ref.watch(currentUserProvider);
     final episodeRepository = ref.watch(episodeRepositoryProvider);
     final feedController = ref.read(feedControllerProvider.notifier);
+    final lastLoaded = ref.watch(lastTrendingDayLoadedProvider);
     final isPlayerAlive =
         ref.watch(playerStateChangesProvider).valueOrNull != null;
 
@@ -219,69 +220,89 @@ class _FeedPageState extends ConsumerState<FeedPage>
             SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, days) {
-                  final episodesValue =
-                      ref.watch(trendingEpisodesProvider(days));
-                  return episodesValue.when(
-                    loading: () => Container(
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.all(8),
-                      child: const SizedBox.square(
-                        dimension: kSmallIconSize,
-                        child: CircularProgressIndicator(strokeWidth: 3),
-                      ),
-                    ),
-                    error: (e, _) => null,
-                    data: (episodes) {
-                      if (episodes.isEmpty) return null;
-                      final trending = feedController.trending;
-                      var section = TrendingSection(days.daysAgo());
-                      if (trending.contains(section)) {
-                        section = trending.firstWhere((s) => s == section);
-                      } else {
-                        trending.add(section);
-                      }
+                  if (lastLoaded < days - 1) return null;
+                  return Consumer(
+                    builder: (context, ref, _) {
+                      final episodesValue =
+                          ref.watch(trendingEpisodesProvider(days));
+                      return episodesValue.when(
+                        loading: () => const SizedBox.shrink(),
+                        error: (e, _) => const SizedBox.shrink(),
+                        data: (episodes) {
+                          if (lastLoaded == days - 1) {
+                            Future.microtask(
+                              () => ref
+                                  .watch(lastTrendingDayLoadedProvider.notifier)
+                                  .state = days,
+                            );
+                          }
+                          if (episodes.isEmpty) return const SizedBox.shrink();
+                          final trending = feedController.trending;
+                          var section = TrendingSection(days.daysAgo());
+                          if (trending.contains(section)) {
+                            section = trending.firstWhere((s) => s == section);
+                          } else {
+                            trending.add(section);
+                          }
 
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          if (user.lastListened != null ||
-                              user.favPodcasts.isNotEmpty ||
-                              trending.first != section)
-                            FeedTitle(
-                              section.title,
-                              textKey: section.key,
-                            ),
-                          for (var i = 0; i < episodes.length; i++)
-                            Consumer(
-                              builder: (context, ref, _) {
-                                final podcastValue = ref.watch(
-                                    podcastFutureProvider(episodes[i].showId));
-                                return podcastValue.when(
-                                    loading: () => const SkeletonEpisodeCard(),
-                                    error: (e, _) => const SizedBox.shrink(),
-                                    data: (podcast) {
-                                      final card = EpisodeCard(
-                                        episodes[i],
-                                        podcast: podcast,
-                                      );
-                                      return user.favPodcasts.isEmpty &&
-                                              i == 0 &&
-                                              trending.first == section
-                                          ? showcase(
-                                              podcastTitle: podcast.name,
-                                              child: card,
-                                            )
-                                          : card;
-                                    });
-                              },
-                            ),
-                        ],
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              if (user.lastListened != null ||
+                                  user.favPodcasts.isNotEmpty ||
+                                  trending.first != section)
+                                FeedTitle(
+                                  section.title,
+                                  textKey: section.key,
+                                ),
+                              for (var i = 0; i < episodes.length; i++)
+                                Consumer(
+                                  builder: (context, ref, _) {
+                                    final podcastValue = ref.watch(
+                                        podcastFutureProvider(
+                                            episodes[i].showId));
+                                    return podcastValue.when(
+                                        loading: () =>
+                                            const SkeletonEpisodeCard(),
+                                        error: (e, _) =>
+                                            const SizedBox.shrink(),
+                                        data: (podcast) {
+                                          final card = EpisodeCard(
+                                            episodes[i],
+                                            podcast: podcast,
+                                          );
+                                          return user.favPodcasts.isEmpty &&
+                                                  i == 0 &&
+                                                  trending.first == section
+                                              ? showcase(
+                                                  podcastTitle: podcast.name,
+                                                  child: card,
+                                                )
+                                              : card;
+                                        });
+                                  },
+                                ),
+                            ],
+                          );
+                        },
                       );
                     },
                   );
                 },
+                childCount: 365,
               ),
             ),
+            if (lastLoaded < 365 - 1)
+              SliverToBoxAdapter(
+                child: Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.all(8),
+                  child: const SizedBox.square(
+                    dimension: kSmallIconSize,
+                    child: CircularProgressIndicator(strokeWidth: 3),
+                  ),
+                ),
+              ),
 
             // so it doesnt end behind the bottom bar
             SliverToBoxAdapter(

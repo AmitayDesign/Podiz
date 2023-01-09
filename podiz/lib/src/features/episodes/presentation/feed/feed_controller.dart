@@ -8,6 +8,8 @@ import 'package:podiz/src/utils/global_key_box.dart';
 
 import 'trending_section.dart';
 
+final lastTrendingDayLoadedProvider = StateProvider<int>((ref) => -1);
+
 final feedControllerProvider = StateNotifierProvider<FeedController, String>(
   (ref) {
     final user = ref.watch(currentUserProvider);
