@@ -141,12 +141,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     onPressed: signIn,
                     child: const LocaleText('intro4'),
                   )
-                else
+                else //* OnboardingPage.email
                   ElevatedButton(
-                    onPressed: () => ref
-                        .read(onboardingControllerProvider.notifier)
-                        .setEmail(email),
-                    child: Text('Send'.hardcoded),
+                    onPressed: () {
+                      ref
+                          .read(onboardingControllerProvider.notifier)
+                          .setEmail(email);
+                    },
+                    child: Text('Save'.hardcoded),
                   ),
                 if (Platform.isIOS) const SizedBox(height: 16)
               ],

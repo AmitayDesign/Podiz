@@ -8,6 +8,10 @@ part 'user_podiz.g.dart';
 
 @JsonSerializable()
 class UserPodiz extends AppUser {
+  /// Returns whether the users email address has been verified.
+  /// Only available for the current app user
+  final bool? emailVerified;
+
   final String? lastListened;
 
   @JsonKey(defaultValue: [])
@@ -28,10 +32,15 @@ class UserPodiz extends AppUser {
     required String? imageUrl,
     required this.lastListened,
     required this.favPodcasts,
+    this.emailVerified,
   }) : super(id: id, name: name, email: email, imageUrl: imageUrl);
 
-  factory UserPodiz.fromFirestore(Doc doc) =>
-      UserPodiz.fromJson(doc.data()!..['id'] = doc.id);
+  factory UserPodiz.fromFirestore(Doc doc, {bool? emailVerified}) =>
+      UserPodiz.fromJson(
+        doc.data()!
+          ..['id'] = doc.id
+          ..['emailVerified'] = emailVerified,
+      );
 
   factory UserPodiz.fromJson(Map<String, dynamic> json) =>
       _$UserPodizFromJson(json);
@@ -40,9 +49,4 @@ class UserPodiz extends AppUser {
 
   @override
   List<Object> get props => [id];
-
-  @override
-  String toString() {
-    return 'UserPodiz(id: $id, name: $name, email: $email, imageUrl: $imageUrl, lastListened: $lastListened, followers: $followers, following: $following, favPodcasts: $favPodcasts)';
-  }
 }

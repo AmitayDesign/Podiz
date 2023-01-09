@@ -27,7 +27,6 @@ class EmailPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(kBorderRadius),
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
@@ -48,7 +47,14 @@ class EmailPage extends StatelessWidget {
                   decoration: const InputDecoration(
                     hintText: 'example@mail.com',
                   ),
-                  style: context.textTheme.titleSmall,
+                  style: context.textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "We'll send a verification email to your address".hardcoded,
+                  style: context.textTheme.bodySmall!
+                      .copyWith(fontStyle: FontStyle.italic),
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),

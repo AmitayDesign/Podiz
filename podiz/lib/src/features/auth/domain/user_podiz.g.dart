@@ -24,6 +24,7 @@ UserPodiz _$UserPodizFromJson(Map<String, dynamic> json) => UserPodiz(
               ?.map((e) => e as String)
               .toList() ??
           [],
+      emailVerified: json['emailVerified'] as bool?,
     );
 
 Map<String, dynamic> _$UserPodizToJson(UserPodiz instance) => <String, dynamic>{
@@ -31,6 +32,7 @@ Map<String, dynamic> _$UserPodizToJson(UserPodiz instance) => <String, dynamic>{
       'name': instance.name,
       'email': instance.email,
       'imageUrl': instance.imageUrl,
+      'emailVerified': instance.emailVerified,
       'lastListened': instance.lastListened,
       'followers': instance.followers,
       'following': instance.following,

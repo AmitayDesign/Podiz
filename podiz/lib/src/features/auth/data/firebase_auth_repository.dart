@@ -45,8 +45,11 @@ class FirebaseAuthRepository implements AuthRepository {
                   .doc(user.uid)
                   .snapshots()
                   .listen((doc) {
-                final user = UserPodiz.fromFirestore(doc);
-                sink.add(user);
+                final userPodiz = UserPodiz.fromFirestore(
+                  doc,
+                  emailVerified: user.emailVerified,
+                );
+                sink.add(userPodiz);
               });
             },
             handleDone: (sink) => userSub?.cancel(),
@@ -86,22 +89,6 @@ class FirebaseAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<void> signInWithEmailLink(String email) async {
-    auth.sendSignInLinkToEmail(
-      email: email,
-      actionCodeSettings: ActionCodeSettings(
-        url: 'https://podiz.io',
-        androidPackageName: 'com.amitay.podiz',
-        iOSBundleId: 'com.amitay.podiz',
-        handleCodeInApp: true,
-      ),
-    );
-    //TODO sign in with email link
-    //https://firebase.google.com/docs/auth/flutter/email-link-auth
-    // auth.signInWithEmailLink(email: email, emailLink: emailLink);
-  }
-
-  @override
   Future<void> updateUser(UserPodiz user) async {
     final currentUser = auth.currentUser;
     if (currentUser == null || currentUser.uid != user.id) return;
@@ -111,6 +98,7 @@ class FirebaseAuthRepository implements AuthRepository {
     if (currentUser.email != user.email && user.email != null) {
       // TODO user needs to authenticate again to update the email
       await currentUser.updateEmail(user.email!);
+      await sendEmailVerification();
     }
     if (currentUser.photoURL != user.imageUrl) {
       await currentUser.updatePhotoURL(user.imageUrl);
@@ -120,4 +108,11 @@ class FirebaseAuthRepository implements AuthRepository {
         .update(user.toJson())
         .catchError((e) => throw Exception('Error updating user'));
   }
+
+  @override
+  Future<void> sendEmailVerification() =>
+      auth.currentUser!.sendEmailVerification();
+
+  @override
+  Future<void> reloadUser() => auth.currentUser!.reload();
 }

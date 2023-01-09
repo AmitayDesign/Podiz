@@ -24,4 +24,11 @@ class SettingsController extends StateNotifier<AsyncValue> {
       await authRepository.updateUser(updatedUser);
     });
   }
+
+  Future<void> sendEmailVerification() async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      await authRepository.sendEmailVerification();
+    });
+  }
 }
