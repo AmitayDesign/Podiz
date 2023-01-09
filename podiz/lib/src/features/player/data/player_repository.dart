@@ -75,7 +75,11 @@ final playerTimeStreamProvider =
   final duration = episode.duration;
   if (!episode.isPlaying) {
     episodePlaying = episode;
-    yield PlayerTime(duration: duration, position: episode.initialPosition);
+    yield PlayerTime(
+      episodeId: episode.id,
+      duration: duration,
+      position: episode.initialPosition,
+    );
   } else {
     final refreshRate = 1 / episode.playbackSpeed;
     final refreshRateInMs = (refreshRate * 1000).toInt();
@@ -91,6 +95,7 @@ final playerTimeStreamProvider =
           playbackSpeed: episode.playbackSpeed,
         );
         return PlayerTime(
+          episodeId: episode.id,
           duration: episode.duration,
           position: position,
         );

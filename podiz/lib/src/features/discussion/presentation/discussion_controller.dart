@@ -18,8 +18,15 @@ final filteredCommentsProvider = StateNotifierProvider.family
     if (isShowcaseRunning) return DiscussionController.showcase();
 
     final comments = ref.watch(commentsStreamProvider(episodeId)).value ?? [];
-    final position = ref.read(playerSliderControllerProvider).position;
+    final playerTime = ref.read(playerSliderControllerProvider);
+    final position =
+        playerTime.episodeId == episodeId ? playerTime.position : Duration.zero;
     final showingAllComments = ref.watch(showingAllCommentsProvider);
+    print('---------------------------');
+    print(episodeId);
+    print(playerTime.episodeId);
+    print(position);
+    print(showingAllComments);
     return DiscussionController(
       comments: comments.reversed.toList(),
       showingAll: showingAllComments,
@@ -51,8 +58,17 @@ class DiscussionController extends StateNotifier<List<Comment>> {
         beepController = null,
         super([]);
 
-  static List<Comment> filterComments(List<Comment> comments, Duration pos) =>
-      comments.where((c) => c.timestamp <= pos).toList();
+  static List<Comment> filterComments(List<Comment> comments, Duration pos) {
+    print('+++++++++++++++++');
+    print(pos);
+    print(comments);
+    final filtered = comments.where((c) {
+      print(c.timestamp);
+      return c.timestamp <= pos;
+    }).toList();
+    print(filtered);
+    return filtered;
+  }
 
   void updateComments(Duration position, bool beep) {
     if (showingAll) return;

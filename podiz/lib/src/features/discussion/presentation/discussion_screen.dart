@@ -80,6 +80,7 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
     ref.listen<PlayerTime>(
       playerSliderControllerProvider,
       (_, playerTime) {
+        if (playerTime.episodeId != episodeId) return;
         final beep =
             ref.read(playerSliderControllerProvider.notifier).updatesWithTime;
         ref

@@ -36,8 +36,7 @@ class PlayerSliderController extends StateNotifier<PlayerTime> {
     });
   }
 
-  set position(Duration position) =>
-      state = PlayerTime(position: position, duration: state.duration);
+  set position(Duration position) => state = state.copyWith(position: position);
 
   Future<void> seekTo(Duration time) => playerRepository.seekTo(time);
 
