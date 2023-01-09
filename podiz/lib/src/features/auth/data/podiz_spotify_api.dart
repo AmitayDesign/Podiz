@@ -97,6 +97,7 @@ class PodizSpotifyAPI implements SpotifyAPI {
           .httpsCallable('fetchSpotifyIsPlaying')
           .call({'accessToken': accessToken});
       final isPlaying = response.data;
+      print("PLAYING $isPlaying");
       if (isPlaying == false) shouldPausePlayer = true;
     }
     return SpotifySdk.connectToSpotifyRemote(

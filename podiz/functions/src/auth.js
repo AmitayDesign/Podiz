@@ -133,7 +133,7 @@ exports.fetchSpotifyIsPlaying = async (accessToken) => {
   try {
     // fetch show from spotify
     var response = await helpers.fetchFromHost(
-      "/me/player/currently-playing", accessToken);
+      "/me/player/currently-playing?additional_types=episode", accessToken);
     if (response["status"] != 200) return false;
 
     var playerState = await response.json();
