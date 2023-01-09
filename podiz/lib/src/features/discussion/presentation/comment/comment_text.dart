@@ -10,7 +10,10 @@ class CommentText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Linkify(
-      options: const LinkifyOptions(removeWww: true),
+      options: const LinkifyOptions(
+        removeWww: true,
+        looseUrl: true,
+      ),
       onOpen: (link) => openUrl(link.url),
       text: text,
       style: context.textTheme.bodyLarge,
