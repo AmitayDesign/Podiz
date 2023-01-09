@@ -29,7 +29,7 @@ class QuickNoteButton extends StatelessWidget {
           isScrollControlled: true,
           builder: (context) => Padding(
             padding: MediaQuery.of(context).viewInsets,
-            child: CommentSheet(episode: episode),
+            child: CommentSheet(episode),
           ),
         ),
         icon: Icon(
