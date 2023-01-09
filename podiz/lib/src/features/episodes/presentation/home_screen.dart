@@ -71,6 +71,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ref.read(showcaseRepositoryProvider).isFirstTime(user.id).then(
           (firstTime) => firstTime ? startShowcase() : openPlayingEpisode(),
         );
+
+    // request notification permission
+    await ref
+        .read(pushNotificationsRepositoryProvider)
+        .requestPermission(user.id);
   }
 
   Future<void> startShowcase() async {

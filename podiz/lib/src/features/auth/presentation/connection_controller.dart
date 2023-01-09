@@ -48,9 +48,7 @@ class ConnectionController extends StateNotifier<AsyncValue> {
       if (error != null) throw Exception('Error: $error');
       final code = data['code']!;
       // sign in with spotify
-      final userId = await authRepository.signInWithSpotify(code);
-      print(userId);
-      await pushNotificationsRepository.requestPermission(userId);
+      await authRepository.signInWithSpotify(code);
       state = const AsyncValue.data(null);
     } catch (err, stack) {
       signInTries < 3

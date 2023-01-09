@@ -22,7 +22,7 @@ abstract class AuthRepository {
   Stream<UserPodiz?> authStateChanges();
   UserPodiz? get currentUser;
   //
-  Future<String> signInWithSpotify(String code);
+  Future<void> signInWithSpotify(String code);
   Future<void> sendEmailVerification();
   Future<void> updateUser(UserPodiz user);
   Future<void> reloadUser();

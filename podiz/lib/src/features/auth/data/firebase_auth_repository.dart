@@ -69,14 +69,13 @@ class FirebaseAuthRepository implements AuthRepository {
   UserPodiz? get currentUser => authState.value;
 
   @override
-  Future<String> signInWithSpotify(String code) async {
+  Future<void> signInWithSpotify(String code) async {
     try {
       final authToken = await spotifyApi.fetchAuthTokenFromCode(code);
       await auth.signInWithCustomToken(authToken);
       // wait for the user to be fetched before ending the login
       // so it doesnt display a wrong frame
-      final user = await authState.stream.firstWhere((user) => user != null);
-      return user!.id;
+      await authState.stream.firstWhere((user) => user != null);
     } catch (e) {
       throw Exception('Sign in error: $e');
     }
