@@ -55,13 +55,6 @@ class CommentCard extends ConsumerStatefulWidget {
 
 class _CommentCardState extends ConsumerState<CommentCard> {
   late var collapsed = widget.comment.replyCount > 1;
-  late DateTime date;
-
-  @override
-  void initState() {
-    date = DateTime.now();
-    super.initState();
-  }
 
   void seekToTimestamp() async {
     // play 10 seconds before
@@ -135,14 +128,15 @@ class _CommentCardState extends ConsumerState<CommentCard> {
   }
 
   String format(DateTime d) {
-    var dateSub60min = date.subtract(const Duration(minutes: 60));
-    var dateSub24h = date.subtract(const Duration(hours: 24));
+    final now = DateTime.now();
+    var dateSub60min = now.subtract(const Duration(minutes: 60));
+    var dateSub24h = now.subtract(const Duration(hours: 24));
 
     if (dateSub60min.compareTo(d) == -1) {
-      var minutes = date.difference(d);
+      var minutes = now.difference(d);
       return '${minutes.inMinutes}m\' ago';
     } else if (dateSub24h.compareTo(d) == -1) {
-      var hours = date.difference(d);
+      var hours = now.difference(d);
       return '${hours.inHours}h\' ago';
     }
     if (d.year == DateTime.now().year) {
