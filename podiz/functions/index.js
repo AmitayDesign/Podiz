@@ -32,6 +32,10 @@ exports.fetchSpotifyShow = functions.https.onCall((data, _) =>
   shows.fetchSpotifyShow(data.accessToken, data.showId)
 );
 
+exports.fetchMyCast = functions.https.onCall((data, _) =>
+  shows.fetchMyCast(data.accessToken, data.favPodcasts)
+);
+
 exports.fetchSpotifySearch = functions.https.onCall((data, _) =>
   search.fetchSpotifySearch(data.accessToken, data.query)
 );

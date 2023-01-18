@@ -55,3 +55,22 @@ const fetchMoreEpisodes = async (accessToken, showId, episodesRef) => {
 
 	populateFirestoreWithEpisodes(accessToken, showId, episodes);
 }
+
+exports.fetchMyCast = async (accessToken, favPodcasts) => {
+	for(showId of favPodcasts) {
+		var response = await helpers.fetchFromHost("/shows/" + showId + "episodes?offset=0&limit=1", accessToken);
+		if (response["status"] != 200) return false;
+
+		var result = await response.json();
+		if(result["items"].length == 0 ) {
+			continue;
+		}
+
+		var episode = result["items"][0];
+		var aux_show = helpers.getShow(showId);
+		if(aux_show["lastSavedEpisode"] != episode["id"]){
+			helpers.addEpisodeToFirestore(episode, showId);
+			helpers.updateShowLastSavedEpisode(showId, episode["id"])
+		}	
+	}
+};

@@ -151,6 +151,11 @@ exports.getShowT = async (t, showId) => {
   return doc.data();
 };
 
+exports.getShow = async (showId) => {
+  var doc = await t.get(showRef(showId));
+  return doc.data();
+};
+
 exports.addLastSavedEpisodeT = (t, showId, episodeId) =>
   t.update(showRef(showId), {
     lastSavedEpisode: episodeId,
@@ -181,4 +186,9 @@ exports.getNumberOfEpisodes = async (showId) => {
     .where("showId", "==", showId)
     .get();
   return snapshot.size;
+};
+
+exports.updateShowLastSavedEpisode = (showId, episodeId) => {
+  admin.firestore().collection("shows").collection("shows").update({"lastSavedEpisode" : episodeId
+, "lastKnownEpisode" : episodeId})
 };
