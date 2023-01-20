@@ -3,6 +3,7 @@
     <queries>
    <package android:name="com.spotify.music"/>
  </queries>
+   <uses-permission android:name="android.permission.INTERNET" />
    <application
         android:label="Podiz"
         android:name="${applicationName}"

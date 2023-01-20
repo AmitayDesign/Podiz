@@ -1,5 +1,5 @@
 name: podiz
-description: A new Flutter project.
+description: Shared podcast experience.
 
 #* before release build
 # https://pub.dev/packages/flutter_local_notifications#release-build-configuration
