@@ -1,4 +1,4 @@
-package com.example.podiz
+package io.podiz.app
 
 import io.flutter.embedding.android.FlutterActivity
 
