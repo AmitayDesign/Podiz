@@ -52,8 +52,6 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<!-- <key>FlutterDeepLinkingEnabled</key>
-	<true/> -->
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>spotify</string>

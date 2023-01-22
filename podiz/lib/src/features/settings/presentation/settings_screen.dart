@@ -16,6 +16,7 @@ import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 import 'package:podiz/src/theme/palette.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'settings_controller.dart';
 
@@ -219,7 +220,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                   fontWeight: FontWeight.w700,
                                 ),
                                 recognizer: TapGestureRecognizer()
-                                  ..onTap = () {}, //!
+                                  ..onTap = () {
+                                    launchUrl(Uri.parse(
+                                        "https://app.getterms.io/view/9zEeI/privacy/en-us"));
+                                  }, //!
                               ),
                               TextSpan(text: ' and '.hardcoded.toUpperCase()),
                               TextSpan(
@@ -229,7 +233,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                   fontWeight: FontWeight.w700,
                                 ),
                                 recognizer: TapGestureRecognizer()
-                                  ..onTap = () {}, //!
+                                  ..onTap = () {
+                                    launchUrl(Uri.parse(
+                                        "https://app.getterms.io/view/9zEeI/tos/en-us"));
+                                  }, //!
                               ),
                             ],
                           ),
