@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/auth/presentation/document_screen.dart';
 import 'package:podiz/src/features/auth/presentation/onboarding/onboarding_screen.dart';
 import 'package:podiz/src/features/auth/presentation/profile/profile_screen.dart';
 import 'package:podiz/src/features/discussion/presentation/discussion_screen.dart';
@@ -14,6 +15,7 @@ import 'package:podiz/src/routing/refresh_stream_list.dart';
 
 enum AppRoute {
   onboarding,
+  document,
   home,
   profile,
   settings,
@@ -28,23 +30,24 @@ final goRouterProvider = Provider<GoRouter>((ref) {
   final authRepository = ref.watch(authRepositoryProvider);
   return GoRouter(
     initialLocation: initialRedirect,
-    debugLogDiagnostics: false,
+    debugLogDiagnostics: true,
     //TODO REFACT THIS FLOW
     // move the has email check into the onboarding location
     //
     redirect: (state) {
       final isLoggedIn = authRepository.currentUser != null;
       final hasEmail = authRepository.currentUser?.email != null;
-      // final isConnected = authRepository.isConnected;
+
+      final isDocumentLocation = state.location.contains('/document');
+      if (isDocumentLocation) return null;
+
       final isOnboardingLocation = state.location.contains('/onboarding');
       final isEmailLocation =
           isOnboardingLocation && state.queryParams['page'] == 'email';
-      print('LOCATION: ${state.location}');
-      print('isLoggedIn: $isLoggedIn');
-      print('hasEmail: $hasEmail');
 
       if (isEmailLocation) {
         if (hasEmail) {
+          // clear redirect and go to home or deeplink
           final redirect = initialRedirect;
           initialRedirect = '/';
           return redirect;
@@ -78,6 +81,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             (p) => p.name == pageName,
           );
           return OnboardingScreen(page: page);
+        },
+      ),
+      GoRoute(
+        path: '/document/:type',
+        name: AppRoute.document.name,
+        builder: (_, state) {
+          final typeName = state.params['type'];
+          final type = DocumentType.values.firstWhere(
+            (t) => t.name == typeName,
+          );
+          return DocumentScreen(type: type);
         },
       ),
       GoRoute(

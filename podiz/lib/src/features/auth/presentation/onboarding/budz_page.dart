@@ -2,10 +2,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:podiz/src/constants/constants.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
+import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/context_theme.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class BudzPage extends StatelessWidget {
   const BudzPage({Key? key}) : super(key: key);
@@ -53,7 +54,7 @@ class BudzPage extends StatelessWidget {
             const SizedBox(height: 32),
             Text.rich(
               TextSpan(
-                text: "By signing up to Podiz you agree to Podiz's ".hardcoded,
+                text: "By signing up to Podiz you agree to Podiz's".hardcoded,
                 style: context.textTheme.bodySmall,
                 children: [
                   const TextSpan(text: ' '),
@@ -64,10 +65,10 @@ class BudzPage extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                     ),
                     recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                        launchUrl(Uri.parse(
-                            "https://app.getterms.io/view/9zEeI/privacy/en-us"));
-                      }, //!
+                      ..onTap = () => context.pushNamed(
+                            AppRoute.document.name,
+                            params: {'type': 'privacy'},
+                          ),
                   ),
                   TextSpan(text: ' and '.hardcoded),
                   TextSpan(
@@ -77,10 +78,10 @@ class BudzPage extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                     ),
                     recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                        launchUrl(Uri.parse(
-                            "https://app.getterms.io/view/9zEeI/tos/en-us"));
-                      }, //!
+                      ..onTap = () => context.pushNamed(
+                            AppRoute.document.name,
+                            params: {'type': 'terms'},
+                          ),
                   ),
                 ],
               ),
