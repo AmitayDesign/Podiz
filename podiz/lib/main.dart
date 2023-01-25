@@ -35,8 +35,6 @@ void main() async {
 
       await Firebase.initializeApp();
 
-      final initialLink = await FirebaseDynamicLinks.instance.getInitialLink();
-      if (initialLink != null) initialRedirect = initialLink.link.path;
       // if (Platform.isIOS) {
       //   final PendingDynamicLinkData? initialLink =
       //       await FirebaseDynamicLinks.instance.getInitialLink();

@@ -142,6 +142,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void initUniLinks() async {
+    final initialLink = await FirebaseDynamicLinks.instance.getInitialLink();
+    if (initialLink != null) handleMyLink(initialLink.link);
     FirebaseDynamicLinks.instance.onLink.listen(
         (PendingDynamicLinkData? dynamicLink) async {
       final Uri deeplink = dynamicLink!.link;
