@@ -30,6 +30,12 @@
 @import connectivity;
 #endif
 
+#if __has_include(<desktop_webview_auth/DesktopWebviewAuthPlugin.h>)
+#import <desktop_webview_auth/DesktopWebviewAuthPlugin.h>
+#else
+@import desktop_webview_auth;
+#endif
+
 #if __has_include(<device_info_plus/FLTDeviceInfoPlusPlugin.h>)
 #import <device_info_plus/FLTDeviceInfoPlusPlugin.h>
 #else
@@ -120,10 +126,10 @@
 @import mixpanel_flutter;
 #endif
 
-#if __has_include(<path_provider_ios/FLTPathProviderPlugin.h>)
-#import <path_provider_ios/FLTPathProviderPlugin.h>
+#if __has_include(<path_provider_foundation/PathProviderPlugin.h>)
+#import <path_provider_foundation/PathProviderPlugin.h>
 #else
-@import path_provider_ios;
+@import path_provider_foundation;
 #endif
 
 #if __has_include(<share_plus/FLTSharePlusPlugin.h>)
@@ -132,10 +138,10 @@
 @import share_plus;
 #endif
 
-#if __has_include(<shared_preferences_ios/FLTSharedPreferencesPlugin.h>)
-#import <shared_preferences_ios/FLTSharedPreferencesPlugin.h>
+#if __has_include(<shared_preferences_foundation/SharedPreferencesPlugin.h>)
+#import <shared_preferences_foundation/SharedPreferencesPlugin.h>
 #else
-@import shared_preferences_ios;
+@import shared_preferences_foundation;
 #endif
 
 #if __has_include(<sign_in_with_apple/SignInWithApplePlugin.h>)
@@ -187,6 +193,7 @@
   [FLTFirebaseFirestorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseFirestorePlugin"]];
   [FLTFirebaseFunctionsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseFunctionsPlugin"]];
   [FLTConnectivityPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTConnectivityPlugin"]];
+  [DesktopWebviewAuthPlugin registerWithRegistrar:[registry registrarForPlugin:@"DesktopWebviewAuthPlugin"]];
   [FLTDeviceInfoPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTDeviceInfoPlusPlugin"]];
   [LaunchexternalappPlugin registerWithRegistrar:[registry registrarForPlugin:@"LaunchexternalappPlugin"]];
   [FLTFirebaseAuthPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseAuthPlugin"]];
@@ -202,9 +209,9 @@
   [FlutterWebAuth2Plugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterWebAuth2Plugin"]];
   [FLTGoogleSignInPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTGoogleSignInPlugin"]];
   [MixpanelFlutterPlugin registerWithRegistrar:[registry registrarForPlugin:@"MixpanelFlutterPlugin"]];
-  [FLTPathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPathProviderPlugin"]];
+  [PathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"PathProviderPlugin"]];
   [FLTSharePlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTSharePlusPlugin"]];
-  [FLTSharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTSharedPreferencesPlugin"]];
+  [SharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"SharedPreferencesPlugin"]];
   [SignInWithApplePlugin registerWithRegistrar:[registry registrarForPlugin:@"SignInWithApplePlugin"]];
   [SoundpoolPlugin registerWithRegistrar:[registry registrarForPlugin:@"SoundpoolPlugin"]];
   [SpotifySdkPlugin registerWithRegistrar:[registry registrarForPlugin:@"SpotifySdkPlugin"]];

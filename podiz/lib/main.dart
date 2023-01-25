@@ -36,15 +36,15 @@ void main() async {
       await Firebase.initializeApp();
 
       final initialLink = await FirebaseDynamicLinks.instance.getInitialLink();
-      if (initialLink != null) initialRedirect = initialLink.link.path;
+      // if (initialLink != null) initialRedirect = initialLink.link.path;
       // if (Platform.isIOS) {
       //   final PendingDynamicLinkData? initialLink =
       //       await FirebaseDynamicLinks.instance.getInitialLink();
-      //   if (initialLink != null) {
-      //     Uri deepLink = initialLink.link;
-      //     initialRedirect =
-      //         deepLink.path + "?t=" + deepLink.queryParameters['t']!;
-      //   }
+      if (initialLink != null) {
+        final path = initialLink.link.path;
+        final time = initialLink.link.queryParameters['t'];
+        if (time != null) initialRedirect = "$path?t=$time";
+      }
       // }
 
       //* Providers initialization

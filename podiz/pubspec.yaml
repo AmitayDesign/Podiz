@@ -30,6 +30,7 @@ dependencies:
   external_app_launcher: ^3.1.0
   firebase_auth: ^3.6.1
   firebase_core: 1.20.0
+  firebase_core_platform_interface: 4.5.1
   firebase_database: ^9.1.1
   firebase_dynamic_links: ^4.3.9
   firebase_messaging: ^12.0.1
@@ -41,7 +42,7 @@ dependencies:
   flutter_linkify: ^5.0.2
   flutter_local_notifications: ^13.0.0
   flutter_locales: ^2.0.1
-  flutter_riverpod: ^2.0.0-dev.9
+  flutter_riverpod: 2.0.0-dev.9
   flutter_svg: ^1.1.1+1
   flutter_svg_provider: ^1.0.3
   flutter_web_auth_2: 1.0.0
