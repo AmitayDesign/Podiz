@@ -35,11 +35,8 @@ void main() async {
 
       await Firebase.initializeApp();
 
+      //* Deeplinking
       final initialLink = await FirebaseDynamicLinks.instance.getInitialLink();
-      // if (initialLink != null) initialRedirect = initialLink.link.path;
-      // if (Platform.isIOS) {
-      //   final PendingDynamicLinkData? initialLink =
-      //       await FirebaseDynamicLinks.instance.getInitialLink();
       if (initialLink != null) {
         final path = initialLink.link.path;
         final time = initialLink.link.queryParameters['t'];
