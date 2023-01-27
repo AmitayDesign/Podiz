@@ -219,6 +219,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>desktop_webview_auth.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>device_info_plus.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -319,7 +324,7 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>path_provider_ios.xcscheme</key>
+		<key>path_provider_foundation.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -329,7 +334,7 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>shared_preferences_ios.xcscheme</key>
+		<key>shared_preferences_foundation.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
