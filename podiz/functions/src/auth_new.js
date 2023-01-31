@@ -122,6 +122,9 @@ async function fetchSpotifyUser(accessToken) {
 		// var userExists = await helpers.checkUserExists(user.id);
 		// console.log(`userExists ${userExists}`);
 		// if (!userExists)
+		if(user.images[0] == undefined) {
+			user.images = [""];
+		}
 		const databaseTask = helpers.addUserToFirestore(user);
 		const authTask = createAuthUser(user);
 
