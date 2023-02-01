@@ -135,12 +135,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       final Uri deeplink = dynamicLink!.link;
       handleMyLink(deeplink);
     }, onError: (_) {
-      print("error");
+      debugPrint("ERROR WITH DEEPLINKING");
     });
   }
 
   void handleMyLink(Uri uri) {
-    //TODO handle params
     context.goNamed(
       AppRoute.discussion.name,
       params: {"episodeId": uri.path.split("/")[2].split("?")[0]},
@@ -289,7 +288,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             final repo = ref.read(userRepositoryProvider);
             await repo.unfollow('hmrs28xr9apw0mlac2dfjwm2v', userId);
             await repo.follow('hmrs28xr9apw0mlac2dfjwm2v', userId);
-            print('followed');
           },
         ),
         const SizedBox(height: 8),
@@ -313,7 +311,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               userId: 'hmrs28xr9apw0mlac2dfjwm2v',
             );
             await repo.addComment(reply);
-            print('commented');
           },
         ),
       ],

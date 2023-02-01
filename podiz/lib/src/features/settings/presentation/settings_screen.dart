@@ -19,7 +19,6 @@ import 'package:podiz/src/theme/palette.dart';
 
 import 'settings_controller.dart';
 
-//TODO refact
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
 
@@ -100,7 +99,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     //TODO settings error popup
     ref.listen(
       settingsControllerProvider,
-      (_, state) => print('ERROR UPDATING EMAIL'),
+      (_, state) => debugPrint('ERROR UPDATING EMAIL'),
     );
     final user = ref.watch(currentUserProvider);
     final state = ref.watch(settingsControllerProvider);

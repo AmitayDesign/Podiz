@@ -31,9 +31,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: initialRedirect,
     debugLogDiagnostics: true,
-    //TODO REFACT THIS FLOW
-    // move the has email check into the onboarding location
-    //
+    //TODO CHANGE THIS FLOW
+    //* move the has email check into the onboarding location
     redirect: (state) {
       final isLoggedIn = authRepository.currentUser != null;
       final hasEmail = authRepository.currentUser?.email != null;

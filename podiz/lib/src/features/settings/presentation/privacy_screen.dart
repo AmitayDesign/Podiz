@@ -48,7 +48,6 @@ class PrivacyScreen extends ConsumerWidget {
       'toUids': [user.id],
       'message': {
         'subject': 'Delete your data',
-        //TODO create deletion link
         'text': 'There you go! '
             'To delete all your data just click on this link\n'
             'https://us-central1-podiz-130ca.cloudfunctions.net/whipeData'

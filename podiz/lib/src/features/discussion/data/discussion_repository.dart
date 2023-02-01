@@ -11,7 +11,6 @@ final discussionRepositoryProvider = Provider<DiscussionRepository>(
       mixPanelRepository: ref.watch(mixPanelRepository)),
 );
 
-//TODO make all paginated
 abstract class DiscussionRepository {
   Future<Comment> fetchComment(String commentId);
   Stream<List<Comment>> watchComments(String episodeId);

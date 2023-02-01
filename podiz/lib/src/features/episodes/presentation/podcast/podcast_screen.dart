@@ -47,7 +47,6 @@ class _PodcastScreenState extends ConsumerState<PodcastScreen> {
     final episodeRepository = ref.watch(episodeRepositoryProvider);
     final podcastValue = ref.watch(podcastStreamProvider(widget.podcastId));
 
-    //TODO podcast empty screen
     return podcastValue.when(
       loading: () => Scaffold(
         appBar: const GradientBar(
@@ -68,8 +67,9 @@ class _PodcastScreenState extends ConsumerState<PodcastScreen> {
           ),
         ),
       ),
+      //TODO Do this work?
       data: (podcast) => FutureBuilder(
-          initialData: "loading",
+          initialData: 'loading',
           future:
               ref.read(podcastRepositoryProvider).refetchPodcast(podcast.id),
           builder: ((context, snapshot) {

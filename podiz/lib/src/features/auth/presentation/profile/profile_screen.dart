@@ -13,7 +13,6 @@ import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/episodes/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/features/episodes/presentation/avatar/skeleton_podcast_avatar.dart';
-import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/context_theme.dart';
@@ -151,8 +150,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 builder: (context, ref, _) {
                   final commentsValue =
                       ref.watch(userCommentsStreamProvider(user.id));
-                  final isPlayerAlive =
-                      ref.watch(playerStateChangesProvider).valueOrNull != null;
                   return commentsValue.when(
                     loading: () => SliverToBoxAdapter(
                       child: Padding(

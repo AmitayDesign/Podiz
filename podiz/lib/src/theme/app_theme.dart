@@ -11,8 +11,6 @@ final themeProvider = Provider<ThemeData>((ref) {
   return ThemeData(
     colorScheme: colorScheme,
     primaryColor: colorScheme.primary,
-    backgroundColor: colorScheme.background,
-    errorColor: colorScheme.error,
     scaffoldBackgroundColor: colorScheme.background,
     canvasColor: colorScheme.background,
     cardColor: colorScheme.surface,

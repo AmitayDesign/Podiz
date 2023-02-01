@@ -40,7 +40,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   void didUpdateWidget(covariant OnboardingScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    print("did change dependecy");
     if (widget.page != null) {
       page = widget.page!;
       controller = PageController(initialPage: page.index);
@@ -69,12 +68,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(page);
-    print(widget.page);
     //TODO onboarding error popup
     ref.listen(
       onboardingControllerProvider,
-      (_, state) => print('ERROR UPDATING EMAIL'),
+      (_, state) => debugPrint('ERROR UPDATING EMAIL'),
     );
 
     final state = ref.watch(connectionControllerProvider);

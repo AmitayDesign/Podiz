@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterfire_ui/firestore.dart';
 
-//TODO stop using this
 class SliverFirestoreQueryBuilder<T> extends StatelessWidget {
   final Query<T> query;
   final Widget Function(BuildContext context, T data)? builder;
