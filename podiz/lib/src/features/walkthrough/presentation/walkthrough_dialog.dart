@@ -10,7 +10,7 @@ Future<bool?> showWalkthroughDialog({
         insetPadding: EdgeInsets.all(16),
         backgroundColor: Colors.white,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+          padding: EdgeInsets.all(24),
           child: Walkthrough(),
         ),
       ),
