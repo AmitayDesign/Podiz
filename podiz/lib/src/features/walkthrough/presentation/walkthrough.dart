@@ -29,31 +29,33 @@ class _WalkthroughState extends ConsumerState<Walkthrough> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SmoothPageIndicator(
-          controller: pageController,
-          count: 3,
-          effect: ScrollingDotsEffect(
-            offset: 0,
-            radius: 8,
-            dotWidth: 8,
-            dotHeight: 8,
-            spacing: 6,
-            activeDotScale: 1,
-            dotColor: context.colorScheme.primary.withOpacity(0.2),
-            activeDotColor: context.colorScheme.primary,
+        Padding(
+          padding: const EdgeInsets.only(top: 8, bottom: 16),
+          child: SmoothPageIndicator(
+            controller: pageController,
+            count: 3,
+            effect: ExpandingDotsEffect(
+              offset: 0,
+              radius: 8,
+              dotWidth: 8,
+              dotHeight: 8,
+              spacing: 6,
+              dotColor: context.colorScheme.primary.withOpacity(0.2),
+              activeDotColor: context.colorScheme.primary,
+            ),
           ),
         ),
-        const SizedBox(height: 16),
         Expanded(
           child: PageView(
             // disable swiping between pages
-            physics: const NeverScrollableScrollPhysics(),
+            // physics: const NeverScrollableScrollPhysics(),
             controller: pageController,
             onPageChanged: (value) => setState(() => page = value),
             children: [
               WalkthroughStep(
                 title: 'Play any episode'.hardcoded,
                 boldTitle: 'on Podiz'.hardcoded,
+                emojis: const ['❤️', '📈', '🔎'],
                 texts: [
                   'Latest episodes from your podcast are on “my Casts”'
                       .hardcoded,
@@ -65,6 +67,7 @@ class _WalkthroughState extends ConsumerState<Walkthrough> {
               WalkthroughStep(
                 title: 'Or jump in'.hardcoded,
                 boldTitle: 'from Spotify'.hardcoded,
+                emojis: const ['🎧', '📲'],
                 texts: [
                   'You can start by plating your favorite episode on Spotify'
                       .hardcoded,
@@ -75,6 +78,7 @@ class _WalkthroughState extends ConsumerState<Walkthrough> {
               WalkthroughStep(
                 title: 'Share'.hardcoded,
                 boldTitle: 'your thoughts'.hardcoded,
+                emojis: const ['💬', '⏰', '💥'],
                 texts: [
                   'When you have something to say, share it with the world!'
                       .hardcoded,
