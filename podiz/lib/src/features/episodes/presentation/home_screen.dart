@@ -22,6 +22,8 @@ import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/domain/playing_episode.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
 import 'package:podiz/src/features/search/presentation/search_page.dart';
+import 'package:podiz/src/features/walkthrough/data/walkthrough_repository.dart';
+import 'package:podiz/src/features/walkthrough/presentation/walkthrough_dialog.dart';
 import 'package:podiz/src/routing/app_router.dart';
 
 enum HomePage { feed, search, notifications }
@@ -52,8 +54,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           page == page.toInt() &&
           page.toInt() != destination.index) goToDestination(page.toInt());
     });
-
+    walktrough();
     connect();
+  }
+
+  Future<void> walktrough() async {
+    final user = ref.read(currentUserProvider);
+    final firstTime =
+        await ref.read(walkthroughRepositoryProvider).isFirstTime(user.id);
+    if (firstTime && mounted) {
+      showWalkthroughDialog(context: context);
+    }
   }
 
   Future<void> connect() async {
@@ -63,8 +74,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     for (var i = 0; i < retries && !success; i++) {
       success = await ref.read(spotifyApiProvider).connectToSdk();
     }
+
     // open playing episode
-    await openPlayingEpisode();
+    openPlayingEpisode();
 
     // request notification permission
     final user = ref.read(currentUserProvider);
