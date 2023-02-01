@@ -151,7 +151,6 @@ class _DiscussionScreenState extends ConsumerState<DiscussionScreen> {
                                       child: CommentCard(
                                         comment,
                                         episodeId: episodeId,
-                                        showcase: comment.id == 'showcase',
                                       ),
                                     ),
                                 ],

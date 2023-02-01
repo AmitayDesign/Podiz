@@ -14,8 +14,6 @@ import 'package:podiz/src/features/episodes/presentation/card/skeleton_episode_c
 import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
-import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
-import 'package:podiz/src/features/showcase/presentation/showcase_step.dart';
 import 'package:podiz/src/theme/context_theme.dart';
 import 'package:podiz/src/utils/date_difference.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -59,19 +57,6 @@ class _FeedPageState extends ConsumerState<FeedPage>
     if (widget.scrollController == null) scrollController.dispose();
     super.dispose();
   }
-
-  Widget showcase({required String podcastTitle, required EpisodeCard child}) =>
-      ShowcaseStep(
-        step: 1,
-        onTap: () {
-          child.openEpisode(context, ref.read);
-          ShowCaseWidget.of(context).next();
-        },
-        onNext: () => child.openEpisode(context, ref.read),
-        title: 'Open a podcast you like',
-        description: '$podcastTitle could be a great option to start with',
-        child: child,
-      );
 
   @override
   Widget build(BuildContext context) {
@@ -220,14 +205,7 @@ class _FeedPageState extends ConsumerState<FeedPage>
                                             episode,
                                             podcast: podcast,
                                           );
-                                          return episode ==
-                                                  episodeValues
-                                                      .first.valueOrNull
-                                              ? showcase(
-                                                  podcastTitle: podcast.name,
-                                                  child: card,
-                                                )
-                                              : card;
+                                          return card;
                                         });
                                   });
                             }),
@@ -294,14 +272,7 @@ class _FeedPageState extends ConsumerState<FeedPage>
                                             episodes[i],
                                             podcast: podcast,
                                           );
-                                          return user.favPodcasts.isEmpty &&
-                                                  i == 0 &&
-                                                  trending.first == section
-                                              ? showcase(
-                                                  podcastTitle: podcast.name,
-                                                  child: card,
-                                                )
-                                              : card;
+                                          return card;
                                         });
                                   },
                                 ),

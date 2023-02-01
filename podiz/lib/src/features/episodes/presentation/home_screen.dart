@@ -22,9 +22,6 @@ import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/domain/playing_episode.dart';
 import 'package:podiz/src/features/player/presentation/player.dart';
 import 'package:podiz/src/features/search/presentation/search_page.dart';
-import 'package:podiz/src/features/showcase/data/showcase_repository.dart';
-import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
-import 'package:podiz/src/features/showcase/presentation/showcase_keys.dart';
 import 'package:podiz/src/routing/app_router.dart';
 
 enum HomePage { feed, search, notifications }
@@ -67,24 +64,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       success = await ref.read(spotifyApiProvider).connectToSdk();
     }
     // open playing episode
-    final user = ref.read(currentUserProvider);
-    ref.read(showcaseRepositoryProvider).isFirstTime(user.id).then(
-          (firstTime) => firstTime ? startShowcase() : openPlayingEpisode(),
-        );
+    await openPlayingEpisode();
 
     // request notification permission
+    final user = ref.read(currentUserProvider);
     await ref
         .read(pushNotificationsRepositoryProvider)
         .requestPermission(user.id);
-  }
-
-  Future<void> startShowcase() async {
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) {
-        ShowCaseWidget.of(context).startShowCase(showcaseKeys);
-        setState(() {});
-      },
-    );
   }
 
   Future<void> openPlayingEpisode() async {

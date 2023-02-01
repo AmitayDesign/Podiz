@@ -8,9 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:podiz/src/common_widgets/symbols.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
-import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
-import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/discussion/presentation/comment/comment_menu_button.dart';
@@ -19,8 +17,6 @@ import 'package:podiz/src/features/episodes/data/episode_repository.dart';
 import 'package:podiz/src/features/episodes/data/podcast_repository.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
-import 'package:podiz/src/features/showcase/presentation/package_files/showcase_widget.dart';
-import 'package:podiz/src/features/showcase/presentation/showcase_step.dart';
 import 'package:podiz/src/localization/string_hardcoded.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/statistics/mix_panel_repository.dart';
@@ -36,7 +32,6 @@ class CommentCard extends ConsumerStatefulWidget {
   final Comment comment;
   final String episodeId;
   final bool navigate;
-  final bool showcase;
 
   final VoidCallback? onReply;
 
@@ -45,7 +40,6 @@ class CommentCard extends ConsumerStatefulWidget {
     Key? key,
     required this.episodeId,
     this.navigate = false,
-    this.showcase = false,
     this.onReply,
   }) : super(key: key);
 
@@ -161,19 +155,10 @@ class _CommentCardState extends ConsumerState<CommentCard> {
               padding: const EdgeInsets.only(left: 16, right: 4),
               child: Row(
                 children: [
-                  if (widget.showcase)
-                    showcase(
-                      user: user,
-                      child: UserAvatar(
-                        user: user,
-                        radius: kMinInteractiveDimension * 5 / 12,
-                      ),
-                    )
-                  else
-                    UserAvatar(
-                      user: user,
-                      radius: kMinInteractiveDimension * 5 / 12,
-                    ),
+                  UserAvatar(
+                    user: user,
+                    radius: kMinInteractiveDimension * 5 / 12,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Column(
@@ -314,32 +299,4 @@ class _CommentCardState extends ConsumerState<CommentCard> {
         onReply: widget.onReply,
         onShare: (comment) => share(comment),
       );
-
-  Widget showcase({required UserPodiz user, required Widget child}) {
-    next() {
-      context.goNamed(
-        AppRoute.profile.name,
-        params: {'userId': user.id},
-      );
-      final isFollowing =
-          ref.read(currentUserProvider).following.contains(user.id);
-      if (isFollowing) {
-        ShowCaseWidget.of(context).next();
-      }
-    }
-
-    return ShowcaseStep(
-      step: 3,
-      skipOnTop: true,
-      shapeBorder: const CircleBorder(),
-      onTap: () {
-        next();
-        ShowCaseWidget.of(context).next();
-      },
-      onNext: next,
-      title: 'Find interesting people',
-      description: '${user.name} could be a great start with',
-      child: child,
-    );
-  }
 }

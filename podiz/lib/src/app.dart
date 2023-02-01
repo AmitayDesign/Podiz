@@ -5,9 +5,6 @@ import 'package:podiz/src/features/notifications/data/push_notifications_reposit
 import 'package:podiz/src/features/player/data/player_repository.dart';
 
 import 'features/auth/data/auth_repository.dart';
-import 'features/showcase/data/showcase_repository.dart';
-import 'features/showcase/presentation/package_files/showcase_widget.dart';
-import 'features/showcase/presentation/showcase_controller.dart';
 import 'features/splash/presentation/splash_screen.dart';
 import 'routing/app_router.dart';
 import 'theme/app_theme.dart';
@@ -58,28 +55,16 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
         darkTheme: theme,
         themeMode: ThemeMode.dark,
         builder: (context, child) {
-          return ShowCaseWidget(
-            disableAnimation: true,
-            disableBarrierInteraction: true,
-            onStart: (_, __) {
-              return ref.read(showcaseRunningProvider.notifier).state = true;
-            },
-            onFinish: () {
-              ref.read(showcaseRunningProvider.notifier).state = false;
-              final user = ref.read(currentUserProvider);
-              ref.read(showcaseRepositoryProvider).disable(user.id);
-            },
-            child: Consumer(builder: (context, ref, _) {
-              final firstConnectionValue = ref.watch(firstUserFutureProvider);
-              return firstConnectionValue.when(
-                error: (e, _) => SplashScreen.error(
-                  onRetry: () => ref.refresh(firstUserFutureProvider),
-                ),
-                loading: () => const SplashScreen(),
-                data: (_) => child!,
-              );
-            }),
-          );
+          return Consumer(builder: (context, ref, _) {
+            final firstConnectionValue = ref.watch(firstUserFutureProvider);
+            return firstConnectionValue.when(
+              error: (e, _) => SplashScreen.error(
+                onRetry: () => ref.refresh(firstUserFutureProvider),
+              ),
+              loading: () => const SplashScreen(),
+              data: (_) => child!,
+            );
+          });
         },
       ),
     );
