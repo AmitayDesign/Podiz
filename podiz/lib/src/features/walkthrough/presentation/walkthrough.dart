@@ -63,6 +63,7 @@ class _WalkthroughState extends ConsumerState<Walkthrough> {
                   'You can also search for your favorite episode using search'
                       .hardcoded,
                 ],
+                videoPath: 'assets/walkthrough/play_episode.mp4',
               ),
               WalkthroughStep(
                 title: 'Or jump in'.hardcoded,
@@ -74,6 +75,7 @@ class _WalkthroughState extends ConsumerState<Walkthrough> {
                   'And Open Podiz when you want to join the conversation'
                       .hardcoded,
                 ],
+                videoPath: 'assets/walkthrough/open_from_spotify.mp4',
               ),
               WalkthroughStep(
                 title: 'Share'.hardcoded,
@@ -85,10 +87,12 @@ class _WalkthroughState extends ConsumerState<Walkthrough> {
                   'Each comment is time-stamped to your playing time'.hardcoded,
                   'You can share the best comments with your friends'.hardcoded,
                 ],
+                videoPath: 'assets/walkthrough/add_comment.mp4',
               ),
             ],
           ),
         ),
+        const SizedBox(height: 16),
         if (page < 2) ...[
           ElevatedButton(
             style: ElevatedButton.styleFrom(
