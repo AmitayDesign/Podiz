@@ -382,7 +382,7 @@
 				);
 				MARKETING_VERSION = 0.2.1;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.amitay.podiz;
+				PRODUCT_BUNDLE_IDENTIFIER = com..podiz;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";

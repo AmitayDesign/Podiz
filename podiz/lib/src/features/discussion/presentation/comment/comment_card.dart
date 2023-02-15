@@ -96,7 +96,7 @@ class _CommentCardState extends ConsumerState<CommentCard> {
 
     final DynamicLinkParameters params = DynamicLinkParameters(
       link: Uri.parse("$url/discussion/$episodeId?t=$timestamp"),
-      uriPrefix: "https://amitay.page.link",
+      uriPrefix: "https://podiz.page.link",
       iosParameters: const IOSParameters(
         bundleId: "com.amitay.podiz",
         minimumVersion: "0",
