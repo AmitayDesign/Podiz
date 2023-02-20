@@ -165,9 +165,17 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          user.name,
-                          style: context.textTheme.titleSmall,
+                        Row(
+                          children: [
+                            Text(
+                              user.name,
+                              style: context.textTheme.titleSmall,
+                            ),
+                            const SizedBox(width: 4),
+                            user.verified == true
+                                ? const Icon(Icons.verified)
+                                : Container()
+                          ],
                         ),
                         Text(
                           '${user.followers.length} followers'

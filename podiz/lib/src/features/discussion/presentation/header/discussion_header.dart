@@ -46,6 +46,7 @@ class DiscussionHeader extends ConsumerWidget {
                         color: backgroundColor,
                         avatarSize: 48,
                         titleMaxLines: 1,
+                        isHeader: true,
                       ),
                     ),
                   ),

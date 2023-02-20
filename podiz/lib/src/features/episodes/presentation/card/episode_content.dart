@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:podiz/src/common_widgets/animated_overflow_text.dart';
 import 'package:podiz/src/common_widgets/symbols.dart';
 import 'package:podiz/src/features/episodes/domain/episode.dart';
 import 'package:podiz/src/features/episodes/domain/podcast.dart';
@@ -23,6 +24,8 @@ class EpisodeContent extends StatelessWidget {
 
   final bool disableAvatarNavigation;
 
+  final bool isHeader;
+
   const EpisodeContent(
     this.episode, {
     Key? key,
@@ -33,6 +36,7 @@ class EpisodeContent extends StatelessWidget {
     this.avatarSize = 64,
     this.titleMaxLines = 2,
     this.disableAvatarNavigation = false,
+    this.isHeader = false,
   }) : super(key: key);
 
   String format(Duration duration) {
@@ -69,12 +73,20 @@ class EpisodeContent extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        episode.name,
-                        style: titleStyle,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: titleMaxLines,
-                      ),
+                      isHeader
+                          ? SizedBox(
+                              height: 18,
+                              child: AnimatedOverFlowText(
+                                text: episode.name,
+                                style: titleStyle,
+                              ),
+                            )
+                          : Text(
+                              episode.name,
+                              style: titleStyle,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: titleMaxLines,
+                            ),
                       Row(
                         children: [
                           Flexible(

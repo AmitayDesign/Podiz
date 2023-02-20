@@ -180,6 +180,12 @@
 @import url_launcher_ios;
 #endif
 
+#if __has_include(<video_player_avfoundation/FLTVideoPlayerPlugin.h>)
+#import <video_player_avfoundation/FLTVideoPlayerPlugin.h>
+#else
+@import video_player_avfoundation;
+#endif
+
 #if __has_include(<webview_flutter_wkwebview/FLTWebViewFlutterPlugin.h>)
 #import <webview_flutter_wkwebview/FLTWebViewFlutterPlugin.h>
 #else
@@ -218,6 +224,7 @@
   [TwitterLoginPlugin registerWithRegistrar:[registry registrarForPlugin:@"TwitterLoginPlugin"]];
   [UniLinksPlugin registerWithRegistrar:[registry registrarForPlugin:@"UniLinksPlugin"]];
   [FLTURLLauncherPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTURLLauncherPlugin"]];
+  [FLTVideoPlayerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTVideoPlayerPlugin"]];
   [FLTWebViewFlutterPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTWebViewFlutterPlugin"]];
 }
 

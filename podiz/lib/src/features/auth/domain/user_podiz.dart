@@ -12,6 +12,9 @@ class UserPodiz extends AppUser {
   /// Only available for the current app user
   final bool? emailVerified;
 
+  @JsonKey(defaultValue: false)
+  final bool? verified;
+
   final String? lastListened;
 
   @JsonKey(defaultValue: [])
@@ -33,6 +36,7 @@ class UserPodiz extends AppUser {
     required this.lastListened,
     required this.favPodcasts,
     this.emailVerified,
+    this.verified,
   }) : super(id: id, name: name, email: email, imageUrl: imageUrl);
 
   factory UserPodiz.fromFirestore(Doc doc, {bool? emailVerified}) =>

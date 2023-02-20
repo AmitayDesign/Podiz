@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_locales/flutter_locales.dart';
+import 'package:flutter_mentions/flutter_mentions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/features/notifications/data/push_notifications_repository.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
@@ -42,30 +43,32 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
     final goRouter = ref.watch(goRouterProvider);
     final theme = ref.watch(themeProvider);
     return LocaleBuilder(
-      builder: (locale) => MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        title: 'Podiz',
-        localizationsDelegates: Locales.delegates,
-        supportedLocales: Locales.supportedLocales,
-        locale: locale,
-        routerDelegate: goRouter.routerDelegate,
-        routeInformationParser: goRouter.routeInformationParser,
-        routeInformationProvider: goRouter.routeInformationProvider,
-        restorationScopeId: 'app',
-        darkTheme: theme,
-        themeMode: ThemeMode.dark,
-        builder: (context, child) {
-          return Consumer(builder: (context, ref, _) {
-            final firstConnectionValue = ref.watch(firstUserFutureProvider);
-            return firstConnectionValue.when(
-              error: (e, _) => SplashScreen.error(
-                onRetry: () => ref.refresh(firstUserFutureProvider),
-              ),
-              loading: () => const SplashScreen(),
-              data: (_) => child!,
-            );
-          });
-        },
+      builder: (locale) => Portal(
+        child: MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          title: 'Podiz',
+          localizationsDelegates: Locales.delegates,
+          supportedLocales: Locales.supportedLocales,
+          locale: locale,
+          routerDelegate: goRouter.routerDelegate,
+          routeInformationParser: goRouter.routeInformationParser,
+          routeInformationProvider: goRouter.routeInformationProvider,
+          restorationScopeId: 'app',
+          darkTheme: theme,
+          themeMode: ThemeMode.dark,
+          builder: (context, child) {
+            return Consumer(builder: (context, ref, _) {
+              final firstConnectionValue = ref.watch(firstUserFutureProvider);
+              return firstConnectionValue.when(
+                error: (e, _) => SplashScreen.error(
+                  onRetry: () => ref.refresh(firstUserFutureProvider),
+                ),
+                loading: () => const SplashScreen(),
+                data: (_) => child!,
+              );
+            });
+          },
+        ),
       ),
     );
   }

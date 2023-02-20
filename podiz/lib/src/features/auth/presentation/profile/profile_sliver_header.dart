@@ -83,11 +83,19 @@ class ProfileHeader extends StatelessWidget {
             children: [
               UserAvatar(user: user, radius: tween(0, 48)),
               SizedBox(height: tween(0, 16)),
-              Text(
-                user.name,
-                style: context.textTheme.titleLarge,
-                maxLines: ratio == 0 ? 1 : 2,
-                overflow: TextOverflow.ellipsis,
+              Row(
+                children: [
+                  Text(
+                    user.name,
+                    style: context.textTheme.titleLarge,
+                    maxLines: ratio == 0 ? 1 : 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(width: 4),
+                  user.verified == true
+                      ? const Icon(Icons.verified)
+                      : Container()
+                ],
               ),
               SizedBox(height: tween(0, 8)),
               Row(

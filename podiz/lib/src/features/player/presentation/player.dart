@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:podiz/src/common_widgets/animated_overflow_text.dart';
 import 'package:podiz/src/features/episodes/presentation/avatar/podcast_avatar.dart';
 import 'package:podiz/src/features/player/data/player_repository.dart';
 import 'package:podiz/src/features/player/presentation/error_player.dart';
@@ -13,7 +14,6 @@ import 'package:podiz/src/features/player/presentation/spotify_button.dart';
 import 'package:podiz/src/features/player/presentation/time_chip.dart';
 import 'package:podiz/src/routing/app_router.dart';
 import 'package:podiz/src/theme/palette.dart';
-import 'package:podiz/src/utils/string_zwsp.dart';
 
 import 'skeleton_player.dart';
 
@@ -89,10 +89,11 @@ class Player extends ConsumerWidget {
                                       AppRoute.podcast.name,
                                       params: {'podcastId': episode.showId},
                                     ),
-                                    child: Text(
-                                      episode.name.useCorrectEllipsis(),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                                    child: SizedBox(
+                                        height: 30,
+                                        child: AnimatedOverFlowText(
+                                          text: episode.name,
+                                        )),
                                   ),
                                 ],
                               ),
