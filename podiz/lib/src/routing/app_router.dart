@@ -3,8 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:podiz/src/features/auth/data/auth_repository.dart';
+import 'package:podiz/src/features/auth/domain/user_podiz.dart';
 import 'package:podiz/src/features/auth/presentation/document_screen.dart';
 import 'package:podiz/src/features/auth/presentation/onboarding/onboarding_screen.dart';
+import 'package:podiz/src/features/auth/presentation/profile/following/following_screen.dart';
 import 'package:podiz/src/features/auth/presentation/profile/profile_screen.dart';
 import 'package:podiz/src/features/discussion/presentation/discussion_screen.dart';
 import 'package:podiz/src/features/episodes/presentation/home_screen.dart';
@@ -22,6 +24,7 @@ enum AppRoute {
   privacy,
   podcast,
   discussion,
+  following
 }
 
 String initialRedirect = '/';
@@ -119,6 +122,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: 'profile/:userId',
             name: AppRoute.profile.name,
+            routes: [
+              GoRoute(
+                  path: 'following',
+                  name: AppRoute.following.name,
+                  builder: ((context, state) {
+                    var user = state.extra as UserPodiz;
+                    return FollowingScreen(user);
+                  }))
+            ],
             builder: (_, state) {
               final userId = state.params['userId']!;
               return ProfileScreen(userId);

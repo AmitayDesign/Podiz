@@ -104,8 +104,8 @@ class ProfileHeader extends StatelessWidget {
               Row(
                 children: [
                   InkWell(
-                    onTap: () => _buildFollowersPopUp(
-                        context, "Followers", user.followers),
+                    onTap: () => context.pushNamed(AppRoute.following.name,
+                        extra: user, params: {'userId': user.id}),
                     child: Text.rich(
                       TextSpan(
                         text: user.followers.length.toString(),
@@ -125,8 +125,8 @@ class ProfileHeader extends StatelessWidget {
                   ),
                   const SizedBox(width: 16),
                   InkWell(
-                    onTap: () => _buildFollowersPopUp(
-                        context, "Following", user.following),
+                    onTap: () => context.pushNamed(AppRoute.following.name,
+                        extra: user, params: {'userId': user.id}),
                     child: Text.rich(
                       TextSpan(
                         text: user.following.length.toString(),
@@ -147,34 +147,6 @@ class ProfileHeader extends StatelessWidget {
                 ],
               ),
             ],
-          ),
-        );
-      },
-    );
-  }
-
-  _buildFollowersPopUp(
-      BuildContext context, String title, List<String> followers) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: followers.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  title: Text(followers[index]),
-                  onTap: () {
-                    context.pushNamed(AppRoute.profile.name,
-                        params: {'userId': followers[index]});
-                  },
-                );
-              },
-            ),
           ),
         );
       },
