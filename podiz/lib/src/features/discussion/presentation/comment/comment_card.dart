@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:podiz/src/common_widgets/symbols.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
+import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
 import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
@@ -173,7 +174,7 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                             ),
                             const SizedBox(width: 4),
                             user.verified == true
-                                ? const Icon(Icons.verified)
+                                ? const Icon(Icons.verified, size: 14)
                                 : Container()
                           ],
                         ),
@@ -214,6 +215,18 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                       widget.onReply?.call();
                     },
                     onShare: () => share(widget.comment),
+                    onLike: () => ref
+                        .read(discussionRepositoryProvider)
+                        .likeComment(widget.comment,
+                            ref.read(authRepositoryProvider).currentUser!.id),
+                    onUnlike: () => ref
+                        .read(discussionRepositoryProvider)
+                        .unlikeComment(widget.comment,
+                            ref.read(authRepositoryProvider).currentUser!.id),
+                    like: !widget.comment.likes.any((element) =>
+                        element ==
+                        ref.read(authRepositoryProvider).currentUser!.id),
+                    number: widget.comment.likes.length,
                   ),
                   if (widget.comment.replyCount > 0) ...[
                     const SizedBox(height: 16),

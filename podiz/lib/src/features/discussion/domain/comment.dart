@@ -23,24 +23,28 @@ class Comment with EquatableMixin {
   final List<String> parentIds;
   final String? parentUserId;
 
+  final List<String> likes;
+
   final int replyCount;
 
   @JsonKey(defaultValue: false)
   final bool reported;
 
-  Comment({
-    this.id = '',
-    required this.text,
-    required this.episodeId,
-    required this.userId,
-    DateTime? date,
-    required this.timestamp,
-    List<String>? parentIds,
-    this.parentUserId,
-    this.replyCount = 0,
-    this.reported = false,
-  })  : date = date ?? DateTime.now(),
-        parentIds = parentIds ?? const [];
+  Comment(
+      {this.id = '',
+      required this.text,
+      required this.episodeId,
+      required this.userId,
+      DateTime? date,
+      required this.timestamp,
+      List<String>? parentIds,
+      this.parentUserId,
+      this.replyCount = 0,
+      this.reported = false,
+      List<String>? likes})
+      : date = date ?? DateTime.now(),
+        parentIds = parentIds ?? const [],
+        likes = likes ?? [];
 
   factory Comment.fromFirestore(Doc doc) =>
       Comment.fromJson(doc.data()!..['id'] = doc.id);

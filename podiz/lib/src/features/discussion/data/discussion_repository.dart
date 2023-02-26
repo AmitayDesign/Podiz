@@ -22,6 +22,8 @@ abstract class DiscussionRepository {
   Future<String> addComment(Comment comment);
   Future<void> updateComment(Comment comment);
   Future<void> deleteComment(Comment comment);
+  Future<void> likeComment(Comment comment, String userId);
+  Future<void> unlikeComment(Comment comment, String userId);
 }
 
 //* Providers

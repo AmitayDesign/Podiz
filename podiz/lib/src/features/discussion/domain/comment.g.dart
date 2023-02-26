@@ -20,6 +20,8 @@ Comment _$CommentFromJson(Map<String, dynamic> json) => Comment(
       parentUserId: json['parentUserId'] as String?,
       replyCount: json['replyCount'] as int? ?? 0,
       reported: json['reported'] as bool? ?? false,
+      likes:
+          (json['likes'] as List<dynamic>?)?.map((e) => e as String).toList(),
     );
 
 Map<String, dynamic> _$CommentToJson(Comment instance) => <String, dynamic>{
@@ -31,6 +33,7 @@ Map<String, dynamic> _$CommentToJson(Comment instance) => <String, dynamic>{
       'timestamp': msFromDuration(instance.timestamp),
       'parentIds': instance.parentIds,
       'parentUserId': instance.parentUserId,
+      'likes': instance.likes,
       'replyCount': instance.replyCount,
       'reported': instance.reported,
     };

@@ -163,4 +163,24 @@ class FirestoreDiscussionRepository implements DiscussionRepository {
     final commentDoc = firestore.commentsCollection.doc(comment.id);
     await commentDoc.delete();
   }
+
+  @override
+  Future<void> likeComment(Comment comment, userId) {
+    print("like");
+    print(comment);
+    comment.likes.add(userId);
+    return firestore.commentsCollection
+        .doc(comment.id)
+        .update(comment.toJson());
+  }
+
+  @override
+  Future<void> unlikeComment(Comment comment, String userId) {
+    print("unlike");
+    print(comment);
+    comment.likes.remove(userId);
+    return firestore.commentsCollection
+        .doc(comment.id)
+        .update(comment.toJson());
+  }
 }

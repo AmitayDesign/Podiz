@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podiz/src/common_widgets/user_avatar.dart';
+import 'package:podiz/src/features/auth/data/auth_repository.dart';
 import 'package:podiz/src/features/auth/data/user_repository.dart';
+import 'package:podiz/src/features/discussion/data/discussion_repository.dart';
 import 'package:podiz/src/features/discussion/domain/comment.dart';
 import 'package:podiz/src/features/discussion/presentation/comment/comment_menu_button.dart';
 import 'package:podiz/src/features/discussion/presentation/sheet/comment_sheet.dart';
@@ -94,6 +96,26 @@ class ReplyWidget extends ConsumerWidget {
                             onReply?.call();
                           },
                           onShare: () => onShare?.call(comment),
+                          onLike: () => ref
+                              .read(discussionRepositoryProvider)
+                              .likeComment(
+                                  comment,
+                                  ref
+                                      .read(authRepositoryProvider)
+                                      .currentUser!
+                                      .id),
+                          onUnlike: () => ref
+                              .read(discussionRepositoryProvider)
+                              .unlikeComment(
+                                  comment,
+                                  ref
+                                      .read(authRepositoryProvider)
+                                      .currentUser!
+                                      .id),
+                          like: !comment.likes.any((element) =>
+                              element ==
+                              ref.read(authRepositoryProvider).currentUser!.id),
+                          number: comment.likes.length,
                         ),
                         for (final reply in directReplies)
                           ReplyWidget(
